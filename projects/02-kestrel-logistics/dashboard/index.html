@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en-ZA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Control Tower · Kestrel Logistics</title>
+<meta name="description" content="Cost to serve across a South African road freight network: which corridors lose money, which doors will not receive, and which trucks are drinking. Demonstration built on synthetic data.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/control-tower.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='5' fill='%230B0F14'/><path d='M5 20h6l3-8 3 8h6' fill='none' stroke='%231C9DB8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/><circle cx='24' cy='11' r='2.5' fill='%23F87171'/></svg>">
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div>
+      <h1>Control Tower</h1>
+      <p class="sub">Kestrel Logistics · road freight · Gauteng, KwaZulu-Natal, Western Cape</p>
+    </div>
+    <div class="meta">
+      <div id="freshness" class="freshness">
+        <span class="fresh-dot" aria-hidden="true"></span>
+        <span id="fresh-label">Checking data freshness</span>
+      </div>
+      <div id="data-through"></div>
+      <div id="last-run"></div>
+    </div>
+  </header>
+
+  <main id="main">
+    <div class="loading" id="loading">
+      <p id="loading-msg">Starting the query engine</p>
+      <p class="muted" style="font-size:0.82rem">
+        The warehouse is running in your browser. Nothing is being sent to a server.
+      </p>
+    </div>
+  </main>
+
+  <footer>
+    <p>
+      <span class="badge">Synthetic data</span>
+      Kestrel Logistics is a fictional operator. Every figure on this page is generated and
+      contains deliberately planted findings. No real company data appears here.
+    </p>
+    <p>
+      Built by Omnatix. Trip, fuel, workshop and delivery exports land as CSV, are modelled
+      through bronze, silver and gold layers in dbt on DuckDB, tested on every build, and
+      published as Parquet. This page loads those files and runs SQL against them in your
+      browser using DuckDB-WASM. There is no backend and no database server. The map is drawn
+      from coordinates in the data, not from map tiles, so nothing at all is fetched from a
+      third party.
+    </p>
+  </footer>
+
+</div>
+
+<script type="module" src="assets/app.js"></script>
+</body>
+</html>

@@ -48,14 +48,21 @@ Adding a demo is one entry in the `PROJECTS` list in `scripts/build_site.py`.
 | 03 | **Sable & Finch Credit** | Microfinance | Credit risk, "we find out about bad loans too late" | CRO / Board |
 | 04 | **Lumen Health Network** | Clinic group | Capacity & cash, "we're full but not profitable" | Hospital MD / Finance |
 
-### 01, Meridian Provisions Co., at a glance
+### At a glance
 
-A Gauteng-based FMCG distributor: R657m turnover, 485 trade customers across Modern Trade,
+**Meridian Provisions Co.** is a Gauteng-based FMCG distributor: R657m turnover, 485 trade customers across Modern Trade,
 General Trade, Wholesale and HoReCa, 131 SKUs, three DCs (Gauteng, KwaZulu-Natal, Western Cape),
 24 months of data to 2026-08-31.
 
 The opening line of the demo: **revenue up 11.9%, gross profit up 4.1%.** Five planted findings
 explain the gap. The reveal script is in `projects/01-meridian-provisions/ANSWER_KEY.md`.
+
+**Kestrel Logistics** is a road freight operator: R243m revenue, 124 vehicles, 12.4m kilometres
+a year, three hubs, 25 line-haul corridors and 4 metro distribution runs.
+
+It opens on the map. **23.7% of every kilometre carried nothing**, and twelve corridors are
+priced as though the truck comes home loaded when it does not. The close: **R21.9m identified
+against R27.6m earned**, which is 79.5% of everything the business currently makes.
 
 ## Visual identity per project
 
@@ -91,13 +98,18 @@ A live operations screen. Dark, map-first, monospace numerics, status as colour.
 | Token | Value |
 |---|---|
 | Page | `#0B0F14` |
-| Panel | `#131A22` |
-| Primary | `#22D3EE` cyan |
-| Warn | `#F59E0B` amber |
-| Breach | `#EF4444` |
-| Type | Barlow Condensed labels · JetBrains Mono figures |
+| Panel | `#121820` |
+| Land | `#151D26` |
+| Series 1 to 4 | `#1C9DB8` cyan · `#A88818` gold · `#D65F92` rose · `#8478DE` violet |
+| Status | `#34D399` ok · `#FBBF24` warn · `#F87171` breach |
+| Type | Barlow Condensed labels · JetBrains Mono figures · Inter body |
 
-Signature visual: the route map with three red corridors burning 22% of fleet cost.
+Series colours validated against this exact surface, worst adjacent pair clearing delta E 11.9.
+Status colours are reserved and always ship with a label, never colour alone.
+
+Signature visual: the network map. Twelve corridors that look profitable one way and lose money
+as a round trip, drawn from coordinates in the data rather than from map tiles, so the page
+still fetches nothing from anyone.
 
 ### 03, Sable & Finch Credit · theme "Institutional"
 
@@ -150,15 +162,15 @@ Applied to every project in this repo.
 | Project | Data | Bronze | Silver | Gold | Dashboard | Chat |
 |---|---|---|---|---|---|---|
 | 01 Meridian | ✅ | ✅ | ✅ | ✅ | ✅ | ⬜ |
-| 02 Kestrel | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 02 Kestrel | ✅ | ✅ | ✅ | ✅ | ✅ | ⬜ |
 | 03 Sable & Finch | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
 | 04 Lumen | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
 
-Meridian: 31 models, 97 data tests (128 build nodes), one warning by design. A full build takes
-about 15 seconds. The dashboard ships as 1.1 MB of Parquet and needs no server.
+Meridian: 31 models, 97 data tests. Kestrel: 35 models, 57 tests. Each has one warning by
+design, the orphan reference test. A full build of either takes under 25 seconds.
 
 The dashboard is a static site: gold tables export to Parquet and DuckDB-WASM runs the SQL in
-the browser. No server, no database to host.
+the browser. No server, no database to host. Meridian ships 1.2 MB of Parquet, Kestrel 268 KB.
 
 See [SETUP.md](SETUP.md) to install and run it, and [REFRESH.md](REFRESH.md) for what happens
 when new data arrives and how the dashboard reports its own freshness.

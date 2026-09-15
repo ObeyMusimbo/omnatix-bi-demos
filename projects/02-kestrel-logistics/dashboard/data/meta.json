@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-09-15T23:24:49+00:00",
+  "built_at": "2026-09-15T23:39:31+00:00",
   "data_from": "2024-09-02",
   "data_through": "2026-09-01",
   "trips": 50652,
@@ -22,8 +22,8 @@
       "bytes": 7524
     },
     "mart_sla_performance": {
-      "rows": 144,
-      "bytes": 5930
+      "rows": 288,
+      "bytes": 8896
     },
     "mart_load_factor": {
       "rows": 68,

@@ -15,6 +15,7 @@ with drops as (
     select
         c.consignment_id,
         c.customer_id,
+        c.contract_type,
         c.is_anchor_account,
         c.is_on_time,
         c.is_failed,
@@ -35,13 +36,14 @@ by_bucket as (
         month_start_date,
         year_month,
         dispatch_day_bucket,
+        contract_type,
         is_anchor_account,
         count(*) as drops,
         count(*) filter (where is_on_time) as on_time_drops,
         count(*) filter (where is_failed) as failed_drops,
         round(sum(revenue_zar), 2) as revenue_zar,
     from drops
-    group by 1, 2, 3, 4
+    group by 1, 2, 3, 4, 5
 
 ),
 
@@ -51,6 +53,7 @@ final as (
         month_start_date,
         year_month,
         dispatch_day_bucket,
+        contract_type,
         is_anchor_account,
         drops,
         on_time_drops,
