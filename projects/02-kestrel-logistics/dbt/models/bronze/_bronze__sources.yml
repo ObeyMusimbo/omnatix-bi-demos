@@ -1,0 +1,40 @@
+version: 2
+
+sources:
+  - name: kestrel_raw
+    description: >
+      The exports as they land from Kestrel's transport management system, the fuel card
+      provider and the workshop. Read in place from disk, nothing is copied, nothing is
+      changed. All ten files are synthetic.
+    schema: main
+    meta:
+      external_location: "{{ var('raw_path') }}/{name}.csv"
+    tables:
+      - name: depots
+        description: The three hubs, with coordinates the dashboard map draws from.
+      - name: vehicles
+        description: The fleet. Registrations are captured three different ways.
+      - name: drivers
+        description: Drivers and the hub they are based at.
+      - name: customers
+        description: Consignees. Names carry stray whitespace and an inconsistent Pty Ltd suffix.
+      - name: lanes
+        description: >
+          Line-haul lanes and metro distribution runs, with nominal distance, tolls and the
+          backhaul fill the tariff was priced against.
+      - name: trips
+        description: >
+          One row per vehicle movement. Timestamps arrive in two formats from two systems,
+          and a GPS fault leaves a few trips with a nonsense distance.
+      - name: consignments
+        description: >
+          One row per drop. Status casing is inconsistent, some weights were never captured,
+          and a few rows quote trips absent from the trip file.
+      - name: trip_costs
+        description: Driver hours, tolls and allocated fixed cost per trip, from the finance export.
+      - name: fuel_transactions
+        description: >
+          Fuel card draws. Contains double swipes, odometer capture errors, and litres written
+          with a decimal comma for part of the window.
+      - name: maintenance
+        description: Workshop jobs, their cost and the downtime they caused.

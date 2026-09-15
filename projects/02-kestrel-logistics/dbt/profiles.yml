@@ -1,0 +1,7 @@
+kestrel:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: '../kestrel.duckdb'
+      threads: 4

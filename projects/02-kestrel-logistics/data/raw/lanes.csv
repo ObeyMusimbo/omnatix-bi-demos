@@ -1,0 +1,30 @@
+lane_id,lane_name,lane_type,origin_depot_code,destination_city,destination_lat,destination_lon,distance_km,toll_cost_zar,planned_hours,assumed_backhaul_pct
+LN-101,Johannesburg to Durban,Line-haul,KES-JHB,Durban,-29.8587,31.0218,568,380,7.5,60
+LN-102,Johannesburg to Cape Town,Line-haul,KES-JHB,Cape Town,-33.9249,18.4241,1398,520,17,60
+LN-103,Johannesburg to Gqeberha,Line-haul,KES-JHB,Gqeberha,-33.9608,25.6022,1040,290,13,60
+LN-104,Johannesburg to Bloemfontein,Line-haul,KES-JHB,Bloemfontein,-29.0852,26.1596,398,180,5,60
+LN-105,Johannesburg to Polokwane,Line-haul,KES-JHB,Polokwane,-23.9045,29.4689,328,145,4,60
+LN-106,Johannesburg to Mbombela,Line-haul,KES-JHB,Mbombela,-25.4753,30.9694,358,165,4.5,60
+LN-107,Johannesburg to Rustenburg,Line-haul,KES-JHB,Rustenburg,-25.6672,27.2424,120,60,1.8,60
+LN-108,Johannesburg to Kimberley,Line-haul,KES-JHB,Kimberley,-28.7282,24.7499,472,150,5.5,60
+LN-109,Johannesburg to East London,Line-haul,KES-JHB,East London,-33.0292,27.8546,985,250,12,60
+LN-110,Johannesburg to Newcastle,Line-haul,KES-JHB,Newcastle,-27.758,29.9318,305,190,4,60
+LN-111,Johannesburg to Klerksdorp,Line-haul,KES-JHB,Klerksdorp,-26.8521,26.6667,168,70,2.2,60
+LN-112,Johannesburg to Welkom,Line-haul,KES-JHB,Welkom,-27.977,26.735,265,120,3.3,60
+LN-113,Durban to Johannesburg,Line-haul,KES-DBN,Johannesburg,-26.2041,28.0473,568,380,7.5,60
+LN-114,Durban to Cape Town,Line-haul,KES-DBN,Cape Town,-33.9249,18.4241,1660,600,20,60
+LN-115,Durban to Gqeberha,Line-haul,KES-DBN,Gqeberha,-33.9608,25.6022,984,300,12,60
+LN-116,Durban to Pietermaritzburg,Line-haul,KES-DBN,Pietermaritzburg,-29.6006,30.3794,80,45,1.2,60
+LN-117,Durban to Richards Bay,Line-haul,KES-DBN,Richards Bay,-28.7807,32.0383,178,95,2.4,60
+LN-118,Durban to Bloemfontein,Line-haul,KES-DBN,Bloemfontein,-29.0852,26.1596,634,260,7.8,60
+LN-119,Cape Town to Johannesburg,Line-haul,KES-CPT,Johannesburg,-26.2041,28.0473,1398,520,17,60
+LN-120,Cape Town to Gqeberha,Line-haul,KES-CPT,Gqeberha,-33.9608,25.6022,750,180,9,60
+LN-121,Cape Town to George,Line-haul,KES-CPT,George,-33.9628,22.4619,430,95,5,60
+LN-122,Cape Town to Worcester,Line-haul,KES-CPT,Worcester,-33.6465,19.4485,110,40,1.5,60
+LN-123,Cape Town to Paarl,Line-haul,KES-CPT,Paarl,-33.7342,18.9621,60,25,0.9,60
+LN-124,Cape Town to Upington,Line-haul,KES-CPT,Upington,-28.4478,21.2561,790,140,9.5,60
+LN-125,Cape Town to Bloemfontein,Line-haul,KES-CPT,Bloemfontein,-29.0852,26.1596,1004,300,12,60
+LN-126,Johannesburg metro,Distribution,KES-JHB,Johannesburg,-26.2341,28.1073,185,40,9,60
+LN-127,Pretoria metro,Distribution,KES-JHB,Johannesburg,-26.2341,28.1073,210,55,9.5,60
+LN-128,Durban metro,Distribution,KES-DBN,Durban,-29.955,30.933,165,35,8.5,60
+LN-129,Cape Town metro,Distribution,KES-CPT,Cape Town,-33.935,18.54,150,30,8,60

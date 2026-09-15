@@ -1,0 +1,28 @@
+name: kestrel
+version: '1.0.0'
+config-version: 2
+profile: kestrel
+
+model-paths: ['models']
+macro-paths: ['macros']
+target-path: 'target'
+clean-targets: ['target', 'dbt_packages']
+
+vars:
+  raw_path: '../data/raw'
+  period_end: '2026-08-31'
+  # The tariff on every lane was priced assuming this much of the return leg sells.
+  # Finding 1 is the lanes where reality falls a long way short of it.
+  assumed_backhaul_pct: 60
+
+models:
+  kestrel:
+    bronze:
+      +materialized: table
+      +schema: bronze
+    silver:
+      +materialized: table
+      +schema: silver
+    gold:
+      +materialized: table
+      +schema: gold
