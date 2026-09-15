@@ -4,7 +4,7 @@ sources:
   - name: meridian_raw
     description: >
       The CSV drops as they land from Meridian's ERP, WMS and finance exports. Read in place
-      from disk — nothing is copied, nothing is changed. All nine files are synthetic.
+      from disk, nothing is copied, nothing is changed. All nine files are synthetic.
     schema: main
     meta:
       external_location: "{{ var('raw_path') }}/{name}.csv"

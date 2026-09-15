@@ -3,7 +3,7 @@
 
   The whole warehouse query engine runs in the browser. Parquet files are fetched over
   plain HTTP from the same static host, registered with DuckDB, and queried with ordinary
-  SQL — no server, no API, no database to operate. That is the point of this architecture
+  SQL, no server, no API, no database to operate. That is the point of this architecture
   and it is worth saying out loud in a demo.
 */
 
@@ -23,6 +23,20 @@ const TABLES = [
 ];
 
 let conn = null;
+let metaCache = null;
+
+/**
+ * Build metadata written by export_parquet.py: when the pipeline last ran and how recent
+ * the newest transaction in it is. Read separately from the Parquet so the page can state
+ * its own freshness even if a query later fails.
+ */
+export async function meta() {
+  if (metaCache) return metaCache;
+  const res = await fetch(new URL('data/meta.json', location.href), { cache: 'no-store' });
+  if (!res.ok) throw new Error(`meta.json ${res.status}`);
+  metaCache = await res.json();
+  return metaCache;
+}
 
 export async function connect(onProgress = () => {}) {
   if (conn) return conn;
@@ -68,7 +82,7 @@ export async function connect(onProgress = () => {}) {
  * Two conversions matter. BigInt is narrowed to Number so values can be charted and
  * formatted. DATE columns come back from Arrow as epoch milliseconds rather than Date
  * objects or strings, so they are read off the schema by name and turned into ISO date
- * strings — which sort correctly and format predictably.
+ * strings, which sort correctly and format predictably.
  */
 export async function q(sql) {
   const c = await connect();

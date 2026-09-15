@@ -1,4 +1,4 @@
-# Omnatix — BI demo suite
+# Omnatix, BI demo suite
 
 Four self-contained analytics demos, each a different industry, a different core business
 problem, and a deliberately different visual identity. Built on a zero-cost stack so they can
@@ -16,7 +16,7 @@ Each project follows the same shape, so a fifth one is a new folder, not a new p
 ```
 projects/NN-name/
   generator/generate.js     synthetic source data, deterministic from a seed
-  data/raw/                 the CSV "drops" — the bronze landing zone
+  data/raw/                 the CSV "drops", the bronze landing zone
   dbt/                      bronze → silver → gold → semantic
   dashboard/                static site: HTML, CSS, JS modules and Parquet
   ANSWER_KEY.md             the planted findings (never ship this)
@@ -26,12 +26,12 @@ projects/NN-name/
 
 | # | Client | Industry | Core problem | Buyer |
 |---|---|---|---|---|
-| 01 | **Meridian Provisions Co.** | FMCG distribution | Profit leakage — "revenue is up, profit isn't" | CFO / Commercial Director |
-| 02 | **Kestrel Logistics** | Freight & fleet | Cost-to-serve — "which routes lose me money?" | COO |
-| 03 | **Sable & Finch Credit** | Microfinance | Credit risk — "we find out about bad loans too late" | CRO / Board |
-| 04 | **Lumen Health Network** | Clinic group | Capacity & cash — "we're full but not profitable" | Hospital MD / Finance |
+| 01 | **Meridian Provisions Co.** | FMCG distribution | Profit leakage, "revenue is up, profit isn't" | CFO / Commercial Director |
+| 02 | **Kestrel Logistics** | Freight & fleet | Cost-to-serve, "which routes lose me money?" | COO |
+| 03 | **Sable & Finch Credit** | Microfinance | Credit risk, "we find out about bad loans too late" | CRO / Board |
+| 04 | **Lumen Health Network** | Clinic group | Capacity & cash, "we're full but not profitable" | Hospital MD / Finance |
 
-### 01 — Meridian Provisions Co., at a glance
+### 01, Meridian Provisions Co., at a glance
 
 A Gauteng-based FMCG distributor: R657m turnover, 485 trade customers across Modern Trade,
 General Trade, Wholesale and HoReCa, 131 SKUs, three DCs (Gauteng, KwaZulu-Natal, Western Cape),
@@ -44,7 +44,7 @@ explain the gap. The reveal script is in `projects/01-meridian-provisions/ANSWER
 
 Deliberately distinct. The point is to show range, not a template.
 
-### 01 — Meridian Provisions · theme "Ledger"
+### 01, Meridian Provisions · theme "Ledger"
 
 A printed financial report. Warm paper, hairline rules, dense tabular figures, restrained colour
 used only where it carries meaning.
@@ -53,21 +53,21 @@ used only where it carries meaning.
 |---|---|---|
 | Page | `#FBF9F4` | `#16140F` |
 | Ink | `#1C1917` | `#F5F1E8` |
-| Series 1 — oxblood | `#B5502C` | `#CB7645` |
-| Series 2 — blue | `#1A5FB4` | `#5A90D4` |
-| Series 3 — ochre | `#96690A` | `#AE8A2A` |
-| Series 4 — teal | `#0A7D5E` | `#1F9C79` |
+| Series 1, oxblood | `#B5502C` | `#CB7645` |
+| Series 2, blue | `#1A5FB4` | `#5A90D4` |
+| Series 3, ochre | `#96690A` | `#AE8A2A` |
+| Series 4, teal | `#0A7D5E` | `#1F9C79` |
 | Rule | `#E5DFD3` | `#332E25` |
 | Type | Source Serif 4 headings · Inter body · tabular figures in tables only |
 
-The series colours are **validated, not chosen** — lightness band, chroma floor, colour-vision
+The series colours are **validated, not chosen**, lightness band, chroma floor, colour-vision
 separation, normal-vision separation and surface contrast, checked independently per mode. Dark
 mode carries its own darker steps rather than a flip of the light ones. Re-validate before
 substituting any of them; the ordering matters too, because adjacency is what gets tested.
 
 Signature visual: the margin waterfall. Gross profit, then freight, then rebate, ending below zero.
 
-### 02 — Kestrel Logistics · theme "Control Tower"
+### 02, Kestrel Logistics · theme "Control Tower"
 
 A live operations screen. Dark, map-first, monospace numerics, status as colour.
 
@@ -82,7 +82,7 @@ A live operations screen. Dark, map-first, monospace numerics, status as colour.
 
 Signature visual: the route map with three red corridors burning 22% of fleet cost.
 
-### 03 — Sable & Finch Credit · theme "Institutional"
+### 03, Sable & Finch Credit · theme "Institutional"
 
 A regulator-ready pack. Navy and bone, dense, auditable, no decoration.
 
@@ -96,7 +96,7 @@ A regulator-ready pack. Navy and bone, dense, auditable, no decoration.
 
 Signature visual: vintage curves by disbursement cohort, one branch diverging from the book.
 
-### 04 — Lumen Health Network · theme "Clinical"
+### 04, Lumen Health Network · theme "Clinical"
 
 Calm and glanceable, readable from across a ward. WCAG AA on every pairing, large number tiles,
 generous whitespace.
@@ -110,7 +110,7 @@ generous whitespace.
 | Alert | `#DC2626` |
 | Type | Inter · 18px base · large tiles |
 
-Signature visual: no-show rate by appointment slot — Monday mornings empty, Thursdays queueing.
+Signature visual: no-show rate by appointment slot, Monday mornings empty, Thursdays queueing.
 
 ## Demo craft rules
 
@@ -141,4 +141,7 @@ Meridian: 31 models, 97 data tests (128 build nodes), one warning by design. A f
 about 15 seconds. The dashboard ships as 1.1 MB of Parquet and needs no server.
 
 The dashboard is a static site: gold tables export to Parquet and DuckDB-WASM runs the SQL in
-the browser. No server, no database to host. See [SETUP.md](SETUP.md) to run it.
+the browser. No server, no database to host.
+
+See [SETUP.md](SETUP.md) to install and run it, and [REFRESH.md](REFRESH.md) for what happens
+when new data arrives and how the dashboard reports its own freshness.

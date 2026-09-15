@@ -1,9 +1,9 @@
 /*
-  Ledger — the Meridian Provisions theme.
+  Ledger, the Meridian Provisions theme.
 
   A printed financial report: warm paper, hairline rules doing the separating rather than
   boxes or shadows, serif headings over a sans body, and colour used only where it carries
-  meaning. The series palette is not hand-picked — it was validated for lightness band,
+  meaning. The series palette is not hand-picked, it was validated for lightness band,
   chroma floor, CVD separation, normal-vision separation and surface contrast, in both
   modes independently. Do not substitute a colour here without re-validating.
 */
@@ -24,7 +24,7 @@
   --s3: #96690A;   /* ochre   */
   --s4: #0A7D5E;   /* teal    */
 
-  /* Polarity. Direction and label always carry the meaning too — never colour alone. */
+  /* Polarity. Direction and label always carry the meaning too, never colour alone. */
   --neg: #B5502C;
   --pos: #0A7D5E;
   --neutral: #57534E;
@@ -116,6 +116,26 @@ body {
   line-height: 1.5;
 }
 
+/*
+  Data freshness. State is carried by the label text as well as the dot colour, never by
+  colour alone, so it survives colour-vision differences and a greyscale print.
+*/
+.freshness {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 500;
+  color: var(--ink-2);
+  margin-bottom: 0.15rem;
+}
+.fresh-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ink-3); flex: none; }
+.freshness.is-current { color: var(--pos); }
+.freshness.is-current .fresh-dot { background: var(--pos); }
+.freshness.is-lagging { color: var(--s3); }
+.freshness.is-lagging .fresh-dot { background: var(--s3); }
+.freshness.is-stale { color: var(--neg); }
+.freshness.is-stale .fresh-dot { background: var(--neg); }
+
 .theme-toggle {
   background: none;
   border: 1px solid var(--rule-strong);
@@ -164,7 +184,7 @@ section { margin: 0 0 4.5rem; scroll-margin-top: 1rem; }
   margin: 2rem 0 0.5rem;
 }
 .hero-value {
-  /* Sans, not the serif — a display serif on the hero reads as decoration.
+  /* Sans, not the serif, a display serif on the hero reads as decoration.
      Proportional figures: tabular at this size makes the number look loose. */
   font-family: var(--font-sans);
   font-size: 4rem;

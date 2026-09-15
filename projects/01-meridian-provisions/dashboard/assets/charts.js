@@ -22,10 +22,10 @@ const GAP = 2;
 const nil = (n) => n === null || n === undefined || Number.isNaN(n);
 
 export const fmtR = (n) =>
-  nil(n) ? '—' : (n < 0 ? '-R' : 'R') + Math.round(Math.abs(n)).toLocaleString('en-ZA');
+  nil(n) ? '-' : (n < 0 ? '-R' : 'R') + Math.round(Math.abs(n)).toLocaleString('en-ZA');
 
 export function fmtRc(n) {
-  if (nil(n)) return '—';
+  if (nil(n)) return '-';
   const a = Math.abs(n), s = n < 0 ? '-R' : 'R';
   if (a >= 1e9) return s + (a / 1e9).toFixed(a / 1e9 >= 10 ? 0 : 1) + 'bn';
   if (a >= 1e6) return s + (a / 1e6).toFixed(a / 1e6 >= 100 ? 0 : 1) + 'm';
@@ -33,9 +33,9 @@ export function fmtRc(n) {
   return s + Math.round(a);
 }
 
-export const fmtNum = (n) => (nil(n) ? '—' : Math.round(n).toLocaleString('en-ZA'));
-export const fmtPct = (n, dp = 1) => (nil(n) ? '—' : n.toFixed(dp) + '%');
-export const fmtR2 = (n) => (nil(n) ? '—' : (n < 0 ? '-R' : 'R') + Math.abs(n).toFixed(2));
+export const fmtNum = (n) => (nil(n) ? '-' : Math.round(n).toLocaleString('en-ZA'));
+export const fmtPct = (n, dp = 1) => (nil(n) ? '-' : n.toFixed(dp) + '%');
+export const fmtR2 = (n) => (nil(n) ? '-' : (n < 0 ? '-R' : 'R') + Math.abs(n).toFixed(2));
 export const fmtMonth = (iso) =>
   new Date(iso + 'T00:00:00Z').toLocaleDateString('en-ZA', { month: 'short', year: '2-digit', timeZone: 'UTC' });
 
@@ -187,7 +187,7 @@ export function waterfall(el, { rows, height = 320, valueFmt = fmtRc, showValues
       invisible sliver on a zero baseline. With zeroBaseline off, the domain is taken from
       the running totals instead, so the steps are legible and the anchors run off the
       bottom of the plot. That is honest here because a waterfall asks the reader to compare
-      the steps, not the absolute height of the anchors — and the axis is labelled as
+      the steps, not the absolute height of the anchors, and the axis is labelled as
       truncated so nobody reads a full-height bar as a full-magnitude one.
     */
     // Anchors span from zero, so their lo would drag a truncated domain back down to zero.
@@ -252,7 +252,7 @@ export function waterfall(el, { rows, height = 320, valueFmt = fmtRc, showValues
 // ------------------------------------------------------------------ columns
 
 /**
- * rows: [{ x, y, color, tip? }]  — x is a label, color a CSS var name or hex.
+ * rows: [{ x, y, color, tip? }], x is a label, color a CSS var name or hex.
  * refLine: optional { value, label }
  */
 export function columns(el, { rows, height = 300, valueFmt = fmtNum, refLine = null, xEvery = 1, yLabel = '' }) {
@@ -301,7 +301,7 @@ export function columns(el, { rows, height = 300, valueFmt = fmtNum, refLine = n
 
 /**
  * rows: [{ label, value, color, tip? }]
- * The right form when there are few categories with long names — the label reads
+ * The right form when there are few categories with long names, the label reads
  * horizontally at full length instead of being truncated under a column.
  */
 export function barsH(el, { rows, valueFmt = fmtRc, rowHeight = 46, labelWidth = 240 }) {
@@ -334,7 +334,7 @@ export function barsH(el, { rows, valueFmt = fmtRc, rowHeight = 46, labelWidth =
 // ------------------------------------------------------------------ lines
 
 /**
- * series: [{ name, color, points: [{x, y}] }] — x values shared and ordered.
+ * series: [{ name, color, points: [{x, y}] }], x values shared and ordered.
  * Crosshair tooltip reads every series at the hovered index.
  */
 export function lines(el, { series, height = 300, valueFmt = fmtPct, xFmt = (v) => v, xEvery = 3, endLabels = true }) {
@@ -378,7 +378,7 @@ export function lines(el, { series, height = 300, valueFmt = fmtPct, xFmt = (v) 
     // One wide hit band per x index
     xs.forEach((xv, i) => {
       const half = iw / Math.max(1, n - 1) / 2;
-      const rows = series.map((ser) => tipRow(ser.name, ser.points[i].y == null ? '—' : valueFmt(ser.points[i].y))).join('');
+      const rows = series.map((ser) => tipRow(ser.name, ser.points[i].y == null ? '-' : valueFmt(ser.points[i].y))).join('');
       s += `<rect x="${xAt(i) - half}" y="${M.top}" width="${half * 2}" height="${ih}" fill="transparent" ` +
            `tabindex="0" data-x="${xAt(i)}" data-tip="${esc(`<b>${xFmt(xv)}</b>${rows}`)}"/>`;
     });
@@ -423,7 +423,7 @@ export function table(cols, rows, { caption = '', totalRow = null } = {}) {
       const raw = r[c.key];
       const v = c.fmt ? c.fmt(raw, r) : raw;
       const cls = [c.align === 'right' ? 'num' : '', c.cls ? c.cls(raw, r) : ''].filter(Boolean).join(' ');
-      return `<td class="${cls}">${v == null ? '—' : esc(v)}</td>`;
+      return `<td class="${cls}">${v == null ? '-' : esc(v)}</td>`;
     }).join('') + `</tr>`;
   }
   if (totalRow) {

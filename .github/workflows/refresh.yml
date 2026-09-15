@@ -1,0 +1,60 @@
+name: Refresh dashboards
+
+# Rebuilds the warehouse from whatever is in data/raw, re-exports what the browser reads,
+# and commits the result. Cloudflare Pages redeploys on the push.
+#
+# A failing dbt test fails the job and commits nothing, so the live dashboard keeps serving
+# the last numbers that passed rather than publishing unchecked ones.
+
+on:
+  schedule:
+    # 04:00 SAST (02:00 UTC) daily, before anyone opens the dashboard
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      project:
+        description: Project folder to refresh
+        default: 01-meridian-provisions
+        required: true
+  push:
+    branches: [main]
+    paths:
+      - 'projects/*/data/raw/**'
+      - 'projects/*/dbt/**'
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dbt
+        run: |
+          python -m venv .venv
+          .venv/bin/python -m pip install --quiet --upgrade pip
+          .venv/bin/python -m pip install --quiet dbt-core dbt-duckdb duckdb
+
+      - name: Check house style
+        run: .venv/bin/python scripts/no_em_dashes.py
+
+      - name: Refresh
+        run: .venv/bin/python scripts/refresh.py --project ${{ inputs.project || '01-meridian-provisions' }}
+
+      - name: Commit the rebuilt artefacts
+        run: |
+          git config user.name  'omnatix-bot'
+          git config user.email 'marshalldube9@gmail.com'
+          git add projects/*/dashboard/data projects/*/ANSWER_KEY.md
+          if git diff --staged --quiet; then
+            echo 'Nothing changed, no commit.'
+          else
+            git commit -m "Refresh: data through $(date -u +%Y-%m-%d)"
+            git push
+          fi

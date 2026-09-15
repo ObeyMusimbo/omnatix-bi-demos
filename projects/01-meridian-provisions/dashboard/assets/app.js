@@ -1,12 +1,12 @@
 /*
-  Meridian Provisions — Margin & Revenue Intelligence.
+  Meridian Provisions, Margin & Revenue Intelligence.
 
   The page is a narrative, not a grid of widgets. It opens on a number nobody in the room
   can explain, bridges the gap, then takes each driver in turn. Every chart carries a table
   twin so no value is only reachable through a tooltip.
 */
 
-import { connect, q } from './db.js';
+import { connect, q, meta } from './db.js';
 import {
   waterfall, columns, barsH, lines, legend, table, figure, wireTableToggles,
   fmtR, fmtRc, fmtR2, fmtNum, fmtPct, fmtMonth,
@@ -15,7 +15,7 @@ import {
 const el = (id) => document.getElementById(id);
 const v = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 const signed = (n, dp = 1) =>
-  n === null || n === undefined || Number.isNaN(n) ? '—' : (n >= 0 ? '+' : '') + n.toFixed(dp) + '%';
+  n === null || n === undefined || Number.isNaN(n) ? '-' : (n >= 0 ? '+' : '') + n.toFixed(dp) + '%';
 
 // ---------------------------------------------------------------- theme
 
@@ -31,18 +31,59 @@ toggle.addEventListener('click', () => {
   try { localStorage.setItem('ledger-theme', next); } catch { /* private mode */ }
 });
 
+// ---------------------------------------------------------------- freshness
+
+const DAY_MS = 86400000;
+const asDate = (iso) => new Date(iso.length === 10 ? iso + 'T00:00:00Z' : iso);
+const longDate = (iso) => asDate(iso).toLocaleDateString('en-ZA',
+  { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
+
+/**
+ * State how current the page is, measured against the reader's clock rather than a value
+ * baked in at build time, so it stays honest as the page sits open or gets bookmarked.
+ *
+ * Two separate facts, because they fail separately. Data latency is how old the newest
+ * transaction is: if that grows, the source feed has stopped arriving. Pipeline age is when
+ * this site was last rebuilt: if that grows while the data is fine, the refresh job is broken.
+ */
+async function renderFreshness() {
+  const m = await meta();
+  const today = new Date();
+
+  const daysBehind = Math.max(0, Math.floor((today - asDate(m.data_through)) / DAY_MS));
+  const buildAge = Math.max(0, Math.floor((today - asDate(m.built_at)) / DAY_MS));
+
+  const state = daysBehind <= 2 ? 'is-current' : daysBehind <= 14 ? 'is-lagging' : 'is-stale';
+  const label = daysBehind === 0 ? 'Up to date'
+    : daysBehind <= 2 ? `Current, ${plural(daysBehind, 'day')} behind`
+    : `${plural(daysBehind, 'day')} behind`;
+
+  const box = el('freshness');
+  box.classList.remove('is-current', 'is-lagging', 'is-stale');
+  box.classList.add(state);
+  box.title = `Newest transaction ${longDate(m.data_through)}. `
+    + `Pipeline last run ${longDate(m.built_at)}.`;
+  el('fresh-label').textContent = label;
+
+  el('data-through').textContent = `Data to ${longDate(m.data_through)}`;
+  el('last-run').textContent = buildAge === 0
+    ? 'Pipeline run today'
+    : `Pipeline run ${longDate(m.built_at)}`;
+
+  return m;
+}
+
 // ---------------------------------------------------------------- render
 
 async function render() {
   const [bridge, monthly, brands, cascadeSteps, promoWeekly, discount, stock, dead] = await Promise.all([
     q(`select * from mart_gp_bridge order by step_order`),
-
     q(`select month_start_date, year_month,
               sum(revenue_zar) as revenue_zar,
               sum(gross_profit_zar) as gross_profit_zar,
               sum(gross_profit_zar) / nullif(sum(revenue_zar),0) * 100 as margin_pct
        from agg_sales_monthly group by 1, 2 order by 1`),
-
     q(`select brand,
               any_value(revenue_zar) as revenue_zar,
               any_value(gross_profit_zar) as gross_profit_zar,
@@ -55,27 +96,22 @@ async function render() {
               any_value(is_margin_trap) as is_trap
        from mart_margin_waterfall where period_order = 1
        group by brand order by any_value(contribution_zar)`),
-
     q(`select step_order, step_label, step_type, step_value_zar, running_total_zar
        from mart_margin_waterfall
        where brand = 'Cascade Springs' and period_order = 1 order by step_order`),
-
     q(`select week_start_date, promo_phase, units, gross_profit_zar, gp_per_unit_zar,
               volume_index_vs_baseline_pct
        from mart_promo_performance where product_name like 'Brightwash Powder 2kg%'
        order by week_start_date`),
-
     q(`select month_start_date, year_month, realised_discount_pct,
               channel_excl_group_realised_discount_pct as channel_pct,
               revenue_zar, revenue_forgone_vs_baseline_zar
        from mart_discount_trend where customer_group = 'Summit Cash & Carry'
        order by month_start_date`),
-
     q(`select product_name, count(*) as weeks, sum(lost_units_est) as units,
               sum(lost_revenue_zar) as revenue_zar, sum(lost_gross_profit_zar) as gp_zar,
               max(stockout_week_pct) as week_pct
        from mart_stockout_impact group by 1 order by 4 desc`),
-
     q(`select product_name, warehouse_name, units_on_hand, unit_cost_zar,
               dead_stock_value_zar, days_since_last_sale, dead_stock_reason
        from mart_dead_stock where is_dead_stock
@@ -86,8 +122,7 @@ async function render() {
   const revGrowth = (h.ttm_revenue_zar / h.prior_revenue_zar - 1) * 100;
   const gpGrowth = (h.ttm_gross_profit_zar / h.prior_gross_profit_zar - 1) * 100;
 
-  const first = monthly[0].month_start_date, last = monthly[monthly.length - 1].month_start_date;
-  el('period').textContent = `${fmtMonth(first)} – ${fmtMonth(last)}`;
+  // The masthead carries the period now, written by renderFreshness from meta.json.
 
   el('main').innerHTML =
     sectionGap(h, revGrowth, gpGrowth, bridge) +
@@ -164,7 +199,7 @@ function sectionGap(h, revGrowth, gpGrowth, bridge) {
     <div class="tiles">${tiles}</div>
     ${figure({
       id: 'c-bridge', title: 'Where the gross profit went',
-      note: 'Four drivers account for the gap. Each is examined in the sections that follow. Bars run from last year’s margin rate applied to this year’s revenue, down to what was actually earned. The vertical axis is truncated so the steps stay legible — the two dark bars continue below the plot.',
+      note: 'Four drivers account for the gap. Each is examined in the sections that follow. Bars run from last year’s margin rate applied to this year’s revenue, down to what was actually earned. The vertical axis is truncated so the steps stay legible, the two dark bars continue below the plot.',
       tableHtml: bridgeTable,
     })}
     ${figure({
@@ -183,7 +218,7 @@ function sectionGap(h, revGrowth, gpGrowth, bridge) {
 function sectionWater(steps, allBrands) {
   // The 140 order lines quoting SKUs absent from the product master roll up as a synthetic
   // "Unknown brand" with no cost, so a 100% gross margin. That is a data-quality signal, not
-  // a commercial one — it belongs in the note below the table, not ranked among real brands.
+  // a commercial one, it belongs in the note below the table, not ranked among real brands.
   const orphan = allBrands.find((b) => b.brand === 'Unknown brand');
   const brands = allBrands.filter((b) => b.brand !== 'Unknown brand');
   const traps = brands.filter((b) => b.is_trap);
@@ -194,8 +229,8 @@ function sectionWater(steps, allBrands) {
       through wholesale accounts that earn a volume rebate. Allocate the freight by weight and
       the rebate by revenue, and the range turns negative.`)}
     ${figure({
-      id: 'c-water', title: 'Cascade Springs — from gross profit to contribution',
-      note: 'Freight is allocated to each line by its share of the order’s total weight; rebate by its share of the order’s revenue. Those two rules are the whole trick, and they are why this is invisible in the current reporting — the costs sit at order level in the finance export and never reach a product report.',
+      id: 'c-water', title: 'Cascade Springs, from gross profit to contribution',
+      note: 'Freight is allocated to each line by its share of the order’s total weight; rebate by its share of the order’s revenue. Those two rules are the whole trick, and they are why this is invisible in the current reporting, the costs sit at order level in the finance export and never reach a product report.',
       tableHtml: table([
         { key: 'step_label', label: 'Step' },
         { key: 'step_value_zar', label: 'Amount', align: 'right', fmt: fmtR,
@@ -206,7 +241,7 @@ function sectionWater(steps, allBrands) {
     })}
     <h3 class="figure-title" style="margin-top:2.5rem">Every brand, ranked by contribution</h3>
     <p class="figure-note">A margin trap is a brand with positive gross profit and negative
-      contribution — it looks profitable until delivery and rebates are counted.</p>
+      contribution, it looks profitable until delivery and rebates are counted.</p>
     ${table([
       { key: 'brand', label: 'Brand' },
       { key: 'revenue_zar', label: 'Revenue', align: 'right', fmt: fmtRc },
@@ -223,7 +258,7 @@ function sectionWater(steps, allBrands) {
       A further <b>${fmtRc(orphan.revenue_zar)}</b> of revenue sits on order lines quoting
       product codes that are absent from the product master, so no cost can be attached to
       them. Those lines are kept rather than dropped, and the pipeline raises a warning on
-      every build until someone reconciles them — a silent inner join here would simply have
+      every build until someone reconciles them, a silent inner join here would simply have
       made that revenue disappear.` : ''}</p>
   </section>`;
 }
@@ -236,7 +271,7 @@ function sectionPromo(weekly, phases) {
     ${head('02', 'The promotion that destroys value', `Brightwash Powder 2kg runs Buy 2 Get 1
       Free every quarter. Volume roughly triples, which is why everyone believes it works.
       Each promoted case earns <b class="neg">${fmtR(on.gp_per_unit || 0)}</b> of gross profit
-      against <b class="pos">${fmtR(base.gp_per_unit || 0)}</b> off deal — and for four weeks
+      against <b class="pos">${fmtR(base.gp_per_unit || 0)}</b> off deal, and for four weeks
       afterwards the line sells at about <b>${Math.round(post.vol_index || 0)}%</b> of baseline
       because customers have loaded their pantries.`)}
     ${legend([
@@ -269,8 +304,7 @@ function sectionDiscount(rows) {
   return `<section id="discount">
     ${head('03', 'The discount nobody reset', `Summit Cash &amp; Carry is the largest account on
       the book. Its realised discount drifted from <b>${fmtPct(firstRow.realised_discount_pct)}</b>
-      to <b>${fmtPct(lastRow.realised_discount_pct)}</b> over two years —
-      <b>${signed(ownCreep)} points</b>, against <b>${signed(chanCreep)} points</b> across the
+      to <b>${fmtPct(lastRow.realised_discount_pct)}</b> over two years, <b>${signed(ownCreep)} points</b>, against <b>${signed(chanCreep)} points</b> across the
       rest of Wholesale. Some of this is market-wide and unavoidable. The
       <b>${(ownCreep - chanCreep).toFixed(1)} points</b> of excess is not, and it is worth
       <b>${fmtRc(forgone)}</b>.`)}
@@ -280,7 +314,7 @@ function sectionDiscount(rows) {
     ], true)}
     ${figure({
       id: 'c-discount', title: 'Realised discount by month',
-      note: 'Both lines climb, which is why this was never questioned — discounting is drifting across the whole channel. The point is the widening space between them: the comparison is the same channel with this group excluded, so it is like for like, and the gap is the part that is specific to this account rather than to the market.',
+      note: 'Both lines climb, which is why this was never questioned, discounting is drifting across the whole channel. The point is the widening space between them: the comparison is the same channel with this group excluded, so it is like for like, and the gap is the part that is specific to this account rather than to the market.',
       tableHtml: table([
         { key: 'year_month', label: 'Month' },
         { key: 'realised_discount_pct', label: 'Summit', align: 'right', fmt: (x) => fmtPct(x) },
@@ -300,12 +334,11 @@ function sectionStock(rows) {
     ${head('04', 'The sales that never happened', `Replenishment into the Gauteng DC runs Monday
       to Wednesday. Three Modern Trade hero lines reach zero on hand on a Thursday in up to
       <b>${fmtPct(Math.max(...rows.map((r) => r.week_pct)), 0)}</b> of weeks and cannot be supplied
-      on the Friday or Saturday. <b>${fmtRc(tot.revenue_zar)}</b> of revenue was never earned —
-      and none of it appears anywhere in a sales report, because you cannot see sales that did
+      on the Friday or Saturday. <b>${fmtRc(tot.revenue_zar)}</b> of revenue was never earned, and none of it appears anywhere in a sales report, because you cannot see sales that did
       not happen.`)}
     ${figure({
       id: 'c-stock', title: 'Revenue forgone to weekend stock-outs',
-      note: 'Lost volume is estimated from each line’s own normal Friday and Saturday demand in weeks when stock was available, then valued at the realised Modern Trade price — not list.',
+      note: 'Lost volume is estimated from each line’s own normal Friday and Saturday demand in weeks when stock was available, then valued at the realised Modern Trade price, not list.',
       tableHtml: table([
         { key: 'product_name', label: 'Product' },
         { key: 'weeks', label: 'Weeks affected', align: 'right', fmt: fmtNum },
@@ -426,12 +459,18 @@ function drawStock(rows) {
 // error rather than anything that looks like a data problem.
 
 try {
+  // Freshness first: it is one small fetch, and if the warehouse fails to load the reader
+  // should still be told how old the thing in front of them is.
+  await renderFreshness().catch((e) => {
+    el('fresh-label').textContent = 'Freshness unknown';
+    console.warn('freshness', e);
+  });
   await connect((msg) => { el('loading-msg').textContent = msg; });
   await render();
 } catch (err) {
   el('main').innerHTML =
     `<div class="err"><b>Could not load the warehouse.</b><br>${String(err.message || err)}
-     <br><br>This page must be served over HTTP — opening the file directly will not work,
+     <br><br>This page must be served over HTTP, opening the file directly will not work,
      because the browser blocks the worker and the Parquet fetches.</div>`;
   console.error(err);
 }

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Margin &amp; Revenue Intelligence — Meridian Provisions Co.</title>
+<title>Margin &amp; Revenue Intelligence, Meridian Provisions Co.</title>
 <meta name="description" content="Where the gross profit went: a margin intelligence report for a South African FMCG distributor. Demonstration built on synthetic data.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,11 +18,15 @@
   <header class="masthead">
     <div>
       <h1>Margin &amp; Revenue Intelligence</h1>
-      <p class="sub">Meridian Provisions Co. — FMCG distribution, Gauteng · KwaZulu-Natal · Western Cape</p>
+      <p class="sub">Meridian Provisions Co. · FMCG distribution · Gauteng, KwaZulu-Natal, Western Cape</p>
     </div>
     <div class="meta">
-      <div id="period">—</div>
-      <div>All figures in rand, excluding VAT</div>
+      <div id="freshness" class="freshness">
+        <span class="fresh-dot" aria-hidden="true"></span>
+        <span id="fresh-label">Checking data freshness</span>
+      </div>
+      <div id="data-through"></div>
+      <div id="last-run"></div>
       <button class="theme-toggle" id="theme-toggle" type="button">Dark</button>
     </div>
   </header>
@@ -45,8 +49,15 @@
     <p>
       Built by Omnatix. Source files land as CSV, are modelled through bronze, silver and gold
       layers in dbt on DuckDB, tested on every build, and exported to Parquet. This page loads
-      those files directly and runs SQL against them in your browser using DuckDB-WASM — there
+      those files directly and runs SQL against them in your browser using DuckDB-WASM. There
       is no backend, no database server, and no data leaves your machine.
+    </p>
+    <p>
+      New data is picked up by rebuilding the warehouse and republishing the files this page
+      reads. Every build runs the full test suite first: if a test fails nothing is published,
+      and the dashboard keeps serving the last figures that passed. The freshness note at the
+      top of this page is measured against your own clock, so it stays accurate however long
+      this page has been open.
     </p>
   </footer>
 

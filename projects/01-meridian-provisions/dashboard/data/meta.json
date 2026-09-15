@@ -1,0 +1,51 @@
+{
+  "built_at": "2026-09-15T22:17:24+00:00",
+  "data_from": "2024-09-02",
+  "data_through": "2026-08-31",
+  "orders": 56217,
+  "sales_lines": 282650,
+  "tables": {
+    "mart_gp_bridge": {
+      "rows": 6,
+      "bytes": 3380
+    },
+    "mart_margin_waterfall": {
+      "rows": 238,
+      "bytes": 16072
+    },
+    "mart_promo_performance": {
+      "rows": 2558,
+      "bytes": 235114
+    },
+    "mart_discount_trend": {
+      "rows": 9114,
+      "bytes": 609766
+    },
+    "mart_stockout_impact": {
+      "rows": 108,
+      "bytes": 5469
+    },
+    "mart_dead_stock": {
+      "rows": 393,
+      "bytes": 22974
+    },
+    "agg_sales_monthly": {
+      "rows": 834,
+      "bytes": 57354
+    },
+    "agg_product_month": {
+      "rows": 3096,
+      "bytes": 210306
+    },
+    "dim_product": {
+      "rows": 131,
+      "bytes": 7446
+    },
+    "dim_customer": {
+      "rows": 485,
+      "bytes": 11924
+    }
+  },
+  "currency": "ZAR",
+  "vat": "excluded"
+}

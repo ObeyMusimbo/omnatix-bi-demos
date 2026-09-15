@@ -112,7 +112,7 @@ for step, driver, step_type, effect, share, ref in rows("""
                         f"**{pct(gp_gap / effect * 100)} below** | |\n")
     else:
         bridge_rows += (f"| {driver} | {rand(effect)} | {pct(share)} | "
-                        f"{ref or '—'} |\n")
+                        f"{ref or ''} |\n")
 
 # ----------------------------------------------------------------- finding 2
 
@@ -177,7 +177,7 @@ f5_total = one("select sum(stock_value_zar) from main_gold.mart_dead_stock")[0]
 
 # ----------------------------------------------------------------- write
 
-doc = f"""# Meridian Provisions Co. — demo answer key
+doc = f"""# Meridian Provisions Co. demo answer key
 
 Derived from `meridian.duckdb` after `dbt build`. Every figure here is what the dashboard
 will show, because it is read from the same gold models the dashboard reads.
@@ -213,13 +213,13 @@ the two can never disagree.
 | Driver | Gross profit effect | Share of gap | Finding |
 |---|---|---|---|
 {bridge_rows}
-Note the bulk water line carefully. That range did not lose gross profit — its gross profit
+Note the bulk water line carefully. That range did not lose gross profit, its gross profit
 is positive. It dragged the blend down by growing from {pct(bw_share_prior)} to
 {pct(bw_share_ttm)} of revenue at {pct(f1[6])} margin against a book average of
 {pct(ttm_margin)}. Finding 1 then shows that once freight and rebates are allocated, that
 growth was actively destroying value rather than merely diluting it.
 
-## Finding 1 — the bulk water range is sold at a loss
+## Finding 1: The bulk water range is sold at a loss
 
 Cascade Springs is a top revenue line at {pct(f1[6])} gross margin, which looks unremarkable.
 It is heavy, low value density ({rand(f1[8], 2)} of revenue per kilogram shipped), and moves
@@ -240,7 +240,7 @@ range grew into the loss.
 
 Freight is allocated to the line by its share of the order's total weight; rebate by its share
 of the order's revenue. Those two allocation rules are the whole trick, and they are why this
-is invisible in Meridian's current reporting — the costs sit at order level in the finance
+is invisible in Meridian's current reporting, the costs sit at order level in the finance
 export and never reach a product report.
 
 Brands flagged `is_margin_trap` (positive gross profit, negative contribution) this period:
@@ -252,7 +252,7 @@ for b, r, cb in traps:
     doc += f"| {b} | {rand(r)} | {rand(cb)} |\n"
 
 doc += f"""
-## Finding 2 — the quarterly laundry promotion destroys value
+## Finding 2: The quarterly laundry promotion destroys value
 
 Brightwash Powder 2kg runs Buy 2 Get 1 Free {f2_windows[0]} times over the window at a planned
 {pct(f2_windows[1])} discount, against a gross margin under 27%. Volume roughly triples, then
@@ -273,13 +273,12 @@ Gross profit forgone on promoted units, valued at the baseline rate:
 
 Promoted units carry a **negative** gross profit per unit. Every case sold on deal costs money,
 and the four weeks after each window sell at roughly
-{pct(f2['Post-promotion (4 weeks)'][5], 0)} of baseline, so the volume was never incremental —
-it was borrowed from the following month.
+{pct(f2['Post-promotion (4 weeks)'][5], 0)} of baseline, so the volume was never incremental, it was borrowed from the following month.
 
 Reveal with weekly units and GP for this SKU, promo windows shaded. The shape tells the story
 before anyone reads a number.
 
-## Finding 3 — discount creep on the largest account
+## Finding 3: Discount creep on the largest account
 
 | Measure | TTM |
 |---|---|
@@ -303,7 +302,7 @@ doc += f"""
 Reveal with realised discount by month for this group against the channel average excluding
 them. One line climbs, the other is flat.
 
-## Finding 4 — weekend stock-outs in the growth channel
+## Finding 4: Weekend stock-outs in the growth channel
 
 Replenishment into the Gauteng DC runs Monday to Wednesday. Three Modern Trade hero lines hit
 zero on hand on Thursdays in up to {pct(f4[4], 0)} of weeks and cannot be supplied Friday or
@@ -321,10 +320,10 @@ Gross profit forgone: {rand(f4[2])}.
 
 This one is invisible in any sales report because you cannot see sales that did not happen. It
 only appears by joining the Thursday inventory snapshot to the same SKU's normal Friday and
-Saturday demand in weeks when stock was available. Say that out loud in the demo — it is the
+Saturday demand in weeks when stock was available. Say that out loud in the demo, it is the
 single best argument for owning the whole pipeline rather than buying a chart tool.
 
-## Finding 5 — dead stock
+## Finding 5: Dead stock
 
 The Halo Shine aerosol range was discontinued and has not sold in
 {f5[3]:,.0f} days. {f5[2]} SKUs across {f5[1]} stock rows.
@@ -335,7 +334,7 @@ The Halo Shine aerosol range was discontinued and has not sold in
 | Total stock on hand at cost | {rand(f5_total)} |
 | Dead as a share of stock | {pct(f5[0] / f5_total * 100)} |
 
-Working capital rather than P&L, which makes it a good closing item — the fix is immediate and
+Working capital rather than P&L, which makes it a good closing item, the fix is immediate and
 needs no analysis to act on.
 
 ## Data quality issues resolved in the silver layer
@@ -343,15 +342,15 @@ needs no analysis to act on.
 These are planted on purpose. Walk a technical buyer through them; it is the difference between
 a dashboard and a data platform.
 
-1. `orders.order_date` mixes ISO and `DD/MM/YYYY` — 17,083 of 57,334 rows
+1. `orders.order_date` mixes ISO and `DD/MM/YYYY`, 17,083 of 57,334 rows
 2. Leading and trailing whitespace on customer names and product categories
 3. `customers.channel` arrives in 11 spellings of 4 channels
-4. 1,441 duplicate order lines — and the pairs are **not** byte-identical, they differ only in
+4. 1,441 duplicate order lines, and the pairs are **not** byte-identical, they differ only in
    number formatting, so money must be cast before the rows are deduplicated
 5. 7 products with a blank standard cost, imputed from the category's cost-to-list ratio
 6. 27,674 revenue values written with thousand separators
 7. 4,040 return lines arriving as negative quantities, kept rather than filtered
-8. 140 order lines quoting SKUs absent from the product master — kept, flagged, and covered by
+8. 140 order lines quoting SKUs absent from the product master, kept, flagged, and covered by
    a deliberately warning test rather than silently dropped
 9. 1,117 cancelled orders, flagged and excluded from revenue
 """

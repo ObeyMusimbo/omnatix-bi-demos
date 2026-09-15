@@ -11,8 +11,8 @@
 
   Only orders.order_date is actually mixed. The other date columns are clean enough that
   DuckDB's CSV sniffer types them as DATE already, so this is applied to them defensively.
-  That means the input can be either VARCHAR or DATE, hence the explicit ::varchar cast —
-  without it, trim() has no candidate overload for a DATE and the model fails to bind.
+  That means the input can be either VARCHAR or DATE, hence the explicit ::varchar cast.
+  Without it, trim() has no candidate overload for a DATE and the model fails to bind.
 #}
 {% macro parse_mixed_date(col) %}
   case
