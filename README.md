@@ -20,7 +20,24 @@ projects/NN-name/
   dbt/                      bronze → silver → gold → semantic
   dashboard/                static site: HTML, CSS, JS modules and Parquet
   ANSWER_KEY.md             the planted findings (never ship this)
+
+site/                       the Omnatix landing page
+scripts/build_site.py       assembles everything into dist/
+scripts/refresh.py          rebuild after new data lands
 ```
+
+All four publish from one Cloudflare Pages project, each under its own path, with the landing
+page at the root:
+
+```
+demos.omnatix.co.za              all four, with the headline finding on each card
+demos.omnatix.co.za/meridian     FMCG distribution
+demos.omnatix.co.za/kestrel      freight and fleet
+demos.omnatix.co.za/sable-finch  microfinance
+demos.omnatix.co.za/lumen        clinic group
+```
+
+Adding a demo is one entry in the `PROJECTS` list in `scripts/build_site.py`.
 
 ## The four projects
 

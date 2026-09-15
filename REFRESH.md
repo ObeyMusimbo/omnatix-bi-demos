@@ -82,9 +82,40 @@ making an argument about your engineering.
 
 ## Deploying
 
-Cloudflare Pages watches the repo. Pushing to the default branch redeploys, with no build step,
-because the site is already static. The Parquet files are committed, which is deliberate: the
-deployed artefact is exactly what was tested, and rolling back is `git revert`.
+One Cloudflare Pages project serves everything, with each demo under its own path:
+
+```
+demos.omnatix.co.za              the landing page, all four
+demos.omnatix.co.za/meridian     FMCG distribution
+demos.omnatix.co.za/kestrel      freight and fleet
+demos.omnatix.co.za/sable-finch  microfinance
+demos.omnatix.co.za/lumen        clinic group
+```
+
+Cloudflare settings:
+
+| Setting | Value |
+|---|---|
+| Build command | `python scripts/build_site.py` |
+| Output directory | `dist` |
+| Root directory | leave blank |
+
+`scripts/build_site.py` copies each project's `dashboard/` into `dist/<slug>/` and renders the
+landing page. It imports nothing outside the standard library, so it runs on a clean build
+image. A project with no dashboard yet renders as a card without a link, so the landing page is
+never advertising a 404.
+
+`dist/` is generated and not committed. What *is* committed is the Parquet under each project,
+which is what the tests ran against, so a rollback is still `git revert`.
+
+Adding a demo is one entry in the `PROJECTS` list at the top of that script.
+
+### Sending a link to a prospect
+
+A deep link works on its own: `demos.omnatix.co.za/kestrel` opens straight into the logistics
+demo. They can navigate up to the landing page and see the others, which for an investor is the
+whole point. If a specific client ever needs a demo nobody else can reach, that one gets its own
+Cloudflare project with Access in front of it, rather than changing this structure.
 
 ## When the shape of the data changes
 

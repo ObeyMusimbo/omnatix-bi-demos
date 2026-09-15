@@ -1,0 +1,205 @@
+/*
+  The Omnatix front door.
+
+  Deliberately not one of the four demo themes. It is a neutral dark shell so that the four
+  cards, each carrying its project's signature colour, do the talking. A prospect should see
+  the range in the first three seconds without clicking anything.
+*/
+
+:root {
+  --bg:      #0C0C0D;
+  --panel:   #141416;
+  --panel-2: #1B1B1E;
+  --text:    #F4F4F2;
+  --text-2:  #A3A29E;
+  --text-3:  #6E6D6A;
+  --rule:    #262629;
+  --rule-2:  #3A393D;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --serif: 'Source Serif 4', Georgia, serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap { max-width: 1060px; margin: 0 auto; padding: 0 2rem; }
+
+/* ---------------------------------------------------------------- header */
+
+header { padding: 5rem 0 0; }
+
+.mark {
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--text);
+  margin: 0 0 3rem;
+}
+
+h1 {
+  font-family: var(--serif);
+  font-size: clamp(2.1rem, 5vw, 3.1rem);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  margin: 0 0 1.25rem;
+  max-width: 19ch;
+}
+
+.lede {
+  color: var(--text-2);
+  font-size: 1.08rem;
+  max-width: 62ch;
+  margin: 0 0 1rem;
+}
+
+.note {
+  color: var(--text-3);
+  font-size: 0.9rem;
+  max-width: 62ch;
+  margin: 0;
+}
+
+/* ---------------------------------------------------------------- cards */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.25rem;
+  margin: 3.5rem 0 4rem;
+}
+
+.card {
+  position: relative;
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  padding: 1.6rem 1.5rem 1.35rem;
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  overflow: hidden;
+  transition: border-color 0.15s, background 0.15s, transform 0.15s;
+}
+a.card:hover { border-color: var(--rule-2); background: var(--panel-2); transform: translateY(-2px); }
+a.card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* The signature colour of the demo this card opens. */
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: var(--accent);
+}
+
+.card.pending { opacity: 0.62; }
+
+.card-industry {
+  font-size: 0.72rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.7rem;
+}
+.card h2 {
+  font-family: var(--serif);
+  font-size: 1.24rem;
+  font-weight: 600;
+  margin: 0 0 0.55rem;
+  letter-spacing: -0.01em;
+}
+.card .problem {
+  color: var(--text-2);
+  font-size: 0.93rem;
+  margin: 0 0 1.15rem;
+  flex: 1;
+}
+.card .problem q { font-style: italic; }
+
+.headline {
+  border-top: 1px solid var(--rule);
+  padding-top: 0.9rem;
+  margin-top: auto;
+}
+.headline-value {
+  font-size: 1.45rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--accent);
+}
+.headline-label { font-size: 0.82rem; color: var(--text-3); margin-top: 0.1rem; }
+
+.card-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.95rem;
+  font-size: 0.82rem;
+  color: var(--text-3);
+}
+.open { color: var(--text); font-weight: 500; }
+a.card:hover .open { color: var(--accent); }
+
+.badge {
+  display: inline-block;
+  border: 1px solid var(--rule-2);
+  border-radius: 999px;
+  padding: 0.12rem 0.62rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+/* ---------------------------------------------------------------- build */
+
+.how {
+  border-top: 1px solid var(--rule);
+  padding-top: 2.5rem;
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 2rem;
+}
+.how h3 {
+  font-size: 0.74rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  font-weight: 500;
+  margin: 0 0 0.5rem;
+}
+.how p { margin: 0; color: var(--text-2); font-size: 0.9rem; }
+
+footer {
+  border-top: 1px solid var(--rule);
+  margin-top: 4rem;
+  padding: 1.75rem 0 4rem;
+  color: var(--text-3);
+  font-size: 0.85rem;
+}
+footer p { margin: 0 0 0.5rem; max-width: 74ch; }
+
+@media (max-width: 640px) {
+  .wrap { padding: 0 1.25rem; }
+  header { padding-top: 3rem; }
+  .mark { margin-bottom: 2rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}

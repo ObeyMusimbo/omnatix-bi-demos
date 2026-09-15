@@ -49,6 +49,8 @@ def run(label: str, cmd: list[str], cwd: Path) -> None:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--project", default="01-meridian-provisions")
+    ap.add_argument("--no-site", action="store_true",
+                    help="skip assembling dist/, useful when iterating on one project")
     ap.add_argument("--regenerate", action="store_true",
                     help="rebuild the synthetic source CSVs first (demo projects only)")
     args = ap.parse_args()
@@ -73,8 +75,12 @@ def main() -> int:
     run("rebuild the answer key",
         [str(VENV_PY), "generator/build_answer_key.py"], project)
 
+    if not args.no_site:
+        run("assemble the public site",
+            [str(VENV_PY), "scripts/build_site.py"], ROOT)
+
     print("\nRefresh complete.")
-    print("Commit and push to publish: Cloudflare Pages redeploys on push to the default branch.")
+    print("Commit and push to publish: Cloudflare rebuilds dist/ and redeploys on push.")
     return 0
 
 

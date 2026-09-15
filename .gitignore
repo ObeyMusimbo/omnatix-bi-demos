@@ -15,3 +15,6 @@ build/
 # dbt build artefacts
 projects/*/dbt/target/
 projects/*/dbt/logs/
+
+# Assembled by scripts/build_site.py; Cloudflare builds it, so it is not committed
+dist/

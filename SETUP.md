@@ -112,16 +112,23 @@ It is a static site, but it must be served over HTTP, because a browser refuses 
 worker or fetch Parquet from a `file://` page.
 
 ```bash
+.venv/Scripts/python.exe scripts/build_site.py
+npx --yes http-server dist -p 4321 -c-1
+```
+
+Then open http://localhost:4321 for the landing page, or http://localhost:4321/meridian/ for
+the demo itself.
+
+To iterate on a single dashboard without reassembling, serve its folder directly:
+
+```bash
 npx --yes http-server projects/01-meridian-provisions/dashboard -p 4321 -c-1
 ```
 
-Then open http://localhost:4321.
-
 ### Deploying it
 
-Cloudflare Pages, connected to the GitHub repo. Build command: none. Output directory:
-`projects/01-meridian-provisions/dashboard`. That is the whole deployment, the page is HTML,
-CSS, three JavaScript modules and 1.1 MB of Parquet.
+One Cloudflare Pages project serves all four demos under their own paths. Build command
+`python scripts/build_site.py`, output directory `dist`. See [REFRESH.md](REFRESH.md).
 
 ## 6. What gets built next, in order
 

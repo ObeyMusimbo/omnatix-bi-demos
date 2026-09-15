@@ -45,6 +45,7 @@ jobs:
         run: .venv/bin/python scripts/no_em_dashes.py
 
       - name: Refresh
+        # build_site.py runs as part of this; Cloudflare re-runs it on its own image too
         run: .venv/bin/python scripts/refresh.py --project ${{ inputs.project || '01-meridian-provisions' }}
 
       - name: Commit the rebuilt artefacts
