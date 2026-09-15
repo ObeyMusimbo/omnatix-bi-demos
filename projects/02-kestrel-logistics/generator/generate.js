@@ -139,13 +139,19 @@ const METRO = [
 
 // ---------------------------------------------------------------- fleet
 
+// Cost structure is sized against published South African road freight benchmarks. For a
+// 34 tonne superlink the per kilometre split runs roughly: fuel R10 to R11, driver R2.00 to
+// R2.50, maintenance and tyres R2.50 to R3.50, tolls R0.50 to R0.80, and fixed cost, meaning
+// finance, insurance, licensing, tracking and overhead, R4.00 to R5.00. Line-haul rates sit
+// around R25 to R32 per kilometre on a full load, which leaves the thin margin the industry
+// actually runs on. Every finding in this demo is large against that margin, which is the point.
 const CLASSES = [
   // name, capacity kg, capacity m3, L/100km laden, maintenance R/km, fixed R/day, tariff R/km
-  { name: 'LDV 1.5t',      kg:  1500, m3:   8, lp100: 11, maint: 0.95, fixed:  380, tariff:  9.40 },
-  { name: 'Rigid 8t',      kg:  8000, m3:  38, lp100: 22, maint: 1.85, fixed:  620, tariff: 14.20 },
-  { name: 'Rigid 14t',     kg: 14000, m3:  60, lp100: 28, maint: 2.35, fixed:  850, tariff: 17.60 },
-  { name: 'Tri-axle 24t',  kg: 24000, m3:  82, lp100: 38, maint: 2.90, fixed: 1350, tariff: 22.80 },
-  { name: 'Superlink 34t', kg: 34000, m3: 120, lp100: 48, maint: 3.20, fixed: 1950, tariff: 26.40 },
+  { name: 'LDV 1.5t',      kg:  1500, m3:   8, lp100: 11, maint: 0.95, fixed:  650, tariff: 10.70 },
+  { name: 'Rigid 8t',      kg:  8000, m3:  38, lp100: 22, maint: 1.85, fixed: 1100, tariff: 16.10 },
+  { name: 'Rigid 14t',     kg: 14000, m3:  60, lp100: 28, maint: 2.35, fixed: 1500, tariff: 20.00 },
+  { name: 'Tri-axle 24t',  kg: 24000, m3:  82, lp100: 38, maint: 2.90, fixed: 2400, tariff: 25.90 },
+  { name: 'Superlink 34t', kg: 34000, m3: 120, lp100: 48, maint: 3.20, fixed: 3400, tariff: 30.00 },
 ];
 const byClass = Object.fromEntries(CLASSES.map((c) => [c.name, c]));
 
@@ -256,11 +262,28 @@ function addCustomer(name, contract, size, depot) {
 const ANCHOR = addCustomer('Highveld Retail Group', 'Dedicated', 9.0, 'KES-JHB');
 addCustomer('Cape Union Foods', 'Dedicated', 5.5, 'KES-CPT');
 addCustomer('Umgeni Building Supplies', 'Dedicated', 5.0, 'KES-DBN');
+// Names have to be unique. Two unrelated businesses sharing a name would be merged by any
+// sane grouping rule downstream, and their delivery failure rates would average out into
+// something nobody acts on.
+const usedNames = new Set();
+function uniqueName() {
+  for (let attempt = 0; attempt < 400; attempt++) {
+    const n = `${pick(CUST_STEM)} ${pick(CUST_TAIL)}`;
+    if (!usedNames.has(n)) { usedNames.add(n); return n; }
+  }
+  let i = 2;
+  while (usedNames.has(`${pick(CUST_STEM)} ${pick(CUST_TAIL)} ${i}`)) i += 1;
+  const n = `${pick(CUST_STEM)} ${pick(CUST_TAIL)} ${i}`;
+  usedNames.add(n);
+  return n;
+}
+for (const c of customers) usedNames.add(c.customer_name);
+
 for (let i = 0; i < 34; i++) {
-  addCustomer(`${pick(CUST_STEM)} ${pick(CUST_TAIL)}`, 'Contract', 1.4 + rnd() * 2.2, pick(DEPOTS).code);
+  addCustomer(uniqueName(), 'Contract', 1.4 + rnd() * 2.2, pick(DEPOTS).code);
 }
 for (let i = 0; i < 205; i++) {
-  addCustomer(`${pick(CUST_STEM)} ${pick(CUST_TAIL)}`, 'Spot', 0.25 + rnd() * 0.8, pick(DEPOTS).code);
+  addCustomer(uniqueName(), 'Spot', 0.25 + rnd() * 0.8, pick(DEPOTS).code);
 }
 
 // PLANT 2: six sites that routinely refuse a first delivery. No booked receiving slot, a
@@ -357,7 +380,7 @@ function makeTrip(ms, d, lane, direction, isEmpty, className) {
   // Dispatch batching: Fridays and the month-end run go out late and arrive late.
   const pressure = (dow(ms) === 5 ? 1 : 0) + (isMonthEndRun(ms) ? 1 : 0);
   const plannedDepart = ms + (5 + ri(0, 9)) * 3600000;
-  const departDelayH = Math.max(0, gauss(0.35 + pressure * 1.9, 0.5 + pressure * 0.8));
+  const departDelayH = Math.max(0, gauss(0.35 + pressure * 3.2, 0.5 + pressure * 1.2));
   const actualDepart = plannedDepart + departDelayH * 3600000;
 
   const baseHours = lane.planned_hours * (1 + gauss(0, 0.07));
@@ -435,15 +458,22 @@ function makeTrip(ms, d, lane, direction, isEmpty, className) {
     ledger.ladenKm += distance;
   }
 
-  return { trip_id, vehicle, driver, c, distance, actualArrive, plannedArrive, lane, ms, d };
+  return { trip_id, vehicle, driver, c, distance, plannedDepart, actualDepart, actualArrive, plannedArrive, lane, ms, d };
 }
 
-function addConsignment(t, customer, dropSeq, windowStart, weightKg, volM3, revenue, statusOverride) {
+// The promise a customer actually gets is a slot, not a number of hours from dispatch. A
+// dedicated account books a two hour window against the planned arrival; a spot load gets
+// eight. PLANT 4 works because a batched Friday dispatch shifts every drop on the route late
+// by the same amount, and the tightest contracts are the ones that break.
+const GRACE_HOURS = { Dedicated: 2, Contract: 4, Spot: 8 };
+
+function addConsignment(t, customer, dropSeq, plannedAt, deliveredAt, weightKg, volM3, revenue, statusOverride) {
   consN += 1;
   const id = 'CON-' + (900000 + consN);
-  // PLANT 4: on Fridays and the month-end run, arrival slips and the SLA window is missed.
-  const late = t.actualArrive > t.plannedArrive + 2 * 3600000;
-  const delivered = t.actualArrive + ri(10, 90) * 60000 * (dropSeq + 1) / 3;
+  const grace = GRACE_HOURS[customer.contract_type] || 8;
+  const windowStart = plannedAt - 3600000;
+  const windowEnd = plannedAt + grace * 3600000;
+  const delivered = deliveredAt;
 
   let status = statusOverride || 'Delivered';
   let failureReason = '';
@@ -460,14 +490,13 @@ function addConsignment(t, customer, dropSeq, windowStart, weightKg, volM3, reve
     customer_id: customer.customer_id,
     drop_sequence: dropSeq,
     sla_window_start: windowStart,
-    sla_window_end: windowStart + customer.sla_hours * 3600000,
+    sla_window_end: windowEnd,
     delivered_at: status === 'Failed' ? '' : delivered,
     weight_kg: weightKg,
     volume_m3: volM3,
     revenue_zar: status === 'Failed' ? 0 : revenue,
     status,
     failure_reason: failureReason,
-    _late: late,
   });
   return status;
 }
@@ -500,8 +529,12 @@ for (let d = 0; d < N_DAYS; d++) {
           const m3 = r2(kg / 260 * (1 + gauss(0, 0.2)));
           // Distribution is billed per drop plus a weight component
           const revenue = r2(185 + kg * 0.62 * (1 + gauss(0, 0.06)));
-          const windowStart = ms + (7 + k) * 3600000;
-          const status = addConsignment(t, cust, k + 1, windowStart, kg, m3, revenue);
+          // Each drop has its own slot on the route: leave the depot, then roughly half an
+          // hour per stop. A late dispatch pushes every slot on the run late together.
+          const offsetMs = (1 + k * 0.5) * 3600000;
+          const plannedAt = t.plannedDepart + offsetMs;
+          const deliveredAt = t.actualDepart + offsetMs + gauss(0, 0.35) * 3600000;
+          const status = addConsignment(t, cust, k + 1, plannedAt, deliveredAt, kg, m3, revenue);
           if (status === 'Failed') {
             // The redelivery is a real cost with no revenue against it
             ledger.redeliveries += 1;
@@ -516,7 +549,7 @@ for (let d = 0; d < N_DAYS; d++) {
         const kg = trips[trips.length - 1].load_kg;
         const m3 = trips[trips.length - 1].load_m3;
         const revenue = r2(c.tariff * lane.distance_km * (1 + gauss(0, 0.05)));
-        addConsignment(t, cust, 1, ms + 6 * 3600000, kg, m3, revenue);
+        addConsignment(t, cust, 1, t.plannedArrive, t.actualArrive + ri(10, 60) * 60000, kg, m3, revenue);
 
         // Return leg. It runs whether or not there is freight for it.
         const back = { ...lane, lane_id: lane.lane_id };
@@ -528,18 +561,22 @@ for (let d = 0; d < N_DAYS; d++) {
           const bm3 = trips[trips.length - 1].load_m3;
           // Backhaul sells at a discount; an empty truck going home is the alternative
           const brev = r2(c.tariff * 0.62 * lane.distance_km * (1 + gauss(0, 0.07)));
-          addConsignment(rt, bcust, 1, ms + 20 * 3600000, bkg, bm3, brev);
+          addConsignment(rt, bcust, 1, rt.plannedArrive, rt.actualArrive + ri(10, 60) * 60000, bkg, bm3, brev);
         }
       }
     }
   }
 
-  // Maintenance happens on its own schedule
-  if (rnd() < 0.85) {
-    const v = pick(vehicles);
+  // Maintenance runs off kilometres, not off the calendar. A line-haul unit covering 160,000
+  // km a year sees a service roughly every 25,000 km, plus tyres and unplanned repairs, so
+  // heavy vehicles are picked far more often than the metro fleet. Across the fleet this lands
+  // maintenance and tyres near R2.20 a kilometre, which is where the benchmarks put it.
+  const jobsToday = Math.round(clamp(gauss(6, 2), 0, 14));
+  for (let j = 0; j < jobsToday; j++) {
+    const v = weighted(vehicles.map((x) => ({ v: x, w: byClass[x.vehicle_class].kg })), 'w').v;
     const c = byClass[v.vehicle_class];
     maintN += 1;
-    const type = pick(['Service', 'Service', 'Repair', 'Tyres', 'Repair']);
+    const type = pick(['Service', 'Service', 'Service', 'Repair', 'Tyres', 'Repair']);
     maintenance.push({
       maintenance_id: 'MNT-' + (300000 + maintN),
       vehicle_id: v.vehicle_id,

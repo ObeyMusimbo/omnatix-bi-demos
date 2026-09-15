@@ -2,17 +2,17 @@ customer_id,customer_name,sector,contract_type,home_depot_code,sla_hours,billing
 CUS-7001,Highveld Retail Group,Building materials,Dedicated,KES-JHB,24,60
 CUS-7002,Cape Union Foods,Pharmaceutical,Dedicated,KES-CPT,24,30
 CUS-7003,Umgeni Building Supplies,Automotive,Dedicated,KES-DBN,24,30
-CUS-7004,Cape Union Holdings,Agriculture,Contract,KES-CPT,48,30
+CUS-7004,Cape Union Holdings (Pty) Ltd,Agriculture,Contract,KES-CPT,48,30
 CUS-7005,Alrode Logistics Partners,Automotive,Contract,KES-JHB,48,30
 CUS-7006,Bellville Logistics Partners,Pharmaceutical,Contract,KES-CPT,48,30
 CUS-7007,Highveld Manufacturing,Industrial,Contract,KES-DBN,48,30
 CUS-7008,Boland Industries,Building materials,Contract,KES-JHB,48,60
-CUS-7009,Germiston Foods (Pty) Ltd,Pharmaceutical,Contract,KES-DBN,48,45
+CUS-7009,Germiston Foods ,Pharmaceutical,Contract,KES-DBN,48,45
 CUS-7010,Boland Logistics Partners,Building materials,Contract,KES-DBN,48,30
 CUS-7011,Sandton Foods,FMCG,Contract,KES-DBN,48,30
 CUS-7012,Pinetown Supplies,Building materials,Contract,KES-CPT,48,45
 CUS-7013,Drakens Holdings,Retail,Contract,KES-CPT,48,30
-CUS-7014,Zambezi Trading,FMCG,Contract,KES-JHB,48,60
+CUS-7014,Zambezi Trading (Pty) Ltd,FMCG,Contract,KES-JHB,48,60
 CUS-7015,Alrode Manufacturing,Industrial,Contract,KES-JHB,48,60
 CUS-7016,Montague Industries,Pharmaceutical,Contract,KES-JHB,48,30
 CUS-7017,Epping Wholesalers,Pharmaceutical,Contract,KES-CPT,48,30
@@ -20,224 +20,224 @@ CUS-7018,Sandton Manufacturing,Pharmaceutical,Contract,KES-CPT,48,30
 CUS-7019,Midrand Logistics Partners,Automotive,Contract,KES-CPT,48,30
 CUS-7020,Riverhorse Logistics Partners,Industrial,Contract,KES-DBN,48,30
 CUS-7021,Atlantis Industries,Automotive,Contract,KES-CPT,48,30
-CUS-7022,Midrand Logistics Partners,Retail,Contract,KES-CPT,48,60
-CUS-7023,Drakens Distributors,Industrial,Contract,KES-JHB,48,30
-CUS-7024,Isando Steel,Automotive,Contract,KES-DBN,48,45
-CUS-7025,Drakens Distributors,Agriculture,Contract,KES-JHB,48,60
-CUS-7026,Isando Industries,Industrial,Contract,KES-CPT,48,30
-CUS-7027,Zambezi Wholesalers,Retail,Contract,KES-DBN,48,30
-CUS-7028,Umgeni Supplies,Industrial,Contract,KES-DBN,48,60
-CUS-7029,Midrand Manufacturing ,Building materials,Contract,KES-JHB,48,60
-CUS-7030,Cape Union Holdings,Industrial,Contract,KES-JHB,48,30
-CUS-7031,Umgeni Industries,Pharmaceutical,Contract,KES-CPT,48,30
-CUS-7032,Germiston Industries,Automotive,Contract,KES-JHB,48,60
-CUS-7033,Isando Trading,Retail,Contract,KES-JHB,48,30
-CUS-7034,Umgeni Distributors,Retail,Contract,KES-JHB,48,30
-CUS-7035,Pinetown Manufacturing,Automotive,Contract,KES-JHB,48,45
-CUS-7036,Isando Supplies,Retail,Contract,KES-JHB,48,60
-CUS-7037,Umgeni Supplies,Automotive,Contract,KES-CPT,48,30
-CUS-7038,Pinetown Wholesalers,Building materials,Spot,KES-DBN,72,30
-CUS-7039,Alrode Foods,Agriculture,Spot,KES-DBN,72,30
-CUS-7040,Riverhorse Foods,Automotive,Spot,KES-DBN,72,30
-CUS-7041,Atlantis Trading,Industrial,Spot,KES-JHB,72,45
-CUS-7042,Springfield Holdings,Pharmaceutical,Spot,KES-JHB,72,30
-CUS-7043,Silverton Industries,Automotive,Spot,KES-JHB,72,60
-CUS-7044,Midrand Holdings,Agriculture,Spot,KES-DBN,72,30
-CUS-7045,Alrode Industries,Agriculture,Spot,KES-JHB,72,45
-CUS-7046,Bellville Trading,FMCG,Spot,KES-JHB,72,30
-CUS-7047,Sandton Wholesalers,Building materials,Spot,KES-JHB,72,30
-CUS-7048,Silverton Supplies ,FMCG,Spot,KES-JHB,72,60
-CUS-7049,Riverhorse Trading,Retail,Spot,KES-CPT,72,30
-CUS-7050,Alrode Trading,Industrial,Spot,KES-JHB,72,60
-CUS-7051,Highveld Wholesalers,Agriculture,Spot,KES-DBN,72,30
-CUS-7052,Bellville Distributors,FMCG,Spot,KES-DBN,72,45
-CUS-7053,Midrand Distributors,Industrial,Spot,KES-JHB,72,30
-CUS-7054,Midrand Manufacturing,Building materials,Spot,KES-CPT,72,30
-CUS-7055,Silverton Logistics Partners,Industrial,Spot,KES-JHB,72,30
-CUS-7056,Riverhorse Foods ,FMCG,Spot,KES-JHB,72,60
-CUS-7057,Pinetown Foods,Industrial,Spot,KES-CPT,72,30
-CUS-7058,Bellville Foods,Automotive,Spot,KES-JHB,72,45
-CUS-7059,Epping Supplies,Industrial,Spot,KES-JHB,72,60
-CUS-7060,Silverton Holdings,Pharmaceutical,Spot,KES-JHB,72,45
-CUS-7061,Drakens Foods,Pharmaceutical,Spot,KES-JHB,72,45
-CUS-7062,Sandton Manufacturing,Agriculture,Spot,KES-JHB,72,60
-CUS-7063,Bellville Industries,FMCG,Spot,KES-DBN,72,30
-CUS-7064,Zambezi Holdings,Pharmaceutical,Spot,KES-DBN,72,60
-CUS-7065,Highveld Holdings,Automotive,Spot,KES-CPT,72,60
-CUS-7066,Pinetown Supplies (Pty) Ltd,Pharmaceutical,Spot,KES-JHB,72,60
-CUS-7067,Midrand Supplies,FMCG,Spot,KES-DBN,72,30
-CUS-7068,Atlantis Wholesalers,Building materials,Spot,KES-CPT,72,30
-CUS-7069,Alrode Wholesalers (Pty) Ltd,Building materials,Spot,KES-CPT,72,30
-CUS-7070,Alrode Trading ,Industrial,Spot,KES-JHB,72,45
-CUS-7071,Drakens Logistics Partners (Pty) Ltd,Agriculture,Spot,KES-DBN,72,45
-CUS-7072,Umgeni Foods,FMCG,Spot,KES-DBN,72,45
-CUS-7073,Drakens Holdings,FMCG,Spot,KES-CPT,72,60
-CUS-7074,Isando Wholesalers,Pharmaceutical,Spot,KES-JHB,72,30
-CUS-7075,Bellville Holdings,Pharmaceutical,Spot,KES-JHB,72,60
-CUS-7076,Atlantis Manufacturing,Agriculture,Spot,KES-DBN,72,60
-CUS-7077,Pinetown Foods,FMCG,Spot,KES-DBN,72,30
-CUS-7078,Isando Logistics Partners (Pty) Ltd,Pharmaceutical,Spot,KES-DBN,72,30
-CUS-7079,Umgeni Industries,Retail,Spot,KES-CPT,72,30
-CUS-7080,Pinetown Supplies,Pharmaceutical,Spot,KES-DBN,72,45
-CUS-7081,Boland Logistics Partners,Building materials,Spot,KES-DBN,72,30
-CUS-7082,Alrode Foods,Pharmaceutical,Spot,KES-DBN,72,45
-CUS-7083,Silverton Manufacturing (Pty) Ltd,Building materials,Spot,KES-CPT,72,30
-CUS-7084,Highveld Industries,Pharmaceutical,Spot,KES-DBN,72,30
-CUS-7085,Umgeni Industries,Industrial,Spot,KES-DBN,72,30
-CUS-7086,Cape Union Industries,Agriculture,Spot,KES-CPT,72,60
-CUS-7087,Germiston Logistics Partners,Industrial,Spot,KES-CPT,72,30
-CUS-7088,Bellville Distributors,Industrial,Spot,KES-DBN,72,60
-CUS-7089,Highveld Manufacturing,Pharmaceutical,Spot,KES-JHB,72,45
-CUS-7090,Isando Steel,Automotive,Spot,KES-CPT,72,30
-CUS-7091,Pinetown Industries,Retail,Spot,KES-JHB,72,30
-CUS-7092,Boland Manufacturing,Retail,Spot,KES-CPT,72,30
-CUS-7093,Germiston Foods ,Agriculture,Spot,KES-CPT,72,30
-CUS-7094,Atlantis Wholesalers,Retail,Spot,KES-DBN,72,30
-CUS-7095,Drakens Distributors,Pharmaceutical,Spot,KES-JHB,72,60
-CUS-7096,Atlantis Supplies,Automotive,Spot,KES-CPT,72,60
-CUS-7097,Drakens Foods,Pharmaceutical,Spot,KES-CPT,72,45
-CUS-7098,Karoo Industries,Industrial,Spot,KES-CPT,72,45
-CUS-7099,Midrand Logistics Partners ,Pharmaceutical,Spot,KES-JHB,72,45
-CUS-7100,Isando Wholesalers,Agriculture,Spot,KES-DBN,72,45
-CUS-7101,Umgeni Steel,Automotive,Spot,KES-JHB,72,30
-CUS-7102,Cape Union Holdings,Automotive,Spot,KES-DBN,72,30
-CUS-7103,Karoo Logistics Partners,Automotive,Spot,KES-JHB,72,60
-CUS-7104,Springfield Distributors,Retail,Spot,KES-JHB,72,30
-CUS-7105,Germiston Manufacturing,Building materials,Spot,KES-JHB,72,45
-CUS-7106,Riverhorse Industries,Automotive,Spot,KES-CPT,72,60
-CUS-7107,Highveld Logistics Partners,Retail,Spot,KES-CPT,72,45
-CUS-7108,Montague Supplies,Building materials,Spot,KES-DBN,72,30
-CUS-7109,Montague Steel,Automotive,Spot,KES-JHB,72,30
-CUS-7110,Midrand Supplies,Building materials,Spot,KES-CPT,72,30
-CUS-7111,Sandton Logistics Partners,Agriculture,Spot,KES-CPT,72,30
-CUS-7112,Midrand Industries,Building materials,Spot,KES-JHB,72,30
-CUS-7113,Springfield Wholesalers,Industrial,Spot,KES-CPT,72,45
-CUS-7114,Atlantis Steel (Pty) Ltd,FMCG,Spot,KES-JHB,72,60
-CUS-7115,Alrode Wholesalers,Industrial,Spot,KES-DBN,72,30
-CUS-7116,Sandton Distributors ,Retail,Spot,KES-JHB,72,45
-CUS-7117,Epping Steel,Agriculture,Spot,KES-CPT,72,30
-CUS-7118,Montague Foods,Agriculture,Spot,KES-CPT,72,60
-CUS-7119,Epping Logistics Partners,Retail,Spot,KES-CPT,72,30
-CUS-7120,Drakens Steel,Pharmaceutical,Spot,KES-DBN,72,45
-CUS-7121,Karoo Foods,Agriculture,Spot,KES-JHB,72,45
-CUS-7122,Pinetown Industries,Building materials,Spot,KES-JHB,72,30
-CUS-7123,Atlantis Holdings (Pty) Ltd,Pharmaceutical,Spot,KES-CPT,72,30
-CUS-7124,Germiston Foods,Retail,Spot,KES-JHB,72,30
-CUS-7125,Silverton Supplies,Industrial,Spot,KES-JHB,72,30
-CUS-7126,Silverton Logistics Partners,Agriculture,Spot,KES-DBN,72,30
-CUS-7127,Karoo Trading,FMCG,Spot,KES-CPT,72,30
-CUS-7128,Montague Steel,Retail,Spot,KES-DBN,72,60
-CUS-7129,Montague Holdings,Industrial,Spot,KES-DBN,72,30
-CUS-7130,Midrand Manufacturing,Automotive,Spot,KES-DBN,72,60
-CUS-7131,Alrode Logistics Partners,Pharmaceutical,Spot,KES-DBN,72,60
-CUS-7132,Karoo Industries,Retail,Spot,KES-DBN,72,30
-CUS-7133,Isando Trading,Automotive,Spot,KES-CPT,72,60
-CUS-7134,Pinetown Steel,Automotive,Spot,KES-DBN,72,30
-CUS-7135,Karoo Distributors,Building materials,Spot,KES-DBN,72,30
-CUS-7136,Boland Industries,Building materials,Spot,KES-CPT,72,30
-CUS-7137,Silverton Logistics Partners,Industrial,Spot,KES-JHB,72,30
-CUS-7138,Boland Industries,Agriculture,Spot,KES-DBN,72,45
-CUS-7139,Boland Foods,Pharmaceutical,Spot,KES-JHB,72,60
-CUS-7140,Midrand Holdings,FMCG,Spot,KES-DBN,72,30
-CUS-7141,Sandton Holdings,Industrial,Spot,KES-CPT,72,30
-CUS-7142,Zambezi Wholesalers,Pharmaceutical,Spot,KES-DBN,72,45
-CUS-7143,Montague Steel,Retail,Spot,KES-DBN,72,30
-CUS-7144,Riverhorse Distributors,Retail,Spot,KES-CPT,72,60
-CUS-7145,Riverhorse Logistics Partners,Automotive,Spot,KES-DBN,72,60
-CUS-7146,Montague Foods,FMCG,Spot,KES-CPT,72,60
-CUS-7147,  Karoo Logistics Partners,FMCG,Spot,KES-JHB,72,30
-CUS-7148,Germiston Distributors,Building materials,Spot,KES-JHB,72,45
-CUS-7149,Karoo Supplies,Building materials,Spot,KES-JHB,72,30
-CUS-7150,Springfield Steel,Agriculture,Spot,KES-DBN,72,45
-CUS-7151,Drakens Distributors,Pharmaceutical,Spot,KES-JHB,72,30
-CUS-7152,Zambezi Logistics Partners,Automotive,Spot,KES-DBN,72,30
-CUS-7153,Pinetown Steel,Agriculture,Spot,KES-CPT,72,60
-CUS-7154,Isando Manufacturing,Pharmaceutical,Spot,KES-DBN,72,45
-CUS-7155,Umgeni Manufacturing,Automotive,Spot,KES-CPT,72,30
-CUS-7156,Drakens Holdings,Retail,Spot,KES-DBN,72,45
-CUS-7157,Silverton Supplies,Building materials,Spot,KES-JHB,72,30
-CUS-7158,Cape Union Steel,Retail,Spot,KES-CPT,72,45
-CUS-7159,Midrand Logistics Partners,FMCG,Spot,KES-JHB,72,60
-CUS-7160,Montague Wholesalers,FMCG,Spot,KES-DBN,72,30
-CUS-7161,Atlantis Trading,Automotive,Spot,KES-CPT,72,30
-CUS-7162,Springfield Wholesalers (Pty) Ltd,Automotive,Spot,KES-JHB,72,45
-CUS-7163,Pinetown Trading,Retail,Spot,KES-DBN,72,45
-CUS-7164,Drakens Wholesalers,Pharmaceutical,Spot,KES-DBN,72,45
-CUS-7165,Silverton Manufacturing,Industrial,Spot,KES-DBN,72,60
-CUS-7166,Alrode Trading,Automotive,Spot,KES-JHB,72,30
-CUS-7167,Silverton Wholesalers,Building materials,Spot,KES-DBN,72,45
-CUS-7168,Isando Foods,Pharmaceutical,Spot,KES-JHB,72,30
-CUS-7169,Midrand Logistics Partners,Retail,Spot,KES-JHB,72,30
-CUS-7170,Sandton Manufacturing,Building materials,Spot,KES-CPT,72,45
-CUS-7171,Riverhorse Logistics Partners,Automotive,Spot,KES-JHB,72,45
-CUS-7172,Zambezi Supplies,FMCG,Spot,KES-CPT,72,60
-CUS-7173,Zambezi Holdings,Building materials,Spot,KES-DBN,72,60
-CUS-7174,Zambezi Wholesalers,Automotive,Spot,KES-CPT,72,60
-CUS-7175,Germiston Steel,Agriculture,Spot,KES-CPT,72,60
-CUS-7176,Highveld Manufacturing,Agriculture,Spot,KES-DBN,72,30
-CUS-7177,Pinetown Wholesalers ,Agriculture,Spot,KES-DBN,72,60
-CUS-7178,Atlantis Foods,Automotive,Spot,KES-DBN,72,45
-CUS-7179,Isando Wholesalers,Pharmaceutical,Spot,KES-CPT,72,45
-CUS-7180,Cape Union Distributors (Pty) Ltd,Agriculture,Spot,KES-CPT,72,30
-CUS-7181,Zambezi Distributors,Pharmaceutical,Spot,KES-JHB,72,60
-CUS-7182,Atlantis Supplies,Building materials,Spot,KES-JHB,72,45
-CUS-7183,Umgeni Logistics Partners,FMCG,Spot,KES-CPT,72,60
-CUS-7184,Umgeni Foods,Industrial,Spot,KES-JHB,72,60
-CUS-7185,Umgeni Trading,Retail,Spot,KES-DBN,72,30
-CUS-7186,Zambezi Holdings,Retail,Spot,KES-CPT,72,30
-CUS-7187,Riverhorse Logistics Partners,Industrial,Spot,KES-DBN,72,60
-CUS-7188,Bellville Logistics Partners,Industrial,Spot,KES-CPT,72,30
-CUS-7189,Boland Steel,Building materials,Spot,KES-DBN,72,60
-CUS-7190,  Bellville Supplies,FMCG,Spot,KES-JHB,72,45
-CUS-7191,Isando Industries,Pharmaceutical,Spot,KES-DBN,72,30
-CUS-7192,Midrand Wholesalers,Industrial,Spot,KES-DBN,72,45
-CUS-7193,Sandton Supplies,Industrial,Spot,KES-JHB,72,60
-CUS-7194,Bellville Foods,Retail,Spot,KES-CPT,72,60
-CUS-7195,Boland Industries,FMCG,Spot,KES-DBN,72,30
-CUS-7196,Pinetown Manufacturing,Building materials,Spot,KES-DBN,72,30
-CUS-7197,  Highveld Foods,Agriculture,Spot,KES-CPT,72,60
-CUS-7198,Isando Foods,Pharmaceutical,Spot,KES-CPT,72,45
-CUS-7199,Springfield Logistics Partners,Pharmaceutical,Spot,KES-JHB,72,45
-CUS-7200,Pinetown Holdings,FMCG,Spot,KES-CPT,72,60
-CUS-7201,Sandton Trading,Pharmaceutical,Spot,KES-DBN,72,60
-CUS-7202,Pinetown Holdings,Automotive,Spot,KES-CPT,72,45
-CUS-7203,Atlantis Supplies,Building materials,Spot,KES-JHB,72,45
-CUS-7204,Atlantis Industries,Agriculture,Spot,KES-DBN,72,30
-CUS-7205,Germiston Industries,Pharmaceutical,Spot,KES-JHB,72,30
-CUS-7206,Boland Trading (Pty) Ltd,Automotive,Spot,KES-JHB,72,60
-CUS-7207,Isando Distributors,Industrial,Spot,KES-DBN,72,30
-CUS-7208,  Isando Logistics Partners,Retail,Spot,KES-CPT,72,30
-CUS-7209,Epping Distributors,Pharmaceutical,Spot,KES-JHB,72,30
-CUS-7210,Isando Manufacturing,Pharmaceutical,Spot,KES-DBN,72,60
-CUS-7211,Sandton Distributors,Building materials,Spot,KES-JHB,72,30
-CUS-7212,Riverhorse Manufacturing,Retail,Spot,KES-CPT,72,30
-CUS-7213,Isando Holdings (Pty) Ltd,Industrial,Spot,KES-CPT,72,45
-CUS-7214,Silverton Logistics Partners,Industrial,Spot,KES-DBN,72,60
-CUS-7215,Pinetown Holdings ,Industrial,Spot,KES-JHB,72,45
-CUS-7216,Epping Logistics Partners,Automotive,Spot,KES-CPT,72,30
-CUS-7217,Boland Manufacturing,Industrial,Spot,KES-DBN,72,45
-CUS-7218,Zambezi Wholesalers,Agriculture,Spot,KES-CPT,72,45
-CUS-7219,Karoo Manufacturing,Agriculture,Spot,KES-DBN,72,30
-CUS-7220,Sandton Logistics Partners,Industrial,Spot,KES-JHB,72,60
-CUS-7221,Highveld Logistics Partners (Pty) Ltd,Automotive,Spot,KES-DBN,72,30
-CUS-7222,Boland Manufacturing,Building materials,Spot,KES-DBN,72,45
-CUS-7223,Alrode Holdings,FMCG,Spot,KES-DBN,72,30
-CUS-7224,Bellville Distributors,Industrial,Spot,KES-CPT,72,60
-CUS-7225,Boland Supplies,Retail,Spot,KES-DBN,72,60
-CUS-7226,Germiston Steel (Pty) Ltd,Retail,Spot,KES-DBN,72,30
-CUS-7227,Highveld Supplies,Agriculture,Spot,KES-JHB,72,45
-CUS-7228,Sandton Trading,Agriculture,Spot,KES-DBN,72,30
-CUS-7229,Atlantis Holdings,FMCG,Spot,KES-CPT,72,60
-CUS-7230,Bellville Distributors,Pharmaceutical,Spot,KES-DBN,72,30
-CUS-7231,Boland Trading,Pharmaceutical,Spot,KES-CPT,72,30
-CUS-7232,Drakens Steel,Building materials,Spot,KES-CPT,72,30
-CUS-7233,Silverton Supplies (Pty) Ltd,Industrial,Spot,KES-DBN,72,30
-CUS-7234,Bellville Industries ,Building materials,Spot,KES-DBN,72,60
-CUS-7235,Alrode Manufacturing,Pharmaceutical,Spot,KES-JHB,72,30
-CUS-7236,Alrode Manufacturing,Pharmaceutical,Spot,KES-CPT,72,30
-CUS-7237,Germiston Distributors,FMCG,Spot,KES-DBN,72,30
-CUS-7238,Cape Union Trading,Industrial,Spot,KES-CPT,72,30
-CUS-7239,Sandton Trading,Automotive,Spot,KES-CPT,72,45
-CUS-7240,Isando Steel,FMCG,Spot,KES-DBN,72,45
-CUS-7241,Karoo Industries,Industrial,Spot,KES-CPT,72,30
-CUS-7242,Bellville Distributors (Pty) Ltd,Retail,Spot,KES-JHB,72,60
+CUS-7022,Boland Steel,Industrial,Contract,KES-CPT,48,30
+CUS-7023,Isando Distributors,FMCG,Contract,KES-JHB,48,45
+CUS-7024,Sandton Supplies,Automotive,Contract,KES-CPT,48,30
+CUS-7025,Drakens Wholesalers,Retail,Contract,KES-CPT,48,45
+CUS-7026,Drakens Industries,Building materials,Contract,KES-JHB,48,30
+CUS-7027,  Umgeni Holdings,Retail,Contract,KES-DBN,48,30
+CUS-7028,Montague Supplies,Agriculture,Contract,KES-CPT,48,30
+CUS-7029,Alrode Trading,Agriculture,Contract,KES-CPT,48,30
+CUS-7030,Bellville Manufacturing,Building materials,Contract,KES-JHB,48,30
+CUS-7031,Isando Foods,Building materials,Contract,KES-DBN,48,45
+CUS-7032,Midrand Manufacturing,Industrial,Contract,KES-CPT,48,45
+CUS-7033,Bellville Wholesalers,Pharmaceutical,Contract,KES-JHB,48,30
+CUS-7034,Highveld Wholesalers,FMCG,Contract,KES-DBN,48,45
+CUS-7035,Springfield Industries,FMCG,Contract,KES-JHB,48,30
+CUS-7036,Pinetown Foods,Agriculture,Contract,KES-DBN,48,45
+CUS-7037,Umgeni Steel,Building materials,Contract,KES-DBN,48,30
+CUS-7038,Germiston Supplies,Building materials,Spot,KES-DBN,72,45
+CUS-7039,Germiston Wholesalers,FMCG,Spot,KES-DBN,72,30
+CUS-7040,Drakens Trading,Agriculture,Spot,KES-CPT,72,30
+CUS-7041,Epping Trading,FMCG,Spot,KES-CPT,72,30
+CUS-7042,Isando Wholesalers,Pharmaceutical,Spot,KES-DBN,72,30
+CUS-7043,Silverton Foods,Building materials,Spot,KES-DBN,72,30
+CUS-7044,Bellville Supplies,Agriculture,Spot,KES-DBN,72,30
+CUS-7045,Sandton Logistics Partners,Building materials,Spot,KES-JHB,72,60
+CUS-7046,Boland Distributors,Retail,Spot,KES-JHB,72,45
+CUS-7047,Umgeni Manufacturing,Industrial,Spot,KES-JHB,72,30
+CUS-7048,Montague Distributors,Industrial,Spot,KES-DBN,72,30
+CUS-7049,Cape Union Steel,Retail,Spot,KES-DBN,72,30
+CUS-7050,Pinetown Holdings,Automotive,Spot,KES-DBN,72,30
+CUS-7051,Sandton Wholesalers,Agriculture,Spot,KES-DBN,72,30
+CUS-7052,Karoo Steel,Building materials,Spot,KES-CPT,72,30
+CUS-7053,Silverton Logistics Partners,Industrial,Spot,KES-JHB,72,30
+CUS-7054,Riverhorse Foods ,FMCG,Spot,KES-JHB,72,60
+CUS-7055,Springfield Steel,Retail,Spot,KES-JHB,72,45
+CUS-7056,Umgeni Trading,Automotive,Spot,KES-DBN,72,45
+CUS-7057,Zambezi Wholesalers,Automotive,Spot,KES-CPT,72,45
+CUS-7058,Cape Union Distributors,Automotive,Spot,KES-DBN,72,30
+CUS-7059,Springfield Trading,Building materials,Spot,KES-DBN,72,45
+CUS-7060,Isando Industries,Building materials,Spot,KES-JHB,72,30
+CUS-7061,Springfield Manufacturing,Automotive,Spot,KES-JHB,72,45
+CUS-7062,Pinetown Distributors,Pharmaceutical,Spot,KES-CPT,72,45
+CUS-7063,Epping Supplies,Retail,Spot,KES-CPT,72,45
+CUS-7064,Cape Union Supplies,Automotive,Spot,KES-DBN,72,30
+CUS-7065,Isando Steel,Automotive,Spot,KES-CPT,72,30
+CUS-7066,Boland Foods,Retail,Spot,KES-DBN,72,30
+CUS-7067,Bellville Industries,FMCG,Spot,KES-CPT,72,30
+CUS-7068,Germiston Trading,Industrial,Spot,KES-CPT,72,45
+CUS-7069,Highveld Industries,FMCG,Spot,KES-DBN,72,60
+CUS-7070,Midrand Industries,Retail,Spot,KES-JHB,72,60
+CUS-7071,Bellville Steel,Agriculture,Spot,KES-DBN,72,30
+CUS-7072,Springfield Distributors,FMCG,Spot,KES-JHB,72,60
+CUS-7073,Riverhorse Industries,Retail,Spot,KES-CPT,72,30
+CUS-7074,Riverhorse Distributors,Agriculture,Spot,KES-JHB,72,30
+CUS-7075,Midrand Foods,FMCG,Spot,KES-JHB,72,60
+CUS-7076,Isando Trading,Industrial,Spot,KES-DBN,72,60
+CUS-7077,Drakens Foods,Agriculture,Spot,KES-JHB,72,30
+CUS-7078,  Highveld Steel,FMCG,Spot,KES-DBN,72,45
+CUS-7079,Sandton Trading,Industrial,Spot,KES-CPT,72,30
+CUS-7080,  Cape Union Trading,Retail,Spot,KES-CPT,72,60
+CUS-7081,Atlantis Manufacturing,Automotive,Spot,KES-CPT,72,60
+CUS-7082,Karoo Trading,Agriculture,Spot,KES-JHB,72,30
+CUS-7083,Atlantis Wholesalers,Pharmaceutical,Spot,KES-JHB,72,30
+CUS-7084,Epping Foods (Pty) Ltd,FMCG,Spot,KES-CPT,72,60
+CUS-7085,Boland Manufacturing,Automotive,Spot,KES-DBN,72,30
+CUS-7086,Atlantis Logistics Partners,Agriculture,Spot,KES-JHB,72,45
+CUS-7087,Germiston Steel,Agriculture,Spot,KES-JHB,72,60
+CUS-7088,Midrand Supplies,Agriculture,Spot,KES-JHB,72,30
+CUS-7089,Silverton Trading,Industrial,Spot,KES-CPT,72,60
+CUS-7090,Springfield Foods,Automotive,Spot,KES-CPT,72,45
+CUS-7091,Montague Steel,Building materials,Spot,KES-CPT,72,60
+CUS-7092,Zambezi Foods,Automotive,Spot,KES-DBN,72,30
+CUS-7093,Isando Supplies,Retail,Spot,KES-DBN,72,60
+CUS-7094,Drakens Manufacturing,Retail,Spot,KES-DBN,72,45
+CUS-7095,Highveld Distributors,Pharmaceutical,Spot,KES-DBN,72,30
+CUS-7096,Boland Trading,Pharmaceutical,Spot,KES-CPT,72,45
+CUS-7097,Montague Logistics Partners,Retail,Spot,KES-CPT,72,60
+CUS-7098,Midrand Wholesalers,Industrial,Spot,KES-CPT,72,45
+CUS-7099,Pinetown Trading,FMCG,Spot,KES-JHB,72,45
+CUS-7100,Riverhorse Holdings,Building materials,Spot,KES-DBN,72,30
+CUS-7101,Midrand Holdings,Retail,Spot,KES-JHB,72,60
+CUS-7102,Atlantis Steel,FMCG,Spot,KES-JHB,72,60
+CUS-7103,Alrode Wholesalers,Industrial,Spot,KES-DBN,72,30
+CUS-7104,Sandton Distributors,Retail,Spot,KES-JHB,72,45
+CUS-7105,Epping Steel (Pty) Ltd,Agriculture,Spot,KES-CPT,72,30
+CUS-7106,Montague Foods,Agriculture,Spot,KES-CPT,72,60
+CUS-7107,Epping Logistics Partners,Retail,Spot,KES-CPT,72,30
+CUS-7108,Drakens Steel,Pharmaceutical,Spot,KES-DBN,72,45
+CUS-7109,Karoo Foods,Agriculture,Spot,KES-JHB,72,45
+CUS-7110,Pinetown Industries,Building materials,Spot,KES-JHB,72,30
+CUS-7111,Atlantis Holdings,Pharmaceutical,Spot,KES-CPT,72,30
+CUS-7112,Pinetown Wholesalers,FMCG,Spot,KES-JHB,72,45
+CUS-7113,Umgeni Distributors,Industrial,Spot,KES-DBN,72,45
+CUS-7114,Germiston Holdings,Agriculture,Spot,KES-JHB,72,30
+CUS-7115,Boland Supplies,Industrial,Spot,KES-CPT,72,45
+CUS-7116,Midrand Steel,Agriculture,Spot,KES-CPT,72,30
+CUS-7117,Atlantis Foods,FMCG,Spot,KES-CPT,72,45
+CUS-7118,Riverhorse Supplies,Automotive,Spot,KES-CPT,72,30
+CUS-7119,Midrand Trading,Pharmaceutical,Spot,KES-JHB,72,45
+CUS-7120,Alrode Steel,FMCG,Spot,KES-CPT,72,45
+CUS-7121,Sandton Industries,Agriculture,Spot,KES-JHB,72,30
+CUS-7122,Riverhorse Trading (Pty) Ltd,Agriculture,Spot,KES-CPT,72,30
+CUS-7123,Germiston Manufacturing (Pty) Ltd,Industrial,Spot,KES-CPT,72,30
+CUS-7124,Karoo Wholesalers,Automotive,Spot,KES-DBN,72,60
+CUS-7125,Riverhorse Manufacturing,FMCG,Spot,KES-JHB,72,45
+CUS-7126,Springfield Holdings,Industrial,Spot,KES-CPT,72,45
+CUS-7127,Cape Union Logistics Partners,Industrial,Spot,KES-CPT,72,30
+CUS-7128,Umgeni Wholesalers,Pharmaceutical,Spot,KES-JHB,72,30
+CUS-7129,Silverton Holdings,FMCG,Spot,KES-DBN,72,30
+CUS-7130,Alrode Holdings,Agriculture,Spot,KES-DBN,72,30
+CUS-7131,Springfield Supplies,Pharmaceutical,Spot,KES-JHB,72,60
+CUS-7132,Silverton Supplies (Pty) Ltd,Pharmaceutical,Spot,KES-DBN,72,45
+CUS-7133,Drakens Logistics Partners,Retail,Spot,KES-CPT,72,30
+CUS-7134,Alrode Industries,Building materials,Spot,KES-DBN,72,45
+CUS-7135,Drakens Distributors,Agriculture,Spot,KES-DBN,72,30
+CUS-7136,Karoo Distributors,Industrial,Spot,KES-CPT,72,60
+CUS-7137,Pinetown Logistics Partners,Building materials,Spot,KES-CPT,72,30
+CUS-7138,Alrode Foods,Pharmaceutical,Spot,KES-JHB,72,30
+CUS-7139,Boland Holdings,Agriculture,Spot,KES-DBN,72,30
+CUS-7140,Montague Manufacturing (Pty) Ltd,Building materials,Spot,KES-DBN,72,30
+CUS-7141,Silverton Wholesalers ,Building materials,Spot,KES-DBN,72,45
+CUS-7142,  Montague Wholesalers,Pharmaceutical,Spot,KES-DBN,72,30
+CUS-7143,Karoo Manufacturing,Automotive,Spot,KES-DBN,72,30
+CUS-7144,Silverton Manufacturing,Pharmaceutical,Spot,KES-DBN,72,45
+CUS-7145,Zambezi Holdings,Building materials,Spot,KES-DBN,72,60
+CUS-7146,Highveld Foods,Agriculture,Spot,KES-CPT,72,45
+CUS-7147,Zambezi Manufacturing,Agriculture,Spot,KES-DBN,72,60
+CUS-7148,  Umgeni Supplies,Pharmaceutical,Spot,KES-DBN,72,60
+CUS-7149,  Sandton Steel,Agriculture,Spot,KES-DBN,72,30
+CUS-7150,Epping Manufacturing,Retail,Spot,KES-JHB,72,30
+CUS-7151,Epping Industries,Retail,Spot,KES-CPT,72,60
+CUS-7152,Umgeni Foods,Industrial,Spot,KES-JHB,72,60
+CUS-7153,Highveld Supplies,Automotive,Spot,KES-JHB,72,30
+CUS-7154,Riverhorse Wholesalers,Industrial,Spot,KES-JHB,72,60
+CUS-7155,Germiston Industries,Building materials,Spot,KES-DBN,72,30
+CUS-7156,Umgeni Industries,Agriculture,Spot,KES-JHB,72,60
+CUS-7157,Zambezi Supplies,Building materials,Spot,KES-CPT,72,60
+CUS-7158,Atlantis Trading (Pty) Ltd,FMCG,Spot,KES-DBN,72,60
+CUS-7159,Alrode Distributors,FMCG,Spot,KES-JHB,72,45
+CUS-7160,Pinetown Manufacturing,Building materials,Spot,KES-DBN,72,30
+CUS-7161,Pinetown Steel (Pty) Ltd,Retail,Spot,KES-CPT,72,45
+CUS-7162,Riverhorse Steel,Agriculture,Spot,KES-DBN,72,60
+CUS-7163,Atlantis Supplies,Pharmaceutical,Spot,KES-JHB,72,30
+CUS-7164,Springfield Wholesalers,Retail,Spot,KES-DBN,72,60
+CUS-7165,Zambezi Industries,Automotive,Spot,KES-CPT,72,60
+CUS-7166,Isando Manufacturing,Retail,Spot,KES-CPT,72,30
+CUS-7167,Drakens Supplies ,Industrial,Spot,KES-DBN,72,45
+CUS-7168,Cape Union Wholesalers,Agriculture,Spot,KES-CPT,72,30
+CUS-7169,Epping Distributors,Pharmaceutical,Spot,KES-JHB,72,30
+CUS-7170,Cape Union Manufacturing (Pty) Ltd,Retail,Spot,KES-JHB,72,60
+CUS-7171,Isando Holdings,Industrial,Spot,KES-CPT,72,45
+CUS-7172,Boland Wholesalers,Agriculture,Spot,KES-DBN,72,60
+CUS-7173,Bellville Distributors,Agriculture,Spot,KES-JHB,72,45
+CUS-7174,Zambezi Logistics Partners,FMCG,Spot,KES-CPT,72,30
+CUS-7175,Highveld Logistics Partners,Automotive,Spot,KES-DBN,72,30
+CUS-7176,Midrand Distributors,Pharmaceutical,Spot,KES-JHB,72,60
+CUS-7177,Epping Holdings,Industrial,Spot,KES-JHB,72,45
+CUS-7178,Silverton Steel,Retail,Spot,KES-JHB,72,60
+CUS-7179,Karoo Industries (Pty) Ltd,Building materials,Spot,KES-CPT,72,45
+CUS-7180,Alrode Supplies ,Building materials,Spot,KES-DBN,72,45
+CUS-7181,Bellville Holdings,Industrial,Spot,KES-DBN,72,30
+CUS-7182,Karoo Supplies,Automotive,Spot,KES-JHB,72,30
+CUS-7183,Highveld Trading,FMCG,Spot,KES-DBN,72,45
+CUS-7184,Isando Logistics Partners,FMCG,Spot,KES-JHB,72,45
+CUS-7185,Highveld Holdings (Pty) Ltd,Agriculture,Spot,KES-JHB,72,45
+CUS-7186,Umgeni Logistics Partners,Agriculture,Spot,KES-DBN,72,30
+CUS-7187,Zambezi Distributors,Building materials,Spot,KES-DBN,72,30
+CUS-7188,Silverton Distributors,Automotive,Spot,KES-JHB,72,60
+CUS-7189,Atlantis Distributors,Pharmaceutical,Spot,KES-DBN,72,45
+CUS-7190,Bellville Trading,Building materials,Spot,KES-JHB,72,45
+CUS-7191,Cape Union Industries,Building materials,Spot,KES-CPT,72,30
+CUS-7192,Silverton Industries,Agriculture,Spot,KES-CPT,72,30
+CUS-7193,  Springfield Logistics Partners,Retail,Spot,KES-CPT,72,30
+CUS-7194,Germiston Logistics Partners ,Pharmaceutical,Spot,KES-JHB,72,60
+CUS-7195,Karoo Holdings,Automotive,Spot,KES-DBN,72,60
+CUS-7196,Germiston Distributors,FMCG,Spot,KES-JHB,72,45
+CUS-7197,Bellville Foods (Pty) Ltd,Retail,Spot,KES-CPT,72,30
+CUS-7198,Montague Trading,Industrial,Spot,KES-JHB,72,60
+CUS-7199,Sandton Holdings,Industrial,Spot,KES-DBN,72,60
+CUS-7200,Karoo Logistics Partners (Pty) Ltd,Agriculture,Spot,KES-JHB,72,45
+CUS-7201,Zambezi Steel,Pharmaceutical,Spot,KES-JHB,72,45
+CUS-7202,Montague Holdings,Agriculture,Spot,KES-DBN,72,30
+CUS-7203,Isando Trading 2,FMCG,Spot,KES-JHB,72,45
+CUS-7204,Drakens Supplies 2,Building materials,Spot,KES-CPT,72,60
+CUS-7205,Zambezi Distributors 2,Industrial,Spot,KES-JHB,72,45
+CUS-7206,Midrand Holdings 2 (Pty) Ltd,Agriculture,Spot,KES-JHB,72,45
+CUS-7207,Springfield Holdings 2,Building materials,Spot,KES-DBN,72,45
+CUS-7208,Zambezi Distributors 2,Industrial,Spot,KES-DBN,72,30
+CUS-7209,Midrand Manufacturing 2,Pharmaceutical,Spot,KES-CPT,72,60
+CUS-7210,Bellville Holdings 2,Industrial,Spot,KES-JHB,72,60
+CUS-7211,Drakens Logistics Partners 2,FMCG,Spot,KES-CPT,72,45
+CUS-7212,Germiston Supplies 2,Industrial,Spot,KES-CPT,72,45
+CUS-7213,Umgeni Manufacturing 3,Automotive,Spot,KES-JHB,72,60
+CUS-7214,Epping Steel 3,Industrial,Spot,KES-CPT,72,30
+CUS-7215,Midrand Distributors 2,Automotive,Spot,KES-DBN,72,60
+CUS-7216,Montague Supplies 2,Agriculture,Spot,KES-CPT,72,60
+CUS-7217,Highveld Industries 2,Agriculture,Spot,KES-CPT,72,30
+CUS-7218,Montague Manufacturing 2,Building materials,Spot,KES-CPT,72,45
+CUS-7219,Springfield Industries 2,Building materials,Spot,KES-DBN,72,30
+CUS-7220,Isando Logistics Partners 2,Retail,Spot,KES-JHB,72,60
+CUS-7221,Highveld Holdings 2 (Pty) Ltd,Retail,Spot,KES-JHB,72,60
+CUS-7222,Midrand Supplies 3,Building materials,Spot,KES-JHB,72,30
+CUS-7223,Cape Union Trading 2,Agriculture,Spot,KES-DBN,72,45
+CUS-7224,Montague Holdings 2,Building materials,Spot,KES-DBN,72,45
+CUS-7225,Cape Union Foods 2,Automotive,Spot,KES-CPT,72,45
+CUS-7226,Cape Union Holdings 2,Retail,Spot,KES-CPT,72,60
+CUS-7227,Sandton Wholesalers 3 ,Pharmaceutical,Spot,KES-CPT,72,30
+CUS-7228,Karoo Distributors 3,Pharmaceutical,Spot,KES-DBN,72,60
+CUS-7229,Atlantis Wholesalers 2,Retail,Spot,KES-DBN,72,45
+CUS-7230,Germiston Steel 2,Building materials,Spot,KES-DBN,72,30
+CUS-7231,Drakens Wholesalers 2,Industrial,Spot,KES-CPT,72,30
+CUS-7232,Pinetown Wholesalers 3,Pharmaceutical,Spot,KES-DBN,72,60
+CUS-7233,Alrode Distributors 2,Pharmaceutical,Spot,KES-DBN,72,60
+CUS-7234,Epping Foods 2,FMCG,Spot,KES-JHB,72,30
+CUS-7235,Pinetown Manufacturing 2,Agriculture,Spot,KES-CPT,72,30
+CUS-7236,Alrode Steel 2,Retail,Spot,KES-CPT,72,45
+CUS-7237,Umgeni Supplies 2,Agriculture,Spot,KES-DBN,72,60
+CUS-7238,Cape Union Logistics Partners 2,Agriculture,Spot,KES-DBN,72,45
+CUS-7239,Zambezi Logistics Partners 3,Industrial,Spot,KES-DBN,72,30
+CUS-7240,Isando Supplies 2 (Pty) Ltd,Industrial,Spot,KES-CPT,72,60
+CUS-7241,Drakens Manufacturing 2,FMCG,Spot,KES-JHB,72,30
+CUS-7242,Silverton Holdings 2,Agriculture,Spot,KES-DBN,72,30

@@ -1,0 +1,214 @@
+version: 2
+
+models:
+  - name: sl_depots
+    description: The three hubs Kestrel dispatches from. Coordinates drive the dashboard map.
+    columns:
+      - name: depot_code
+        description: Stable code for the hub, used everywhere as the origin of a lane.
+        data_tests: [unique, not_null]
+      - name: latitude
+        description: Decimal degrees, negative in the southern hemisphere.
+        data_tests: [not_null]
+      - name: longitude
+        description: Decimal degrees.
+        data_tests: [not_null]
+
+  - name: sl_vehicles
+    description: >
+      The fleet, one row per vehicle. Registrations arrive in three spellings across the TMS,
+      the fuel card file and the workshop system, so the same truck can look like three.
+    columns:
+      - name: vehicle_id
+        data_tests: [unique, not_null]
+      - name: registration
+        description: >
+          Punctuation stripped and uppercased, so the three captured spellings resolve to one
+          vehicle. This is the form to match on.
+        data_tests: [not_null]
+      - name: registration_raw
+        description: The plate exactly as captured, kept so an operator can search for what they typed.
+      - name: vehicle_class
+        description: Determines capacity, fuel burn and the rate the vehicle is sold at.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['LDV 1.5t', 'Rigid 8t', 'Rigid 14t', 'Tri-axle 24t', 'Superlink 34t']
+      - name: capacity_kg
+        description: Payload the vehicle is licensed to carry. The denominator of weight utilisation.
+      - name: capacity_m3
+        description: >
+          Deck volume. The denominator of volume utilisation, and the limit that binds first
+          on light, bulky freight.
+
+  - name: sl_drivers
+    description: Drivers and the hub they book on at.
+    columns:
+      - name: driver_id
+        data_tests: [unique, not_null]
+
+  - name: sl_customers
+    description: >
+      Consignees. Names arrive with stray whitespace and an inconsistent Pty Ltd suffix, so
+      the same business can be written more than one way.
+    columns:
+      - name: customer_id
+        description: The aggregation key. Every row here is a separate business.
+        data_tests: [unique, not_null]
+      - name: customer_group
+        description: >
+          Display label with the inconsistent suffix stripped. Not a merge key: two customer
+          ids sharing a group are still two customers.
+      - name: contract_type
+        description: >
+          Dedicated accounts book a two hour delivery window, Contract four, Spot eight. The
+          tighter the promise, the harder a late dispatch breaks it.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Dedicated', 'Contract', 'Spot']
+      - name: sla_hours
+        description: Hours allowed around the planned arrival before a drop counts as late.
+
+  - name: sl_lanes
+    description: Line-haul corridors and metro distribution runs.
+    columns:
+      - name: lane_id
+        data_tests: [unique, not_null]
+      - name: lane_type
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Line-haul', 'Distribution']
+      - name: assumed_backhaul_pct
+        description: >
+          The share of the return leg the rate card assumed would sell. It is the same figure
+          on every lane, which is the root of finding 1: one assumption, never revisited
+          corridor by corridor.
+      - name: distance_km
+        description: Nominal one way distance, and the fallback when a trip GPS distance is faulty.
+
+  - name: sl_trips
+    description: >
+      One row per vehicle movement, including the empty ones. Timestamps arrive in two formats
+      from two systems and a GPS fault leaves a few trips with an unusable distance.
+    columns:
+      - name: trip_id
+        data_tests: [unique, not_null]
+      - name: direction
+        description: Outbound is the loaded leg out of the hub. Return is the leg home, loaded or not.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Outbound', 'Return']
+      - name: distance_km
+        description: Kilometres covered, falling back to the lane nominal where telemetry failed.
+        data_tests: [not_null]
+      - name: distance_is_estimated
+        description: True where the GPS distance was unusable and the lane nominal was substituted.
+      - name: is_empty
+        description: >
+          The truck carried nothing. These legs are the point of this warehouse: the cost is
+          real and, until finding 1, it was charged to nobody.
+      - name: arrive_delay_hours
+        description: Hours later than planned. Negative means early.
+      - name: vehicle_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('sl_vehicles')
+                field: vehicle_id
+      - name: lane_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('sl_lanes')
+                field: lane_id
+
+  - name: sl_consignments
+    description: >
+      One row per drop. Failed deliveries are kept with zero revenue, because the cost of
+      arriving at a door that would not receive is exactly what finding 2 measures.
+    columns:
+      - name: consignment_id
+        data_tests: [unique, not_null]
+      - name: status
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Delivered', 'Failed', 'Returned']
+      - name: weight_kg
+        description: >
+          Weight carried. Where nobody weighed the load, estimated from volume using the
+          median density of everything that was weighed, and flagged.
+      - name: weight_is_estimated
+        description: True where weight was recovered from volume rather than captured.
+      - name: is_on_time
+        description: >
+          Delivered inside the window the customer was promised. A failed drop is not on time:
+          it was never delivered, and counting it as neutral would flatter the service figure
+          that finding 4 turns into a penalty.
+      - name: trip_is_known
+        description: >
+          False for drops quoting a trip absent from the trip file. They are kept so their
+          revenue stays visible.
+      - name: customer_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('sl_customers')
+                field: customer_id
+      - name: trip_id
+        description: The trip that carried this drop.
+        data_tests:
+          # Deliberately a warning, not a failure.
+          #
+          # Around 90 drops quote a trip id absent from the trip file, which is what a real
+          # export looks like when two systems fall out of step. The rows are kept and flagged
+          # rather than dropped, so the revenue stays visible and somebody has to reconcile it.
+          # If this count moves in either direction, something changed upstream and a person
+          # should look. A silent inner join would have hidden all of that.
+          - relationships:
+              arguments:
+                to: ref('sl_trips')
+                field: trip_id
+              config:
+                severity: warn
+
+  - name: sl_trip_costs
+    description: >
+      The finance export: driver hours, tolls and apportioned fixed cost per trip. Fuel is
+      deliberately not here. It arrives separately, against a vehicle rather than a trip,
+      which is why nobody at Kestrel has a single number for what a trip costs.
+    columns:
+      - name: trip_id
+        data_tests:
+          - unique
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('sl_trips')
+                field: trip_id
+
+  - name: sl_fuel_transactions
+    description: >
+      Fuel card draws, after removing double swipes and parsing litres the provider wrote with
+      a decimal comma for part of the window.
+    columns:
+      - name: fuel_txn_id
+        description: Not unique before deduplication, because a double swipe writes the row twice.
+        data_tests: [not_null]
+      - name: litres
+        description: Litres drawn, parsed from a column that lands as text because of the decimal comma.
+        data_tests: [not_null]
+      - name: odometer_is_suspect
+        description: >
+          True where the reading is far below the highest previous one for that vehicle, which
+          is what a dropped digit on capture looks like. Anything using odometer deltas has to
+          exclude these.
+
+  - name: sl_maintenance
+    description: Workshop jobs, their cost and the hours the vehicle was off the road.
+    columns:
+      - name: maintenance_id
+        data_tests: [unique, not_null]

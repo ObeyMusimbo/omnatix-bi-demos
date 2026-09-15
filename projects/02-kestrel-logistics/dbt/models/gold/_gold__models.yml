@@ -1,0 +1,240 @@
+version: 2
+
+models:
+  - name: dim_date
+    description: >
+      The operating calendar, one row per day whether or not a wheel turned. Carries the
+      dispatch day bucket that finding 4 is charted on.
+    columns:
+      - name: date_day
+        data_tests: [unique, not_null]
+      - name: is_month_end_run
+        description: >
+          One of the last two business days of the month, when dispatch batches out everything
+          that has been standing and service falls over.
+      - name: dispatch_day_bucket
+        description: >
+          Normal day, Friday, or Month end run. A day that is both counts as month end run,
+          because that is the harder pressure.
+
+  - name: dim_vehicle
+    description: One row per vehicle, with its hub and whether it is a line-haul unit.
+    columns:
+      - name: vehicle_id
+        data_tests: [unique, not_null]
+      - name: is_heavy
+        description: Superlink or Tri-axle. These carry the kilometres, the fuel bill, and most of the findings.
+
+  - name: dim_driver
+    description: One row per driver.
+    columns:
+      - name: driver_id
+        data_tests: [unique, not_null]
+
+  - name: dim_customer
+    description: One row per consignee.
+    columns:
+      - name: customer_id
+        data_tests: [unique, not_null]
+      - name: is_anchor_account
+        description: >
+          The one account whose contract carries a service penalty clause, worth 2% of monthly
+          spend for every percentage point of on-time performance below 90%.
+
+  - name: dim_lane
+    description: >
+      One row per lane, carrying the coordinates of both ends so the dashboard can draw the
+      network as a map rather than a table.
+    columns:
+      - name: lane_id
+        data_tests: [unique, not_null]
+      - name: origin_lat
+        description: Latitude of the dispatching hub.
+      - name: destination_lat
+        description: Latitude of the destination city.
+      - name: assumed_backhaul_pct
+        description: What the rate card assumed the return leg would sell. Identical on every lane.
+
+  - name: fct_trip
+    description: >
+      One row per vehicle movement, and the first place at Kestrel where the full cost of a
+      trip exists as a single number. Driver hours and tolls come from the finance export,
+      fuel from the card provider against a vehicle rather than a trip, and workshop spend
+      from a system that never heard of a trip at all. Empty legs are included.
+    columns:
+      - name: trip_id
+        data_tests: [unique, not_null]
+      - name: is_empty
+        description: The truck carried nothing on this leg. The cost is identical either way.
+      - name: fuel_cost_zar
+        description: >
+          The fuel draw that vehicle made during this trip, matched by vehicle and time. Zero
+          where no draw fell inside the trip window.
+      - name: maintenance_cost_zar
+        description: >
+          That vehicle's workshop spend for the month, spread across the kilometres it covered
+          that month. Wear belongs to the distance that caused it, not to the day the invoice
+          landed.
+      - name: total_cost_zar
+        description: Fuel plus driver plus tolls plus fixed plus allocated maintenance.
+        data_tests: [not_null]
+      - name: revenue_zar
+        description: Sum of the consignments carried on this trip. Zero on an empty leg.
+        data_tests: [not_null]
+      - name: contribution_zar
+        description: Revenue less total cost, for this leg alone.
+        data_tests: [not_null]
+      - name: weight_utilisation_pct
+        description: Payload carried against what the vehicle is licensed to carry.
+      - name: volume_utilisation_pct
+        description: >
+          Deck space used against deck space available. On light, bulky freight this fills long
+          before weight does, which is finding 5.
+      - name: litres_per_100km
+        description: Fuel burn for this leg. The basis of the class comparison in finding 3.
+      - name: vehicle_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_vehicle')
+                field: vehicle_id
+      - name: lane_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_lane')
+                field: lane_id
+
+  - name: fct_consignment
+    description: >
+      One row per drop, with the trip cost shared across the drops it carried. A failed
+      delivery keeps its full share of the cost, because the diesel was burned getting there.
+    columns:
+      - name: consignment_id
+        data_tests: [unique, not_null]
+      - name: allocated_trip_cost_zar
+        description: >
+          The trip total shared by weight where weight is known, evenly otherwise. This is what
+          a redelivery actually costs.
+
+  - name: fct_round_trip
+    description: >
+      An outbound leg paired with the return it caused. The model finding 1 turns on.
+
+      Kestrel prices a lane one way. Operationally there is no such thing: a truck sent out has
+      to come back, and the diesel, driver and tolls are spent whether or not anything is
+      loaded for the return. Every leg has looked profitable in isolation for years because the
+      outbound is measured alone and the empty return is charged to nobody.
+
+      Legs are matched by lane and order of departure. The nth outbound on a lane belongs with
+      the nth return. Matching on a time window instead fails on the long corridors, where a
+      return can leave days after the outbound it belongs to and after later outbounds have gone.
+    columns:
+      - name: round_trip_id
+        data_tests: [unique, not_null]
+      - name: outbound_only_contribution_zar
+        description: >
+          What the outbound leg appears to earn on its own. This is what current reporting
+          shows, and the gap against contribution_zar is the finding.
+      - name: contribution_zar
+        description: >
+          Revenue from both legs less the cost of both legs. The truth about the corridor.
+      - name: return_was_empty
+        description: The return leg carried nothing.
+
+  - name: mart_lane_economics
+    description: >
+      Finding 1. Lane by period, carrying both ends of the line so the dashboard can colour
+      each corridor on a map by what it actually contributes.
+    columns:
+      - name: actual_backhaul_pct
+        description: Share of return legs that found paying freight.
+      - name: backhaul_shortfall_pts
+        description: >
+          How far short of the rate card assumption this lane runs. The larger this is, the
+          more of the return leg the outbound is quietly paying for.
+      - name: is_backhaul_trap
+        description: >
+          Positive contribution one way, negative as a round trip. The flag the map colours on
+          and the demo opens with.
+
+  - name: mart_failed_deliveries
+    description: >
+      Finding 2. Customer by month. A failed drop earns nothing and still consumed a slot on a
+      truck that had already been paid for, so it never appears in a revenue report.
+    columns:
+      - name: failure_rate_pct
+        description: Share of drops at this customer that failed on first attempt.
+      - name: failed_cost_zar
+        description: Allocated trip cost of the drops that failed. What the wasted journeys cost.
+      - name: is_problem_site
+        description: >
+          More than 15% of drops refused. A site at this level is not having bad luck, it has
+          no booked receiving slot, and that is a conversation rather than an analysis.
+
+  - name: mart_fuel_outliers
+    description: >
+      Finding 3. One row per vehicle, compared against the median of its own class rather than
+      the fleet, because consumption only means something against like work.
+    columns:
+      - name: excess_pct
+        description: How far above the class median this vehicle burns.
+      - name: excess_cost_zar
+        description: >
+          Extra litres per kilometre, over the distance this vehicle actually covered, at the
+          price it actually paid. Diesel moved across the window, so an average price would
+          understate it.
+      - name: is_outlier
+        description: More than 15% above the class median.
+
+  - name: mart_sla_performance
+    description: >
+      Finding 4. Dispatch day bucket by month. Service sits near 96% on a normal day and
+      collapses on Fridays and at month end, when dispatch batches everything into one run.
+      The tightest contracts break hardest, which means the customers paying most for service
+      are the ones failed first.
+    columns:
+      - name: on_time_pct
+        description: Share of drops delivered inside the promised window.
+      - name: penalty_exposure_zar
+        description: >
+          2% of monthly spend for every percentage point below 90% on-time, on the one account
+          whose contract carries the clause. Everyone else's late delivery costs goodwill,
+          which does not appear here.
+
+  - name: mart_load_factor
+    description: >
+      Finding 5. Vehicle class by lane. Freight is billed by weight, but a trailer runs out of
+      deck space long before it runs out of axle allowance on light, bulky cargo.
+    columns:
+      - name: utilisation_gap_pts
+        description: Volume utilisation less weight utilisation. A large positive gap is a truck full of air.
+      - name: air_trips
+        description: Trips over 85% full by volume and under 55% by weight.
+
+  - name: mart_opportunity_bridge
+    description: >
+      The closing visual, and deliberately not a year on year variance bridge.
+
+      Kestrel's findings are standing costs rather than deterioration: empty returns, doors
+      that will not receive, thirsty trucks and a service clause were all just as true last
+      year. Framing them as variance would be dishonest and produces a meaningless residual.
+
+      So this runs the other way. It starts at what Kestrel actually earned and adds what each
+      finding identified, ending at what the same fleet and the same customers could contribute
+      with nothing new bought. The figures are what the findings are worth in full; recovery
+      assumptions belong in the conversation with the client, not baked into a mart.
+    columns:
+      - name: step_order
+        data_tests: [unique, not_null]
+      - name: driver_short
+        description: Label short enough to sit under a waterfall bar without truncating.
+      - name: identified_pct_of_contribution
+        description: >
+          What the findings are worth against what the business actually earns. The number the
+          demo closes on.
+
+  - name: agg_trip_monthly
+    description: >
+      Monthly trading summary by lane type, vehicle class and hub. Small enough to ship to a
+      browser whole, which is what the dashboard overview reads.

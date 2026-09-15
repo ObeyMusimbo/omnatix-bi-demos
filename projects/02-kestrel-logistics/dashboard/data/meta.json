@@ -1,0 +1,51 @@
+{
+  "built_at": "2026-09-15T23:24:49+00:00",
+  "data_from": "2024-09-02",
+  "data_through": "2026-09-01",
+  "trips": 50652,
+  "kilometres": 23979869,
+  "tables": {
+    "mart_opportunity_bridge": {
+      "rows": 6,
+      "bytes": 3955
+    },
+    "mart_lane_economics": {
+      "rows": 50,
+      "bytes": 10529
+    },
+    "mart_failed_deliveries": {
+      "rows": 10431,
+      "bytes": 121696
+    },
+    "mart_fuel_outliers": {
+      "rows": 124,
+      "bytes": 7524
+    },
+    "mart_sla_performance": {
+      "rows": 144,
+      "bytes": 5930
+    },
+    "mart_load_factor": {
+      "rows": 68,
+      "bytes": 6820
+    },
+    "agg_trip_monthly": {
+      "rows": 505,
+      "bytes": 27453
+    },
+    "dim_lane": {
+      "rows": 29,
+      "bytes": 4540
+    },
+    "dim_vehicle": {
+      "rows": 124,
+      "bytes": 4361
+    },
+    "dim_customer": {
+      "rows": 242,
+      "bytes": 5553
+    }
+  },
+  "currency": "ZAR",
+  "vat": "excluded"
+}
