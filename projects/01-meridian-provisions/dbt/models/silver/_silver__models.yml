@@ -1,0 +1,436 @@
+version: 2
+
+models:
+
+  - name: sl_products
+    description: >
+      Everything Meridian sells, one row per SKU, with the pack, brand and category labels
+      tidied so they group correctly in a report. Two source problems are corrected here:
+      the category label arrived padded with spaces, which split single categories into
+      several, and seven products reached us with no unit cost at all. Those seven are
+      filled in from the typical cost-to-list relationship of their own category and are
+      individually flagged, so margin can still be calculated without anyone mistaking an
+      estimate for a figure the business actually measured.
+    columns:
+      - name: sku
+        description: Meridian's own code for a sellable pack. The identifier every other table points back to.
+        data_tests:
+          - unique
+          - not_null
+      - name: product_name
+        description: The full pack description as it appears on a price list or invoice.
+        data_tests:
+          - not_null
+      - name: brand
+        description: The brand the pack is sold under, used to roll results up to a brand owner.
+        data_tests:
+          - not_null
+      - name: category
+        description: >
+          The broad merchandising group, such as Beverages or Household Care. Whitespace has
+          been stripped, so each category now appears once rather than two or three times.
+        data_tests:
+          - not_null
+      - name: subcategory
+        description: The finer split within a category, for example Bottled Water inside Beverages.
+        data_tests:
+          - not_null
+      - name: pack_size
+        description: The selling configuration, such as a 12-bottle case, that distinguishes variants of one product.
+      - name: weight_kg
+        description: Shipping weight of one selling unit in kilograms, used for freight and pallet work.
+      - name: unit_cost_zar
+        description: >
+          What one unit costs Meridian to buy, in rand. Where the source was blank this is an
+          estimate rather than a measured cost, so check unit_cost_is_imputed before relying on it.
+        data_tests:
+          - not_null
+      - name: unit_cost_is_imputed
+        description: >
+          True when the cost above was estimated by this pipeline because the source left it
+          blank, false when it came from the supplier record. Seven products are expected to
+          be true. Exclude these if you need cost accurate to the cent.
+        data_tests:
+          - not_null
+      - name: list_price_zar
+        description: The standard rand price before any customer-specific discount or rebate.
+        data_tests:
+          - not_null
+      - name: status
+        description: Whether the product is still actively sold or has been delisted.
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: ['Active', 'Discontinued']
+      - name: is_discontinued
+        description: >
+          A plain true/false version of status, so reports can exclude delisted products
+          without matching on text.
+        data_tests:
+          - not_null
+      - name: launch_date
+        description: When the product first became available to order, useful for separating new lines from established ones.
+        data_tests:
+          - not_null
+
+  - name: sl_customers
+    description: >
+      The trade accounts Meridian sells to, one row per customer, with their commercial terms.
+      Two source problems are corrected here: account names arrived padded with spaces, and the
+      trade channel was written in three different casings, which would otherwise have reported
+      the same channel as three separate ones. Channel is mapped to a fixed list rather than
+      simply re-capitalised, so a genuinely new channel is caught by a failing test instead of
+      quietly appearing in the results.
+    columns:
+      - name: customer_id
+        description: The account code for a trading customer. Orders reference this.
+        data_tests:
+          - unique
+          - not_null
+      - name: customer_name
+        description: The trading name of the outlet or account, trimmed of stray spacing.
+        data_tests:
+          - not_null
+      - name: channel
+        description: >
+          The route to market the account belongs to, which is the main way the business
+          compares performance. One of four values regardless of how the source wrote it.
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: ['Modern Trade', 'General Trade', 'Wholesale', 'HoReCa']
+      - name: region
+        description: The South African province the account trades in.
+        data_tests:
+          - not_null
+      - name: city
+        description: The town or city of the account, for route and territory work.
+      - name: credit_terms_days
+        description: How many days the account is allowed before payment falls due.
+        data_tests:
+          - not_null
+      - name: rep_id
+        description: The sales representative who owns the relationship with this account.
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('sl_sales_reps')
+              field: rep_id
+      - name: rebate_pct
+        description: The percentage rebate agreed with the account, paid back after the sale and a real cost to margin.
+        data_tests:
+          - not_null
+      - name: onboarded_date
+        description: When the account first started trading with Meridian.
+        data_tests:
+          - not_null
+
+  - name: sl_sales_reps
+    description: >
+      The field sales team, one row per representative, with the territory and team each
+      belongs to. Used to attribute orders to a person and to compare territories fairly.
+    columns:
+      - name: rep_id
+        description: The staff code for a sales representative.
+        data_tests:
+          - unique
+          - not_null
+      - name: rep_name
+        description: The representative's full name, for reports people actually read.
+        data_tests:
+          - not_null
+      - name: region
+        description: The province the representative covers.
+        data_tests:
+          - not_null
+      - name: team
+        description: Which selling team they belong to, such as Key Accounts or Trade Sales.
+        data_tests:
+          - not_null
+
+  - name: sl_warehouses
+    description: >
+      Meridian's three distribution centres. Small, but it gives orders and stock a proper
+      site name and province instead of a bare code.
+    columns:
+      - name: warehouse_code
+        description: The short code identifying a distribution centre.
+        data_tests:
+          - unique
+          - not_null
+      - name: warehouse_name
+        description: The readable name of the site, for report headings and maps.
+        data_tests:
+          - not_null
+      - name: region
+        description: The province the distribution centre serves from.
+        data_tests:
+          - not_null
+
+  - name: sl_orders
+    description: >
+      Order headers, one row per order, carrying who ordered, when, from which site and on what
+      terms. Two source problems are corrected here: order dates arrived in two different
+      formats, with roughly three in ten written day-first, which a naive load would have
+      discarded outright; and cancelled orders are marked rather than deleted, so they can still
+      be counted and explained while being kept out of revenue.
+    columns:
+      - name: order_id
+        description: The order number. The key that lines, freight and rebate all hang from.
+        data_tests:
+          - unique
+          - not_null
+      - name: order_date
+        description: >
+          The date the order was placed, now a real date regardless of which of the two source
+          formats it arrived in. This drives every trend and period comparison.
+        data_tests:
+          - not_null
+      - name: customer_id
+        description: The account that placed the order.
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('sl_customers')
+              field: customer_id
+      - name: warehouse_code
+        description: The distribution centre the order was served from.
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('sl_warehouses')
+              field: warehouse_code
+      - name: rep_id
+        description: The representative credited with the order.
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('sl_sales_reps')
+              field: rep_id
+      - name: order_status
+        description: How the order ended up, whether delivered, returned, or cancelled before it shipped.
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: ['Delivered', 'Returned', 'Cancelled']
+      - name: payment_terms_days
+        description: >
+          The payment window agreed for this particular order, which can differ from the
+          account's standing terms.
+        data_tests:
+          - not_null
+      - name: is_cancelled
+        description: >
+          True for orders that were cancelled before shipping. Defined once here so every
+          revenue measure excludes them identically, rather than each report inventing its
+          own filter and quietly disagreeing with the others.
+        data_tests:
+          - not_null
+
+  - name: sl_order_lines
+    description: >
+      What was actually sold, one row per order line, and the busiest table in the warehouse.
+      Four source problems are corrected here. Around half a percent of lines were exact
+      duplicates and are removed. Some revenue figures were written with thousand separators
+      and are parsed into real numbers, and note that these two problems are entangled, because
+      the duplicate pairs differ only in that formatting, so the values must be parsed before
+      the duplicates can be seen at all. Returns arrive as negative quantities and are
+      deliberately kept and flagged, not filtered, because they genuinely reduce what the
+      business earned. Finally, a small number of lines quote products that are missing from the
+      product master; those are kept and flagged too, so the revenue stays visible instead of
+      vanishing inside a join.
+    columns:
+      - name: order_line_id
+        description: >
+          The line number within an order. Unique here, though not in the source, where some
+          lines appeared twice under the same id.
+        data_tests:
+          - unique
+          - not_null
+      - name: order_id
+        description: The order this line belongs to.
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('sl_orders')
+              field: order_id
+      - name: sku
+        description: >
+          The product sold on this line. A small number of lines quote products that are not in
+          the product master, so use sku_is_known to tell them apart.
+        data_tests:
+          - not_null
+          # This relationship test is EXPECTED TO WARN, and that is the entire point of it.
+          # About 140 lines reference SKUs in the MP-9xxx range that were never in the product
+          # master (planted defect 8). It is set to warn rather than error so the pipeline still
+          # runs end to end, while every dbt run prints a live count of the referential break.
+          # The alternative, an inner join somewhere downstream, would make that revenue
+          # disappear silently, which is exactly the failure mode this layer exists to prevent.
+          # If this warning ever reaches zero the source has been fixed; if it grows, something
+          # upstream has got worse. Either way it should be looked at, never suppressed.
+          - relationships:
+              to: ref('sl_products')
+              field: sku
+              config:
+                severity: warn
+      - name: quantity
+        description: >
+          Units sold on this line. Negative on returns, which is intentional, because these are
+          real movements of stock back from the customer and netting them off is usually correct.
+        data_tests:
+          - not_null
+      - name: unit_price_zar
+        description: The rand price charged per unit on this line, before the line discount.
+        data_tests:
+          - not_null
+      - name: discount_pct
+        description: >
+          The discount applied to this line, on a 0 to 100 scale, so 10.29 means 10.29 percent.
+          Note this differs from the fractional scale used in sl_promotions.
+        data_tests:
+          - not_null
+      - name: line_revenue_zar
+        description: >
+          What the line is worth in rand, negative on returns. Figures written with thousand
+          separators in the source have been parsed properly rather than dropped.
+        data_tests:
+          - not_null
+      - name: promo_id
+        description: >
+          The promotion this line ran under, or empty for the large majority of lines that were
+          sold on normal terms.
+        data_tests:
+          - relationships:
+              to: ref('sl_promotions')
+              field: promo_id
+      - name: is_return
+        description: >
+          True where stock came back from the customer. Returns are kept in the table rather
+          than filtered out, because removing them would overstate what the business earned.
+        data_tests:
+          - not_null
+      - name: sku_is_known
+        description: >
+          False where the line quotes a product that is missing from the product master. These
+          lines carry real revenue, so they are kept and marked rather than dropped, and
+          anything that joins to product detail should decide deliberately how to treat them.
+        data_tests:
+          - not_null
+
+  - name: sl_cost_allocations
+    description: >
+      The costs of serving each order, namely getting it there, picking it, and the rebate paid
+      back to the customer afterwards. One row per order. These are the figures that turn a
+      healthy-looking gross margin into the real one. Rebate amounts written with thousand
+      separators in the source are parsed properly here; left as they were they would have
+      become blanks and quietly flattered profitability.
+    columns:
+      - name: order_id
+        description: The order these costs belong to. One row per order, so this joins cleanly to the header.
+        data_tests:
+          - unique
+          - not_null
+          - relationships:
+              to: ref('sl_orders')
+              field: order_id
+      - name: freight_cost_zar
+        description: The rand cost of physically delivering the order, typically the largest cost to serve.
+        data_tests:
+          - not_null
+      - name: handling_cost_zar
+        description: The rand cost of picking and packing the order in the distribution centre.
+        data_tests:
+          - not_null
+      - name: rebate_amount_zar
+        description: >
+          The rand rebate paid back to the customer on this order. Money that has genuinely left
+          the business, so it belongs in any honest margin calculation.
+        data_tests:
+          - not_null
+
+  - name: sl_promotions
+    description: >
+      The promotional calendar, one row per promotion, covering what was run, on which product,
+      over what dates and who paid for it. Lets promotional trading be separated from normal
+      trading, and shows whether supplier-funded activity behaves differently from the activity
+      Meridian funds itself.
+    columns:
+      - name: promo_id
+        description: The reference for a promotion, which order lines point back to.
+        data_tests:
+          - unique
+          - not_null
+      - name: promo_name
+        description: The readable name of the promotion as the commercial team would recognise it.
+        data_tests:
+          - not_null
+      - name: sku
+        description: The product the promotion applies to.
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('sl_products')
+              field: sku
+      - name: mechanic
+        description: How the offer worked at the shelf, for example a straight percentage off or a multibuy.
+        data_tests:
+          - not_null
+      - name: start_date
+        description: The first day the offer was live.
+        data_tests:
+          - not_null
+      - name: end_date
+        description: The last day the offer was live.
+        data_tests:
+          - not_null
+      - name: planned_discount_pct
+        description: >
+          The discount the promotion was designed to give, as a fraction, so 0.15 means 15
+          percent. Worth comparing against the discount actually granted on the lines, which is
+          recorded on a 0 to 100 scale.
+        data_tests:
+          - not_null
+      - name: funding_source
+        description: >
+          Whether the supplier contributed to the cost of the promotion or Meridian carried it
+          alone, which changes what the activity really cost.
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: ['Supplier co-funded', 'Meridian funded']
+
+  - name: sl_inventory_snapshots
+    description: >
+      Stock positions taken twice a week, with one row per snapshot date, site and product.
+      Read alongside sales it shows how long stock would last and where a line is at risk of
+      running out or of sitting too long. The grain is the three columns together; no single
+      column identifies a row on its own.
+    columns:
+      - name: snapshot_date
+        description: The day the stock count was taken. Captured every Monday and Thursday.
+        data_tests:
+          - not_null
+      - name: warehouse_code
+        description: The distribution centre holding the stock.
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('sl_warehouses')
+              field: warehouse_code
+      - name: sku
+        description: The product being counted.
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('sl_products')
+              field: sku
+      - name: units_on_hand
+        description: Units physically available to sell at that site on that day.
+        data_tests:
+          - not_null
+      - name: units_in_transit
+        description: >
+          Units already on their way to the site. This stock is committed but not yet sellable,
+          so cover looks worse than it really is if it is ignored.
+        data_tests:
+          - not_null

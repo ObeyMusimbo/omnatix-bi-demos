@@ -1,0 +1,29 @@
+version: 2
+
+sources:
+  - name: meridian_raw
+    description: >
+      The CSV drops as they land from Meridian's ERP, WMS and finance exports. Read in place
+      from disk — nothing is copied, nothing is changed. All nine files are synthetic.
+    schema: main
+    meta:
+      external_location: "{{ var('raw_path') }}/{name}.csv"
+    tables:
+      - name: orders
+        description: Order headers. order_date arrives in two different formats.
+      - name: order_lines
+        description: Order lines. Contains duplicates, returns as negative quantities, and orphan SKUs.
+      - name: products
+        description: Product master. Some unit_cost values are blank.
+      - name: customers
+        description: Trade customers. channel casing is inconsistent; names carry stray whitespace.
+      - name: sales_reps
+        description: Sales representatives and their territories.
+      - name: warehouses
+        description: The three distribution centres.
+      - name: cost_allocations
+        description: Order-level freight, handling and customer rebate. The key to finding 1.
+      - name: promotions
+        description: Promotion calendar, one row per promotion and SKU.
+      - name: inventory_snapshots
+        description: Stock on hand by SKU and warehouse, captured every Monday and Thursday.

@@ -1,0 +1,132 @@
+sku,product_name,brand,category,subcategory,pack_size,weight_kg,unit_cost,list_price,status,launch_date
+MP-1001,Cascade Springs Still 12x1.5L,Cascade Springs,  Beverages,Bottled Water,Still 12x1.5L,19.2,111.6,146.7,Active,2022-06-14
+MP-1002,Cascade Springs Still 6x5L,Cascade Springs,Beverages,Bottled Water,Still 6x5L,30.6,161.1,212.4,Active,2022-04-24
+MP-1003,Cascade Springs Sparkling 12x1.5L,Cascade Springs,Beverages,Bottled Water,Sparkling 12x1.5L,19.4,117.9,154.8,Active,2022-03-31
+MP-1004,Cascade Springs Still 24x500ml,Cascade Springs,Beverages,Bottled Water,Still 24x500ml,12.8,86.4,115.2,Active,2022-05-15
+MP-1005,Zesta Orange 12x1L,Zesta,Beverages,Juice,Orange 12x1L,13.1,156.6,233.1,Active,2022-11-03
+MP-1006,Zesta Mango 12x1L,Zesta,Beverages,Juice,Mango 12x1L,13.1,160.2,237.6,Active,2020-12-15
+MP-1007,Zesta Apple 24x330ml,Zesta,Beverages,Juice,Apple 24x330ml,9.4,127.8,196.2,Active,2024-02-12
+MP-1008,Zesta Tropical 6x2L,Zesta,Beverages,Juice,Tropical 6x2L,13,144.9,221.4,Active,2020-02-07
+MP-1009,Kopje Cola Original 24x330ml,Kopje Cola,Beverages,Carbonates,Original 24x330ml,9.8,100.8,161.1,Active,2019-08-25
+MP-1010,Kopje Cola Zero 24x330ml,Kopje Cola,Beverages,Carbonates,Zero 24x330ml,9.8,102.6,162.9,Active,2020-10-10
+MP-1011,Kopje Cola Original 12x2L,Kopje Cola,Beverages,Carbonates,Original 12x2L,25.4,167.4,255.6,Active,2018-08-29
+MP-1012,Kopje Cola Lemon 24x330ml,Kopje Cola,Beverages,Carbonates,Lemon 24x330ml,9.8,101.7,162,Active,2019-10-21
+MP-1013,Dawnbrew Tea 100s x12,Dawnbrew,Beverages,Hot Beverages,Tea 100s x12,4.6,191.7,307.8,Active,2023-05-24
+MP-1014,Dawnbrew Instant Coffee 200g x12,Dawnbrew,Beverages,Hot Beverages,Instant Coffee 200g x12,3.1,345.6,553.5,Active,2018-11-26
+MP-1015,Dawnbrew Rooibos 80s x12,Dawnbrew,Beverages,Hot Beverages,Rooibos 80s x12,3.8,177.3,286.2,Active,2023-12-15
+MP-1016,Brightwash Powder 2kg x6,Brightwash,Household Care,Laundry,Powder 2kg x6,12.4,189.9,257.4,Active,2023-07-09
+MP-1017,Brightwash Powder 5kg x4,Brightwash,Household Care,Laundry,Powder 5kg x4,20.6,304.2,406.8,Active,2021-09-08
+MP-1018,Brightwash Liquid 2L x6,Brightwash,  Household Care,Laundry,Liquid 2L x6,13,224.1,306.9,Active,2022-08-08
+MP-1019,Brightwash Fabric Softener 2L x6,Brightwash,Household Care,Laundry,Fabric Softener 2L x6,13,174.6,245.7,Active,2021-10-06
+MP-1020,Citrona Liquid 750ml x12,Citrona,Household Care,Dishwashing,Liquid 750ml x12,9.8,145.8,223.2,Active,2023-10-05
+MP-1021,Citrona Liquid 2L x6,Citrona,Household Care,Dishwashing,Liquid 2L x6,13,180.9,275.4,Active,2021-07-07
+MP-1022,Citrona Scourers 10pk x24,Citrona,Household Care,Dishwashing,Scourers 10pk x24,3.2,111.6,179.1,Active,2021-09-27
+MP-1023,Halo Shine Glass 400ml x12,Halo Shine,Household Care,Glass & Surface Aerosol,Glass 400ml x12,6.1,167.4,246.6,Discontinued,2020-03-24
+MP-1024,Halo Shine Multi 400ml x12,Halo Shine,Household Care,Glass & Surface Aerosol,Multi 400ml x12,6.1,170.1,250.2,Discontinued,2023-09-17
+MP-1025,Halo Shine Furniture 300ml x12,Halo Shine,Household Care,Glass & Surface Aerosol,Furniture 300ml x12,4.9,154.8,230.4,Discontinued,2020-03-08
+MP-1026,Halo Shine Kitchen 400ml x12,Halo Shine,Household Care,Glass & Surface Aerosol,Kitchen 400ml x12,6.1,171.9,252.9,Discontinued,2021-07-19
+MP-1027,Verdelle Bath Soap 6x175g x8,Verdelle,Personal Care,Bath & Body,Bath Soap 6x175g x8,8.6,142.2,228.6,Active,2022-09-30
+MP-1028,Verdelle Body Wash 400ml x12,Verdelle,Personal Care,Bath & Body,Body Wash 400ml x12,5.4,236.7,377.1,Active,2019-10-21
+MP-1029,Verdelle Lotion 400ml x12,Verdelle,Personal Care,Bath & Body,Lotion 400ml x12,5.4,216.9,347.4,Active,2021-03-17
+MP-1030,Verdelle Handwash 500ml x12,Verdelle,Personal Care,Bath & Body,Handwash 500ml x12,6.4,195.3,313.2,Active,2018-10-24
+MP-1031,Minta Toothpaste 100ml x24,Minta,Personal Care,Oral Care,Toothpaste 100ml x24,3.1,255.6,415.8,Active,2021-02-06
+MP-1032,Minta Toothbrush 12pk x12,Minta,Personal Care,Oral Care,Toothbrush 12pk x12,1.9,176.4,294.3,Active,2024-01-23
+MP-1033,Minta Mouthwash 500ml x12,Minta,Personal Care,Oral Care,Mouthwash 500ml x12,6.6,243.9,391.5,Active,2019-01-01
+MP-1034,Sunveld Maize Meal 10kg,Sunveld,Dry Goods,Staples,Maize Meal 10kg,10.3,80.1,105.3,Active,2019-05-27
+MP-1035,Sunveld Maize Meal 5kg x2,Sunveld,Dry Goods,Staples,Maize Meal 5kg x2,10.3,82.8,108.9,Active,2024-02-13
+MP-1036,Sunveld Rice 5kg x4,Sunveld,Dry Goods,Staples,Rice 5kg x4,20.4,241.2,318.6,Active,2023-07-20
+MP-1037,Sunveld Flour 2.5kg x8,Sunveld,Dry Goods,Staples,Flour 2.5kg x8,20.3,170.1,225.9,Active,2021-06-11
+MP-1038,Pantri Pasta 500g x20,Pantri,Dry Goods,Pasta & Sauce,Pasta 500g x20,10.2,131.4,207.9,Active,2021-12-20
+MP-1039,Pantri Tomato Sauce 700g x12,Pantri,Dry Goods,Pasta & Sauce,Tomato Sauce 700g x12,8.8,155.7,244.8,Active,2023-02-05
+MP-1040,Pantri Baked Beans 410g x24,Pantri,Dry Goods,Pasta & Sauce,Baked Beans 410g x24,10.1,,232.2,Active,2019-06-06
+MP-1041,Pantri Cooking Oil 2L x6,Pantri,Dry Goods,Pasta & Sauce,Cooking Oil 2L x6,11.4,204.3,284.4,Active,2020-06-03
+MP-1042,Meadowvale Full Cream Milk 6x1L,Meadowvale,Dairy & Chilled,Milk & Yoghurt,Full Cream Milk 6x1L,6.3,70.2,98.1,Active,2021-06-09
+MP-1043,Meadowvale Low Fat Milk 6x1L,Meadowvale,Dairy & Chilled,Milk & Yoghurt,Low Fat Milk 6x1L,6.3,69.3,97.2,Active,2021-08-28
+MP-1044,Meadowvale Yoghurt 1kg x6,Meadowvale,Dairy & Chilled,Milk & Yoghurt,Yoghurt 1kg x6,6.4,125.1,192.6,Active,2019-06-13
+MP-1045,Meadowvale Spread 500g x12,Meadowvale,Dairy & Chilled,Milk & Yoghurt,Spread 500g x12,6.3,163.8,258.3,Active,2019-04-16
+MP-1046,Crunchpop Chips 125g x24,Crunchpop,Snacks & Confectionery,Savoury Snacks,Chips 125g x24,3.2,178.2,302.4,Active,2021-12-18
+MP-1047,Crunchpop Nuts 200g x18,Crunchpop,Snacks & Confectionery,Savoury Snacks,Nuts 200g x18,3.8,221.4,370.8,Active,2019-04-20
+MP-1048,Crunchpop Popcorn 100g x24,Crunchpop,  Snacks & Confectionery,Savoury Snacks,Popcorn 100g x24,2.6,147.6,260.1,Active,2019-01-20
+MP-1049,Sweetwell Biscuits 200g x24,Sweetwell,Snacks & Confectionery,Confectionery,Biscuits 200g x24,5.1,191.7,322.2,Active,2019-06-29
+MP-1050,Sweetwell Sweets 150g x30,Sweetwell,Snacks & Confectionery,Confectionery,Sweets 150g x30,4.8,168.3,291.6,Active,2019-07-29
+MP-1051,Sweetwell Chocolate 90g x36,Sweetwell,Snacks & Confectionery,Confectionery,Chocolate 90g x36,3.4,251.1,423.9,Active,2020-01-02
+MP-1052,Little Fern Nappies M 44s x4,Little Fern,Baby & Infant,Baby Care,Nappies M 44s x4,9.2,374.4,574.2,Active,2020-11-14
+MP-1053,Little Fern Nappies L 40s x4,Little Fern,Baby & Infant,Baby Care,Nappies L 40s x4,9.6,386.1,588.6,Active,2020-08-20
+MP-1054,Little Fern Wipes 80s x12,Little Fern,Baby & Infant,Baby Care,Wipes 80s x12,7.1,201.6,324.9,Active,2022-08-03
+MP-1055,Little Fern Baby Lotion 400ml x12,Little Fern,Baby & Infant,Baby Care,Baby Lotion 400ml x12,5.4,241.2,380.7,Active,2022-12-03
+MP-1056,Softleaf Toilet Tissue 9pk x6,Softleaf,Paper & Hygiene,Paper Products,Toilet Tissue 9pk x6,8.4,207.9,298.8,Active,2022-09-17
+MP-1057,Softleaf Kitchen Towel 2pk x12,Softleaf,Paper & Hygiene,Paper Products,Kitchen Towel 2pk x12,7.2,167.4,255.6,Active,2023-07-20
+MP-1058,Softleaf Facial Tissue 150s x24,Softleaf,Paper & Hygiene,Paper Products,Facial Tissue 150s x24,6.1,183.6,288.9,Active,2021-04-01
+MP-1059,Softleaf Serviettes 100s x20,Softleaf,Paper & Hygiene ,Paper Products,Serviettes 100s x20,5.4,133.2,212.4,Active,2019-07-14
+MP-1060,Zesta Guava Orange 12x1L,Zesta,  Beverages,Juice,Guava Orange 12x1L,13.1,154.81,223.33,Active,2021-08-31
+MP-1061,Zesta Pineapple Orange 12x1L,Zesta,Beverages,Juice,Pineapple Orange 12x1L,13.1,168.07,257.87,Active,2022-01-22
+MP-1062,Zesta Mixed Berry Orange 12x1L,Zesta,Beverages,Juice,Mixed Berry Orange 12x1L,13.1,,222.18,Active,2022-11-03
+MP-1063,Zesta Guava Mango 12x1L,Zesta,Beverages,Juice,Guava Mango 12x1L,13.1,143.41,203.77,Active,2023-12-04
+MP-1064,Zesta Pineapple Mango 12x1L,Zesta,Beverages,Juice,Pineapple Mango 12x1L,13.1,161.46,248.53,Active,2021-11-08
+MP-1065,Zesta Mixed Berry Mango 12x1L,Zesta,Beverages,Juice,Mixed Berry Mango 12x1L,13.1,163.66,244.41,Active,2023-04-20
+MP-1066,Kopje Cola Cream Soda Original 24x330ml,Kopje Cola,Beverages,Carbonates,Cream Soda Original 24x330ml,9.8,110.85,177.67,Active,2021-01-22
+MP-1067,Kopje Cola Ginger Original 24x330ml,Kopje Cola,Beverages,Carbonates,Ginger Original 24x330ml,9.8,102.26,157.14,Active,2024-01-22
+MP-1068,Kopje Cola Orange Original 24x330ml,Kopje Cola,Beverages,Carbonates,Orange Original 24x330ml,9.8,100.03,159.47,Active,2022-06-17
+MP-1069,Kopje Cola Cream Soda Zero 24x330ml,Kopje Cola,Beverages,Carbonates,Cream Soda Zero 24x330ml,9.8,,157.09,Active,2021-06-04
+MP-1070,Kopje Cola Ginger Zero 24x330ml,Kopje Cola,Beverages,Carbonates,Ginger Zero 24x330ml,9.8,98.6,155.68,Active,2024-06-09
+MP-1071,Kopje Cola Orange Zero 24x330ml,Kopje Cola,  Beverages,Carbonates,Orange Zero 24x330ml,9.8,104.86,170.11,Active,2021-05-21
+MP-1072,Dawnbrew Decaf Tea 100s x12,Dawnbrew,Beverages,Hot Beverages,Decaf Tea 100s x12,4.6,197.15,309.22,Active,2023-12-06
+MP-1073,Dawnbrew Strong Tea 100s x12,Dawnbrew,Beverages,Hot Beverages,Strong Tea 100s x12,4.6,201.91,321.22,Active,2020-12-06
+MP-1074,Dawnbrew Decaf Instant Coffee 200g x12,Dawnbrew,Beverages ,Hot Beverages,Decaf Instant Coffee 200g x12,3.1,353.85,579.76,Active,2023-11-12
+MP-1075,Dawnbrew Strong Instant Coffee 200g x12,Dawnbrew,Beverages,Hot Beverages,Strong Instant Coffee 200g x12,3.1,350.4,562.92,Active,2023-10-23
+MP-1076,Brightwash Spring Fresh Powder 2kg x6,Brightwash,  Household Care,Laundry,Spring Fresh Powder 2kg x6,12.4,200.74,266.32,Active,2024-03-24
+MP-1077,Brightwash Floral Powder 2kg x6,Brightwash,Household Care,Laundry,Floral Powder 2kg x6,12.4,189.17,253.91,Active,2022-01-28
+MP-1078,Brightwash Spring Fresh Powder 5kg x4,Brightwash,Household Care,Laundry,Spring Fresh Powder 5kg x4,20.6,272.05,361.88,Active,2024-06-30
+MP-1079,Brightwash Floral Powder 5kg x4,Brightwash,Household Care,Laundry,Floral Powder 5kg x4,20.6,291.9,381.85,Active,2022-06-30
+MP-1080,Citrona Lemon Liquid 750ml x12,Citrona,Household Care,Dishwashing,Lemon Liquid 750ml x12,9.8,136.49,214.32,Active,2024-02-17
+MP-1081,Citrona Green Apple Liquid 750ml x12,Citrona,  Household Care,Dishwashing,Green Apple Liquid 750ml x12,9.8,138.56,216.42,Active,2024-04-11
+MP-1082,Citrona Lemon Liquid 2L x6,Citrona,Household Care ,Dishwashing,Lemon Liquid 2L x6,13,174.28,258.45,Active,2023-03-03
+MP-1083,Citrona Green Apple Liquid 2L x6,Citrona,Household Care,Dishwashing,Green Apple Liquid 2L x6,13,179.22,271.59,Active,2022-07-21
+MP-1084,Halo Shine Lemon Glass 400ml x12,Halo Shine,Household Care,Glass & Surface Aerosol,Lemon Glass 400ml x12,6.1,160.34,236.43,Discontinued,2023-02-24
+MP-1085,Halo Shine Ocean Glass 400ml x12,Halo Shine,Household Care,Glass & Surface Aerosol,Ocean Glass 400ml x12,6.1,170.08,243.45,Discontinued,2021-03-26
+MP-1086,Halo Shine Lemon Multi 400ml x12,Halo Shine,Household Care,Glass & Surface Aerosol,Lemon Multi 400ml x12,6.1,,260.45,Discontinued,2023-04-02
+MP-1087,Halo Shine Ocean Multi 400ml x12,Halo Shine,Household Care,Glass & Surface Aerosol,Ocean Multi 400ml x12,6.1,151.2,223.97,Discontinued,2020-12-14
+MP-1088,Verdelle Aloe Bath Soap 6x175g x8,Verdelle,Personal Care,Bath & Body,Aloe Bath Soap 6x175g x8,8.6,148.85,227.33,Active,2022-02-06
+MP-1089,Verdelle Coconut Bath Soap 6x175g x8,Verdelle,Personal Care,Bath & Body,Coconut Bath Soap 6x175g x8,8.6,139.94,227.8,Active,2022-11-13
+MP-1090,Verdelle Lavender Bath Soap 6x175g x8,Verdelle,Personal Care,Bath & Body,Lavender Bath Soap 6x175g x8,8.6,144.77,232.74,Active,2022-12-03
+MP-1091,Verdelle Aloe Body Wash 400ml x12,Verdelle,  Personal Care,Bath & Body,Aloe Body Wash 400ml x12,5.4,246.41,404.71,Active,2021-12-16
+MP-1092,Verdelle Coconut Body Wash 400ml x12,Verdelle,Personal Care,Bath & Body,Coconut Body Wash 400ml x12,5.4,,375.33,Active,2022-09-23
+MP-1093,Verdelle Lavender Body Wash 400ml x12,Verdelle,Personal Care,Bath & Body,Lavender Body Wash 400ml x12,5.4,248.91,395.04,Active,2023-11-18
+MP-1094,Minta Whitening Toothpaste 100ml x24,Minta,Personal Care,Oral Care,Whitening Toothpaste 100ml x24,3.1,237.07,381.68,Active,2021-08-13
+MP-1095,Minta Herbal Toothpaste 100ml x24,Minta,Personal Care,Oral Care,Herbal Toothpaste 100ml x24,3.1,248.91,401.24,Active,2023-03-23
+MP-1096,Minta Whitening Toothbrush 12pk x12,Minta,  Personal Care,Oral Care,Whitening Toothbrush 12pk x12,1.9,178.34,292.57,Active,2021-04-20
+MP-1097,Minta Herbal Toothbrush 12pk x12,Minta,Personal Care,Oral Care,Herbal Toothbrush 12pk x12,1.9,163.99,270.9,Active,2022-02-16
+MP-1098,Sunveld Premium Maize Meal 10kg,Sunveld,Dry Goods,Staples,Premium Maize Meal 10kg,10.3,76.7,101.28,Active,2022-11-16
+MP-1099,Sunveld Value Maize Meal 10kg,Sunveld,Dry Goods,Staples,Value Maize Meal 10kg,10.3,79,104.44,Active,2023-09-06
+MP-1100,Sunveld Premium Maize Meal 5kg x2,Sunveld,Dry Goods,Staples,Premium Maize Meal 5kg x2,10.3,82.18,104.64,Active,2023-08-30
+MP-1101,Sunveld Value Maize Meal 5kg x2,Sunveld,Dry Goods,Staples,Value Maize Meal 5kg x2,10.3,,111.29,Active,2023-08-23
+MP-1102,Pantri Wholewheat Pasta 500g x20,Pantri,Dry Goods,Pasta & Sauce,Wholewheat Pasta 500g x20,10.2,122.75,188.25,Active,2021-08-11
+MP-1103,Pantri Chilli Pasta 500g x20,Pantri,Dry Goods,Pasta & Sauce,Chilli Pasta 500g x20,10.2,128.92,198.46,Active,2024-01-07
+MP-1104,Pantri Wholewheat Tomato Sauce 700g x12,Pantri,  Dry Goods,Pasta & Sauce,Wholewheat Tomato Sauce 700g x12,8.8,153.87,236.16,Active,2023-02-18
+MP-1105,Pantri Chilli Tomato Sauce 700g x12,Pantri,Dry Goods,Pasta & Sauce,Chilli Tomato Sauce 700g x12,8.8,153.52,240.12,Active,2021-01-13
+MP-1106,Meadowvale Strawberry Full Cream Milk 6x1L,Meadowvale,Dairy & Chilled,Milk & Yoghurt,Strawberry Full Cream Milk 6x1L,6.3,73.35,103.11,Active,2024-04-18
+MP-1107,Meadowvale Vanilla Full Cream Milk 6x1L,Meadowvale,  Dairy & Chilled,Milk & Yoghurt,Vanilla Full Cream Milk 6x1L,6.3,76.41,106.11,Active,2022-01-01
+MP-1108,Meadowvale Strawberry Low Fat Milk 6x1L,Meadowvale,  Dairy & Chilled,Milk & Yoghurt,Strawberry Low Fat Milk 6x1L,6.3,68.18,95.56,Active,2022-05-13
+MP-1109,Meadowvale Vanilla Low Fat Milk 6x1L,Meadowvale,Dairy & Chilled,Milk & Yoghurt,Vanilla Low Fat Milk 6x1L,6.3,67.46,94.42,Active,2023-05-15
+MP-1110,Crunchpop Salt & Vinegar Chips 125g x24,Crunchpop,Snacks & Confectionery,Savoury Snacks,Salt & Vinegar Chips 125g x24,3.2,177.89,311.74,Active,2021-11-23
+MP-1111,Crunchpop Cheese Chips 125g x24,Crunchpop,Snacks & Confectionery,Savoury Snacks,Cheese Chips 125g x24,3.2,160.1,259.7,Active,2021-09-15
+MP-1112,Crunchpop Barbecue Chips 125g x24,Crunchpop,Snacks & Confectionery,Savoury Snacks,Barbecue Chips 125g x24,3.2,171.42,293.4,Active,2023-11-16
+MP-1113,Crunchpop Chilli Chips 125g x24,Crunchpop,Snacks & Confectionery,Savoury Snacks,Chilli Chips 125g x24,3.2,178.37,306.05,Active,2022-07-22
+MP-1114,Crunchpop Salt & Vinegar Nuts 200g x18,Crunchpop,Snacks & Confectionery,Savoury Snacks,Salt & Vinegar Nuts 200g x18,3.8,221.13,362.84,Active,2021-11-15
+MP-1115,Crunchpop Cheese Nuts 200g x18,Crunchpop,Snacks & Confectionery,Savoury Snacks,Cheese Nuts 200g x18,3.8,213.36,351.28,Active,2024-05-28
+MP-1116,Crunchpop Barbecue Nuts 200g x18,Crunchpop,Snacks & Confectionery,Savoury Snacks,Barbecue Nuts 200g x18,3.8,220.9,377.98,Active,2023-08-20
+MP-1117,Crunchpop Chilli Nuts 200g x18,Crunchpop,Snacks & Confectionery,Savoury Snacks,Chilli Nuts 200g x18,3.8,217.81,353.77,Active,2021-08-30
+MP-1118,Sweetwell Caramel Biscuits 200g x24,Sweetwell,Snacks & Confectionery,Confectionery,Caramel Biscuits 200g x24,5.1,208.11,357.24,Active,2021-08-30
+MP-1119,Sweetwell Mint Biscuits 200g x24,Sweetwell,Snacks & Confectionery,Confectionery,Mint Biscuits 200g x24,5.1,190.7,330.48,Active,2022-02-20
+MP-1120,Sweetwell Berry Biscuits 200g x24,Sweetwell,Snacks & Confectionery,Confectionery,Berry Biscuits 200g x24,5.1,184.64,313.23,Active,2022-12-11
+MP-1121,Sweetwell Caramel Sweets 150g x30,Sweetwell,Snacks & Confectionery,Confectionery,Caramel Sweets 150g x30,4.8,176.04,298.65,Active,2021-11-10
+MP-1122,Sweetwell Mint Sweets 150g x30,Sweetwell,Snacks & Confectionery,Confectionery,Mint Sweets 150g x30,4.8,166.94,287.01,Active,2023-09-01
+MP-1123,Sweetwell Berry Sweets 150g x30,Sweetwell,  Snacks & Confectionery,Confectionery,Berry Sweets 150g x30,4.8,173.81,301.64,Active,2021-01-04
+MP-1124,Little Fern Sensitive Nappies M 44s x4,Little Fern,Baby & Infant,Baby Care,Sensitive Nappies M 44s x4,9.2,390.29,597.43,Active,2023-04-30
+MP-1125,Little Fern Night Nappies M 44s x4,Little Fern,Baby & Infant,Baby Care,Night Nappies M 44s x4,9.2,393.19,569.46,Active,2022-03-16
+MP-1126,Little Fern Sensitive Nappies L 40s x4,Little Fern,  Baby & Infant,Baby Care,Sensitive Nappies L 40s x4,9.6,406.3,618.89,Active,2023-01-04
+MP-1127,Little Fern Night Nappies L 40s x4,Little Fern,Baby & Infant,Baby Care,Night Nappies L 40s x4,9.6,406.89,651.8,Active,2021-02-08
+MP-1128,Softleaf Scented Toilet Tissue 9pk x6,Softleaf,Paper & Hygiene,Paper Products,Scented Toilet Tissue 9pk x6,8.4,211.46,304.76,Active,2022-03-05
+MP-1129,Softleaf Extra Soft Toilet Tissue 9pk x6,Softleaf,Paper & Hygiene,Paper Products,Extra Soft Toilet Tissue 9pk x6,8.4,193.68,274.67,Active,2023-09-13
+MP-1130,Softleaf Scented Kitchen Towel 2pk x12,Softleaf,Paper & Hygiene,Paper Products,Scented Kitchen Towel 2pk x12,7.2,170.34,257.71,Active,2021-11-01
+MP-1131,Softleaf Extra Soft Kitchen Towel 2pk x12,Softleaf,Paper & Hygiene,Paper Products,Extra Soft Kitchen Towel 2pk x12,7.2,,273.66,Active,2021-05-17

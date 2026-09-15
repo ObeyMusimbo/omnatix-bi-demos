@@ -1,0 +1,17 @@
+node_modules/
+.venv/
+__pycache__/
+*.duckdb
+*.duckdb.wal
+target/
+dbt_packages/
+logs/
+.evidence/
+build/
+.env
+.env.*
+!.env.example
+
+# dbt build artefacts
+projects/*/dbt/target/
+projects/*/dbt/logs/

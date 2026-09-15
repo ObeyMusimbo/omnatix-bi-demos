@@ -1,0 +1,8 @@
+meridian:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      # The entire warehouse is this one file. No server, nothing to administer.
+      path: '../meridian.duckdb'
+      threads: 4

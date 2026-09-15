@@ -1,0 +1,647 @@
+version: 2
+
+models:
+
+  # ------------------------------------------------------------------ dimensions
+
+  - name: dim_date
+    description: >
+      The company calendar. One row for every single day in the window Meridian has data for,
+      from the first day of the first month of trading through the last day of the last month,
+      whether or not anything happened on that day. Having a row for quiet days matters: it is
+      what lets a chart show a week with no sales as a genuine zero rather than skipping the
+      week entirely. The range is read from the data itself each time the warehouse is rebuilt,
+      so the calendar can never be shorter than the facts that join to it.
+    columns:
+      - name: date_day
+        description: The calendar day itself. This is the key every fact table joins to on its own date.
+        tests:
+          - unique
+          - not_null
+      - name: year
+        description: Calendar year as a four digit number, for example 2026.
+      - name: month_num
+        description: Month of the year as a number from 1 (January) to 12 (December). Use this to sort months correctly rather than sorting the month name alphabetically.
+      - name: month_name
+        description: Full English name of the month, for example "August". For display only.
+      - name: month_short
+        description: Three letter abbreviation of the month, for example "Aug". Used where axis labels would otherwise collide.
+      - name: year_month
+        description: Year and month together as text in the form "2026-08". This is the standard label for any monthly trend in the reporting, and it sorts correctly as text.
+      - name: quarter
+        description: Calendar quarter, 1 to 4. Meridian reports on the calendar year, not a split financial year.
+      - name: day_of_week
+        description: Day of the week numbered the ISO way, 1 for Monday through 7 for Sunday. Thursday is 4, Friday is 5 and Saturday is 6 - the three days the weekend stock-out analysis turns on.
+      - name: day_name
+        description: Full English name of the day, for example "Thursday".
+      - name: is_weekend
+        description: True on Saturday and Sunday. Note that Saturday is a full trading day for Meridian and Sunday is not a trading day at all, so this flag marks the calendar weekend, not a break in trading.
+      - name: is_month_end
+        description: True only on the last calendar day of the month. Useful for picking month-end stock positions or closing balances without writing a date calculation in the BI tool.
+
+  - name: dim_product
+    description: >
+      The product master, one row per SKU. Everything the business knows about a line it sells:
+      what it is called, who makes it, what it weighs, what it costs Meridian to buy and what
+      it is listed at. This is the cleaned version - blank costs have already been filled in
+      upstream and are flagged where that happened, so nobody has to guess whether a margin is
+      real or imputed.
+    columns:
+      - name: sku
+        description: The stock keeping unit code, for example MP-1016. Unique identifier for a sellable product and the key every sales and stock record points at.
+        tests:
+          - unique
+          - not_null
+      - name: product_name
+        description: The full trade description of the line, brand and pack together, for example "Brightwash Powder 2kg x6". This is what appears on an invoice and what a buyer would recognise.
+      - name: brand
+        description: The brand the line is sold under, for example "Cascade Springs". Brand is the level at which range decisions are actually taken, so most profitability reporting is grouped here.
+      - name: category
+        description: Top level merchandising category, for example "Beverages" or "Household Care". Eight categories cover the whole range.
+      - name: subcategory
+        description: The merchandising segment within the category, for example "Bottled Water" within Beverages. This is the level at which a buyer plans a shelf.
+      - name: pack_size
+        description: The selling configuration, for example "12x1.5L" - how many units in what size, as the trade quotes it. Meridian sells cases, so a single unit of quantity is one of these packs.
+      - name: weight_kg
+        description: >
+          Gross weight of one selling pack in kilograms. This is the number that drives
+          freight - a delivery is paid for by what it weighs, so weight is how the cost of
+          getting an order to a customer is fairly shared out between the lines on that order.
+      - name: unit_cost_zar
+        description: What Meridian pays its supplier for one pack, in rand. This is the cost used for gross profit everywhere in the warehouse.
+      - name: unit_cost_is_imputed
+        description: True where the supplier cost was missing in the source system and has been estimated upstream from the category's normal cost to price relationship. Margins on these lines are indicative rather than exact, and this flag is how you tell which ones.
+      - name: list_price_zar
+        description: The published trade price of one pack before any customer discount, in rand. The starting point of every price negotiation and the benchmark realised discount is measured against.
+      - name: status
+        description: Whether the line is still part of the active range, either "Active" or "Discontinued".
+      - name: is_discontinued
+        description: True where the line has been withdrawn from the range. Discontinued lines can still hold stock in a warehouse long after the last sale, which is the whole of finding 5.
+      - name: launch_date
+        description: The date the line was first listed for sale.
+      - name: is_bulk_water
+        description: >
+          True for the Cascade Springs range, which is Meridian's entire bulk bottled water
+          offer. Flagged because this range behaves unlike anything else in the portfolio: it
+          is very heavy relative to its value, so it consumes far more of a delivery's cost
+          than its share of revenue suggests. It is the subject of finding 1.
+
+  - name: dim_customer
+    description: >
+      The trading account master, one row per customer, with the sales representative who owns
+      the relationship attached and the account rolled up to its parent group. The grouping is
+      the important part: large customers trade through several branches under separate account
+      numbers, and pricing decisions that look small on one branch are substantial once the
+      branches are added together. Finding 3 is invisible without it.
+    columns:
+      - name: customer_id
+        description: The account number, for example CUS-5041. Unique identifier for a trading account and the key sales records point at.
+        tests:
+          - unique
+          - not_null
+      - name: customer_name
+        description: The account name exactly as the business uses it, including the branch marker - for example "Summit Cash & Carry Depot".
+      - name: customer_group
+        description: >
+          The parent business the account belongs to, derived by stripping one trailing branch
+          marker from the account name. Meridian uses two branch conventions: numbered banners
+          such as "Baywater Market #03", and named depots such as "Summit Cash & Carry Depot",
+          "... Branch" and "... Hub" - all three of which roll up to "Summit Cash & Carry".
+          Only one marker is removed, so "Apex Depot Depot" correctly becomes "Apex Depot".
+          Independent shops carry a plain shop number instead ("Cape Town Kwikshop 41"); those
+          are separate businesses, not branches, so their numbers are deliberately left alone
+          and each one remains its own group.
+      - name: channel
+        description: >
+          The route to market the account trades through - Modern Trade, General Trade,
+          Wholesale or HoReCa. Channel drives almost everything about how an account behaves -
+          order size, discount level, what it buys and how much rebate it earns.
+      - name: region
+        description: The province the account trades in. Region determines which distribution centre serves it and therefore what the delivery costs.
+      - name: city
+        description: The town or city the account is located in.
+      - name: credit_terms_days
+        description: How many days after invoice the account has agreed to pay, for example 30. A commercial term, not a payment record.
+      - name: rebate_pct
+        description: The volume rebate rate agreed with the account, as a decimal fraction of what they spend (0.06 means six percent). This is money handed back after the sale, so it never appears in the invoiced price and is easy to forget when judging whether an account is profitable.
+      - name: onboarded_date
+        description: The date the account first started trading with Meridian.
+      - name: rep_id
+        description: Identifier of the sales representative who owns the account.
+      - name: rep_name
+        description: Name of the sales representative who owns the account.
+      - name: rep_team
+        description: The team the representative belongs to, either "Trade Sales" or "Key Accounts".
+      - name: rep_region
+        description: The territory the representative covers. Usually the same as the customer's region, and worth checking where it is not.
+      - name: is_group_branch
+        description: True where the account is one branch of a multi-branch group, false where it is a standalone business. Use it to separate chain trade from independent trade.
+
+  # ------------------------------------------------------------------ facts
+
+  - name: fct_sales_line
+    description: >
+      The central sales fact and the model everything else in the gold layer is built on. One
+      row per line of every order that was actually shipped.
+
+      Cancelled orders are excluded because they were never picked, shipped or invoiced.
+      Returns are kept, as negative quantities and negative revenue, because a return is a real
+      commercial event and quietly dropping them would overstate what the business sold.
+
+      What makes this table different from Meridian's current reporting is that it does not
+      stop at gross profit. Freight, warehouse handling and customer rebates are all recorded
+      at order level in the source systems, where no one attributes them to a product. Here
+      they are pushed down onto the individual lines using a rule that reflects how each cost
+      is actually incurred - freight by weight, handling by line, rebate by revenue - so every
+      line ends with a contribution figure: what it was genuinely worth once the cost of
+      getting it to the customer and the money handed back to the customer are both charged
+      against it. Allocations always add back exactly to the order total, so nothing is
+      created or lost in the process.
+    columns:
+      - name: order_line_id
+        description: Unique identifier of one line on one order. The grain of this table.
+        tests:
+          - unique
+          - not_null
+      - name: order_id
+        description: The order the line belongs to. Several lines share an order, and it is at this level that freight, handling and rebate were originally recorded.
+      - name: order_date
+        description: The date the order was placed. All sales trends are measured on this date.
+      - name: sku
+        description: The product sold on this line.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_product')
+              field: sku
+              # A small number of lines quote a SKU that never made it into the product master.
+              # Those rows are kept on purpose - the revenue is real - and are flagged by
+              # sku_is_known, so the integrity test is scoped to the rows that should match.
+              config:
+                where: "sku_is_known"
+      - name: customer_id
+        description: The account the order was sold to.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_customer')
+              field: customer_id
+      - name: warehouse_code
+        description: The distribution centre the order shipped from, for example WH-01. Determined by where the customer is.
+      - name: rep_id
+        description: The sales representative credited with the order.
+      - name: channel
+        description: The customer's route to market, carried onto the line so channel analysis needs no join. Reads "Unknown" on the rare line whose account could not be matched.
+      - name: region
+        description: The customer's province, carried onto the line.
+      - name: brand
+        description: Brand of the product sold, carried onto the line.
+      - name: category
+        description: Merchandising category of the product sold, carried onto the line.
+      - name: subcategory
+        description: Merchandising segment of the product sold, carried onto the line.
+      - name: product_name
+        description: Full trade description of the product sold. Where the SKU is missing from the product master this reads "Unknown product (CODE)" so the money stays visible in a report instead of falling out of it.
+      - name: quantity
+        description: Number of packs sold on the line. Negative on a return, which is how credits flow through every total in this table without any special handling.
+      - name: unit_price_zar
+        description: The price per pack this customer was quoted before discount, in rand. Close to list price but not identical - it moves a little with negotiation.
+      - name: discount_pct
+        description: The discount recorded against the line, on a 0 to 100 scale (10.29 means 10.29 percent off). This is what was entered on the order; realised discount, which is what the customer actually received, is derived from the money and can differ.
+      - name: gross_value_zar
+        description: What the line would have billed at full price - quantity multiplied by unit price, before any discount. In rand.
+      - name: discount_value_zar
+        description: The rand value of the discount actually given on this line, calculated as gross value less invoiced revenue. This is the real cost of the pricing decision, in money rather than percentage points, and it is what the discount creep finding is measured from.
+      - name: revenue_zar
+        description: The invoiced value of the line after discount, in rand. This is Meridian's revenue and it is the figure every revenue total in the business should tie back to. Negative on a return.
+        tests:
+          - not_null
+      - name: unit_cost_zar
+        description: What Meridian paid its supplier for one pack of this product, in rand. Zero on the rare line whose SKU is missing from the product master.
+      - name: cogs_zar
+        description: Cost of goods sold on the line - quantity multiplied by unit cost, in rand. Negative on a return, because a return puts the stock back.
+      - name: gross_profit_zar
+        description: Revenue less cost of goods, in rand. This is as far as Meridian's existing reporting goes, and on its own it is the number that makes a loss-making range look healthy.
+      - name: line_weight_kg
+        description: Total weight of the line in kilograms - packs multiplied by pack weight, using absolute quantity because a return still occupies space on a truck. This is the basis on which the order's freight is shared out.
+      - name: allocated_freight_zar
+        description: >
+          This line's share of the delivery cost of its order, in rand. Freight is shared out
+          by weight: a line that is a fifth of the kilograms on the truck carries a fifth of
+          the freight. Weight is used rather than revenue because that is how trucking is
+          actually charged, and it is the choice that changes the answer - a heavy, cheap
+          range looks fine under a revenue split and is exposed under a weight one.
+      - name: allocated_handling_zar
+        description: This line's share of the warehouse handling cost of its order, in rand. Picking, packing and checking cost roughly the same per line whatever is on it, so handling is split evenly across the lines of an order.
+      - name: allocated_rebate_zar
+        description: This line's share of the volume rebate paid back to the customer on its order, in rand. Rebate is earned on what the customer spends, so it follows revenue. Because it is settled after the sale it never shows up in the invoiced price, which is exactly why accounts earning heavy rebates can look more profitable than they are.
+      - name: contribution_zar
+        description: >
+          Gross profit less allocated freight, handling and rebate. In rand, and the most
+          important measure in the warehouse: what the line was genuinely worth to Meridian
+          once the cost of serving the customer is charged against it. A line can carry a
+          perfectly respectable gross profit and a negative contribution, and when that happens
+          the business is paying to make the sale.
+        tests:
+          - not_null
+      - name: promo_id
+        description: The promotion the line was sold under, where one applied. Empty on ordinary trade.
+      - name: is_on_promo
+        description: True where the line was sold under a promotion. The quickest way to split promoted from unpromoted trade.
+      - name: is_return
+        description: True where the line is a credit rather than a sale. Quantity and revenue are negative on these rows.
+      - name: sku_is_known
+        description: True where the SKU on the line was found in the product master. On the small number of rows where it is false the revenue is still real, but there is no cost, no weight and no product description, so those lines carry no cost of goods and draw no freight. Worth excluding from any margin comparison.
+
+  - name: fct_inventory_snapshot
+    description: >
+      Stock on hand, counted twice a week. One row per SKU per distribution centre per count
+      date - a series of photographs of the warehouse, not a running balance, so it answers
+      "what was there on that Thursday" rather than "what moved this week".
+
+      Two derived measures turn the stock list into something a manager can act on: what the
+      stock is worth at cost, and how many weeks of normal selling it represents. Joined
+      against expected demand it also answers a question sales data cannot: what Meridian could
+      not supply because the shelf was empty.
+    columns:
+      - name: snapshot_date
+        description: The date the stock count was taken. Counts are taken on Mondays and Thursdays - the Thursday count is the one that matters, because replenishment into WH-01 runs Monday to Wednesday and Thursday is the first honest read on whether the week can be finished.
+      - name: warehouse_code
+        description: The distribution centre the stock is held at - WH-01 Gauteng, WH-02 Coastal, WH-03 Cape.
+      - name: sku
+        description: The product counted.
+      - name: units_on_hand
+        description: Packs physically available at that distribution centre on that date. Zero means the line was unavailable, and any order placed against it until the next delivery cannot be filled.
+      - name: units_in_transit
+        description: Packs already dispatched from the supplier and on their way to the distribution centre, but not yet available to sell.
+      - name: stock_value_zar
+        description: What the stock on hand is worth at what Meridian paid for it - units on hand multiplied by unit cost, in rand. Valued at cost rather than at selling price, because this measures cash tied up, not profit forgone.
+      - name: is_stockout
+        description: True where units on hand is exactly zero. A stock-out on a Thursday means Friday and Saturday orders for that line cannot be served.
+      - name: avg_weekly_demand_units
+        description: The average number of packs of this SKU shipped from this distribution centre in a week, net of returns, measured across the whole period. A flat average rather than a forecast - it is a sense of scale for judging whether a stock position is sensible, and the denominator for weeks of cover.
+      - name: weeks_cover
+        description: How many weeks the stock on hand would last at normal demand - units on hand divided by average weekly demand. Under one week is a stock-out waiting to happen; a very large number is capital sitting still. Empty where the SKU has no demand at that distribution centre at all, because "infinite" is the honest answer there.
+
+  # ------------------------------------------------------------------ marts
+
+  - name: mart_margin_waterfall
+    description: >
+      FINDING 1. Feeds the margin waterfall: a chart that walks a brand from revenue down to
+      what it was really worth, one bar at a time - revenue, less cost of goods, to gross
+      profit, then the three costs Meridian records at order level, ending at contribution.
+
+      One row per period, brand and step of the waterfall, so each row is one bar. Two rolling
+      twelve month periods are provided so the current year can be shown against the one before
+      it. Every row also carries the brand's own totals and margins, so a tooltip or a summary
+      tile needs no second query.
+
+      The Cascade Springs bulk water range is what the chart is for. On gross margin it is an
+      ordinary, acceptable range. Once the freight its weight actually consumes and the rebates
+      its wholesale customers earn are charged against it, the last bar finishes below zero -
+      Meridian is paying to sell it. Nothing in the existing reporting shows this, because the
+      existing reporting stops at the third bar.
+    columns:
+      - name: period_label
+        description: Which twelve month window the row covers - "Trailing twelve months" or "Prior twelve months". Both end on the last day of data.
+      - name: period_order
+        description: Sort key for the period, 1 for the trailing year and 2 for the year before it.
+      - name: period_start
+        description: First day included in the period.
+      - name: period_end
+        description: Last day included in the period.
+      - name: brand
+        description: The brand the waterfall is drawn for. Brand is the level at which a range decision is actually taken.
+      - name: category
+        description: The merchandising category the brand sits in.
+      - name: is_bulk_water
+        description: True for the Cascade Springs range. Filter on this to go straight to finding 1.
+      - name: step_order
+        description: Position of the bar in the waterfall, 1 through 7. Sort on this to draw the chart in the right order.
+      - name: step_label
+        description: The name of the bar - Revenue, Cost of goods sold, Gross profit, Allocated freight, Allocated handling, Allocated customer rebate, Net contribution.
+      - name: step_type
+        description: Whether the bar is a running subtotal that sits on the axis ("total") or a movement from the bar before it ("delta"). Waterfall charts draw the two differently.
+      - name: step_value_zar
+        description: The value of this bar in rand, already signed the way it should be drawn - costs are negative so they step the chart downward.
+      - name: running_total_zar
+        description: Where the waterfall stands after this step, in rand. This is the height the bar reaches. On the last step it equals net contribution.
+      - name: step_pct_of_revenue
+        description: This step as a percentage of the brand's revenue for the period. Makes the size of the freight and rebate steps comparable across brands of very different sizes.
+      - name: units
+        description: Packs sold of the brand in the period, net of returns.
+      - name: sales_line_count
+        description: Number of order lines the brand appeared on in the period. A sense of how widely the range is bought, rather than how much of it.
+      - name: revenue_zar
+        description: The brand's invoiced revenue for the period after discount, in rand.
+      - name: cogs_zar
+        description: What the goods sold cost Meridian to buy, in rand.
+      - name: gross_profit_zar
+        description: Revenue less cost of goods, in rand. The number the business currently manages by.
+      - name: allocated_freight_zar
+        description: The brand's share of delivery costs, shared out by the weight it put on trucks. In rand.
+      - name: allocated_handling_zar
+        description: The brand's share of warehouse picking and packing costs, shared out by the number of order lines. In rand.
+      - name: allocated_rebate_zar
+        description: The brand's share of volume rebates paid back to customers, shared out by revenue. In rand.
+      - name: contribution_zar
+        description: Gross profit less freight, handling and rebate - what the brand was actually worth for the period, in rand. Negative means the range destroyed value.
+      - name: weight_kg
+        description: Total kilograms of the brand shipped in the period. The reason the freight step is the size it is.
+      - name: brand_gross_margin_pct
+        description: Gross profit as a percentage of revenue. The margin the business quotes today.
+      - name: brand_contribution_margin_pct
+        description: Contribution as a percentage of revenue. The margin the business should be quoting. The gap between this and gross margin is the whole finding.
+      - name: revenue_per_kg_zar
+        description: Rand of revenue earned per kilogram shipped. A measure of value density - the lower it is, the more of the delivery cost the range swallows relative to what it brings in, and the more likely it is to be unprofitable once freight is honestly charged.
+      - name: is_margin_trap
+        description: True where the brand shows a positive gross profit and a negative contribution for the period. In other words, the range looks profitable in today's reporting and is losing money in reality.
+
+  - name: mart_promo_performance
+    description: >
+      FINDING 2. Feeds the promotion chart: units, revenue and profit week by week for every
+      SKU that has ever been promoted, with each week labelled by what was happening to it.
+
+      One row per SKU, trading week and promotion phase. A week produces one row normally, and
+      two only where a promotion starts or ends part way through it - in which case the two
+      parts are reported separately rather than averaged into a number that describes neither.
+
+      The mart answers two questions from the same rows. First, the straight comparison: group
+      by promotion phase and look at profit per unit on promotion against profit per unit in a
+      normal week. Second, the hangover: plot volume against baseline week by week and watch
+      what happens after the promotion ends. The Brightwash Powder buy-two-get-one-free
+      mechanic gives away a third of the price against a margin of around a quarter, so every
+      promoted pack loses money - and for the four weeks afterwards volume falls to roughly
+      45 percent of normal, because customers filled their storerooms at the promotional price
+      and simply stop ordering. The promotion does not grow the business, it moves it.
+    columns:
+      - name: sku
+        description: The promoted product.
+      - name: product_name
+        description: Full trade description of the product.
+      - name: brand
+        description: Brand of the product.
+      - name: category
+        description: Merchandising category of the product.
+      - name: subcategory
+        description: Merchandising segment of the product.
+      - name: week_start_date
+        description: The Monday the trading week begins on. Meridian does not trade on Sundays, so a Monday-start week contains exactly the trading days of a promotion window and the shaded promotion blocks line up cleanly with the weeks on the chart.
+      - name: year_month
+        description: The month the week starts in, as "2026-08". For rolling a weekly chart up to a monthly one.
+      - name: promo_phase
+        description: >
+          What was happening to the SKU that week. "On promotion" means a promotion was live.
+          "Post-promotion (4 weeks)" covers the four weeks straight after a window closed,
+          which is where pantry loading shows up. "Baseline" is ordinary trading, neither on
+          promotion nor in the shadow of one. Where a live promotion overlaps another
+          promotion's hangover, the live promotion wins.
+      - name: is_on_promo_week
+        description: True where the phase is "On promotion". A convenience flag for shading the chart.
+      - name: promo_id
+        description: Identifier of the promotion that put the week into its phase, whether the promotion was running or had just ended.
+      - name: promo_name
+        description: Name of that promotion, for example "Brightwash Buy 2 Get 1 Free - Q3".
+      - name: mechanic
+        description: How the promotion works - a percentage off, a multibuy, or a buy-two-get-one-free. The mechanic determines the effective discount, and a buy-two-get-one-free is a third off however it is described internally.
+      - name: funding_source
+        description: Who pays for the promotion, either "Supplier co-funded" or "Meridian funded". Note that co-funded does not mean free.
+      - name: planned_discount_pct
+        description: The discount the promotion was designed to give, on a 0 to 100 scale. Worth holding next to realised discount, which is what customers actually received.
+      - name: sales_line_count
+        description: Number of order lines for the SKU in the week. A read on how many customers bought, as opposed to how much they bought.
+      - name: units
+        description: Packs of the SKU sold in the week, net of returns. The series that makes the promotion spike and the hangover trough visible.
+      - name: gross_value_zar
+        description: What the week's volume would have billed at full price before discount, in rand.
+      - name: discount_value_zar
+        description: The rand value of discount given in the week - gross value less revenue.
+      - name: revenue_zar
+        description: Invoiced revenue for the SKU in the week after discount, in rand.
+      - name: cogs_zar
+        description: Cost of the goods sold in the week, in rand.
+      - name: gross_profit_zar
+        description: Revenue less cost of goods for the week, in rand. On Brightwash promotion weeks this is negative, which is the finding in one number.
+      - name: contribution_zar
+        description: Gross profit for the week less the week's share of freight, handling and rebate, in rand. The full picture of what the week was worth.
+      - name: gross_margin_pct
+        description: Gross profit as a percentage of revenue for the week.
+      - name: realised_discount_pct
+        description: The discount customers actually received in the week, as a percentage - discount value over gross value. This is what was really given away, which is not always what the promotion planned.
+      - name: gp_per_unit_zar
+        description: Gross profit divided by packs sold, in rand per pack. The cleanest way to compare a promotion week with a normal week, because it strips out the fact that a promotion week sells far more volume.
+      - name: revenue_per_unit_zar
+        description: Revenue divided by packs sold, in rand per pack. The effective price achieved.
+      - name: baseline_units_per_week
+        description: What this SKU sells in an average normal week, calculated from its own baseline weeks only. Using the SKU's own history keeps seasonality, channel mix and price out of the comparison.
+      - name: baseline_gp_per_unit_zar
+        description: Gross profit per pack in normal trading for this SKU, in rand. The rate promoted volume would have earned had it been sold at ordinary prices.
+      - name: baseline_revenue_per_unit_zar
+        description: Revenue per pack in normal trading for this SKU, in rand. The effective everyday price.
+      - name: baseline_gross_margin_pct
+        description: >
+          Gross margin percentage in normal trading for this SKU. Put this next to the
+          promotion's discount - when the discount exceeds the margin, every promoted pack
+          loses money.
+      - name: volume_index_vs_baseline_pct
+        description: >
+          The week's volume as a percentage of a normal week. 100 is normal. Promotion weeks
+          run well above it, and the four weeks after a window closes sit well below it - around
+          45 for Brightwash, meaning less than half of normal trading. This single column is the
+          pantry-loading hangover.
+      - name: gp_forgone_vs_baseline_zar
+        description: >
+          Profit given up on the week's volume, in rand - the week's packs valued at the
+          difference between normal profit per pack and what they actually earned. Positive
+          means the week earned less than the same volume would have in normal trading. Summed
+          across a promotion's weeks it is the true cost of running it.
+      - name: units_below_baseline
+        description: How many packs short of a normal week the week fell, floored at zero. Most meaningful on post-promotion weeks, where it measures the volume that was pulled forward into the promotion rather than created by it.
+
+  - name: mart_discount_trend
+    description: >
+      FINDING 3. Feeds a two-line chart: the discount a customer group is actually getting month
+      by month, against what the rest of its channel is getting. One line climbs steadily and
+      the other is flat.
+
+      One row per customer group, channel and calendar month.
+
+      "Realised" is the operative word. Nobody ever approved a fifteen and a half percent
+      discount for Summit Cash & Carry, Meridian's largest account. It arrived one concession at
+      a time over two years, was never reviewed and never reset, and it is invisible on any
+      single branch or in any single month. It only appears when the branches are added together
+      and the invoiced value is divided by the list value, month after month. The mart also
+      carries what that drift has cost, by holding the group's starting discount as the
+      benchmark.
+    columns:
+      - name: customer_group
+        description: The parent business, with branches rolled together. This is the level at which the pricing relationship actually exists, even though every branch invoices separately.
+      - name: channel
+        description: The group's route to market. Discounts are only comparable within a channel, so the comparison lines are built per channel.
+      - name: year_month
+        description: The month, as "2026-08". The x axis of the chart.
+      - name: month_start_date
+        description: First day of the month, for sorting and for date filters.
+      - name: trading_branch_count
+        description: How many of the group's branches actually placed an order that month. Worth watching, because a change in realised discount can come from mix between branches rather than from any price decision.
+      - name: gross_value_zar
+        description: What the group's purchases that month would have billed at full price, in rand. The denominator of realised discount.
+      - name: revenue_zar
+        description: What the group was actually invoiced that month after discount, in rand.
+      - name: discount_value_zar
+        description: The rand value of discount given to the group that month - gross value less revenue. The real cost of the pricing, in money.
+      - name: realised_discount_pct
+        description: The discount the group actually received that month, as a percentage of list value. This is the line that climbs from around 8 percent to around 15.5 percent over two years.
+      - name: channel_realised_discount_pct
+        description: The same measure for the whole channel that month, including this group. The broad comparison.
+      - name: channel_excl_group_realised_discount_pct
+        description: The same measure for the channel with this group taken out. The fairer comparison for a large account, because a big group otherwise drags the average it is being judged against toward its own number. This is the flat line on the chart.
+      - name: discount_gap_vs_channel_pct_pts
+        description: How many percentage points more discount the group received than the rest of its channel that month. A positive and widening gap is the signature of discount creep.
+      - name: baseline_month_start_date
+        description: The first month the group appears in the data - the month its benchmark discount is taken from.
+      - name: baseline_discount_pct
+        description: The discount the group was realising when it first appears in the data. Used as the benchmark for what should have held if nobody had let it drift.
+      - name: discount_creep_pct_pts
+        description: Percentage points of discount the group has gained since its own starting point. This is the drift itself, isolated from how much the group buys.
+      - name: revenue_forgone_vs_baseline_zar
+        description: Money left on the table that month purely because the discount drifted - the extra percentage points applied to the month's list value, in rand. Summed over the period it is what the finding is worth.
+      - name: share_of_channel_revenue_pct
+        description: The group's revenue that month as a percentage of the whole channel's. Shows how much leverage the account has, which is usually the reason the discount was conceded in the first place.
+      - name: group_total_revenue_zar
+        description: The group's total revenue across the whole period, in rand. Repeated on every row so the largest accounts can be found or filtered without a second query.
+      - name: group_share_of_company_revenue_pct
+        description: The group's share of Meridian's total revenue across the whole period, as a percentage. The context that makes a few points of discount drift material.
+
+  - name: mart_stockout_impact
+    description: >
+      FINDING 4. Puts a number on sales that never happened.
+
+      One row per SKU per week, for every week in which the Thursday stock count at WH-01 read
+      zero on a line that runs out chronically.
+
+      Replenishment into WH-01 runs Monday to Wednesday, so the Thursday count is the first
+      honest read on whether the week can be finished. When it reads zero, Friday and Saturday
+      orders for that line cannot be filled. Three Modern Trade hero lines - Meadowvale Full
+      Cream Milk, Sunveld Maize Meal and Softleaf Toilet Tissue - do this in roughly a third of
+      all weeks.
+
+      None of this appears in a sales report, by definition: an order that could not be supplied
+      was never written down. It only becomes visible by joining the stock snapshot to what the
+      same line normally sells on those two days. The lost volume is estimated from the SKU's
+      own Friday and Saturday demand in the weeks it was in stock, and valued at the price the
+      SKU actually achieves in that channel rather than at list price.
+
+      Which SKUs count as chronic is decided from the data, not from a list: the line must read
+      zero on at least a fifth of Thursdays, and must normally sell at least a pack over a
+      weekend, so the estimate measures a real gap rather than the rounding noise of a line that
+      barely moves.
+    columns:
+      - name: sku
+        description: The product that ran out.
+      - name: product_name
+        description: Full trade description of the product.
+      - name: brand
+        description: Brand of the product.
+      - name: category
+        description: Merchandising category of the product.
+      - name: subcategory
+        description: Merchandising segment of the product.
+      - name: warehouse_code
+        description: The distribution centre the stock-out was observed at. Always WH-01, the centre whose Monday to Wednesday replenishment cycle causes the pattern.
+      - name: week_start_date
+        description: The Monday of the week that was lost. Each row is one such week.
+      - name: year_month
+        description: The month the week falls in, as "2026-08". For rolling the losses up to a monthly total.
+      - name: thursday_snapshot_date
+        description: The Thursday the stock count read zero.
+      - name: thursday_units_on_hand
+        description: Packs on hand at that count. Zero by definition on every row in this mart - it is carried so the reader can see the evidence rather than take the flag on trust.
+      - name: baseline_fri_sat_units
+        description: What this SKU normally ships on a Friday and Saturday together, averaged across the weeks when Thursday stock was not zero. The SKU's own normal weekend, which is the only fair benchmark for what it would have sold.
+      - name: actual_fri_sat_units
+        description: What actually shipped on the Friday and Saturday of this week. Usually close to nothing, because there was nothing to ship.
+      - name: lost_units_est
+        description: The estimate of packs not supplied - normal weekend demand less what actually shipped, floored at zero so a week that happened to beat its baseline cannot quietly offset a real loss elsewhere. This is an estimate, and it is deliberately conservative.
+      - name: avg_realised_price_zar
+        description: What a pack of this SKU actually sells for in Modern Trade, in rand - revenue divided by packs across the whole period. Used rather than list price, because valuing lost sales at list would overstate the loss by the discount that would have been given.
+      - name: avg_gross_profit_per_unit_zar
+        description: Gross profit a pack of this SKU actually earns in Modern Trade, in rand.
+      - name: lost_revenue_zar
+        description: Revenue forgone in the week - estimated lost packs at the realised price, in rand. Sum this across all rows for the headline number.
+      - name: lost_gross_profit_zar
+        description: Gross profit forgone in the week, in rand. The revenue number is what the conversation opens with; this is what the loss was actually worth.
+      - name: thursday_weeks_observed
+        description: How many Thursday counts exist for this SKU across the whole period. The denominator behind the stock-out rate.
+      - name: stockout_week_count
+        description: How many of those Thursdays read zero for this SKU.
+      - name: stockout_week_pct
+        description: The share of Thursdays that read zero, as a percentage. Around 35 for the three hero lines, which is roughly one week in three where the weekend cannot be served.
+
+  - name: mart_dead_stock
+    description: >
+      FINDING 5. What is sitting in the warehouses that nobody is buying any more.
+
+      One row per SKU per distribution centre, as at the most recent stock count. Live stock is
+      included alongside dead stock on purpose, so a chart can show the dead pile against the
+      total it is part of rather than as a number with no scale - filter on is_dead_stock for
+      the finding itself.
+
+      The Halo Shine aerosol range was discontinued and has not sold in over six months, yet
+      eight of its SKUs still hold stock in WH-02. This is a working capital problem rather than
+      a profit one: the cash is already spent, it is simply not coming back while the stock sits
+      on a rack. That is what makes it a good item to close on - unlike the other findings, the
+      fix needs no pricing decision and no system change.
+    columns:
+      - name: sku
+        description: The product held in stock.
+      - name: product_name
+        description: Full trade description of the product.
+      - name: brand
+        description: Brand of the product. Dead stock usually arrives a whole brand at a time, because ranges are delisted as ranges.
+      - name: category
+        description: Merchandising category of the product.
+      - name: subcategory
+        description: Merchandising segment of the product.
+      - name: status
+        description: Whether the line is still part of the active range, "Active" or "Discontinued".
+      - name: is_discontinued
+        description: True where the line has been withdrawn from the range. A discontinued line holding stock is the clearest case of dead stock, because there is no plan that brings it back.
+      - name: warehouse_code
+        description: The distribution centre holding the stock.
+      - name: warehouse_name
+        description: Name of that distribution centre, for example "Meridian Coastal DC".
+      - name: warehouse_region
+        description: The province the distribution centre is in.
+      - name: snapshot_date
+        description: The date of the stock count this row reports, which is the most recent count in the data.
+      - name: as_of_date
+        description: The last day the business traded in the data. Days since last sale is measured against this rather than against today, so the figures do not drift as time passes.
+      - name: units_on_hand
+        description: Packs physically held at that distribution centre at the latest count.
+      - name: units_in_transit
+        description: Packs still on their way to the distribution centre. On a dead line this is worth checking - it means more of the same is still arriving.
+      - name: unit_cost_zar
+        description: What Meridian paid its supplier for one pack, in rand.
+      - name: list_price_zar
+        description: The published trade price of one pack before discount, in rand. Useful for judging how much room there is to clear the stock at a markdown.
+      - name: stock_value_zar
+        description: What the stock on hand is worth at cost - packs multiplied by unit cost, in rand. This is cash currently tied up, whether the line is alive or dead.
+      - name: avg_weekly_demand_units
+        description: Average packs of this SKU shipped from this distribution centre per week over the whole period. Near zero on a dead line, which is the point.
+      - name: weeks_cover
+        description: How many weeks the stock would last at normal demand. Empty where there is no demand at all at that centre, which is the strongest signal of all.
+      - name: last_sale_date
+        description: The last date the SKU was sold anywhere in the business, counting sales only - a credit note is a customer sending stock back, not evidence the line still moves. Empty where it has never sold.
+      - name: days_since_last_sale
+        description: Days between the last sale and the last day of trading in the data. Over 180 is the trade's working definition of dead. Empty where the line has never sold.
+      - name: has_ever_sold
+        description: False where the SKU has no sales history at all. These are the worst cases, since there is no evidence anyone ever wanted the line.
+      - name: lifetime_units_sold
+        description: Total packs of the SKU ever sold across the whole period. Context for whether a line is genuinely dead or simply slow.
+      - name: is_dead_stock
+        description: True where there is physical stock on hand and the line has not sold in over 180 days, or has never sold. Six months is the FMCG convention - anything that has not moved in two quarters is not going to move on its own.
+      - name: dead_stock_reason
+        description: Plain wording of why the row is flagged - "Discontinued and no sale in 180+ days", "No sale in 180+ days" or "Never sold". Empty where the stock is not dead. Written out so it can be dropped straight into a report without being decoded.
+      - name: dead_stock_value_zar
+        description: The stock value in rand where the row is dead, and zero where it is not. Sum this column to get the working capital that could be released, without needing a filter on the chart.

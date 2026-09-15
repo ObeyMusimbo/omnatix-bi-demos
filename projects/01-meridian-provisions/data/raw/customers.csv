@@ -1,0 +1,486 @@
+customer_id,customer_name,channel,region,city,credit_terms_days,rep_id,rebate_pct,onboarded_date
+CUS-5001,Kloofview Foods #01,Modern Trade,Eastern Cape,Polokwane,60,REP-104,0,2024-06-01
+CUS-5002,Kloofview Foods #02,Modern Trade,Western Cape,Durban,30,REP-109,0,2020-03-08
+CUS-5003,Kloofview Foods #03,MODERN TRADE,Mpumalanga,Mbombela,30,REP-106,0,2021-03-30
+CUS-5004,Kloofview Foods #04,Modern Trade,KwaZulu-Natal,Tembisa,30,REP-102,0,2020-09-27
+CUS-5005,Kloofview Foods #05,Modern Trade,Gauteng,East London,14,REP-101,0,2019-03-23
+CUS-5006,Highveld Grocer #01,Modern Trade,Mpumalanga,Durban,30,REP-106,0.04,2017-07-22
+CUS-5007,Highveld Grocer #02 ,modern trade,Eastern Cape,Bloemfontein,30,REP-104,0.04,2018-10-19
+CUS-5008,Highveld Grocer #03,MODERN TRADE,Free State,Umlazi,30,REP-105,0.04,2022-12-12
+CUS-5009,Highveld Grocer #04,Modern Trade,Gauteng,Bloemfontein,30,REP-107,0,2023-10-23
+CUS-5010,Highveld Grocer #05,Modern Trade,Gauteng,Durban,30,REP-107,0.03,2024-06-13
+CUS-5011,Baywater Market #01,Modern Trade,Mpumalanga,Pretoria,60,REP-112,0.05,2020-11-30
+CUS-5012,Baywater Market #02,Modern Trade,Eastern Cape,Rustenburg,30,REP-110,0,2018-06-18
+CUS-5013,Baywater Market #03,Modern Trade,Eastern Cape,Umlazi,45,REP-110,0.02,2023-07-16
+CUS-5014,  Baywater Market #04,Modern Trade,Eastern Cape,Soweto,45,REP-110,0.02,2017-09-28
+CUS-5015,Baywater Market #05,Modern Trade,KwaZulu-Natal,Rustenburg,60,REP-108,0,2017-12-25
+CUS-5016,Umdoni Fresh #01,Modern Trade,Eastern Cape,Gqeberha,30,REP-104,0.04,2017-11-06
+CUS-5017,Umdoni Fresh #02,Modern Trade,KwaZulu-Natal,Rustenburg,30,REP-102,0,2019-07-18
+CUS-5018,Umdoni Fresh #03,Modern Trade,Free State,Gqeberha,30,REP-105,0.03,2020-07-14
+CUS-5019,Umdoni Fresh #04,Modern Trade,Western Cape,Bloemfontein,30,REP-103,0,2024-06-01
+CUS-5020,  Umdoni Fresh #05,Modern Trade,Gauteng,Tembisa,30,REP-101,0,2022-10-06
+CUS-5021,Sandhurst Provisions #01,Modern Trade,Western Cape,Soweto,14,REP-103,0.05,2022-11-14
+CUS-5022,Sandhurst Provisions #02,Modern Trade,Western Cape,Polokwane,30,REP-103,0.05,2019-04-14
+CUS-5023,Sandhurst Provisions #03,Modern Trade,Eastern Cape,Polokwane,60,REP-110,0,2021-12-16
+CUS-5024,Sandhurst Provisions #04,MODERN TRADE,Free State,East London,45,REP-111,0.02,2018-11-09
+CUS-5025,Sandhurst Provisions #05,Modern Trade,KwaZulu-Natal,Bloemfontein,45,REP-108,0.02,2018-02-26
+CUS-5026,  Table Bay Foods #01,Modern Trade,Mpumalanga,Khayelitsha,14,REP-106,0.02,2019-04-06
+CUS-5027,Table Bay Foods #02,Modern Trade,Gauteng,Polokwane,30,REP-107,0.04,2021-12-09
+CUS-5028,Table Bay Foods #03,Modern Trade,Mpumalanga,Gqeberha,30,REP-106,0.05,2022-02-01
+CUS-5029,Table Bay Foods #04,Modern Trade,Gauteng,Durban,60,REP-101,0.03,2023-08-30
+CUS-5030,Table Bay Foods #05,Modern Trade,Western Cape,Bloemfontein,30,REP-103,0.05,2021-03-28
+CUS-5031,Midvaal Super #01,Modern Trade,KwaZulu-Natal,Durban,30,REP-108,0.04,2023-11-25
+CUS-5032,Midvaal Super #02,Modern Trade,Eastern Cape,Polokwane,14,REP-110,0.05,2018-04-29
+CUS-5033,Midvaal Super #03,Modern Trade,KwaZulu-Natal,Umlazi,30,REP-102,0,2024-04-12
+CUS-5034,Midvaal Super #04,Modern Trade,Free State,Umlazi,30,REP-111,0.04,2018-10-15
+CUS-5035,Midvaal Super #05,Modern Trade,Gauteng,Cape Town,45,REP-107,0.03,2018-10-14
+CUS-5036,  Ridgecrest Market #01,Modern Trade,Mpumalanga,Umlazi,30,REP-112,0.04,2020-06-06
+CUS-5037,Ridgecrest Market #02,Modern Trade,KwaZulu-Natal,Johannesburg,45,REP-102,0.03,2017-09-03
+CUS-5038,Ridgecrest Market #03,Modern Trade,Eastern Cape,Pretoria,45,REP-110,0,2022-08-21
+CUS-5039,Ridgecrest Market #04,Modern Trade,Eastern Cape,Johannesburg,60,REP-110,0.03,2023-08-27
+CUS-5040,Ridgecrest Market #05,MODERN TRADE,Gauteng,Bloemfontein,30,REP-101,0,2018-08-04
+CUS-5041,Summit Cash & Carry Depot,Wholesale,Western Cape,Soweto,30,REP-103,0.06,2020-05-07
+CUS-5042,Summit Cash & Carry Branch,Wholesale,Eastern Cape,Polokwane,30,REP-104,0.06,2022-07-13
+CUS-5043,Summit Cash & Carry Hub,Wholesale,Gauteng,Khayelitsha,30,REP-107,0.06,2018-08-05
+CUS-5044,Boksburg Bulk Traders Depot,Wholesale,Free State,Tembisa,14,REP-111,0.04,2022-06-02
+CUS-5045,Boksburg Bulk Traders Branch,Wholesale,Eastern Cape,Cape Town,30,REP-110,0.04,2024-01-11
+CUS-5046,Boksburg Bulk Traders Hub,Wholesale,Mpumalanga,Vereeniging,45,REP-106,0.04,2017-11-07
+CUS-5047,Ironstone Wholesale Depot,Wholesale,KwaZulu-Natal,Mbombela,30,REP-102,0.06,2023-08-31
+CUS-5048,Ironstone Wholesale Branch ,Wholesale,Mpumalanga,Soweto,30,REP-112,0.05,2018-06-05
+CUS-5049,Ironstone Wholesale Hub,Wholesale,Mpumalanga,Tembisa,45,REP-106,0.04,2019-12-25
+CUS-5050,Apex Depot Depot,Wholesale,Western Cape,Durban,45,REP-109,0.06,2018-11-11
+CUS-5051,  Apex Depot Branch,Wholesale,Mpumalanga,Tembisa,14,REP-106,0.06,2021-07-24
+CUS-5052,Apex Depot Hub ,wholesale,Mpumalanga,Umlazi,60,REP-112,0.05,2019-12-19
+CUS-5053,Karoo Supply Co Depot,Wholesale,Mpumalanga,Johannesburg,30,REP-112,0.05,2020-06-12
+CUS-5054,Karoo Supply Co Branch,wholesale,Mpumalanga,Bloemfontein,14,REP-112,0.04,2024-01-26
+CUS-5055,  Karoo Supply Co Hub,Wholesale,Free State,Vereeniging,14,REP-105,0.05,2019-09-07
+CUS-5056,Bloemfontein Spaza 9,General Trade,Eastern Cape,Khayelitsha,30,REP-104,0,2021-07-02
+CUS-5057,Khayelitsha Superette 75,General Trade,Free State,Pretoria,60,REP-111,0,2023-04-25
+CUS-5058,Johannesburg Superette 23 ,General Trade,Free State,Durban,45,REP-105,0,2021-09-27
+CUS-5059,Bloemfontein Superette 58,General Trade,Free State,Soweto,30,REP-111,0,2020-04-07
+CUS-5060,Soweto Superette 9,General Trade,Western Cape,East London,30,REP-103,0,2017-08-13
+CUS-5061,Gqeberha General Dealer 91,GENERAL TRADE,Western Cape,Polokwane,60,REP-103,0,2023-06-30
+CUS-5062,Polokwane Spaza 51,General Trade,Mpumalanga,Rustenburg,30,REP-112,0,2023-04-25
+CUS-5063,Vereeniging Mini Market 46,General Trade,Western Cape,Soweto,30,REP-103,0,2022-01-28
+CUS-5064,Polokwane Mini Market 22,General Trade,Free State,Johannesburg,30,REP-111,0,2024-03-31
+CUS-5065,Umlazi General Dealer 23,General Trade,Mpumalanga,Mbombela,45,REP-112,0,2024-01-11
+CUS-5066,Durban General Dealer 56,General Trade,Gauteng,Polokwane,30,REP-107,0,2023-04-19
+CUS-5067,Durban Mini Market 20,General Trade,KwaZulu-Natal,Vereeniging,30,REP-108,0,2019-11-03
+CUS-5068,Soweto Corner Store 3,General Trade,Free State,Umlazi,45,REP-105,0,2022-04-08
+CUS-5069,  Durban General Dealer 78,General Trade,Mpumalanga,Mbombela,45,REP-112,0,2022-03-16
+CUS-5070,Gqeberha General Dealer 89,General Trade,Free State,Umlazi,30,REP-105,0,2020-03-27
+CUS-5071,  Gqeberha General Dealer 40,General Trade,Western Cape,Johannesburg,14,REP-109,0,2021-11-04
+CUS-5072,East London Kwikshop 29,GENERAL TRADE,Gauteng,East London,30,REP-107,0,2018-04-23
+CUS-5073,Johannesburg Spaza 31,General Trade,Eastern Cape,Pretoria,30,REP-104,0,2018-01-19
+CUS-5074,Soweto Corner Store 23,General Trade,Gauteng,Gqeberha,45,REP-101,0,2021-05-19
+CUS-5075,Tembisa Spaza 38,General Trade,Gauteng,Gqeberha,14,REP-107,0,2018-01-11
+CUS-5076,Khayelitsha General Dealer 97,General Trade,KwaZulu-Natal,Tembisa,14,REP-108,0,2019-11-02
+CUS-5077,Johannesburg Tuck Shop 8,General Trade,Gauteng,Umlazi,30,REP-107,0,2020-07-29
+CUS-5078,Mbombela Corner Store 50,General Trade,Eastern Cape,Rustenburg,45,REP-104,0,2023-05-02
+CUS-5079,Gqeberha Spaza 55,General Trade,Eastern Cape,Khayelitsha,30,REP-104,0,2022-04-13
+CUS-5080,Johannesburg Superette 62,General Trade,Mpumalanga,Johannesburg,45,REP-112,0,2021-06-16
+CUS-5081,Mbombela Spaza 24,General Trade,Gauteng,Durban,45,REP-101,0,2017-09-29
+CUS-5082,Pretoria Spaza 19,General Trade,Mpumalanga,Khayelitsha,14,REP-106,0,2022-08-08
+CUS-5083,Umlazi Superette 29,General Trade,Eastern Cape,Pretoria,30,REP-104,0,2023-06-05
+CUS-5084,Vereeniging Tuck Shop 33 ,General Trade,Gauteng,Vereeniging,60,REP-101,0,2020-09-06
+CUS-5085,Bloemfontein Corner Store 74,General Trade,Western Cape,Gqeberha,30,REP-109,0,2022-06-18
+CUS-5086,Soweto Superette 42,GENERAL TRADE,KwaZulu-Natal,Vereeniging,60,REP-102,0,2024-05-31
+CUS-5087,Soweto Kwikshop 81,General Trade,Eastern Cape,Durban,30,REP-110,0,2023-08-03
+CUS-5088,Soweto Tuck Shop 3,General Trade,KwaZulu-Natal,Rustenburg,14,REP-102,0,2020-09-01
+CUS-5089,Durban Tuck Shop 48,General Trade,Eastern Cape,Cape Town,30,REP-104,0,2021-11-16
+CUS-5090,Rustenburg Spaza 78,General Trade,Free State,Pretoria,14,REP-105,0,2019-04-10
+CUS-5091,Pretoria Corner Store 81,General Trade,Western Cape,Polokwane,14,REP-109,0,2023-02-24
+CUS-5092,  Umlazi Kwikshop 81,General Trade,Free State,Mbombela,45,REP-111,0,2021-02-18
+CUS-5093,East London Trading Store 77,general trade,Mpumalanga,Gqeberha,30,REP-106,0,2019-01-28
+CUS-5094,Mbombela Corner Store 3,GENERAL TRADE,Free State,Bloemfontein,30,REP-105,0,2020-11-12
+CUS-5095,Umlazi Kwikshop 82,General Trade,Mpumalanga,East London,30,REP-106,0,2022-11-06
+CUS-5096,Johannesburg Mini Market 75,GENERAL TRADE,Eastern Cape,Polokwane,60,REP-104,0,2021-11-19
+CUS-5097,Gqeberha Tuck Shop 40,General Trade,Free State,Gqeberha,30,REP-111,0,2022-06-20
+CUS-5098,Pretoria Superette 76,GENERAL TRADE,Western Cape,Gqeberha,45,REP-109,0,2019-08-29
+CUS-5099,Cape Town General Dealer 60,General Trade,Western Cape,Mbombela,14,REP-103,0,2018-12-24
+CUS-5100,Polokwane Trading Store 68,general trade,Eastern Cape,Khayelitsha,30,REP-110,0,2018-07-22
+CUS-5101,Pretoria General Dealer 10,General Trade,Mpumalanga,Rustenburg,30,REP-112,0,2017-11-10
+CUS-5102,Rustenburg Spaza 9,General Trade,Free State,Rustenburg,60,REP-111,0,2018-10-25
+CUS-5103,Soweto Spaza 9,General Trade,KwaZulu-Natal,Khayelitsha,45,REP-102,0,2023-08-15
+CUS-5104,Soweto Corner Store 43,General Trade,Eastern Cape,Rustenburg,60,REP-110,0,2021-10-10
+CUS-5105,Gqeberha Mini Market 5,General Trade,Western Cape,Pretoria,30,REP-109,0,2020-03-25
+CUS-5106,Durban General Dealer 69,General Trade,Eastern Cape,Khayelitsha,14,REP-110,0,2018-10-02
+CUS-5107,East London Tuck Shop 34,General Trade,Free State,Mbombela,30,REP-105,0,2017-10-05
+CUS-5108,Umlazi General Dealer 4,GENERAL TRADE,Western Cape,Bloemfontein,60,REP-109,0,2020-08-10
+CUS-5109,East London Corner Store 4,General Trade,Gauteng,Cape Town,30,REP-101,0,2018-09-18
+CUS-5110,Khayelitsha Superette 48,General Trade,Mpumalanga,Mbombela,45,REP-112,0,2022-07-23
+CUS-5111,Bloemfontein Corner Store 46,General Trade,Eastern Cape,Khayelitsha,30,REP-110,0,2021-07-13
+CUS-5112,Durban Spaza 29,General Trade,KwaZulu-Natal,Mbombela,30,REP-102,0,2024-01-04
+CUS-5113,Gqeberha Kwikshop 86,General Trade,Gauteng,East London,30,REP-107,0,2020-03-02
+CUS-5114,Soweto Corner Store 17,General Trade,KwaZulu-Natal,Pretoria,60,REP-108,0,2022-02-12
+CUS-5115,Tembisa Trading Store 12,General Trade,Western Cape,Tembisa,30,REP-103,0,2019-09-19
+CUS-5116,Khayelitsha Trading Store 7,General Trade,Mpumalanga,Johannesburg,14,REP-106,0,2022-03-27
+CUS-5117,Durban Superette 88,General Trade,KwaZulu-Natal,Pretoria,30,REP-108,0,2024-05-15
+CUS-5118,Tembisa Trading Store 83,General Trade,KwaZulu-Natal,Bloemfontein,30,REP-102,0,2020-01-08
+CUS-5119,Soweto Mini Market 67,General Trade,Eastern Cape,Mbombela,30,REP-110,0,2023-11-11
+CUS-5120,Rustenburg Tuck Shop 66,General Trade,Free State,Gqeberha,14,REP-105,0,2024-02-10
+CUS-5121,Soweto Kwikshop 86,General Trade,Gauteng,Bloemfontein,45,REP-101,0,2024-07-14
+CUS-5122,Gqeberha General Dealer 73,General Trade,KwaZulu-Natal,Cape Town,30,REP-108,0,2018-09-30
+CUS-5123,Polokwane General Dealer 62,general trade,Gauteng,Polokwane,60,REP-107,0,2022-06-24
+CUS-5124,Umlazi General Dealer 45,General Trade,Western Cape,Tembisa,60,REP-109,0,2020-08-26
+CUS-5125,Polokwane Trading Store 12,General Trade,Mpumalanga,Bloemfontein,30,REP-112,0,2019-12-09
+CUS-5126,Johannesburg Tuck Shop 32,General Trade,Mpumalanga,Khayelitsha,30,REP-106,0,2021-08-01
+CUS-5127,Cape Town Mini Market 41,General Trade,Western Cape,Umlazi,30,REP-103,0,2021-03-16
+CUS-5128,Rustenburg Kwikshop 25,general trade,Free State,Durban,60,REP-111,0,2022-04-17
+CUS-5129,Johannesburg General Dealer 8,GENERAL TRADE,Free State,Cape Town,30,REP-111,0,2021-03-16
+CUS-5130,Johannesburg General Dealer 75,General Trade,Eastern Cape,Vereeniging,45,REP-110,0,2023-10-25
+CUS-5131,Vereeniging Superette 17,GENERAL TRADE,KwaZulu-Natal,East London,30,REP-108,0,2021-03-28
+CUS-5132,Mbombela Mini Market 41,General Trade,Free State,Pretoria,45,REP-105,0,2023-09-11
+CUS-5133,Polokwane Mini Market 25,General Trade,KwaZulu-Natal,Tembisa,30,REP-108,0,2019-12-03
+CUS-5134,Johannesburg Corner Store 47,General Trade,Free State,Johannesburg,14,REP-111,0,2018-12-04
+CUS-5135,Soweto Kwikshop 59,General Trade,Free State,Mbombela,14,REP-111,0,2020-07-27
+CUS-5136,East London Trading Store 76,General Trade,KwaZulu-Natal,Soweto,30,REP-108,0,2020-07-30
+CUS-5137,Rustenburg Kwikshop 92,general trade,Gauteng,Bloemfontein,45,REP-101,0,2018-12-14
+CUS-5138,Johannesburg Corner Store 73,General Trade,Mpumalanga,Tembisa,30,REP-112,0,2017-10-18
+CUS-5139,Soweto General Dealer 93,General Trade,Mpumalanga,Durban,14,REP-106,0,2021-03-22
+CUS-5140,Mbombela Corner Store 21 ,GENERAL TRADE,Mpumalanga,Gqeberha,30,REP-112,0,2021-01-13
+CUS-5141,East London Kwikshop 78,General Trade,Free State,Gqeberha,30,REP-111,0,2020-11-09
+CUS-5142,Pretoria Kwikshop 84,General Trade,Mpumalanga,Bloemfontein,30,REP-112,0,2020-09-01
+CUS-5143,Khayelitsha Corner Store 21,general trade,KwaZulu-Natal,Gqeberha,14,REP-108,0,2017-08-02
+CUS-5144,Gqeberha Tuck Shop 46,General Trade,Western Cape,Bloemfontein,30,REP-109,0,2022-03-26
+CUS-5145,Tembisa Kwikshop 67,General Trade,Western Cape,Polokwane,30,REP-103,0,2019-03-22
+CUS-5146,Gqeberha Mini Market 8,General Trade,Mpumalanga,Cape Town,30,REP-106,0,2023-08-24
+CUS-5147,Umlazi Tuck Shop 93,General Trade,Gauteng,Khayelitsha,45,REP-107,0,2023-06-16
+CUS-5148,Bloemfontein Trading Store 52,General Trade,Mpumalanga,Pretoria,45,REP-112,0,2021-11-07
+CUS-5149,Vereeniging Kwikshop 67,General Trade,KwaZulu-Natal,Bloemfontein,60,REP-108,0,2020-10-29
+CUS-5150,Soweto Spaza 71,General Trade,Western Cape,Johannesburg,14,REP-109,0,2024-02-19
+CUS-5151,East London Spaza 81,General Trade,Eastern Cape,Gqeberha,30,REP-110,0,2022-08-23
+CUS-5152,Pretoria Corner Store 61,GENERAL TRADE,Mpumalanga,East London,45,REP-112,0,2020-10-06
+CUS-5153,Gqeberha General Dealer 19,General Trade,Eastern Cape,Cape Town,14,REP-110,0,2021-06-13
+CUS-5154,Pretoria Mini Market 93,General Trade,Mpumalanga,Umlazi,14,REP-112,0,2021-10-30
+CUS-5155,Umlazi Corner Store 52,general trade,Free State,Gqeberha,30,REP-105,0,2021-09-21
+CUS-5156,Johannesburg Corner Store 21,General Trade,Free State,Tembisa,30,REP-111,0,2024-06-23
+CUS-5157,Vereeniging General Dealer 26,General Trade,Western Cape,Cape Town,30,REP-103,0,2022-01-26
+CUS-5158,Durban Kwikshop 70,General Trade,Gauteng,Pretoria,30,REP-107,0,2023-04-01
+CUS-5159,Polokwane General Dealer 83,general trade,KwaZulu-Natal,Durban,45,REP-108,0,2019-10-09
+CUS-5160,Rustenburg Tuck Shop 32,General Trade,Eastern Cape,Rustenburg,45,REP-110,0,2021-08-24
+CUS-5161,East London Kwikshop 38,General Trade,Free State,Durban,30,REP-105,0,2017-10-31
+CUS-5162,Cape Town General Dealer 48,General Trade,Eastern Cape,Vereeniging,30,REP-104,0,2019-12-29
+CUS-5163,Polokwane Tuck Shop 83,General Trade,Gauteng,Soweto,14,REP-107,0,2023-04-25
+CUS-5164,Pretoria Trading Store 38,General Trade,Eastern Cape,Bloemfontein,45,REP-110,0,2022-12-31
+CUS-5165,Johannesburg Corner Store 34,General Trade,Western Cape,Umlazi,30,REP-103,0,2023-03-04
+CUS-5166,East London Tuck Shop 54,General Trade,Eastern Cape,Cape Town,30,REP-104,0,2019-08-13
+CUS-5167,Cape Town Kwikshop 13,General Trade,Gauteng,Vereeniging,30,REP-101,0,2020-07-12
+CUS-5168,Rustenburg Trading Store 81,General Trade,KwaZulu-Natal,Khayelitsha,60,REP-108,0,2023-09-24
+CUS-5169,Vereeniging Spaza 97,General Trade,Eastern Cape,Mbombela,60,REP-110,0,2017-12-03
+CUS-5170,Bloemfontein Tuck Shop 5,General Trade,Western Cape,Khayelitsha,30,REP-109,0,2021-08-15
+CUS-5171,Rustenburg Tuck Shop 3,General Trade,Mpumalanga,Tembisa,30,REP-112,0,2024-03-29
+CUS-5172,Khayelitsha General Dealer 10,General Trade,Mpumalanga,Durban,30,REP-106,0,2022-06-19
+CUS-5173,Cape Town Kwikshop 65,General Trade,Free State,Vereeniging,30,REP-111,0,2024-07-30
+CUS-5174,Rustenburg Mini Market 80,GENERAL TRADE,Western Cape,Bloemfontein,60,REP-109,0,2021-11-13
+CUS-5175,East London Kwikshop 68,General Trade,KwaZulu-Natal,Johannesburg,60,REP-108,0,2024-04-04
+CUS-5176,Tembisa Tuck Shop 29,General Trade,KwaZulu-Natal,Pretoria,60,REP-102,0,2018-04-25
+CUS-5177,Johannesburg Trading Store 66,General Trade,Free State,Gqeberha,30,REP-105,0,2018-02-17
+CUS-5178,Bloemfontein Superette 31,General Trade,Mpumalanga,Bloemfontein,45,REP-112,0,2019-12-21
+CUS-5179,East London Tuck Shop 91,General Trade,Gauteng,Durban,60,REP-107,0,2021-12-17
+CUS-5180,East London Tuck Shop 50,General Trade,Mpumalanga,Johannesburg,45,REP-106,0,2020-04-06
+CUS-5181,Mbombela Spaza 27,general trade,Gauteng,Bloemfontein,60,REP-101,0,2021-11-13
+CUS-5182,Soweto Kwikshop 16,General Trade,Western Cape,Pretoria,30,REP-103,0,2018-06-06
+CUS-5183,Polokwane Trading Store 58,General Trade,Eastern Cape,Soweto,30,REP-104,0,2018-12-31
+CUS-5184,  Vereeniging Mini Market 26,General Trade,Western Cape,Johannesburg,45,REP-109,0,2020-01-14
+CUS-5185,Khayelitsha General Dealer 17,General Trade,Free State,Vereeniging,14,REP-111,0,2023-01-09
+CUS-5186,Gqeberha Trading Store 30 ,General Trade,Eastern Cape,Khayelitsha,45,REP-110,0,2022-10-02
+CUS-5187,Cape Town Trading Store 45,GENERAL TRADE,Western Cape,Vereeniging,30,REP-109,0,2019-11-24
+CUS-5188,Rustenburg Trading Store 46,General Trade,KwaZulu-Natal,Mbombela,14,REP-102,0,2019-08-23
+CUS-5189,Mbombela General Dealer 69,General Trade,KwaZulu-Natal,Bloemfontein,30,REP-102,0,2022-03-17
+CUS-5190,Soweto Superette 15,General Trade,Free State,Vereeniging,30,REP-111,0,2022-09-02
+CUS-5191,Gqeberha Superette 99,general trade,Mpumalanga,Gqeberha,14,REP-112,0,2022-04-24
+CUS-5192,Rustenburg Mini Market 38,GENERAL TRADE,KwaZulu-Natal,Vereeniging,30,REP-108,0,2024-01-01
+CUS-5193,Gqeberha Trading Store 31,General Trade,Free State,Rustenburg,30,REP-111,0,2020-09-23
+CUS-5194,Johannesburg Corner Store 2,General Trade,Western Cape,Vereeniging,30,REP-103,0,2020-01-31
+CUS-5195,Mbombela Tuck Shop 3,General Trade,Eastern Cape,Cape Town,30,REP-110,0,2022-09-01
+CUS-5196,Pretoria Kwikshop 64,General Trade,Mpumalanga,Pretoria,30,REP-106,0,2020-07-12
+CUS-5197,Cape Town Trading Store 66,General Trade,Eastern Cape,Tembisa,60,REP-104,0,2018-08-01
+CUS-5198,Umlazi Corner Store 28,General Trade,Eastern Cape,Pretoria,30,REP-110,0,2018-02-16
+CUS-5199,Polokwane Corner Store 9,General Trade,KwaZulu-Natal,Rustenburg,30,REP-108,0,2019-01-19
+CUS-5200,Umlazi Tuck Shop 99,General Trade,Eastern Cape,Vereeniging,60,REP-110,0,2020-08-10
+CUS-5201,Pretoria Kwikshop 1,General Trade,Western Cape,Mbombela,45,REP-109,0,2019-07-15
+CUS-5202,Tembisa Tuck Shop 3,General Trade,Mpumalanga,Pretoria,60,REP-112,0,2023-07-31
+CUS-5203,East London Mini Market 14,General Trade,Western Cape,Khayelitsha,14,REP-103,0,2023-08-03
+CUS-5204,Durban Superette 1,General Trade,Mpumalanga,Rustenburg,60,REP-106,0,2023-02-20
+CUS-5205,Johannesburg Corner Store 34,General Trade,Mpumalanga,Polokwane,30,REP-112,0,2017-10-03
+CUS-5206,Polokwane Mini Market 43,General Trade,Eastern Cape,Cape Town,30,REP-110,0,2022-03-04
+CUS-5207,Umlazi Mini Market 45,General Trade,Gauteng,Bloemfontein,60,REP-107,0,2018-02-19
+CUS-5208,Mbombela Superette 86,General Trade,Gauteng,Vereeniging,30,REP-107,0,2018-11-12
+CUS-5209,Rustenburg Superette 28,GENERAL TRADE,Eastern Cape,Johannesburg,60,REP-104,0,2022-07-24
+CUS-5210,Polokwane Tuck Shop 58,General Trade,Gauteng,Soweto,30,REP-101,0,2019-03-07
+CUS-5211,Mbombela Mini Market 68,General Trade,KwaZulu-Natal,East London,30,REP-102,0,2023-07-26
+CUS-5212,Pretoria Kwikshop 21,General Trade,Eastern Cape,East London,60,REP-104,0,2021-04-22
+CUS-5213,Gqeberha Mini Market 49 ,General Trade,KwaZulu-Natal,Pretoria,14,REP-108,0,2018-10-30
+CUS-5214,Vereeniging Kwikshop 47,General Trade,KwaZulu-Natal,Vereeniging,30,REP-108,0,2020-11-04
+CUS-5215,Gqeberha General Dealer 63,General Trade,Gauteng,Johannesburg,30,REP-101,0,2023-08-16
+CUS-5216,Durban General Dealer 47,General Trade,Eastern Cape,Durban,30,REP-104,0,2020-07-18
+CUS-5217,East London Tuck Shop 40,General Trade,Free State,Tembisa,30,REP-105,0,2019-07-04
+CUS-5218,Gqeberha Corner Store 9,General Trade,KwaZulu-Natal,Durban,30,REP-108,0,2019-06-30
+CUS-5219,East London Trading Store 18,General Trade,Gauteng,Johannesburg,60,REP-101,0,2021-11-03
+CUS-5220,Umlazi Corner Store 52,General Trade,KwaZulu-Natal,Bloemfontein,30,REP-102,0,2021-12-04
+CUS-5221,Pretoria Kwikshop 85,General Trade,Mpumalanga,Umlazi,45,REP-106,0,2021-04-28
+CUS-5222,Polokwane Mini Market 8,General Trade,KwaZulu-Natal,Soweto,45,REP-108,0,2020-09-04
+CUS-5223,Soweto Trading Store 75,GENERAL TRADE,Western Cape,Gqeberha,30,REP-103,0,2019-11-03
+CUS-5224,Mbombela General Dealer 8,General Trade,Western Cape,Durban,30,REP-103,0,2023-08-14
+CUS-5225,Bloemfontein Superette 58,General Trade,Western Cape,Mbombela,60,REP-103,0,2019-06-09
+CUS-5226,Soweto Tuck Shop 3,General Trade,Gauteng,Mbombela,30,REP-107,0,2021-09-01
+CUS-5227,Gqeberha Tuck Shop 84,GENERAL TRADE,Eastern Cape,Khayelitsha,14,REP-104,0,2018-11-10
+CUS-5228,Pretoria Trading Store 82,General Trade,Free State,Vereeniging,60,REP-111,0,2022-03-07
+CUS-5229,Polokwane General Dealer 10,General Trade,Gauteng,Rustenburg,14,REP-101,0,2020-04-16
+CUS-5230,East London General Dealer 85,General Trade,Eastern Cape,Umlazi,30,REP-110,0,2021-04-17
+CUS-5231,Khayelitsha Corner Store 36,General Trade,Gauteng,Umlazi,30,REP-107,0,2024-06-22
+CUS-5232,Johannesburg Superette 46,General Trade,Gauteng,Rustenburg,60,REP-101,0,2022-08-14
+CUS-5233,Polokwane Mini Market 13,General Trade,Gauteng,Gqeberha,30,REP-101,0,2019-09-18
+CUS-5234,Cape Town Trading Store 9,General Trade,Eastern Cape,Cape Town,60,REP-104,0,2021-08-02
+CUS-5235,Gqeberha Kwikshop 66,general trade,Mpumalanga,Khayelitsha,30,REP-112,0,2021-09-05
+CUS-5236,Khayelitsha Mini Market 19,General Trade,Western Cape,Polokwane,60,REP-109,0,2024-01-11
+CUS-5237,Khayelitsha Kwikshop 76,General Trade,Free State,Rustenburg,45,REP-111,0,2023-04-06
+CUS-5238,Polokwane General Dealer 4,general trade,Gauteng,Khayelitsha,30,REP-107,0,2023-11-05
+CUS-5239,Tembisa Trading Store 40,general trade,KwaZulu-Natal,Polokwane,60,REP-108,0,2017-11-21
+CUS-5240,Vereeniging Spaza 93,General Trade,Western Cape,Johannesburg,30,REP-103,0,2024-07-16
+CUS-5241,Khayelitsha Kwikshop 56,General Trade,Western Cape,Cape Town,30,REP-109,0,2021-08-05
+CUS-5242,East London Spaza 72,General Trade,Mpumalanga,Polokwane,45,REP-106,0,2024-02-06
+CUS-5243,Polokwane Superette 6,General Trade,Free State,Khayelitsha,30,REP-105,0,2018-09-30
+CUS-5244,Gqeberha Superette 81,General Trade,Gauteng,Soweto,30,REP-101,0,2022-05-25
+CUS-5245,Mbombela Mini Market 89,General Trade,Mpumalanga,Bloemfontein,60,REP-106,0,2019-04-03
+CUS-5246,Pretoria Kwikshop 60,General Trade,Free State,Bloemfontein,30,REP-105,0,2022-06-25
+CUS-5247,Polokwane Corner Store 9,General Trade,Gauteng,Pretoria,30,REP-107,0,2019-05-02
+CUS-5248,  Polokwane Kwikshop 15,general trade,KwaZulu-Natal,Gqeberha,14,REP-102,0,2023-12-19
+CUS-5249,Rustenburg Superette 54,General Trade,Eastern Cape,Mbombela,14,REP-110,0,2020-01-02
+CUS-5250,Johannesburg General Dealer 8,General Trade,KwaZulu-Natal,Pretoria,30,REP-102,0,2019-04-26
+CUS-5251,Gqeberha Spaza 83,General Trade,Western Cape,Pretoria,60,REP-103,0,2021-01-06
+CUS-5252,Cape Town Spaza 28,General Trade,Eastern Cape,Johannesburg,30,REP-110,0,2022-09-04
+CUS-5253,Gqeberha Mini Market 73,General Trade,Free State,Umlazi,14,REP-111,0,2020-04-25
+CUS-5254,Cape Town Spaza 39,General Trade,Mpumalanga,Umlazi,14,REP-106,0,2020-11-28
+CUS-5255,Mbombela General Dealer 65,General Trade,Mpumalanga,Tembisa,60,REP-112,0,2019-03-28
+CUS-5256,Soweto Kwikshop 10,GENERAL TRADE,Western Cape,Durban,60,REP-103,0,2018-08-14
+CUS-5257,Polokwane General Dealer 97,GENERAL TRADE,Eastern Cape,Gqeberha,45,REP-110,0,2021-01-16
+CUS-5258,Tembisa Kwikshop 40,General Trade,Eastern Cape,Cape Town,60,REP-110,0,2018-08-17
+CUS-5259,Cape Town Mini Market 55,General Trade,KwaZulu-Natal,Umlazi,30,REP-108,0,2022-02-04
+CUS-5260,Polokwane General Dealer 25,General Trade,Mpumalanga,East London,30,REP-112,0,2019-05-07
+CUS-5261,Vereeniging General Dealer 78,General Trade,Free State,Johannesburg,30,REP-105,0,2019-12-18
+CUS-5262,East London General Dealer 47,General Trade,Eastern Cape,Khayelitsha,30,REP-110,0,2023-06-21
+CUS-5263,East London Trading Store 38 ,GENERAL TRADE,Eastern Cape,East London,14,REP-104,0,2022-09-16
+CUS-5264,Rustenburg General Dealer 51,General Trade,Eastern Cape,Mbombela,30,REP-104,0,2018-11-03
+CUS-5265,Khayelitsha General Dealer 96,General Trade,Eastern Cape,Polokwane,30,REP-110,0,2021-01-07
+CUS-5266,Soweto Mini Market 95,General Trade,Free State,Durban,60,REP-105,0,2017-10-28
+CUS-5267,Rustenburg Trading Store 77,general trade,Eastern Cape,Khayelitsha,45,REP-110,0,2018-04-03
+CUS-5268,Johannesburg Spaza 68,General Trade,Western Cape,Vereeniging,45,REP-109,0,2018-02-25
+CUS-5269,Johannesburg Tuck Shop 19,General Trade,Gauteng,Vereeniging,30,REP-107,0,2019-11-29
+CUS-5270,Umlazi Mini Market 69,GENERAL TRADE,Mpumalanga,Vereeniging,30,REP-112,0,2018-02-08
+CUS-5271,Cape Town Superette 66,General Trade,Gauteng,Polokwane,45,REP-101,0,2018-03-04
+CUS-5272,Soweto Kwikshop 47,General Trade,Mpumalanga,Rustenburg,30,REP-106,0,2023-12-22
+CUS-5273,Pretoria Corner Store 39,General Trade,Free State,East London,60,REP-105,0,2018-06-03
+CUS-5274,Soweto Tuck Shop 15,General Trade,Gauteng,Vereeniging,45,REP-107,0,2020-11-08
+CUS-5275,Polokwane Tuck Shop 71,General Trade,Free State,Johannesburg,30,REP-111,0,2024-04-22
+CUS-5276,Soweto General Dealer 44,General Trade,KwaZulu-Natal,Gqeberha,14,REP-102,0,2022-11-01
+CUS-5277,Gqeberha Mini Market 62,General Trade,Gauteng,Vereeniging,30,REP-101,0,2024-03-06
+CUS-5278,Gqeberha Corner Store 22,General Trade,Free State,Bloemfontein,30,REP-111,0,2018-12-14
+CUS-5279,Gqeberha Trading Store 29,General Trade,Mpumalanga,Vereeniging,45,REP-112,0,2022-06-11
+CUS-5280,Durban Tuck Shop 36,General Trade,KwaZulu-Natal,Johannesburg,30,REP-108,0,2018-07-09
+CUS-5281,Johannesburg Trading Store 97,General Trade,Eastern Cape,Cape Town,30,REP-104,0,2023-05-04
+CUS-5282,Polokwane Trading Store 85,General Trade,Western Cape,Durban,30,REP-109,0,2020-01-26
+CUS-5283,Umlazi Tuck Shop 28,General Trade,Eastern Cape,Soweto,14,REP-104,0,2019-01-01
+CUS-5284,Vereeniging Trading Store 32,General Trade,Western Cape,Gqeberha,45,REP-109,0,2020-10-01
+CUS-5285,East London Corner Store 20,General Trade,Eastern Cape,Tembisa,45,REP-104,0,2017-09-17
+CUS-5286,Cape Town Corner Store 30,General Trade,Eastern Cape,Gqeberha,45,REP-110,0,2021-10-06
+CUS-5287,Tembisa Corner Store 31,General Trade,Free State,Umlazi,45,REP-105,0,2017-11-19
+CUS-5288,East London Mini Market 96,General Trade,Free State,Cape Town,30,REP-111,0,2018-06-21
+CUS-5289,Umlazi Mini Market 83,General Trade,Free State,Bloemfontein,30,REP-111,0,2019-01-05
+CUS-5290,Cape Town Superette 32,General Trade,Eastern Cape,Cape Town,30,REP-104,0,2019-06-10
+CUS-5291,Rustenburg Corner Store 64,General Trade,Free State,Pretoria,45,REP-111,0,2020-02-01
+CUS-5292,Khayelitsha Mini Market 71,General Trade,KwaZulu-Natal,Cape Town,30,REP-108,0,2023-04-12
+CUS-5293,Khayelitsha Tuck Shop 4,General Trade,KwaZulu-Natal,Johannesburg,60,REP-102,0,2018-10-01
+CUS-5294,Gqeberha Spaza 98,General Trade,Free State,Pretoria,14,REP-111,0,2024-05-07
+CUS-5295,Polokwane Trading Store 55,GENERAL TRADE,Eastern Cape,Pretoria,30,REP-110,0,2019-03-21
+CUS-5296,Bloemfontein Trading Store 33,General Trade,Free State,East London,45,REP-105,0,2019-06-29
+CUS-5297,Johannesburg Trading Store 43,General Trade,Mpumalanga,Rustenburg,60,REP-112,0,2021-01-05
+CUS-5298,Vereeniging Spaza 4,General Trade,Gauteng,Khayelitsha,30,REP-107,0,2023-02-18
+CUS-5299,Cape Town Tuck Shop 9,General Trade,Western Cape,Soweto,30,REP-109,0,2021-07-08
+CUS-5300,Tembisa Mini Market 27,General Trade,Eastern Cape,Bloemfontein,30,REP-104,0,2019-09-15
+CUS-5301,  Tembisa Superette 43,General Trade,Mpumalanga,Polokwane,45,REP-112,0,2020-08-11
+CUS-5302,  Cape Town Trading Store 44,General Trade,Mpumalanga,Pretoria,30,REP-112,0,2022-10-23
+CUS-5303,Bloemfontein Superette 85,General Trade,Free State,Durban,45,REP-111,0,2019-08-11
+CUS-5304,Mbombela Tuck Shop 62 ,General Trade,Free State,Johannesburg,30,REP-111,0,2023-02-10
+CUS-5305,Polokwane Tuck Shop 89,General Trade,Western Cape,Soweto,30,REP-109,0,2019-12-31
+CUS-5306,Pretoria Superette 25,General Trade,Western Cape,Khayelitsha,30,REP-109,0,2022-11-02
+CUS-5307,  Soweto Corner Store 41,General Trade,Eastern Cape,Khayelitsha,14,REP-110,0,2022-08-10
+CUS-5308,Tembisa Superette 39,GENERAL TRADE,KwaZulu-Natal,East London,30,REP-108,0,2023-07-31
+CUS-5309,Khayelitsha General Dealer 34,GENERAL TRADE,KwaZulu-Natal,Durban,14,REP-102,0,2020-03-25
+CUS-5310,Cape Town Corner Store 26,General Trade,Free State,Soweto,60,REP-105,0,2017-08-23
+CUS-5311,East London Kwikshop 88,General Trade,Mpumalanga,Khayelitsha,60,REP-112,0,2021-06-30
+CUS-5312,Bloemfontein Kwikshop 20,General Trade,Mpumalanga,Polokwane,30,REP-112,0,2018-03-29
+CUS-5313,Bloemfontein Superette 25 ,General Trade,Gauteng,Polokwane,30,REP-101,0,2021-05-16
+CUS-5314,Khayelitsha Tuck Shop 39,General Trade,Free State,Umlazi,30,REP-111,0,2018-05-25
+CUS-5315,Soweto Spaza 72 ,GENERAL TRADE,Western Cape,Khayelitsha,30,REP-103,0,2020-11-24
+CUS-5316,Cape Town Kwikshop 76,General Trade,Free State,East London,30,REP-111,0,2023-05-05
+CUS-5317,Pretoria Mini Market 82,General Trade,Free State,Khayelitsha,30,REP-111,0,2017-12-08
+CUS-5318,Umlazi Mini Market 84,GENERAL TRADE,Mpumalanga,Polokwane,30,REP-106,0,2022-01-01
+CUS-5319,  Rustenburg General Dealer 9,General Trade,Western Cape,East London,14,REP-103,0,2024-05-03
+CUS-5320,Johannesburg Superette 81,General Trade,Mpumalanga,Mbombela,30,REP-106,0,2022-03-06
+CUS-5321,Gqeberha Superette 75,General Trade,Eastern Cape,Pretoria,30,REP-104,0,2022-10-27
+CUS-5322,  Gqeberha Tuck Shop 21,General Trade,Eastern Cape,Soweto,45,REP-104,0,2022-04-02
+CUS-5323,Gqeberha Kwikshop 43,GENERAL TRADE,Free State,Vereeniging,30,REP-105,0,2017-08-24
+CUS-5324,Cape Town Corner Store 8,General Trade,KwaZulu-Natal,Johannesburg,14,REP-102,0,2023-04-04
+CUS-5325,  Durban Tuck Shop 86,General Trade,Western Cape,Soweto,30,REP-109,0,2018-01-24
+CUS-5326,Johannesburg General Dealer 80,GENERAL TRADE,Mpumalanga,Pretoria,30,REP-106,0,2020-05-09
+CUS-5327,Cape Town Mini Market 58,General Trade,Gauteng,Tembisa,60,REP-107,0,2021-03-12
+CUS-5328,Tembisa Mini Market 60,General Trade,KwaZulu-Natal,Rustenburg,30,REP-108,0,2021-03-26
+CUS-5329,Pretoria Spaza 72,General Trade,Mpumalanga,Soweto,60,REP-112,0,2021-09-17
+CUS-5330,  Pretoria Trading Store 85,General Trade,Free State,Rustenburg,14,REP-111,0,2021-12-28
+CUS-5331,Soweto Superette 43,General Trade,KwaZulu-Natal,Vereeniging,60,REP-102,0,2019-11-11
+CUS-5332,Gqeberha Superette 84,General Trade,Western Cape,Gqeberha,14,REP-103,0,2021-12-19
+CUS-5333,Rustenburg Superette 66,General Trade,Western Cape,Pretoria,30,REP-103,0,2021-08-08
+CUS-5334,Khayelitsha Spaza 21,General Trade,Mpumalanga,Rustenburg,45,REP-112,0,2020-10-14
+CUS-5335,Soweto Trading Store 86,General Trade,Gauteng,Rustenburg,30,REP-101,0,2018-09-24
+CUS-5336,Polokwane Superette 43,General Trade,KwaZulu-Natal,Pretoria,30,REP-108,0,2020-05-25
+CUS-5337,Rustenburg Superette 71,General Trade,Eastern Cape,Tembisa,30,REP-104,0,2018-10-22
+CUS-5338,Khayelitsha Tuck Shop 68,General Trade,Free State,Pretoria,45,REP-111,0,2019-08-14
+CUS-5339,  Umlazi Spaza 3,General Trade,Free State,Durban,30,REP-105,0,2018-07-01
+CUS-5340,  Umlazi Mini Market 24,General Trade,Gauteng,Mbombela,30,REP-101,0,2018-02-13
+CUS-5341,Mbombela Spaza 29,GENERAL TRADE,Gauteng,Soweto,30,REP-101,0,2022-05-24
+CUS-5342,  Gqeberha Trading Store 71,General Trade,Eastern Cape,Bloemfontein,60,REP-110,0,2017-10-25
+CUS-5343,Tembisa Kwikshop 63,General Trade,Gauteng,Johannesburg,60,REP-107,0,2017-11-08
+CUS-5344,Tembisa Mini Market 5,General Trade,Mpumalanga,Khayelitsha,60,REP-106,0,2019-09-24
+CUS-5345,Bloemfontein Kwikshop 21,General Trade,Gauteng,Bloemfontein,30,REP-107,0,2020-11-21
+CUS-5346,Rustenburg Mini Market 94,General Trade,Gauteng,Polokwane,30,REP-101,0,2024-01-31
+CUS-5347,Vereeniging Spaza 29,General Trade,Free State,Soweto,30,REP-105,0,2017-12-18
+CUS-5348,  Tembisa Tuck Shop 38,General Trade,Western Cape,Cape Town,30,REP-109,0,2019-09-08
+CUS-5349,Mbombela Corner Store 9,General Trade,Mpumalanga,Rustenburg,30,REP-112,0,2019-10-10
+CUS-5350,Cape Town General Dealer 33,General Trade,KwaZulu-Natal,Bloemfontein,14,REP-102,0,2019-10-25
+CUS-5351,Rustenburg Superette 12,General Trade,Free State,Soweto,30,REP-105,0,2020-08-30
+CUS-5352,East London Trading Store 94,General Trade,Gauteng,Durban,14,REP-107,0,2021-07-14
+CUS-5353,Khayelitsha Corner Store 47,General Trade,KwaZulu-Natal,Durban,30,REP-108,0,2021-01-23
+CUS-5354,Khayelitsha Superette 87,General Trade,Eastern Cape,Bloemfontein,30,REP-104,0,2018-09-02
+CUS-5355,Tembisa Kwikshop 5,General Trade,Mpumalanga,Johannesburg,30,REP-112,0,2023-12-14
+CUS-5356,Rustenburg Mini Market 15,General Trade,Mpumalanga,Umlazi,45,REP-106,0,2024-07-03
+CUS-5357,Tembisa Corner Store 41,General Trade,Western Cape,Umlazi,30,REP-109,0,2023-07-06
+CUS-5358,Mbombela Spaza 6,General Trade,KwaZulu-Natal,Rustenburg,30,REP-102,0,2018-04-27
+CUS-5359,Tembisa Trading Store 4,General Trade,Western Cape,Umlazi,30,REP-109,0,2022-03-26
+CUS-5360,Bloemfontein Mini Market 19,GENERAL TRADE,KwaZulu-Natal,Pretoria,45,REP-108,0,2020-01-25
+CUS-5361,Vereeniging Spaza 69,General Trade,Eastern Cape,East London,60,REP-110,0,2023-10-01
+CUS-5362,  Vereeniging Spaza 67,General Trade,Gauteng,Rustenburg,30,REP-107,0,2018-04-20
+CUS-5363,Johannesburg Spaza 26,General Trade,Mpumalanga,Umlazi,30,REP-106,0,2019-11-14
+CUS-5364,Umlazi Kwikshop 28 ,General Trade,Eastern Cape,Pretoria,45,REP-110,0,2021-08-05
+CUS-5365,Vereeniging Spaza 27 ,General Trade,Gauteng,Soweto,30,REP-107,0,2021-12-17
+CUS-5366,Johannesburg Kwikshop 18,General Trade,KwaZulu-Natal,East London,30,REP-102,0,2019-07-19
+CUS-5367,Durban Tuck Shop 2,General Trade,KwaZulu-Natal,Rustenburg,30,REP-102,0,2022-11-09
+CUS-5368,Bloemfontein Superette 33,General Trade,Western Cape,Gqeberha,14,REP-109,0,2024-06-25
+CUS-5369,Durban Kwikshop 6,General Trade,Mpumalanga,Cape Town,60,REP-106,0,2019-11-22
+CUS-5370,Soweto Superette 30,General Trade,Eastern Cape,Tembisa,14,REP-104,0,2021-04-21
+CUS-5371,Umlazi Tuck Shop 81 ,General Trade,KwaZulu-Natal,Rustenburg,45,REP-102,0,2019-12-13
+CUS-5372,Soweto General Dealer 12,General Trade,Eastern Cape,Khayelitsha,30,REP-110,0,2020-08-11
+CUS-5373,Soweto Corner Store 82,General Trade,Gauteng,Cape Town,30,REP-107,0,2022-07-18
+CUS-5374,Tembisa Kwikshop 35,General Trade,Eastern Cape,Vereeniging,45,REP-110,0,2024-06-16
+CUS-5375,  Pretoria Kwikshop 35,General Trade,Western Cape,Cape Town,30,REP-103,0,2023-04-30
+CUS-5376,Polokwane Corner Store 47,General Trade,Free State,Khayelitsha,30,REP-105,0,2017-08-31
+CUS-5377,Tembisa Kwikshop 32,General Trade,Gauteng,Bloemfontein,30,REP-101,0,2018-12-26
+CUS-5378,Gqeberha Tuck Shop 70,General Trade,Mpumalanga,Vereeniging,60,REP-112,0,2021-10-16
+CUS-5379,Rustenburg Kwikshop 85 ,General Trade,Western Cape,Soweto,30,REP-103,0,2018-08-02
+CUS-5380,Vereeniging Spaza 48,General Trade,Western Cape,Umlazi,60,REP-109,0,2017-11-14
+CUS-5381,Bloemfontein General Dealer 31,General Trade,Eastern Cape,Mbombela,45,REP-104,0,2017-10-14
+CUS-5382,Cape Town Tuck Shop 28,General Trade,Western Cape,Soweto,30,REP-103,0,2019-05-24
+CUS-5383,Umlazi Tuck Shop 73,General Trade,Western Cape,Durban,30,REP-103,0,2021-09-23
+CUS-5384,Bloemfontein Tuck Shop 82,General Trade,Western Cape,Durban,30,REP-103,0,2022-02-21
+CUS-5385,Soweto Kwikshop 73,General Trade,KwaZulu-Natal,Tembisa,30,REP-102,0,2020-12-31
+CUS-5386,Johannesburg Tuck Shop 25,General Trade,Western Cape,East London,60,REP-103,0,2020-02-01
+CUS-5387,Tembisa Trading Store 39,General Trade,Mpumalanga,Soweto,45,REP-106,0,2022-06-06
+CUS-5388,Gqeberha Superette 26,General Trade,Gauteng,Vereeniging,60,REP-101,0,2024-02-04
+CUS-5389,Cape Town Mini Market 69,General Trade,Mpumalanga,Khayelitsha,30,REP-106,0,2023-11-13
+CUS-5390,Umlazi Spaza 40,General Trade,Gauteng,Umlazi,30,REP-107,0,2017-12-14
+CUS-5391,Khayelitsha Mini Market 47,General Trade,KwaZulu-Natal,Durban,14,REP-108,0,2021-06-30
+CUS-5392,Pretoria Mini Market 48,General Trade,Free State,Soweto,30,REP-111,0,2018-09-07
+CUS-5393,Umlazi Corner Store 23,General Trade,Gauteng,Johannesburg,45,REP-101,0,2023-01-25
+CUS-5394,Cape Town Kwikshop 41,General Trade,Eastern Cape,Vereeniging,14,REP-104,0,2023-03-22
+CUS-5395,Cape Town Mini Market 73,General Trade,Western Cape,Durban,30,REP-109,0,2019-09-13
+CUS-5396,Mbombela Lodge 20,HoReCa,Eastern Cape,Vereeniging,30,REP-110,0,2018-06-25
+CUS-5397,Soweto Shisanyama 26,HoReCa,Mpumalanga,Pretoria,30,REP-106,0,2019-05-08
+CUS-5398,Cape Town Lodge 2,horeca,Gauteng,Umlazi,30,REP-107,0,2024-03-15
+CUS-5399,Johannesburg Guest House 10,HoReCa,KwaZulu-Natal,Johannesburg,30,REP-108,0,2020-06-21
+CUS-5400,Soweto Guest House 36,HoReCa,Eastern Cape,Soweto,30,REP-110,0,2022-11-07
+CUS-5401,Khayelitsha Cafe 35,HORECA,Mpumalanga,Tembisa,60,REP-106,0,2019-04-15
+CUS-5402,Vereeniging Takeaway 1,HoReCa,KwaZulu-Natal,Johannesburg,30,REP-108,0,2021-05-30
+CUS-5403,Vereeniging Grill 23,HoReCa,Gauteng,Cape Town,30,REP-101,0,2018-05-08
+CUS-5404,Polokwane Lodge 8,HoReCa,Western Cape,Rustenburg,30,REP-109,0,2018-03-17
+CUS-5405,Durban Grill 31,HoReCa,Gauteng,Khayelitsha,60,REP-101,0,2018-12-01
+CUS-5406,Mbombela Shisanyama 24,HoReCa,Gauteng,Johannesburg,60,REP-101,0,2020-08-15
+CUS-5407,Vereeniging Bistro 22,horeca,Eastern Cape,Rustenburg,30,REP-104,0,2019-07-30
+CUS-5408,Mbombela Takeaway 36,HoReCa,Western Cape,Khayelitsha,30,REP-109,0,2024-04-22
+CUS-5409,Bloemfontein Canteen 16,HoReCa,Gauteng,Cape Town,60,REP-107,0,2020-01-08
+CUS-5410,Cape Town Canteen 21,HoReCa,Western Cape,Cape Town,30,REP-109,0,2019-12-13
+CUS-5411,Polokwane Canteen 16,HoReCa,Gauteng,Pretoria,30,REP-101,0,2023-01-16
+CUS-5412,Soweto Lodge 1,horeca,Gauteng,East London,14,REP-107,0,2024-02-14
+CUS-5413,Gqeberha Guest House 13,HoReCa,Free State,Mbombela,30,REP-111,0,2018-09-29
+CUS-5414,Vereeniging Takeaway 39,HoReCa,Gauteng,Vereeniging,30,REP-101,0,2022-05-30
+CUS-5415,Durban Shisanyama 13,HoReCa,Mpumalanga,Mbombela,45,REP-106,0,2021-03-26
+CUS-5416,Khayelitsha Bistro 36,HoReCa,Western Cape,Pretoria,30,REP-103,0,2021-09-17
+CUS-5417,Johannesburg Bistro 11,HoReCa,Mpumalanga,Pretoria,45,REP-106,0,2023-11-08
+CUS-5418,Rustenburg Lodge 17,HORECA,KwaZulu-Natal,Pretoria,30,REP-102,0,2018-05-28
+CUS-5419,Khayelitsha Grill 26,HoReCa,Free State,East London,45,REP-105,0,2018-04-25
+CUS-5420,Rustenburg Shisanyama 13,HoReCa,Free State,Umlazi,30,REP-111,0,2020-10-24
+CUS-5421,Johannesburg Lodge 37,HoReCa,KwaZulu-Natal,Soweto,14,REP-102,0,2019-01-22
+CUS-5422,Polokwane Guest House 8,HoReCa,Mpumalanga,Johannesburg,30,REP-112,0,2017-11-30
+CUS-5423,Khayelitsha Grill 16,HoReCa,KwaZulu-Natal,Johannesburg,14,REP-102,0,2018-09-16
+CUS-5424,Gqeberha Takeaway 7,HoReCa,Western Cape,Khayelitsha,30,REP-109,0,2019-09-19
+CUS-5425,Khayelitsha Guest House 36,HoReCa,Gauteng,Cape Town,14,REP-107,0,2022-04-28
+CUS-5426,Polokwane Lodge 34,HoReCa,Mpumalanga,Soweto,30,REP-112,0,2018-09-02
+CUS-5427,Khayelitsha Guest House 27,HoReCa,Gauteng,Bloemfontein,45,REP-107,0,2020-08-31
+CUS-5428,Umlazi Lodge 39,HORECA,Eastern Cape,Umlazi,30,REP-110,0,2023-04-27
+CUS-5429,Cape Town Grill 21,horeca,Gauteng,Johannesburg,30,REP-101,0,2024-05-14
+CUS-5430,East London Bistro 32,HoReCa,KwaZulu-Natal,Soweto,30,REP-102,0,2018-11-20
+CUS-5431,Rustenburg Grill 16,HoReCa,KwaZulu-Natal,Vereeniging,45,REP-108,0,2020-11-30
+CUS-5432,Pretoria Lodge 18,HoReCa,Eastern Cape,Johannesburg,30,REP-104,0,2022-05-16
+CUS-5433,Rustenburg Bistro 14,HoReCa,Western Cape,Mbombela,30,REP-109,0,2022-08-19
+CUS-5434,Vereeniging Grill 32,HoReCa,Western Cape,Khayelitsha,30,REP-103,0,2017-07-21
+CUS-5435,Tembisa Guest House 29,HoReCa,Mpumalanga,Johannesburg,45,REP-106,0,2022-02-05
+CUS-5436,Bloemfontein Cafe 40,HoReCa,Free State,Durban,30,REP-111,0,2020-11-16
+CUS-5437,  Khayelitsha Takeaway 4,HoReCa,KwaZulu-Natal,Polokwane,14,REP-102,0,2017-09-22
+CUS-5438,Pretoria Lodge 1,HoReCa,Gauteng,Johannesburg,30,REP-101,0,2023-02-09
+CUS-5439,Durban Takeaway 22,HoReCa,Gauteng,Rustenburg,45,REP-101,0,2020-04-15
+CUS-5440,Soweto Grill 36,HORECA,KwaZulu-Natal,Pretoria,60,REP-102,0,2019-05-02
+CUS-5441,Durban Grill 30,HoReCa,Mpumalanga,Bloemfontein,30,REP-112,0,2018-03-12
+CUS-5442,Cape Town Cafe 39,HoReCa,Gauteng,Umlazi,30,REP-101,0,2024-06-17
+CUS-5443,Soweto Bistro 40,HoReCa,Eastern Cape,Soweto,30,REP-104,0,2020-07-19
+CUS-5444,Johannesburg Guest House 40,HoReCa,Mpumalanga,Polokwane,30,REP-106,0,2018-11-17
+CUS-5445,Cape Town Canteen 40,HoReCa,Gauteng,Polokwane,60,REP-101,0,2023-11-25
+CUS-5446,Umlazi Cafe 40,HoReCa,Western Cape,Pretoria,60,REP-103,0,2023-07-14
+CUS-5447,Khayelitsha Grill 7,HoReCa,Mpumalanga,Khayelitsha,60,REP-106,0,2017-09-13
+CUS-5448,Umlazi Canteen 12,HoReCa,Western Cape,Polokwane,30,REP-103,0,2022-02-26
+CUS-5449,Pretoria Cafe 15,HORECA,KwaZulu-Natal,East London,30,REP-108,0,2022-04-26
+CUS-5450,Durban Grill 31,HoReCa,Eastern Cape,Pretoria,45,REP-104,0,2022-01-18
+CUS-5451,Khayelitsha Shisanyama 6,HoReCa,Eastern Cape,Cape Town,30,REP-104,0,2019-12-19
+CUS-5452,Durban Grill 37 ,HoReCa,KwaZulu-Natal,Mbombela,45,REP-102,0,2024-02-06
+CUS-5453,Pretoria Lodge 36,HoReCa,Western Cape,Vereeniging,14,REP-103,0,2020-04-17
+CUS-5454,Johannesburg Cafe 20,HoReCa,Mpumalanga,East London,14,REP-106,0,2021-08-07
+CUS-5455,Mbombela Shisanyama 3,HoReCa,KwaZulu-Natal,Khayelitsha,45,REP-108,0,2020-11-30
+CUS-5456,Pretoria Lodge 21,HoReCa,Free State,Vereeniging,30,REP-105,0,2019-03-05
+CUS-5457,Umlazi Lodge 37,HoReCa,KwaZulu-Natal,Pretoria,30,REP-102,0,2022-09-13
+CUS-5458,Rustenburg Lodge 7,HoReCa,Eastern Cape,Rustenburg,30,REP-104,0,2018-02-11
+CUS-5459,Tembisa Canteen 16,HoReCa,Mpumalanga,Soweto,30,REP-106,0,2023-01-22
+CUS-5460,Umlazi Grill 12,HoReCa,Gauteng,Polokwane,30,REP-107,0,2019-08-13
+CUS-5461,  East London Lodge 21,HoReCa,Mpumalanga,Rustenburg,14,REP-112,0,2020-04-10
+CUS-5462,Polokwane Shisanyama 26,HoReCa,Free State,Vereeniging,60,REP-105,0,2020-04-03
+CUS-5463,Rustenburg Canteen 30,HoReCa,Mpumalanga,Umlazi,60,REP-112,0,2019-12-03
+CUS-5464,Tembisa Canteen 3,HoReCa,Free State,East London,45,REP-111,0,2021-03-01
+CUS-5465,Tembisa Cafe 21,HoReCa,Mpumalanga,Johannesburg,14,REP-112,0,2024-06-22
+CUS-5466,Rustenburg Lodge 5,HoReCa,Eastern Cape,Pretoria,14,REP-110,0,2021-07-10
+CUS-5467,Khayelitsha Guest House 37,HoReCa,Western Cape,Vereeniging,45,REP-103,0,2024-07-14
+CUS-5468,Polokwane Cafe 28,HoReCa,Mpumalanga,Polokwane,45,REP-112,0,2024-06-06
+CUS-5469,Gqeberha Lodge 37,HoReCa,Western Cape,East London,30,REP-109,0,2018-11-27
+CUS-5470,Pretoria Lodge 34,HoReCa,Mpumalanga,Johannesburg,14,REP-106,0,2019-09-19
+CUS-5471,Umlazi Takeaway 28,HoReCa,Eastern Cape,Johannesburg,30,REP-110,0,2020-09-05
+CUS-5472,Khayelitsha Lodge 28 ,HoReCa,Eastern Cape,Gqeberha,30,REP-104,0,2020-12-24
+CUS-5473,East London Guest House 11,HORECA,Eastern Cape,Durban,30,REP-104,0,2019-08-06
+CUS-5474,Polokwane Shisanyama 33,HoReCa,Eastern Cape,Bloemfontein,45,REP-110,0,2022-03-30
+CUS-5475,Umlazi Shisanyama 5,horeca,KwaZulu-Natal,Tembisa,30,REP-102,0,2020-11-04
+CUS-5476,Durban Canteen 16,horeca,Mpumalanga,Khayelitsha,30,REP-106,0,2024-02-27
+CUS-5477,Soweto Takeaway 20,HoReCa,Western Cape,Tembisa,30,REP-103,0,2019-04-10
+CUS-5478,Rustenburg Shisanyama 10,HoReCa,Gauteng,Vereeniging,30,REP-107,0,2017-11-20
+CUS-5479,Khayelitsha Cafe 33 ,HoReCa,Free State,Vereeniging,60,REP-105,0,2017-12-24
+CUS-5480,Johannesburg Grill 1 ,HoReCa,Mpumalanga,Gqeberha,30,REP-112,0,2017-09-02
+CUS-5481,East London Grill 2,HoReCa,Eastern Cape,Tembisa,60,REP-110,0,2024-06-09
+CUS-5482,Johannesburg Bistro 22,HoReCa,Western Cape,Polokwane,60,REP-103,0,2023-08-22
+CUS-5483,Durban Bistro 24,HoReCa,KwaZulu-Natal,Umlazi,45,REP-102,0,2024-07-27
+CUS-5484,Vereeniging Grill 22,HoReCa,Eastern Cape,Vereeniging,60,REP-110,0,2023-11-22
+CUS-5485,Cape Town Shisanyama 38,horeca,Free State,Vereeniging,60,REP-105,0,2021-12-12

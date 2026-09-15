@@ -1,0 +1,28 @@
+name: meridian
+version: '1.0.0'
+config-version: 2
+profile: meridian
+
+model-paths: ['models']
+macro-paths: ['macros']
+target-path: 'target'
+clean-targets: ['target', 'dbt_packages']
+
+vars:
+  # Relative to this dbt project directory
+  raw_path: '../data/raw'
+  # The trailing twelve months end on the last day of data. Kept as a var so the demo
+  # can be re-pointed at a different window without touching model SQL.
+  period_end: '2026-08-31'
+
+models:
+  meridian:
+    bronze:
+      +materialized: table
+      +schema: bronze
+    silver:
+      +materialized: table
+      +schema: silver
+    gold:
+      +materialized: table
+      +schema: gold
