@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en-ZA" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Margin &amp; Revenue Intelligence — Meridian Provisions Co.</title>
+<meta name="description" content="Where the gross profit went: a margin intelligence report for a South African FMCG distributor. Demonstration built on synthetic data.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/ledger.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='5' fill='%23B5502C'/><path d='M8 22V10h3l5 8 5-8h3v12h-3v-7l-4 6h-2l-4-6v7z' fill='%23FBF9F4'/></svg>">
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div>
+      <h1>Margin &amp; Revenue Intelligence</h1>
+      <p class="sub">Meridian Provisions Co. — FMCG distribution, Gauteng · KwaZulu-Natal · Western Cape</p>
+    </div>
+    <div class="meta">
+      <div id="period">—</div>
+      <div>All figures in rand, excluding VAT</div>
+      <button class="theme-toggle" id="theme-toggle" type="button">Dark</button>
+    </div>
+  </header>
+
+  <main id="main">
+    <div class="loading" id="loading">
+      <p id="loading-msg">Starting the query engine</p>
+      <p class="muted" style="font-size:0.82rem">
+        The warehouse is running in your browser. Nothing is being sent to a server.
+      </p>
+    </div>
+  </main>
+
+  <footer>
+    <p>
+      <span class="badge">Synthetic data</span>
+      Meridian Provisions Co. is a fictional business. Every figure on this page is generated
+      and contains deliberately planted findings. No real company data appears here.
+    </p>
+    <p>
+      Built by Omnatix. Source files land as CSV, are modelled through bronze, silver and gold
+      layers in dbt on DuckDB, tested on every build, and exported to Parquet. This page loads
+      those files directly and runs SQL against them in your browser using DuckDB-WASM — there
+      is no backend, no database server, and no data leaves your machine.
+    </p>
+  </footer>
+
+</div>
+
+<script type="module" src="assets/app.js"></script>
+</body>
+</html>

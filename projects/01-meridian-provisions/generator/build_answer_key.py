@@ -99,6 +99,21 @@ bw_share_shift = bw_share_ttm - bw_share_prior
 bw_margin_gap = ttm_margin - f1[6]
 bw_mix_effect = bw_share_shift / 100 * bw_margin_gap / 100 * ttm[1]
 
+# The bridge itself is a model, so the answer key and the dashboard read the same rows.
+bridge_rows = ""
+for step, driver, step_type, effect, share, ref in rows("""
+    select step_order, driver, step_type, effect_zar, pct_of_gap, finding_ref
+    from main_gold.mart_gp_bridge order by step_order
+"""):
+    if step_type == "anchor":
+        bridge_rows += f"| _{driver}_ | _{rand(effect)}_ | | |\n"
+    elif step_type == "total":
+        bridge_rows += (f"| **{driver}** | **{rand(effect)}** | "
+                        f"**{pct(gp_gap / effect * 100)} below** | |\n")
+    else:
+        bridge_rows += (f"| {driver} | {rand(effect)} | {pct(share)} | "
+                        f"{ref or '—'} |\n")
+
 # ----------------------------------------------------------------- finding 2
 
 f2 = rows("""
@@ -192,16 +207,14 @@ Had margin merely held at last year's {pct(prior_margin)}, gross profit would ha
 Close the demo on this table, not on the individual findings. It is the difference between
 showing a client five charts and telling them why their profit is flat.
 
-| Driver | Gross profit effect | Finding |
-|---|---|---|
-| Promotion sold below cost | {rand(-f2['On promotion'][6])} | 2 |
-| Discount creep on the largest account | {rand(-f3[0])} | 3 |
-| Bulk water taking share at {pct(f1[6])} margin | {rand(-bw_mix_effect)} | 1 |
-| Other discount drift and mix | {rand(-(gp_gap - f2['On promotion'][6] - f3[0] - bw_mix_effect))} | — |
-| **Total gap** | **{rand(-gp_gap)}** | |
+Read straight from `mart_gold.mart_gp_bridge`, which is also what the dashboard draws, so
+the two can never disagree.
 
-Note the third line carefully. The bulk water range did not lose gross profit — its gross
-profit is positive. It dragged the blend down by growing from {pct(bw_share_prior)} to
+| Driver | Gross profit effect | Share of gap | Finding |
+|---|---|---|---|
+{bridge_rows}
+Note the bulk water line carefully. That range did not lose gross profit — its gross profit
+is positive. It dragged the blend down by growing from {pct(bw_share_prior)} to
 {pct(bw_share_ttm)} of revenue at {pct(f1[6])} margin against a book average of
 {pct(ttm_margin)}. Finding 1 then shows that once freight and rebates are allocated, that
 growth was actively destroying value rather than merely diluting it.

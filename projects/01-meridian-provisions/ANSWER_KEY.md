@@ -28,16 +28,20 @@ R180,672,793. The gap to explain is **R12,615,619**.
 Close the demo on this table, not on the individual findings. It is the difference between
 showing a client five charts and telling them why their profit is flat.
 
-| Driver | Gross profit effect | Finding |
-|---|---|---|
-| Promotion sold below cost | -R3,247,490 | 2 |
-| Discount creep on the largest account | -R4,805,686 | 3 |
-| Bulk water taking share at 12.9% margin | -R2,046,619 | 1 |
-| Other discount drift and mix | -R2,515,825 | — |
-| **Total gap** | **-R12,615,619** | |
+Read straight from `mart_gold.mart_gp_bridge`, which is also what the dashboard draws, so
+the two can never disagree.
 
-Note the third line carefully. The bulk water range did not lose gross profit — its gross
-profit is positive. It dragged the blend down by growing from 1.9% to
+| Driver | Gross profit effect | Share of gap | Finding |
+|---|---|---|---|
+| _Gross profit at last year's margin_ | _R180,672,793_ | | |
+| Promotion sold below cost | -R3,659,274 | 29.0% | 2 |
+| Discount creep on the largest account | -R4,805,686 | 38.1% | 3 |
+| Bulk water taking share at a low margin | -R2,046,619 | 16.2% | 1 |
+| Other discount drift and mix | -R2,104,041 | 16.7% | — |
+| **Actual gross profit** | **R168,057,174** | **7.5% below** | |
+
+Note the bulk water line carefully. That range did not lose gross profit — its gross profit
+is positive. It dragged the blend down by growing from 1.9% to
 4.3% of revenue at 12.9% margin against a book average of
 26.2%. Finding 1 then shows that once freight and rebates are allocated, that
 growth was actively destroying value rather than merely diluting it.

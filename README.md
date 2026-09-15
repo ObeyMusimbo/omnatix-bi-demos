@@ -8,7 +8,7 @@ All four are South African businesses. **Money is rand, excluding VAT**, and mon
 a `_zar` suffix from the silver layer onwards.
 
 ```
-DuckDB  +  dbt Core  +  Evidence.dev  +  GitHub Actions  →  Cloudflare Pages
+DuckDB  +  dbt Core  +  DuckDB-WASM  +  GitHub Actions  →  Cloudflare Pages
 ```
 
 Each project follows the same shape, so a fifth one is a new folder, not a new platform:
@@ -18,7 +18,7 @@ projects/NN-name/
   generator/generate.js     synthetic source data, deterministic from a seed
   data/raw/                 the CSV "drops" — the bronze landing zone
   dbt/                      bronze → silver → gold → semantic
-  evidence/                 the dashboard itself
+  dashboard/                static site: HTML, CSS, JS modules and Parquet
   ANSWER_KEY.md             the planted findings (never ship this)
 ```
 
@@ -49,14 +49,21 @@ Deliberately distinct. The point is to show range, not a template.
 A printed financial report. Warm paper, hairline rules, dense tabular figures, restrained colour
 used only where it carries meaning.
 
-| Token | Value |
-|---|---|
-| Page | `#FBF9F4` |
-| Ink | `#1C1917` |
-| Accent (negative) | `#7C2D12` oxblood |
-| Accent (positive) | `#166534` |
-| Rule | `#E7E2D8` hairline, 0.5px |
-| Type | Source Serif 4 headings · Inter body · tabular numerals |
+| Token | Light | Dark |
+|---|---|---|
+| Page | `#FBF9F4` | `#16140F` |
+| Ink | `#1C1917` | `#F5F1E8` |
+| Series 1 — oxblood | `#B5502C` | `#CB7645` |
+| Series 2 — blue | `#1A5FB4` | `#5A90D4` |
+| Series 3 — ochre | `#96690A` | `#AE8A2A` |
+| Series 4 — teal | `#0A7D5E` | `#1F9C79` |
+| Rule | `#E5DFD3` | `#332E25` |
+| Type | Source Serif 4 headings · Inter body · tabular figures in tables only |
+
+The series colours are **validated, not chosen** — lightness band, chroma floor, colour-vision
+separation, normal-vision separation and surface contrast, checked independently per mode. Dark
+mode carries its own darker steps rather than a flip of the light ones. Re-validate before
+substituting any of them; the ordering matters too, because adjacency is what gets tested.
 
 Signature visual: the margin waterfall. Gross profit, then freight, then rebate, ending below zero.
 
@@ -125,12 +132,13 @@ Applied to every project in this repo.
 
 | Project | Data | Bronze | Silver | Gold | Dashboard | Chat |
 |---|---|---|---|---|---|---|
-| 01 Meridian | ✅ | ✅ | ✅ | ✅ | ⬜ | ⬜ |
+| 01 Meridian | ✅ | ✅ | ✅ | ✅ | ✅ | ⬜ |
 | 02 Kestrel | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
 | 03 Sable & Finch | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
 | 04 Lumen | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
 
-Meridian: 28 models, 125 dbt tests, one warning by design. Build takes about 20 seconds.
+Meridian: 31 models, 97 data tests (128 build nodes), one warning by design. A full build takes
+about 15 seconds. The dashboard ships as 1.1 MB of Parquet and needs no server.
 
-The dashboard layer is an open decision — Evidence has moved to a hosted product model since
-this stack was chosen. See [SETUP.md](SETUP.md) for what to install before starting.
+The dashboard is a static site: gold tables export to Parquet and DuckDB-WASM runs the SQL in
+the browser. No server, no database to host. See [SETUP.md](SETUP.md) to run it.

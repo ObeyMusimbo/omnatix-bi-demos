@@ -85,12 +85,37 @@ cd projects/01-meridian-provisions/dbt
 
 Builds `meridian.duckdb` through bronze, silver and gold, and runs every test.
 
-## 4. What gets built next, in order
+Then refresh what the dashboard and the reveal script read:
+
+```bash
+cd projects/01-meridian-provisions
+../../.venv/Scripts/python.exe generator/export_parquet.py
+../../.venv/Scripts/python.exe generator/build_answer_key.py
+```
+
+## 4. Run the dashboard
+
+It is a static site — but it must be served over HTTP, because a browser refuses to start a
+worker or fetch Parquet from a `file://` page.
+
+```bash
+npx --yes http-server projects/01-meridian-provisions/dashboard -p 4321 -c-1
+```
+
+Then open http://localhost:4321.
+
+### Deploying it
+
+Cloudflare Pages, connected to the GitHub repo. Build command: none. Output directory:
+`projects/01-meridian-provisions/dashboard`. That is the whole deployment — the page is HTML,
+CSS, three JavaScript modules and 1.1 MB of Parquet.
+
+## 5. What gets built next, in order
 
 1. ~~Bronze models — raw CSVs read as-is, one model per source file~~ ✅
-2. Silver models — the nine planted data quality issues resolved, with tests
-3. Gold models — dimensions, `fct_sales_line`, and one mart per finding
-4. Evidence dashboard in the Meridian "Ledger" theme
+2. ~~Silver models — the nine planted data quality issues resolved, with tests~~ ✅
+3. ~~Gold models — dimensions, `fct_sales_line`, and one mart per finding~~ ✅
+4. ~~Dashboard in the Meridian "Ledger" theme~~ ✅
 5. The chat endpoint, grounded in the gold layer
 6. Deploy to Cloudflare Pages
 7. Repeat for projects 02–04

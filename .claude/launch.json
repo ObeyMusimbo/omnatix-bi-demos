@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "meridian-dashboard",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["--yes", "http-server", "projects/01-meridian-provisions/dashboard", "-p", "4321", "-c-1", "--cors"],
+      "port": 4321
+    }
+  ]
+}

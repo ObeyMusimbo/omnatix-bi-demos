@@ -67,6 +67,48 @@ which matters because the dashboard, the chat endpoint and CI all read it from e
   the relationship test is deliberately `severity: warn`. The warning is the point: it proves the
   pipeline surfaces referential breaks instead of hiding the revenue.
 
+## The dashboard layer
+
+Static HTML plus DuckDB-WASM. Gold tables export to Parquet, the browser fetches them and runs
+SQL client-side. No server, no API, no database to host — and "this is running entirely in your
+browser" is a line worth saying in a demo.
+
+Evidence.dev was the original plan and was dropped: it has become a hosted product with a
+separate CLI, a login step and a ClickHouse dialect. Hand-rolled charts also give the four
+projects genuinely different visual identities, which a constrained theme token set cannot.
+
+### Chart rules — these are the design, not preferences
+
+- Bars capped at 24px with a 4px rounded data end, square at the baseline; 2px lines;
+  markers at least 8px with a 2px surface ring; hairline **solid** gridlines, never dashed
+- A legend whenever there are two or more series; none for a single series (the title names it)
+- Label selectively — never a value on every point
+- Every chart ships a table twin behind a "Show data" toggle, so no value is reachable only
+  through a tooltip
+- The hero figure is sans, never the serif, and uses proportional figures; `tabular-nums`
+  belongs in table columns and axis ticks only
+- **Never a dual-axis chart.** Two measures of different scale means two charts.
+
+### The palette is validated, not chosen
+
+Series colours passed a six-check validation (lightness band, chroma floor, CVD separation,
+normal-vision separation, surface contrast) independently in light and dark mode. Dark mode has
+its own darker steps — it is not a flip of the light ones. Do not substitute a colour without
+re-running the check; the ordering matters too, because adjacency is what is tested.
+
+Light on `#FBF9F4`: `#B5502C` `#1A5FB4` `#96690A` `#0A7D5E`
+Dark on `#16140F`: `#CB7645` `#5A90D4` `#AE8A2A` `#1F9C79`
+
+### Gotchas already paid for
+
+- DuckDB-WASM returns DATE columns as **epoch milliseconds**, not Date objects. `db.js` reads
+  the Arrow schema and converts them; do not assume ISO strings elsewhere.
+- Module top-level `await` runs before `const` declarations further down the file. The boot
+  block lives at the **end** of `app.js` for that reason.
+- A waterfall whose anchor dwarfs its steps needs `zeroBaseline: false`, and the axis must be
+  labelled as truncated. The Cascade waterfall keeps a zero baseline because crossing zero is
+  the finding.
+
 ## Style
 
 - SQL: lowercase keywords, trailing commas, one column per line, named CTEs, end on
