@@ -155,6 +155,12 @@ def main() -> int:
     (DIST / "index.html").write_text(template.replace("{{CARDS}}", "\n".join(cards)), encoding="utf-8")
     shutil.copy2(SITE / "omnatix.css", DIST / "omnatix.css")
 
+    # Without this, Cloudflare Pages answers an unknown path with the landing page and a 200.
+    # A mistyped link then looks like it worked, which is worse than an honest failure: the
+    # reader believes they are looking at the thing they asked for. Pages serves 404.html with
+    # a real 404 status as soon as the file exists.
+    shutil.copy2(SITE / "404.html", DIST / "404.html")
+
     total = sum(f.stat().st_size for f in DIST.rglob("*") if f.is_file())
     print(f"\n  {built_count} of {len(PROJECTS)} demos live, {total / 1024 / 1024:.1f} MB -> {DIST}")
     return 0
