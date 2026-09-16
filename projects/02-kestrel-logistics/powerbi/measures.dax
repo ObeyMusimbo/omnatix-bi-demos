@@ -1,0 +1,156 @@
+// Kestrel Logistics, DAX measures
+// ---------------------------------------------------------------------------------------
+// Create a blank table called "_Measures" (Home > Enter Data) and add each measure to it.
+// Format strings are given per measure.
+//
+// Kestrel has three facts at three grains: a trip, a drop, and a round trip. Which one a
+// measure comes from is the whole game. Revenue per kilometre off the consignment table is a
+// different number from revenue per kilometre off the trip table, and only one of them means
+// anything.
+// ---------------------------------------------------------------------------------------
+
+
+// ---- Trips. The vehicle moving. Format: "R"#,##0
+
+Revenue = SUM ( fct_trip[revenue_zar] )
+
+Cost = SUM ( fct_trip[total_cost_zar] )
+
+Contribution = SUM ( fct_trip[contribution_zar] )
+
+Fuel Cost = SUM ( fct_trip[fuel_cost_zar] )
+
+Driver Cost = SUM ( fct_trip[driver_cost_zar] )
+
+Maintenance Cost = SUM ( fct_trip[maintenance_cost_zar] )
+
+Toll Cost = SUM ( fct_trip[toll_cost_zar] )
+
+Fixed Cost = SUM ( fct_trip[fixed_cost_zar] )
+
+// Format: 0.0%
+Contribution Margin % = DIVIDE ( [Contribution], [Revenue] )
+
+
+// ---- Distance and the empty running that is the headline
+
+// Format: #,##0
+Kilometres = SUM ( fct_trip[distance_km] )
+
+// Format: #,##0
+Empty Kilometres = CALCULATE ( [Kilometres], fct_trip[is_empty] = TRUE () )
+
+// Format: 0.0%
+// Nearly a quarter of every kilometre this fleet turns carries nothing, and until the round
+// trip was modelled nobody was charged for it.
+Empty Kilometre % = DIVIDE ( [Empty Kilometres], [Kilometres] )
+
+// Format: #,##0
+Trips = COUNTROWS ( fct_trip )
+
+// Format: #,##0
+Empty Trips = CALCULATE ( COUNTROWS ( fct_trip ), fct_trip[is_empty] = TRUE () )
+
+// Format: "R"#,##0.00
+// Divide the sums, never average the per-trip ratio. Averaging a ratio gives every trip equal
+// weight regardless of length, so a 40 km metro run counts as much as a 1,400 km line haul.
+Cost per Km = DIVIDE ( [Cost], [Kilometres] )
+
+// Format: "R"#,##0.00
+Revenue per Km = DIVIDE ( [Revenue], [Kilometres] )
+
+// Format: "R"#,##0
+Cost of Empty Running = CALCULATE ( [Cost], fct_trip[is_empty] = TRUE () )
+
+
+// ---- Load factor
+
+// Format: 0.0%
+// Weighted by capacity, not a plain average of the per-trip percentages, for the same reason
+// as cost per km.
+Weight Utilisation % =
+DIVIDE ( SUM ( fct_trip[load_kg] ), SUM ( fct_trip[capacity_kg] ) )
+
+// Format: 0.0%
+Volume Utilisation % =
+DIVIDE ( SUM ( fct_trip[load_m3] ), SUM ( fct_trip[capacity_m3] ) )
+
+// Format: #,##0.0
+Litres per 100km =
+DIVIDE ( SUM ( fct_trip[fuel_litres] ) * 100, [Kilometres] )
+
+
+// ---- Drops. The customer's experience. From fct_consignment.
+// About 90 consignments quote a trip that is not in the trip file. They are kept and flagged,
+// and every measure that needs trip context filters them out explicitly rather than letting
+// them drift in and out of totals depending on what else is on the page.
+
+// Format: #,##0
+Drops = COUNTROWS ( fct_consignment )
+
+// Format: #,##0
+Failed Drops = CALCULATE ( COUNTROWS ( fct_consignment ), fct_consignment[is_failed] = TRUE () )
+
+// Format: 0.0%
+Failed Drop % = DIVIDE ( [Failed Drops], [Drops] )
+
+// Format: 0.0%
+// On time is only meaningful where the trip is known, because the promise is measured against
+// a dispatch the orphan rows do not have.
+On Time % =
+CALCULATE (
+    DIVIDE (
+        CALCULATE ( COUNTROWS ( fct_consignment ), fct_consignment[is_on_time] = TRUE () ),
+        COUNTROWS ( fct_consignment )
+    ),
+    fct_consignment[trip_is_known] = TRUE ()
+)
+
+// Format: "R"#,##0
+Drop Revenue = SUM ( fct_consignment[revenue_zar] )
+
+// Format: "R"#,##0
+// What the failed attempts cost: a journey that earned nothing and has to be made again.
+Cost of Failed Drops =
+CALCULATE ( SUM ( fct_consignment[allocated_trip_cost_zar] ), fct_consignment[is_failed] = TRUE () )
+
+// Format: #,##0
+Drops With Unknown Trip =
+CALCULATE ( COUNTROWS ( fct_consignment ), fct_consignment[trip_is_known] = FALSE () )
+
+
+// ---- Round trips. The finding. From fct_round_trip.
+// An outbound leg paired with the return it caused, so the cost of both is charged against
+// the revenue they jointly earned. Kestrel's own reporting measures legs, which is exactly why
+// the empty return has never been charged to anything.
+
+// Format: #,##0
+Round Trips = COUNTROWS ( fct_round_trip )
+
+// Format: "R"#,##0
+Round Trip Revenue = SUM ( fct_round_trip[total_revenue_zar] )
+
+// Format: "R"#,##0
+Round Trip Cost = SUM ( fct_round_trip[total_cost_zar] )
+
+// Format: "R"#,##0
+Round Trip Contribution = SUM ( fct_round_trip[contribution_zar] )
+
+// Format: "R"#,##0
+// What the outbound leg looks like on its own, which is what the current rate card was priced
+// against. The gap between this and Round Trip Contribution is the finding, lane by lane.
+Outbound Only Contribution = SUM ( fct_round_trip[outbound_only_contribution_zar] )
+
+// Format: "R"#,##0
+Backhaul Blind Spot = [Outbound Only Contribution] - [Round Trip Contribution]
+
+// Format: 0.0%
+Empty Return % =
+DIVIDE (
+    CALCULATE ( COUNTROWS ( fct_round_trip ), fct_round_trip[return_was_empty] = TRUE () ),
+    [Round Trips]
+)
+
+// Format: "R"#,##0.00
+Contribution per Km =
+DIVIDE ( [Round Trip Contribution], SUM ( fct_round_trip[total_distance_km] ) )

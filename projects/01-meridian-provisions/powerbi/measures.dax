@@ -1,0 +1,142 @@
+// Meridian Provisions Co., DAX measures
+// ---------------------------------------------------------------------------------------
+// Create a blank table called "_Measures" (Home > Enter Data), then add each measure to it,
+// so they sit in one place rather than scattered across the fact tables.
+//
+// Format strings are given per measure. Set them in Measure tools > Format. A rand figure
+// shown without its unit is the easiest way to have a room stop trusting a page.
+// ---------------------------------------------------------------------------------------
+
+
+// ---- The P&L line. Format: "R"#,##0
+
+Revenue = SUM ( fct_sales_line[revenue_zar] )
+
+COGS = SUM ( fct_sales_line[cogs_zar] )
+
+Gross Profit = SUM ( fct_sales_line[gross_profit_zar] )
+
+// Revenue less cost of goods, less the freight, handling and rebate allocated to the line.
+// This is the number the business does not currently produce, and the reason for the demo.
+Contribution = SUM ( fct_sales_line[contribution_zar] )
+
+Allocated Freight = SUM ( fct_sales_line[allocated_freight_zar] )
+
+Allocated Handling = SUM ( fct_sales_line[allocated_handling_zar] )
+
+Allocated Rebate = SUM ( fct_sales_line[allocated_rebate_zar] )
+
+// Format: 0.00%
+Gross Margin % = DIVIDE ( [Gross Profit], [Revenue] )
+
+// Format: 0.00%
+Contribution Margin % = DIVIDE ( [Contribution], [Revenue] )
+
+// Format: "R"#,##0
+Discount Given = SUM ( fct_sales_line[discount_value_zar] )
+
+// Format: 0.00%
+// Against gross value, not net revenue. Discount as a share of what was already discounted
+// understates it, and understating this particular number is the whole finding.
+Discount % = DIVIDE ( [Discount Given], SUM ( fct_sales_line[gross_value_zar] ) )
+
+
+// ---- Volume. Format: #,##0
+
+Units = SUM ( fct_sales_line[quantity] )
+
+Lines = COUNTROWS ( fct_sales_line )
+
+Orders = DISTINCTCOUNT ( fct_sales_line[order_id] )
+
+Customers Trading = DISTINCTCOUNT ( fct_sales_line[customer_id] )
+
+// Format: "R"#,##0.00
+Revenue per Kg = DIVIDE ( [Revenue], SUM ( fct_sales_line[line_weight_kg] ) )
+
+
+// ---- The comparison the whole demo rests on
+// Trailing twelve months against the twelve before it. Revenue is up double digits and gross
+// profit is not, and no single month looks bad enough to notice.
+
+Revenue LY = CALCULATE ( [Revenue], DATEADD ( dim_date[date_day], -1, YEAR ) )
+
+Gross Profit LY = CALCULATE ( [Gross Profit], DATEADD ( dim_date[date_day], -1, YEAR ) )
+
+// Format: 0.0%
+Revenue Growth % = DIVIDE ( [Revenue] - [Revenue LY], [Revenue LY] )
+
+// Format: 0.0%
+Gross Profit Growth % = DIVIDE ( [Gross Profit] - [Gross Profit LY], [Gross Profit LY] )
+
+// Format: 0.00%
+Gross Margin % LY = CALCULATE ( [Gross Margin %], DATEADD ( dim_date[date_day], -1, YEAR ) )
+
+// Format: 0.00 pts
+// Margin erosion in percentage points. Never quote a percentage change of a percentage: a
+// margin going from 28% to 26% is down two points, not down seven per cent, and the second
+// number will be challenged in the room.
+Margin Change pts = ( [Gross Margin %] - [Gross Margin % LY] ) * 100
+
+// Format: "R"#,##0
+// What the current period's revenue would have earned at last year's margin rate. The gap
+// between this and actual gross profit is the number the page opens on.
+Gross Profit at LY Margin = [Revenue] * [Gross Margin % LY]
+
+// Format: "R"#,##0
+Margin Gap = [Gross Profit at LY Margin] - [Gross Profit]
+
+
+// ---- Returns and promotions
+
+// Format: #,##0
+Return Lines = CALCULATE ( COUNTROWS ( fct_sales_line ), fct_sales_line[is_return] = TRUE () )
+
+// Format: "R"#,##0
+// Returns carry negative quantity and negative revenue, so they net off rather than being
+// filtered out. Netting is usually correct: stock genuinely came back.
+Returns Value = CALCULATE ( [Revenue], fct_sales_line[is_return] = TRUE () )
+
+// Format: "R"#,##0
+Promo Revenue = CALCULATE ( [Revenue], fct_sales_line[is_on_promo] = TRUE () )
+
+// Format: "R"#,##0
+Promo Gross Profit = CALCULATE ( [Gross Profit], fct_sales_line[is_on_promo] = TRUE () )
+
+// Format: 0.00%
+Promo Margin % = DIVIDE ( [Promo Gross Profit], [Promo Revenue] )
+
+// Format: 0.0%
+Promo Share of Revenue = DIVIDE ( [Promo Revenue], [Revenue] )
+
+
+// ---- Inventory, from fct_inventory_snapshot
+// A snapshot table. Never sum a balance across dates: use the last date in context, or the
+// figure triples when somebody drags a quarter onto the page.
+
+// Format: "R"#,##0
+Stock Value =
+CALCULATE (
+    SUM ( fct_inventory_snapshot[stock_value_zar] ),
+    LASTDATE ( dim_date[date_day] )
+)
+
+// Format: #,##0
+Stockout Rows = CALCULATE ( COUNTROWS ( fct_inventory_snapshot ), fct_inventory_snapshot[is_stockout] = TRUE () )
+
+// Format: 0.0
+Avg Weeks Cover = AVERAGE ( fct_inventory_snapshot[weeks_cover] )
+
+
+// ---- Data quality, worth putting on the page rather than hiding
+// About 134 order lines quote a SKU that is not in the product master. They are kept and
+// flagged rather than dropped, because deleting them would quietly remove R536,696 of real
+// revenue and nothing would say so.
+
+// Format: #,##0
+Lines With Unknown SKU =
+CALCULATE ( COUNTROWS ( fct_sales_line ), fct_sales_line[sku_is_known] = FALSE () )
+
+// Format: "R"#,##0
+Revenue With Unknown SKU =
+CALCULATE ( [Revenue], fct_sales_line[sku_is_known] = FALSE () )

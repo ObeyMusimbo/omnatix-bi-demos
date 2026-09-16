@@ -224,3 +224,31 @@ the browser. No server, no database to host, and the whole four-demo site is und
 See [SETUP.md](SETUP.md) to install and run it, [REFRESH.md](REFRESH.md) for what happens when
 new data arrives and how the dashboard reports its own freshness, and [DEPLOY.md](DEPLOY.md) to
 put it on a live URL.
+
+## The same warehouse in Power BI
+
+Every project also exports a Power BI model, because the objection this whole suite answers is
+"do we need Microsoft for this?" and the strongest answer is not "no". It is: the pipeline is
+the product, the front end is a choice, and here is the identical analysis in both.
+
+```bash
+.venv/Scripts/python.exe scripts/export_powerbi.py --all
+```
+
+That writes the row level star per project, snappy compressed, with 128 bit sums cast down,
+because Power Query reads Parquet differently from DuckDB-WASM. Each project then has a
+`powerbi/` folder with the Power Query to paste, the relationships to build, a DAX file with a
+format string per measure, and a table of figures to check before showing anyone.
+
+| Project | Guide | The modelling decision that matters |
+|---|---|---|
+| 01 Meridian | [powerbi/README.md](projects/01-meridian-provisions/powerbi/README.md) | Margin change in points, never a percentage of a percentage |
+| 02 Kestrel | [powerbi/README.md](projects/02-kestrel-logistics/powerbi/README.md) | Three facts at three grains, and never joining fact to fact |
+| 03 Sable & Finch | [powerbi/README.md](projects/03-sable-finch-credit/powerbi/README.md) | Cohort month and snapshot month as two date roles |
+| 04 Lumen | [powerbi/README.md](projects/04-lumen-health/powerbi/README.md) | Costing empty capacity at the rate of the session it sat in |
+
+Power BI Desktop is free and opening a `.pbix` on a prospect's laptop costs nothing. Publishing
+and sharing needs a per user licence, which is a decision for when somebody is paying.
+
+The exported Parquet is not committed. A `.pbix` holds its own copy of the data, so a workbook
+demos standalone, and regenerating the files takes seconds.

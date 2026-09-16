@@ -1,0 +1,201 @@
+// Sable & Finch Credit, DAX measures
+// ---------------------------------------------------------------------------------------
+// Create a blank table called "_Measures" (Home > Enter Data) and add each measure to it.
+// Format strings are given per measure.
+//
+// Two rules run through this whole model and both are easy to get wrong.
+//
+//   A balance is a snapshot. Never sum outstanding balance across months. Sum it across a
+//   quarter and you get three times the book that exists. Every balance measure below pins
+//   itself to the last month in context.
+//
+//   Cohort month and snapshot month are different questions. Cohort month says which loans;
+//   snapshot month says which observations of them. The vintage analysis is the difference
+//   between the two, so they get two separate date tables. See the README.
+// ---------------------------------------------------------------------------------------
+
+
+// ---- The book, from dim_loan. One row per loan, so these are loan level facts.
+
+// Format: #,##0
+Loans = COUNTROWS ( dim_loan )
+
+// Format: "R"#,##0
+Disbursed = SUM ( dim_loan[principal_zar] )
+
+// Format: "R"#,##0
+Current Balance = SUM ( dim_loan[current_balance_zar] )
+
+// Format: "R"#,##0
+// Written off less anything recovered since. Zero on a loan that never went bad.
+Net Loss = SUM ( dim_loan[net_loss_zar] )
+
+// Format: 0.00%
+Loss Rate % = DIVIDE ( [Net Loss], [Disbursed] )
+
+// Format: "R"#,##0
+Collected = SUM ( dim_loan[total_collected_zar] )
+
+
+// ---- Credit quality. Ever 90 is the bad definition used everywhere, fixed once.
+// Two marts disagreeing about what counts as bad is how a portfolio report loses a room.
+
+// Format: #,##0
+Ever 90 = CALCULATE ( COUNTROWS ( dim_loan ), dim_loan[ever_90] = TRUE () )
+
+// Format: 0.0%
+Ever 90 % = DIVIDE ( [Ever 90], [Loans] )
+
+// Format: 0.0%
+// By value rather than by count, which is the one that matters to a lender and the one the
+// vintage curves are drawn on.
+Ever 90 % by Value =
+DIVIDE ( CALCULATE ( [Disbursed], dim_loan[ever_90] = TRUE () ), [Disbursed] )
+
+// Format: #,##0
+Written Off = CALCULATE ( COUNTROWS ( dim_loan ), dim_loan[is_written_off] = TRUE () )
+
+// Format: 0.0%
+Written Off % = DIVIDE ( [Written Off], [Loans] )
+
+// Format: #,##0
+First Payment Defaults =
+CALCULATE ( COUNTROWS ( dim_loan ), dim_loan[first_payment_defaulted] = TRUE () )
+
+// Format: 0.0%
+First Payment Default % = DIVIDE ( [First Payment Defaults], [Loans] )
+
+
+// ---- The four findings, each as a filter on the same book
+
+// Format: #,##0
+Loans Breaching Affordability =
+CALCULATE ( COUNTROWS ( dim_loan ), dim_loan[breaches_affordability_floor] = TRUE () )
+
+// Format: "R"#,##0
+// Outstanding balance on agreements a court could set aside under section 83 of the National
+// Credit Act, having found the credit reckless under section 81.
+//
+// This is NOT an expected credit loss and it is never added to one. Treating it as a credit
+// number understates it, because the exposure is the whole balance rather than the expected
+// loss on it. Adding it to a credit number overstates that. Report it in its own box.
+Reckless Exposure =
+CALCULATE (
+    [Current Balance],
+    dim_loan[breaches_affordability_floor] = TRUE (),
+    dim_loan[status] <> "Written off"
+)
+
+// Format: #,##0
+Top Ups = CALCULATE ( COUNTROWS ( dim_loan ), dim_loan[is_topup] = TRUE () )
+
+// Format: #,##0
+Loans With Inflated Income =
+CALCULATE ( COUNTROWS ( dim_loan ), dim_loan[income_declared_above_file] = TRUE () )
+
+// Format: 0.0%
+// Income declared at origination exceeds the income on file. One branch runs this at nearly
+// two thirds and every other branch at zero. That is not a credit problem, it is a conduct
+// one, and it is visible at origination before a single instalment falls due.
+Income Inflated % = DIVIDE ( [Loans With Inflated Income], [Loans] )
+
+// Format: #,##0
+Debit Order Mismatched =
+CALCULATE ( COUNTROWS ( dim_loan ), dim_loan[debit_order_mismatched] = TRUE () )
+
+// Format: 0.00
+// How this slice performs against the whole book. Above 1 is worse than the book.
+// ALL() strips every filter, so the denominator stays the book no matter what is sliced.
+Bad Rate vs Book =
+DIVIDE ( [Ever 90 %], CALCULATE ( [Ever 90 %], ALL ( dim_loan ), ALL ( dim_branch ), ALL ( dim_agent ) ) )
+
+
+// ---- The monthly panel, from fct_loan_month. Balances, so pinned to a point in time.
+
+// Format: "R"#,##0
+// LASTDATE, because a balance summed across months is not a bigger book, it is the same book
+// counted repeatedly.
+Gross Book =
+CALCULATE (
+    SUM ( fct_loan_month[outstanding_balance_zar] ),
+    LASTDATE ( dim_date[month_start_date] )
+)
+
+// Format: "R"#,##0
+Arrears Balance =
+CALCULATE (
+    SUM ( fct_loan_month[arrears_amount_zar] ),
+    LASTDATE ( dim_date[month_start_date] )
+)
+
+// Format: "R"#,##0
+Balance 90 Plus =
+CALCULATE (
+    SUM ( fct_loan_month[outstanding_balance_zar] ),
+    LASTDATE ( dim_date[month_start_date] ),
+    fct_loan_month[arrears_bucket] = "90+"
+)
+
+// Format: 0.0%
+// Portfolio at risk. The number the board already has, and the reason they cannot see the
+// problem: it improves when you write off the worst accounts, when you refinance the
+// delinquent ones, and when you simply grow fast enough that new lending dilutes it.
+PAR 90 % = DIVIDE ( [Balance 90 Plus], [Gross Book] )
+
+// Format: #,##0
+Accounts On Book =
+CALCULATE ( DISTINCTCOUNT ( fct_loan_month[loan_id] ), LASTDATE ( dim_date[month_start_date] ) )
+
+// Format: #,##0
+// Rows where the arrears file and the reconstructed payment history disagree. Two systems of
+// record, one reconciliation nobody runs.
+Reconciliation Conflicts =
+CALCULATE (
+    COUNTROWS ( fct_loan_month ),
+    fct_loan_month[conflicts_with_payment_history] = TRUE ()
+)
+
+
+// ---- The vintage curve, which is what the page opens on
+//
+// Requires a disconnected table called 'Months on Book' with a single whole number column
+// 'Month' holding 0 to 24. Home > Enter Data. Put that column on the x axis and Cohort on the
+// legend, with the cohort date table on the legend rather than the snapshot one.
+//
+// The measure asks a question dim_loan can answer on its own: what share of this cohort's
+// principal had reached ninety days by month N. months_to_90 is null on a loan that never got
+// there, so the comparison excludes it without any extra filter.
+
+// Format: 0.0%
+Vintage Bad % =
+VAR N = SELECTEDVALUE ( 'Months on Book'[Month] )
+VAR CohortPrincipal = [Disbursed]
+VAR BadByMonthN =
+    CALCULATE ( [Disbursed], dim_loan[months_to_90] <= N )
+// The window the data actually covers, regardless of what is filtered.
+VAR LastObserved =
+    CALCULATE ( MAX ( fct_loan_month[month_start_date] ), ALL ( fct_loan_month ) )
+VAR CohortStart = MAX ( dim_loan[cohort_month] )
+VAR MonthsObserved = DATEDIFF ( CohortStart, LastObserved, MONTH )
+RETURN
+    // Draw a cohort only for the months it has actually been on book. Extending a young
+    // cohort with zeroes to fill the axis draws a flat line that reads as excellent
+    // performance, and it is the single most common way a vintage chart lies.
+    IF ( N <= MonthsObserved, DIVIDE ( BadByMonthN, CohortPrincipal ) )
+
+// Format: #,##0
+// How far the newest cohorts have drifted from the oldest at the same age. Put this on a card
+// beside the curves.
+Vintage Spread pts =
+VAR N = SELECTEDVALUE ( 'Months on Book'[Month] )
+VAR Cohorts =
+    FILTER (
+        ADDCOLUMNS (
+            VALUES ( dim_loan[cohort_month] ),
+            "@Rate", [Vintage Bad %]
+        ),
+        NOT ISBLANK ( [@Rate] )
+    )
+VAR Oldest = MINX ( TOPN ( 3, Cohorts, dim_loan[cohort_month], ASC ), [@Rate] )
+VAR Newest = MAXX ( TOPN ( 3, Cohorts, dim_loan[cohort_month], DESC ), [@Rate] )
+RETURN ( Newest - Oldest ) * 100
