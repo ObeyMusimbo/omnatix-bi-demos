@@ -221,5 +221,6 @@ A full build of any one project takes under 30 seconds.
 The dashboard is a static site: gold tables export to Parquet and DuckDB-WASM runs the SQL in
 the browser. No server, no database to host, and the whole four-demo site is under 2 MB.
 
-See [SETUP.md](SETUP.md) to install and run it, and [REFRESH.md](REFRESH.md) for what happens
-when new data arrives and how the dashboard reports its own freshness.
+See [SETUP.md](SETUP.md) to install and run it, [REFRESH.md](REFRESH.md) for what happens when
+new data arrives and how the dashboard reports its own freshness, and [DEPLOY.md](DEPLOY.md) to
+put it on a live URL.
