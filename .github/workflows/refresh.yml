@@ -3,17 +3,21 @@ name: Refresh dashboards
 # Rebuilds each warehouse from whatever is in data/raw, re-exports what the browser reads,
 # and commits the result. Cloudflare Pages redeploys on the push.
 #
-# A failing dbt test fails that project's job and commits nothing for it, so the live
+# A failing dbt test stops that project's refresh before anything is exported, so the live
 # dashboard keeps serving the last numbers that passed rather than publishing unchecked ones.
+# The other three still refresh, and the job fails at the end so the failure is visible.
 #
 # Every project refreshes, not just the first one. A nightly job that quietly refreshed one of
 # four would leave three dashboards stating a freshness they had not earned, which is worse
 # than not refreshing at all.
 #
-# Budget: four projects at roughly two minutes each, nightly, is about 240 of the 2 000 Actions
-# minutes a free account gets each month. Note also that GitHub disables a scheduled workflow
-# after 60 days with no repository activity, so if the refresh ever goes quiet, check that
-# before looking for a bug.
+# One job, one commit, on purpose. This was a four way matrix that committed and pushed per
+# project, which meant four commits, four Cloudflare builds queued behind each other, and four
+# installs of dbt per night. One commit is one build, and the toolchain installs once.
+#
+# Budget: roughly five minutes a night against the 2 000 Actions minutes a free account gets
+# each month. Note also that GitHub disables a scheduled workflow after 60 days with no
+# repository activity, so if the refresh ever goes quiet, check that before looking for a bug.
 
 on:
   schedule:
@@ -34,7 +38,6 @@ on:
 permissions:
   contents: write
 
-# Each project commits to the same branch, so they cannot run at once without racing the push.
 concurrency:
   group: refresh-${{ github.ref }}
   cancel-in-progress: false
@@ -42,56 +45,47 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    strategy:
-      # Serial on purpose: the commit step pushes, and parallel pushes to one branch reject.
-      max-parallel: 1
-      # One project failing its tests must not stop the other three from refreshing.
-      fail-fast: false
-      matrix:
-        project:
-          - 01-meridian-provisions
-          - 02-kestrel-logistics
-          - 03-sable-finch-credit
-          - 04-lumen-health
-
     steps:
       - uses: actions/checkout@v4
 
-      # A manual run naming one project skips the other three rather than refreshing them.
-      - name: Decide whether this project is in scope
-        id: scope
-        run: |
-          want='${{ inputs.project }}'
-          if [ -z "$want" ] || [ "$want" = 'all' ] || [ "$want" = '${{ matrix.project }}' ]; then
-            echo 'run=yes' >> "$GITHUB_OUTPUT"
-          else
-            echo 'run=no' >> "$GITHUB_OUTPUT"
-            echo "Skipping ${{ matrix.project }}, this run targets $want."
-          fi
-
       - uses: actions/setup-python@v5
-        if: steps.scope.outputs.run == 'yes'
         with:
           python-version: '3.12'
 
       - name: Install dbt
-        if: steps.scope.outputs.run == 'yes'
         run: |
           python -m venv .venv
           .venv/bin/python -m pip install --quiet --upgrade pip
           .venv/bin/python -m pip install --quiet dbt-core dbt-duckdb duckdb
 
       - name: Check house style
-        if: steps.scope.outputs.run == 'yes'
         run: .venv/bin/python scripts/no_em_dashes.py
 
-      - name: Refresh
-        # build_site.py runs as part of this; Cloudflare re-runs it on its own image too
-        if: steps.scope.outputs.run == 'yes'
-        run: .venv/bin/python scripts/refresh.py --project ${{ matrix.project }}
+      - name: Refresh every project
+        run: |
+          want='${{ inputs.project }}'
+          failed=''
+          for p in 01-meridian-provisions 02-kestrel-logistics 03-sable-finch-credit 04-lumen-health; do
+            if [ -n "$want" ] && [ "$want" != 'all' ] && [ "$want" != "$p" ]; then
+              echo "Skipping $p, this run targets $want."
+              continue
+            fi
+            echo "::group::$p"
+            # Keep going on failure so one project's broken test cannot hold the other three
+            # stale. The step fails at the end instead.
+            if .venv/bin/python scripts/refresh.py --project "$p"; then
+              echo "$p refreshed"
+            else
+              echo "::error title=Refresh failed::$p did not refresh, its dashboard keeps the last numbers that passed"
+              failed="$failed $p"
+            fi
+            echo "::endgroup::"
+          done
+          echo "FAILED=$failed" >> "$GITHUB_ENV"
 
+      # Runs even when a project failed, so the ones that did refresh still publish.
       - name: Commit the rebuilt artefacts
-        if: steps.scope.outputs.run == 'yes'
+        if: always()
         run: |
           git config user.name  'omnatix-bot'
           git config user.email 'marshalldube9@gmail.com'
@@ -99,7 +93,16 @@ jobs:
           if git diff --staged --quiet; then
             echo 'Nothing changed, no commit.'
           else
-            git commit -m "Refresh ${{ matrix.project }}: data through $(date -u +%Y-%m-%d)"
+            git commit -m "Refresh: data through $(date -u +%Y-%m-%d)"
             git pull --rebase
             git push
           fi
+
+      - name: Fail if any project did not refresh
+        if: always()
+        run: |
+          if [ -n "${FAILED// /}" ]; then
+            echo "These projects did not refresh:$FAILED"
+            exit 1
+          fi
+          echo 'All projects refreshed.'
