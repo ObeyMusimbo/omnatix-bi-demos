@@ -1,0 +1,272 @@
+version: 2
+
+models:
+  - name: dim_date
+    description: >
+      The operating calendar, one row per day whether or not a room was open. Sunday exists
+      here and is empty everywhere downstream, which is correct: a calendar that omits the
+      days with no activity cannot tell you that a day had none.
+    columns:
+      - name: date_day
+        data_tests: [unique, not_null]
+      - name: day_of_week
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 1
+                max_value: 7
+
+  - name: dim_clinic
+    description: One row per site.
+    columns:
+      - name: clinic_code
+        data_tests: [unique, not_null]
+
+  - name: dim_practitioner
+    description: One row per practitioner, with the site and the cost of a session.
+    columns:
+      - name: practitioner_id
+        data_tests: [unique, not_null]
+      - name: clinic_name
+        description: Denormalised from the site so the practitioner table reads without a join.
+        data_tests: [not_null]
+
+  - name: dim_scheme
+    description: >
+      One row per payer. gap_pct_of_tariff is the share of the bill the patient owes, which is
+      the number reception has to collect and mostly does not.
+    columns:
+      - name: scheme_code
+        data_tests: [unique, not_null]
+      - name: gap_pct_of_tariff
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
+
+  - name: fct_appointment
+    description: >
+      The central fact: one row per booked slot with everything that happened to the money
+      attached. Encounters and payments are aggregated before the join rather than joined and
+      then aggregated, because a visit with two line items would otherwise double the claim
+      value beside it.
+    columns:
+      - name: appointment_id
+        description: >
+          The grain. If this is not unique, one of the many-to-one joins has fanned out and
+          every revenue figure on the dashboard is overstated.
+        data_tests: [unique, not_null]
+      - name: claim_id
+        description: >
+          At most one claim per visit, after silver deduplicates the switch retries. Null for
+          a visit that was never attended, and for self funded patients who have no scheme.
+        data_tests: [unique]
+      - name: status
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Attended', 'No show', 'Cancelled']
+      - name: rejection_class
+        description: >
+          Splits a rejection by what it would take to recover it rather than by what the
+          scheme said. Fixable at the practice is a resubmission. No cover is an invoice to
+          the patient. The same rand, and completely different work.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Fixable at the practice', 'No cover, becomes a patient account']
+      - name: billed_zar
+        description: >
+          Null rather than zero on a visit that did not happen, because not billed at all and
+          billed nothing are different facts and only one belongs in an average.
+
+  - name: fct_session
+    description: >
+      One row per session. This is the cost side: a session is bought whole, so unfilled slots
+      multiplied by the cost of a slot is money spent on nothing.
+    columns:
+      - name: session_id
+        data_tests: [unique, not_null]
+      - name: slots_unfilled
+        description: >
+          Offered less booked. Cannot be negative: more bookings than slots would mean the
+          diary was double booked, which this practice does not do and this test would catch.
+        data_tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 0
+      - name: fill_rate
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 1
+
+  - name: fct_capacity_hour
+    description: >
+      Capacity expanded one slot at a time and placed in the hour each slot starts in, because
+      a twenty five minute slot crosses the hour and dividing a session evenly across its
+      hours would put capacity in hours the diary never offered.
+    columns:
+      - name: slot_hour
+        data_tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 6
+                max_value: 20
+      - name: slots_unfilled
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+
+  - name: mart_slot_grid
+    description: >
+      The signature view: the consulting week as weekday against hour, carrying capacity,
+      demand and waiting time in the same cell. Saturday has no afternoon rows because the
+      diary offers none, rather than showing them as empty.
+    data_tests: [not_empty]
+    columns:
+      - name: fill_pct
+        data_tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
+
+  - name: mart_capacity_cost
+    description: >
+      What the empty half of the diary costs, split by why the chair was empty. Never booked
+      is a roster problem. Booked and not arrived is a reminder problem.
+    data_tests: [not_empty]
+    columns:
+      - name: slots_excess
+        description: >
+          Capacity above what a diary at the target fill rate would need for this cell's own
+          demand. Deliberately assumes no patient moves, so the total is conservative.
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+
+  - name: mart_no_show
+    description: >
+      Who does not arrive, by how far ahead the booking was made and whether a reminder went
+      out. The recoverable column applies the rate already observed on reminded bookings in
+      the same lead band, so it never claims an effect the data has not shown.
+    data_tests: [not_empty]
+    columns:
+      - name: no_show_pct
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
+      - name: recoverable_visits
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+
+  - name: mart_claim_recovery
+    description: >
+      What the schemes sent back and what happened next, by reason and by site. The
+      denominator is every claim ever rejected, including the ones that were fixed, so a site
+      that works its rejections is not flattered by having fewer left.
+    data_tests: [not_empty]
+    columns:
+      - name: recovery_pct
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
+
+  - name: mart_scheme
+    description: >
+      One row per payer. working_capital_zar is what a slow payer keeps locked up. It is a
+      balance sheet number, not a loss, and it is never added to the collection bridge.
+    data_tests: [not_empty]
+    columns:
+      - name: scheme_code
+        data_tests: [unique, not_null]
+      - name: working_capital_zar
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+
+  - name: mart_practitioner
+    description: >
+      One row per practitioner, every ratio also expressed against the median of that
+      practitioner's own discipline. A radiologist and a dietician are bought at different
+      prices, so ranking them on one list says nothing except which discipline is expensive.
+    data_tests: [not_empty]
+    columns:
+      - name: practitioner_id
+        data_tests: [unique, not_null]
+      - name: fill_pct
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
+
+  - name: mart_clinic
+    description: The site scorecard, one column for each of the five findings.
+    data_tests: [not_empty]
+    columns:
+      - name: clinic_code
+        data_tests: [unique, not_null]
+      - name: fill_pct
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
+
+  - name: agg_monthly
+    description: >
+      The monthly trend. Partial months at either end of the window are dropped, because a
+      partial month plotted beside a whole one reads as a collapse.
+    data_tests: [not_empty]
+    columns:
+      - name: month_start
+        data_tests: [unique, not_null]
+
+  - name: mart_collection_bridge
+    description: >
+      Everything billed for care delivered, walked down to the cash received. Every rand of
+      the shortfall lands in exactly one bucket, and the buckets are defined by who has to do
+      something about it.
+    data_tests: [not_empty]
+    columns:
+      - name: step_order
+        data_tests: [unique, not_null]
+      - name: reconciliation_gap_zar
+        description: >
+          The assertion that makes the bridge a bridge. Anchor less every step must equal the
+          cash received, computed independently. Anything but zero and the page is wrong.
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: -1
+                max_value: 1
+
+  - name: mart_data_quality
+    description: >
+      The defects that exist in the source drops and survive into the warehouse as flags
+      rather than deletions. Publishing it is the point: a dashboard that quietly drops the
+      rows it cannot reconcile is how a practice ends up believing a number that is short.
+    data_tests: [not_empty]
+    columns:
+      - name: issue_order
+        data_tests: [unique, not_null]
+      - name: treatment
+        description: What was done about it, in words a practice manager can check.
+        data_tests: [not_null]

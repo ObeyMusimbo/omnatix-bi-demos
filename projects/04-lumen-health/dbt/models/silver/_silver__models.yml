@@ -1,0 +1,270 @@
+version: 2
+
+models:
+  - name: sl_clinics
+    description: >
+      The six sites. The name is captured by hand at each front desk and arrives in three
+      spellings, so it is folded to one for display. Nothing joins on it.
+    columns:
+      - name: clinic_code
+        description: The join key everywhere. Clean in the source, and kept that way.
+        data_tests: [unique, not_null]
+      - name: clinic_name
+        data_tests: [not_null]
+      - name: consulting_rooms
+        description: >
+          Physical capacity. The roster can exceed it only if sessions overlap, which is a
+          check worth having and not one this dataset breaks.
+        data_tests: [not_null]
+
+  - name: sl_practitioners
+    description: >
+      The consulting roster. sessional_cost_zar is the number that makes an empty slot
+      expensive: the group pays it for the session, not for the patients seen in it.
+    columns:
+      - name: practitioner_id
+        data_tests: [unique, not_null]
+      - name: discipline
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['General practice', 'Dentistry', 'Physiotherapy', 'Radiology',
+                         'Dietetics', 'Occupational health', 'Minor procedures']
+      - name: clinic_code
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('sl_clinics')
+                field: clinic_code
+      - name: sessional_cost_zar
+        description: What a nine hour session costs the group, regardless of who turns up.
+        data_tests: [not_null]
+
+  - name: sl_schemes
+    description: >
+      Medical schemes. tariff_factor is the share of the practice tariff the scheme settles;
+      one minus that is the gap somebody has to ask the patient for. Self funded patients are
+      carried as a scheme with a factor of one, so every visit has a payer.
+    columns:
+      - name: scheme_code
+        data_tests: [unique, not_null]
+      - name: tariff_factor
+        data_tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 1
+                inclusive: true
+
+  - name: sl_patients
+    description: >
+      Registered patients. There is no name, no date of birth and no identity number in this
+      table by design: an age band and a scheme are everything the analysis needs.
+    columns:
+      - name: patient_ref
+        data_tests: [unique, not_null]
+      - name: scheme_code
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('sl_schemes')
+                field: scheme_code
+      - name: age_band
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['0-17', '18-34', '35-49', '50-64', '65+']
+
+  - name: sl_sessions
+    description: >
+      The capacity grid, and the denominator of every utilisation figure on the dashboard.
+      Session dates arrive in two formats and are parsed by a macro that handles both.
+    columns:
+      - name: session_id
+        data_tests: [unique, not_null]
+      - name: session_date
+        description: >
+          Parsed from ISO or DD/MM/YYYY. A null here would mean a date the macro could not
+          read, which would quietly remove capacity from the denominator.
+        data_tests: [not_null]
+      - name: clinic_code
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('sl_clinics')
+                field: clinic_code
+      - name: practitioner_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('sl_practitioners')
+                field: practitioner_id
+      - name: slots_offered
+        data_tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 1
+                max_value: 60
+      - name: cost_per_slot_zar
+        description: Sessional cost divided by slots. What one empty chair costs.
+        data_tests: [not_null]
+
+  - name: sl_appointments
+    description: >
+      One row per booked slot. Status arrives in three casings and is mapped through a lookup,
+      so an unexpected value becomes null and fails the not_null test below rather than
+      quietly becoming a fourth status.
+    columns:
+      - name: appointment_id
+        data_tests: [unique, not_null]
+      - name: session_id
+        description: Every appointment belongs to a session. This is what makes fill rate computable.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('sl_sessions')
+                field: session_id
+      - name: patient_ref
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('sl_patients')
+                field: patient_ref
+      - name: status
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Attended', 'No show', 'Cancelled']
+      - name: scheduled_at
+        data_tests: [not_null]
+      - name: booking_lead_days
+        description: >
+          Days between the booking being made and the slot. The single strongest predictor of
+          whether the patient arrives.
+        data_tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 120
+      - name: booking_lead_band
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['0 to 2 days', '3 to 6 days', '1 to 2 weeks', '2 to 3 weeks',
+                         'Over 3 weeks']
+      - name: day_of_week
+        description: ISO weekday, 1 Monday to 7 Sunday. The clinics do not open on a Sunday.
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 1
+                max_value: 6
+
+  - name: sl_encounters
+    description: >
+      What was done at the visit and what it was billed at. Amounts over a thousand rand are
+      exported with thousands separators inside quotes, so the column lands as text.
+    columns:
+      - name: encounter_id
+        data_tests: [unique, not_null]
+      - name: appointment_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('sl_appointments')
+                field: appointment_id
+      - name: billed_zar
+        description: >
+          A null here would mean the separator stripping failed, which would silently reduce
+          revenue rather than raise an error.
+        data_tests: [not_null]
+      - name: icd10_code
+        description: >
+          Roughly one line in fifty lost its diagnosis code migrating off the old practice
+          system. Deliberately left null and flagged rather than filled in, because a missing
+          ICD-10 is one of the reasons a claim comes back. This test warns rather than fails.
+        data_tests:
+          - not_null:
+              config:
+                severity: warn
+
+  - name: sl_claims
+    description: >
+      What went to the scheme and what came back, deduplicated on claim id because the switch
+      retries on a timer and occasionally sends the same claim twice.
+    columns:
+      - name: claim_id
+        description: Unique after deduplication. If this fails, the retries are being counted twice.
+        data_tests: [unique, not_null]
+      - name: appointment_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('sl_appointments')
+                field: appointment_id
+      - name: scheme_code
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('sl_schemes')
+                field: scheme_code
+      - name: status
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Paid', 'Paid on resubmission', 'Short paid', 'Rejected']
+      - name: claimed_zar
+        data_tests: [not_null]
+      - name: shortfall_zar
+        description: >
+          Claimed less paid. Never negative: a scheme does not pay more than it was asked for,
+          and if this range test fails the tariff logic has drifted.
+        data_tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true
+      - name: submitted_at
+        data_tests: [not_null]
+
+  - name: sl_patient_payments
+    description: >
+      What reception collected. Refunds land as negative amounts against a zero charge and are
+      kept, because netting them out is the only way the collected figure is true.
+    columns:
+      - name: payment_id
+        data_tests: [unique, not_null]
+      - name: appointment_id
+        description: >
+          A handful of rows quote a visit that is not in the appointment file. That is a real
+          capture fault, so this relationship test warns rather than fails: the rows are
+          flagged, published on the data quality panel, and excluded from site attribution.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('sl_appointments')
+                field: appointment_id
+              config:
+                severity: warn
+      - name: amount_due_zar
+        data_tests: [not_null]
+      - name: amount_paid_zar
+        data_tests: [not_null]
+      - name: payment_type
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Scheme gap', 'Self funded', 'Refund']

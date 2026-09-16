@@ -1,0 +1,49 @@
+version: 2
+
+sources:
+  - name: lumen_raw
+    description: >
+      The exports as they land from the practice management system, the billing engine, the
+      claims switch and the point of sale at reception. Read in place from disk, nothing is
+      copied, nothing is changed. All nine files are synthetic and contain no patient
+      identifiers of any kind: a patient is a reference number, an age band and a scheme.
+    schema: main
+    meta:
+      external_location: "{{ var('raw_path') }}/{name}.csv"
+    tables:
+      - name: clinics
+        description: The six sites. Names carry casing and whitespace variants.
+      - name: practitioners
+        description: >
+          The consulting roster, the discipline each one practises, and what the group pays
+          for a session whether or not anybody walks through the door.
+      - name: schemes
+        description: >
+          Medical schemes, their stated payment terms, and the proportion of the practice
+          tariff each one actually pays. The balance is the patient gap.
+      - name: patients
+        description: >
+          One row per registered patient. Reference, age band, gender, home site and scheme.
+          There are no names and no identity numbers anywhere in this file.
+      - name: sessions
+        description: >
+          The capacity grid: a practitioner in a room for a block of hours. Session dates
+          arrive in two formats. This is the denominator of every utilisation number.
+      - name: appointments
+        description: >
+          One row per booked slot, with when it was made, when it was for, when the patient
+          arrived and when they were seen. Status arrives in three casings.
+      - name: encounters
+        description: >
+          What was done at the visit and what it was billed at. A slice of rows lost their
+          ICD-10 code on migration from the old system, and amounts are sometimes written
+          with thousands separators.
+      - name: claims
+        description: >
+          What went to the scheme and what came back. Contains duplicate submissions, which
+          is itself one of the rejection reasons.
+      - name: patient_payments
+        description: >
+          What reception collected, being the gap on a scheme visit or the whole amount on a
+          self funded one. Contains refunds as negative amounts and rows quoting appointments
+          absent from the appointment file.

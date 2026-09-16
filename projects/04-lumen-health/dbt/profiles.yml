@@ -1,0 +1,7 @@
+lumen:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: '../lumen.duckdb'
+      threads: 4

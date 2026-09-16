@@ -1,0 +1,33 @@
+practitioner_id,practitioner_name,discipline,clinic_code,practice_number,sessional_cost_zar,joined_date
+PR-3001,Dr Tebogo Zwane,General practice,LUM-SAN,PN-4311653,4207,2017-04-03
+PR-3002,Dr Sizwe Maseko,Dentistry,LUM-SAN,PN-8366766,5987,2018-11-25
+PR-3003,Dr Karabo Maseko,Occupational health,LUM-SAN,PN-3752853,3679,2023-08-17
+PR-3004,Dr Priya Van Wyk,General practice,LUM-SAN,PN-3572804,4117,2017-04-08
+PR-3005,Dr Riaan Maseko,General practice,LUM-SAN,PN-4062831,4234,2024-03-19
+PR-3006,Dr Sipho Botha,Physiotherapy,LUM-SAN,PN-7612570,3134,2018-04-18
+PR-3007,Dr Nomsa Jacobs,Minor procedures,LUM-SAN,PN-6708083,6711,2020-08-19
+PR-3008,Dr Lerato Khumalo,General practice,LUM-PTA,PN-8236806,3803,2022-10-15
+PR-3009,Dr Karabo Patel,Radiology,LUM-PTA,PN-5235030,8221,2022-01-20
+PR-3010,Dr Nomsa Sithole,Dentistry,LUM-PTA,PN-2147201,5602,2017-05-11
+PR-3011,Dr Karabo Patel,General practice,LUM-PTA,PN-6482512,4519,2022-06-23
+PR-3012,Dr Anita Khumalo,General practice,LUM-PTA,PN-4123789,4073,2017-06-11
+PR-3013,Dr Yusuf Patel,Dentistry,LUM-PTA,PN-2165328,5678,2021-06-27
+PR-3014,Dr Zanele Fourie,General practice,LUM-UMH,PN-4751028,3616,2020-02-14
+PR-3015,Dr Lerato Sithole,Dentistry,LUM-UMH,PN-5818781,4817,2018-06-07
+PR-3016,Dr Imraan Govender,Physiotherapy,LUM-UMH,PN-2175418,3166,2020-07-31
+PR-3017,Dr Michelle Du Toit,Radiology,LUM-UMH,PN-6084919,7465,2023-02-15
+PR-3018,Dr Johan Sithole,General practice,LUM-UMH,PN-9924987,3765,2018-07-27
+PR-3019,Dr Thandi Malan,General practice,LUM-CLR,PN-2536151,4416,2017-10-31
+PR-3020,Dr Johan Van Wyk,Physiotherapy,LUM-CLR,PN-6398217,3302,2019-11-22
+PR-3021,Dr Anita Ndlovu,General practice,LUM-CLR,PN-2184821,4210,2017-09-10
+PR-3022,Dr Naledi Jacobs,General practice,LUM-CLR,PN-9866028,4199,2017-11-03
+PR-3023,Dr Naledi Naidoo,General practice,LUM-CLR,PN-5843847,3940,2020-09-18
+PR-3024,Dr Priya Zwane,General practice,LUM-CLR,PN-5957308,4215,2023-02-15
+PR-3025,Dr Yusuf Fourie,General practice,LUM-GQE,PN-5528188,3480,2023-09-03
+PR-3026,Dr Sizwe Van Wyk,General practice,LUM-GQE,PN-8383095,4421,2018-04-12
+PR-3027,Dr Thandi Dlamini,Dentistry,LUM-GQE,PN-8021739,5152,2021-03-13
+PR-3028,Dr Yusuf Mahlangu,General practice,LUM-GQE,PN-1383969,4210,2019-12-27
+PR-3029,Dr Johan Mahlangu,Dentistry,LUM-BFN,PN-3982567,4817,2023-02-12
+PR-3030,Dr Pieter Adams,Dietetics,LUM-BFN,PN-7323865,2885,2023-07-21
+PR-3031,Dr Naledi Molefe,Dietetics,LUM-BFN,PN-2571832,3256,2017-01-24
+PR-3032,Dr Deon Ndlovu,Dietetics,LUM-BFN,PN-9534151,2779,2022-06-08

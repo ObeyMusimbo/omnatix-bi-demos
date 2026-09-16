@@ -1,0 +1,53 @@
+{
+  "built_at": "2026-09-16T00:33:41+00:00",
+  "data_from": "2024-09-02",
+  "data_through": "2026-08-31",
+  "appointments": 232558,
+  "billed_zar": 160784568,
+  "clinics": 6,
+  "practitioners": 32,
+  "tables": {
+    "mart_collection_bridge": {
+      "rows": 6,
+      "bytes": 3992
+    },
+    "mart_slot_grid": {
+      "rows": 50,
+      "bytes": 5869
+    },
+    "mart_capacity_cost": {
+      "rows": 50,
+      "bytes": 7621
+    },
+    "mart_no_show": {
+      "rows": 10,
+      "bytes": 4100
+    },
+    "mart_claim_recovery": {
+      "rows": 42,
+      "bytes": 6213
+    },
+    "mart_scheme": {
+      "rows": 6,
+      "bytes": 4134
+    },
+    "mart_practitioner": {
+      "rows": 32,
+      "bytes": 6692
+    },
+    "mart_clinic": {
+      "rows": 6,
+      "bytes": 6126
+    },
+    "mart_data_quality": {
+      "rows": 7,
+      "bytes": 2605
+    },
+    "agg_monthly": {
+      "rows": 24,
+      "bytes": 5392
+    }
+  },
+  "currency": "ZAR",
+  "vat": "excluded"
+}

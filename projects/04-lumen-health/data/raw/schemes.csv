@@ -1,0 +1,8 @@
+scheme_code,scheme_name,payment_terms_days,tariff_factor
+SCH-AUR,Aurum Health,32,0.94
+SCH-VER,Veritas Medical,29,0.97
+SCH-KOP,Koppie Health,74,0.88
+SCH-NDL,Ndlela Scheme,35,0.92
+SCH-STL,Stellar Med,31,0.95
+SCH-GOV,Public Service Med,44,0.9
+SELF,Self funded,0,1

@@ -1,0 +1,34 @@
+name: lumen
+version: '1.0.0'
+config-version: 2
+profile: lumen
+
+model-paths: ['models']
+macro-paths: ['macros']
+target-path: 'target'
+clean-targets: ['target', 'dbt_packages']
+
+vars:
+  raw_path: '../data/raw'
+  period_end: '2026-08-31'
+
+  # A medical scheme allows four months from date of service to receive a claim. Past that
+  # the money is gone regardless of who was at fault, which is what makes an unworked
+  # rejection different from a slow one.
+  resubmission_window_days: 120
+
+  # What a well run consulting diary fills. Used as the target in the utilisation mart, and
+  # deliberately not 100%: a diary with no slack cannot absorb an urgent case.
+  target_fill_rate: 0.85
+
+models:
+  lumen:
+    bronze:
+      +materialized: table
+      +schema: bronze
+    silver:
+      +materialized: table
+      +schema: silver
+    gold:
+      +materialized: table
+      +schema: gold
