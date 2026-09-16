@@ -13,8 +13,8 @@ All money is South African rand, excluding VAT.
 | Measure | TTM |
 |---|---|
 | Revenue | R243,339,163 |
-| Cost | R215,766,292 |
-| Contribution | R27,572,871 (11.3%) |
+| Cost | R215,771,361 |
+| Contribution | R27,567,802 (11.3%) |
 | Kilometres | 12,435,053 |
 | Earned per kilometre | R19.57 |
 | Spent per kilometre | R17.35 |
@@ -29,14 +29,14 @@ turns is carrying nothing, and until today nobody was charged for it.
 
 | Driver | Worth | Share | Finding |
 |---|---|---|---|
-| _Contribution earned in the last twelve months_ | _R27,572,871_ | | |
-| Corridors that fund their own empty return | R5,525,148 | 25.2% | 1 |
-| Deliveries that had to be done twice | R6,509,247 | 29.7% | 2 |
+| _Contribution earned in the last twelve months_ | _R27,567,802_ | | |
+| Corridors that fund their own empty return | R5,525,387 | 25.2% | 1 |
+| Deliveries that had to be done twice | R6,509,220 | 29.7% | 2 |
 | Vehicles burning more than their class | R4,663,684 | 21.3% | 3 |
 | Service penalties on the anchor account | R5,213,459 | 23.8% | 4 |
-| **Contribution with the same fleet and the same customers** | **R49,484,409** | | |
+| **Contribution with the same fleet and the same customers** | **R49,479,551** | | |
 
-**R21,911,538 identified against R27,572,871 earned, or 79.5% of
+**R21,911,749 identified against R27,567,802 earned, or 79.5% of
 contribution.** Four findings, each worth a fifth to a third of the total, on the same fleet
 serving the same customers with nothing new bought.
 
@@ -61,8 +61,8 @@ by corridor. On these lanes the outbound leg looks healthy and the round trip lo
 | Cape Town to Bloemfontein | 30.2% | 60% | R1,670,736 | **-R237,661** |
 | Cape Town to Paarl | 65.6% | 60% | R77,623 | **-R225,569** |
 | Durban to Bloemfontein | 42.3% | 60% | R952,530 | **-R213,925** |
-| Cape Town to Worcester | 60.1% | 60% | R276,683 | **-R40,791** |
-| Johannesburg to Rustenburg | 64.4% | 60% | R397,365 | **-R28,240** |
+| Cape Town to Worcester | 60.1% | 60% | R277,004 | **-R40,470** |
+| Johannesburg to Rustenburg | 64.4% | 60% | R397,365 | **-R28,799** |
 
 The whole reveal is one join: pair an outbound trip with the return it caused, and charge the
 cost of both legs against the revenue they jointly earned. Kestrel's reporting measures legs,
@@ -75,15 +75,15 @@ rate card is.
 ## Finding 2: deliveries that had to be done twice
 
 3,334 drops failed on first attempt in the last twelve months, 4.0% of
-everything delivered, costing **R6,509,247** in journeys that earned nothing.
+everything delivered, costing **R6,509,220** in journeys that earned nothing.
 
 | Site | Failure rate | Failed drops | Cost | Usual reason |
 |---|---|---|---|---|
-| Atlantis Industries | 45.6% | 411 | R1,046,186 | Goods-in queue timeout |
+| Atlantis Industries | 45.6% | 411 | R1,046,186 | No booked slot |
 | Midrand Holdings | 44.5% | 318 | R559,986 | No booked slot |
 | Midrand Supplies 3 | 45.5% | 270 | R484,974 | No booked slot |
 | Karoo Supplies | 46.3% | 300 | R461,825 | No booked slot |
-| Springfield Manufacturing | 32.2% | 156 | R300,268 | Receiving closed |
+| Springfield Manufacturing | 32.2% | 156 | R297,941 | Receiving closed |
 | Montague Wholesalers | 39.9% | 110 | R212,278 | No booked slot |
 
 These sites are not having bad luck. They have no booked receiving slot, or a goods-in desk
@@ -145,8 +145,8 @@ Penalty exposure on the anchor account, at 2% of monthly spend per point below 9
 | Class | Air trips | Weight used | Volume used | Cost |
 |---|---|---|---|---|
 | Superlink 34t | 3,576 | 69.0% | 82.6% | R54,803,779 |
-| Tri-axle 24t | 3,620 | 68.8% | 82.4% | R25,289,738 |
-| Rigid 14t | 209 | 76.7% | 74.9% | R799,312 |
+| Tri-axle 24t | 3,620 | 68.8% | 82.4% | R25,289,678 |
+| Rigid 14t | 209 | 76.7% | 74.9% | R799,871 |
 | Rigid 8t | 113 | 76.6% | 75.0% | R360,653 |
 | LDV 1.5t | 97 | 65.8% | 70.7% | R223,229 |
 
