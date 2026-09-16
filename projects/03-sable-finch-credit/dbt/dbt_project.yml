@@ -1,0 +1,31 @@
+name: sable
+version: '1.0.0'
+config-version: 2
+profile: sable
+
+model-paths: ['models']
+macro-paths: ['macros']
+target-path: 'target'
+clean-targets: ['target', 'dbt_packages']
+
+vars:
+  raw_path: '../data/raw'
+  period_end: '2026-08-31'
+  # Loans are written off at five missed instalments, which is where most South African
+  # unsecured lenders sit. Kept as a var because it is a policy choice, not a fact.
+  writeoff_dpd: 150
+  # The National Credit Act obliges the lender to leave the client able to meet the
+  # regulated expense norm after the new instalment. Below zero is reckless lending.
+  affordability_floor_zar: 0
+
+models:
+  sable:
+    bronze:
+      +materialized: table
+      +schema: bronze
+    silver:
+      +materialized: table
+      +schema: silver
+    gold:
+      +materialized: table
+      +schema: gold

@@ -1,0 +1,7 @@
+sable:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: '../sable.duckdb'
+      threads: 4

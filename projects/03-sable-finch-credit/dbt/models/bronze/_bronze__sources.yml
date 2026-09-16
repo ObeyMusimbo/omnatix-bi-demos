@@ -1,0 +1,40 @@
+version: 2
+
+sources:
+  - name: sable_raw
+    description: >
+      The exports as they land from the loan management system, the affordability tool, the
+      collections dialler and the finance ledger. Read in place from disk, nothing is copied,
+      nothing is changed. All nine files are synthetic.
+    schema: main
+    meta:
+      external_location: "{{ var('raw_path') }}/{name}.csv"
+    tables:
+      - name: branches
+        description: The nine branches. Names carry stray whitespace and casing variants.
+      - name: agents
+        description: Loan officers, and the branch each one books business at.
+      - name: clients
+        description: >
+          Borrowers. Income and payday drive both the affordability assessment and whether the
+          debit order has any chance of succeeding.
+      - name: loans
+        description: >
+          The loan book. Disbursement dates arrive in two formats, a slice of rows lost their
+          interest rate on migration, and amounts are sometimes written with separators.
+      - name: affordability
+        description: >
+          The National Credit Act assessment recorded at origination: declared income, declared
+          expenses, existing obligations, and what is left after the new instalment.
+      - name: repayments
+        description: >
+          Instalment level collection history. Contains double posted receipts, reversals as
+          negative amounts, and rows quoting loans absent from the book.
+      - name: arrears_snapshots
+        description: >
+          Month end arrears file from the loan management system. A second system of record,
+          and it does not always agree with the repayment history.
+      - name: collections_activity
+        description: Every call, SMS, letter and field visit, with what it cost.
+      - name: writeoffs
+        description: Loans written off, the balance at write off, and anything recovered since.
