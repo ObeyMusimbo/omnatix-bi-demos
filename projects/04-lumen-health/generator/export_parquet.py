@@ -28,6 +28,7 @@ TABLES = [
     "mart_capacity_cost",
     "mart_no_show",
     "mart_claim_recovery",
+    "mart_patient_charges",
     "mart_scheme",
     "mart_practitioner",
     "mart_clinic",

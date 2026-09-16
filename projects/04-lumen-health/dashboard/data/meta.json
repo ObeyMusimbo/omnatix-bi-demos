@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-09-16T00:33:41+00:00",
+  "built_at": "2026-09-16T00:44:42+00:00",
   "data_from": "2024-09-02",
   "data_through": "2026-08-31",
   "appointments": 232558,
@@ -17,7 +17,7 @@
     },
     "mart_capacity_cost": {
       "rows": 50,
-      "bytes": 7621
+      "bytes": 7607
     },
     "mart_no_show": {
       "rows": 10,
@@ -26,6 +26,10 @@
     "mart_claim_recovery": {
       "rows": 42,
       "bytes": 6213
+    },
+    "mart_patient_charges": {
+      "rows": 12,
+      "bytes": 3469
     },
     "mart_scheme": {
       "rows": 6,

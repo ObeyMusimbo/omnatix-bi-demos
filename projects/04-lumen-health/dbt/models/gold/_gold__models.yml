@@ -187,6 +187,25 @@ models:
                 min_value: 0
                 max_value: 100
 
+  - name: mart_patient_charges
+    description: >
+      What reception charged the patient and what it took, by site and by charge type.
+      Blending the two types gives a collection rate near seventy per cent everywhere, which
+      describes neither of the behaviours inside it.
+    data_tests: [not_empty]
+    columns:
+      - name: collected_pct
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 105
+      - name: payment_type
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Scheme gap', 'Self funded']
+
   - name: mart_scheme
     description: >
       One row per payer. working_capital_zar is what a slow payer keeps locked up. It is a

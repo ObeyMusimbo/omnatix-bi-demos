@@ -51,8 +51,8 @@ PROJECTS = [
         "client": "Kestrel Logistics",
         "industry": "Freight and fleet",
         "problem": "Delivery is treated as fixed overhead, so nobody knows which routes lose money.",
-        "headline_value": None,
-        "headline_label": "Cost to serve, route by route",
+        "headline_value": "R21.9m",
+        "headline_label": "identified against R27.6m of contribution",
         "accent": "#22D3EE",
     },
     {
@@ -61,8 +61,8 @@ PROJECTS = [
         "client": "Sable & Finch Credit",
         "industry": "Microfinance",
         "problem": "Arrears are reported monthly and backward looking. By then the money is gone.",
-        "headline_value": None,
-        "headline_label": "Portfolio risk, three months earlier",
+        "headline_value": "R10.3m",
+        "headline_label": "of credit loss above the clean book rate",
         "accent": "#5A90D4",
     },
     {
@@ -71,9 +71,9 @@ PROJECTS = [
         "client": "Lumen Health Network",
         "industry": "Clinic group",
         "problem": "Every clinic is full and the group still loses money. Capacity and cash are managed apart.",
-        "headline_value": None,
-        "headline_label": "Where the capacity actually goes",
-        "accent": "#2DD4BF",
+        "headline_value": "R17.4m",
+        "headline_label": "billed for care delivered and never collected",
+        "accent": "#00919A",
     },
 ]
 

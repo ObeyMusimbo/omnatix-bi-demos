@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en-ZA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Capacity and Collection Review · Lumen Health Network</title>
+<meta name="description" content="Where a South African private clinic group loses money: an uneven consulting diary, rejected claims nobody reworks, patients who do not arrive, and the gap nobody asks for. Demonstration built on synthetic data.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/clinical.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%2300919A'/><path d='M4 18h5l2.5-7 4 13 3-9 2 3h7' stroke='%23FFFFFF' stroke-width='2.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div>
+      <h1>Capacity and Collection Review</h1>
+      <p class="sub">Lumen Health Network · private primary care · six sites</p>
+    </div>
+    <div class="meta">
+      <div id="freshness" class="freshness">
+        <span class="fresh-dot" aria-hidden="true"></span>
+        <span id="fresh-label">Checking data freshness</span>
+      </div>
+      <div id="data-through"></div>
+      <div id="last-run"></div>
+    </div>
+  </header>
+
+  <main id="main">
+    <div class="loading" id="loading">
+      <p id="loading-msg">Starting the query engine</p>
+      <p class="muted" style="font-size:0.85rem">
+        The warehouse is running in your browser. Nothing is being sent to a server.
+      </p>
+    </div>
+  </main>
+
+  <footer>
+    <p>
+      <span class="badge">Synthetic data</span>
+      Lumen Health Network is a fictional practice group. Every figure on this page is
+      generated and contains deliberately planted findings. There are no patient identifiers
+      anywhere in this dataset: no names, no dates of birth and no identity numbers. A patient
+      is a reference number, an age band and a scheme.
+    </p>
+    <p>
+      Built by Omnatix. Diary, billing, claims and reception exports land as CSV, are modelled
+      through bronze, silver and gold layers in dbt on DuckDB, tested on every build, and
+      published as Parquet. This page loads those files and runs SQL against them in your
+      browser using DuckDB-WASM. There is no backend and no database server.
+    </p>
+    <p>
+      Money figures are in rand and exclude VAT. Claim settlement is measured from submission
+      to payment rather than from date of service, so a slow scheme and a slow practice stay
+      separate numbers. Nothing on this page is clinical or financial advice.
+    </p>
+  </footer>
+
+</div>
+
+<script type="module" src="assets/app.js"></script>
+</body>
+</html>

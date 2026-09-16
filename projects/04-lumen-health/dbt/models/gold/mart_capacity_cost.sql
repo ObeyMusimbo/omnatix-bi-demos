@@ -86,7 +86,10 @@ final as (
         round(s.slots_no_show * s.cost_per_slot_zar, 2) as no_show_cost_zar,
         round(s.slots_excess * s.cost_per_slot_zar, 2) as excess_cost_zar,
 
-        {{ target }} * 100 as target_fill_pct,
+        -- Cast explicitly: Jinja renders this as decimal arithmetic, DuckDB types the
+        -- result DECIMAL, and Arrow hands a decimal to the browser as an object rather
+        -- than a number. Every numeric column that crosses into JavaScript is a double.
+        ({{ target }} * 100)::double as target_fill_pct,
         t.all_slots,
         t.all_booked,
         t.all_unfilled,
