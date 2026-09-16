@@ -97,7 +97,14 @@ by_day = rows("""
 """)
 lead_vs_fill = one("""
     select round(corr(fill_pct, avg_booking_lead_days), 2),
-           round(min(avg_booking_lead_days), 1), round(max(avg_booking_lead_days), 1)
+           round(min(avg_booking_lead_days), 1), round(max(avg_booking_lead_days), 1),
+           -- Slope of no-show against lead time across the working week, so the sentence
+           -- quotes what the data shows rather than what somebody remembered.
+           round(regr_slope(no_show_pct, avg_booking_lead_days) * 6, 1),
+           -- Fill and waiting time correlate positively: the two grids are the same shape,
+           -- not opposites. An earlier draft called them mirror images, which is backwards.
+           round((select corr(fill_pct, avg_wait_minutes) from main_gold.mart_slot_grid
+                  where avg_wait_minutes is not null), 2)
     from main_gold.mart_slot_grid
     where day_of_week between 1 and 5
 """)
@@ -342,9 +349,15 @@ about {lead_vs_fill[2]}. The busy cells are booked further out because they are 
 left, and finding 3 shows that bookings made further out are the ones that do not arrive.
 
 The relationship is tight, the size of it is modest, and both halves of that sentence matter.
-Six extra days of lead time costs roughly three no-shows in every hundred. Claim that, not
-more. The diary imbalance is not the main cause of the no-show rate. It is a contributor that
-runs in the direction that costs money, on top of a reminder problem that is much larger.
+Six extra days of lead time is worth about {lead_vs_fill[3]} no-shows in every hundred. Claim
+that, not more. The diary imbalance is not the main cause of the no-show rate. It is a
+contributor that runs in the direction that costs money, on top of a reminder problem that is
+much larger.
+
+One thing that is easy to say backwards, so rehearse it. Slot fill and waiting time correlate
+at **{lead_vs_fill[4]}**, which is positive: the two grids are nearly the same shape, not
+mirror images of one another. The hours that fill are the hours people queue in, and the hours
+nobody wants have no wait at all. Capacity is not short, it is in the wrong place.
 
 ## Finding 2: rejected claims that nobody worked
 

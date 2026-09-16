@@ -229,6 +229,21 @@ async function render() {
     .filter((d) => d.n >= 3)
     .sort((a, b2) => b2.n - a.n);
 
+  // Both of these are stated in the copy below, so they are measured rather than remembered.
+  // An earlier draft called the lead time effect "roughly three" no-shows per hundred and the
+  // practitioner spread "roughly twice"; the data says 3.6 and 2.5.
+  const leadCells = weekdayGrid.filter(
+    (g) => g.avg_booking_lead_days != null && g.no_show_pct != null);
+  const meanLead = leadCells.reduce((t, g) => t + g.avg_booking_lead_days, 0) / leadCells.length;
+  const meanNoShow = leadCells.reduce((t, g) => t + g.no_show_pct, 0) / leadCells.length;
+  const noShowPerSixDays = 6 *
+    leadCells.reduce((t, g) => t + (g.avg_booking_lead_days - meanLead) * (g.no_show_pct - meanNoShow), 0) /
+    leadCells.reduce((t, g) => t + (g.avg_booking_lead_days - meanLead) ** 2, 0);
+
+  const gps = practitioners.filter((x) => x.discipline === 'General practice');
+  const gpCostSpread = Math.max(...gps.map((x) => x.cost_per_attended_zar))
+    / Math.min(...gps.map((x) => x.cost_per_attended_zar));
+
   const slowest = [...schemes].sort((a, b2) => b2.avg_days_to_settle - a.avg_days_to_settle)[0];
   const workingCapital = schemes.reduce((t, s) => t + s.working_capital_zar, 0);
 
@@ -335,8 +350,10 @@ async function render() {
       title: 'Average wait by weekday and hour',
       note: `The same grid measured the other way, and a deliberately different hue: waiting
              time and slot fill are different quantities, and sharing a ramp would invite you to
-             read them as one. The two grids are close to mirror images, which is the finding.
-             The hours the practice cannot fill are the hours nobody waits in.`,
+             read them as one. Compare the two and they are almost the same shape, which is
+             the finding: the hours that fill are the hours people queue in, and the hours
+             nobody wants have no wait at all. Capacity is not short, it is in the wrong
+             place.`,
       legendHtml: scaleLegend(WAIT_RAMP, 'Seen on time', 'Long wait'),
     })}
 
@@ -549,9 +566,9 @@ async function render() {
       The link back to section 02, in this order. How full an hour is and how far ahead it gets
       booked move together almost exactly. The busy cells are taken weeks out because they are
       the only ones left, and the bookings made weeks out are the ones that do not arrive. The
-      relationship is tight and the size of it is modest: about six extra days of lead time costs
-      roughly three no-shows in every hundred. The diary imbalance is a contributor, not the main
-      cause. The reminder is the main cause.
+      relationship is tight and the size of it is modest: six extra days of lead time is worth
+      about <b>${noShowPerSixDays.toFixed(1)} no-shows in every hundred</b>. The diary imbalance
+      is a contributor, not the main cause. The reminder is the main cause.
     </div>
   </section>
 
@@ -642,8 +659,9 @@ async function render() {
       id: 'fig-prac',
       title: 'Sessional cost per patient actually seen',
       note: `What the group paid in clinician time for each patient who sat down, against the
-             median of that practitioner's own discipline. A diary half empty costs roughly twice
-             as much per patient as the one next door on the same rate.`,
+             median of that practitioner's own discipline. Across general practice alone, where
+             the session rates sit within a few per cent of each other, the dearest patient
+             costs <b>${gpCostSpread.toFixed(1)} times</b> the cheapest.`,
       legendHtml: legend(disciplines.map((d, i) => ({
         name: d.discipline, color: v(['--s1', '--s2', '--s3', '--s4'][i % 4]),
       }))),

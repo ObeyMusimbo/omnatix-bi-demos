@@ -113,7 +113,13 @@ final as (
                  + sum(case when step_type = 'decrease' then effect_zar else 0 end)
                    over (order by step_order rows between unbounded preceding and current row)
         end as running_total_zar,
-        effect_zar / nullif((select gp_at_prior_margin - ttm_gp from gap), 0) * -100 as pct_of_gap,
+        -- Only a step has a share of the gap. The anchor and the total are levels, not
+        -- movements, and dividing them by the gap produces a number like -1432% that means
+        -- nothing. The page happens to hide it, but the marts are also what will ground the
+        -- chat layer, so it is nulled at the source rather than filtered at the surface.
+        case when step_type = 'decrease'
+             then effect_zar / nullif((select gp_at_prior_margin - ttm_gp from gap), 0) * -100
+        end as pct_of_gap,
         (select ttm_revenue from gap) as ttm_revenue_zar,
         (select ttm_gp from gap) as ttm_gross_profit_zar,
         (select prior_revenue from gap) as prior_revenue_zar,

@@ -113,9 +113,15 @@ about 18.3. The busy cells are booked further out because they are the only ones
 left, and finding 3 shows that bookings made further out are the ones that do not arrive.
 
 The relationship is tight, the size of it is modest, and both halves of that sentence matter.
-Six extra days of lead time costs roughly three no-shows in every hundred. Claim that, not
-more. The diary imbalance is not the main cause of the no-show rate. It is a contributor that
-runs in the direction that costs money, on top of a reminder problem that is much larger.
+Six extra days of lead time is worth about 3.6 no-shows in every hundred. Claim
+that, not more. The diary imbalance is not the main cause of the no-show rate. It is a
+contributor that runs in the direction that costs money, on top of a reminder problem that is
+much larger.
+
+One thing that is easy to say backwards, so rehearse it. Slot fill and waiting time correlate
+at **0.98**, which is positive: the two grids are nearly the same shape, not
+mirror images of one another. The hours that fill are the hours people queue in, and the hours
+nobody wants have no wait at all. Capacity is not short, it is in the wrong place.
 
 ## Finding 2: rejected claims that nobody worked
 
@@ -208,8 +214,8 @@ nothing except which discipline is expensive.
 |---|---|---|---|---|---|---|
 | General practice | 16 | 41.3% | 68.9% | 91.7% | R180 | R451 |
 | Dentistry | 6 | 38.1% | 70.6% | 89.2% | R381 | R1,058 |
-| Dietetics | 3 | 31.0% | 55.1% | 80.4% | R243 | R709 |
 | Physiotherapy | 3 | 52.1% | 64.4% | 86.7% | R265 | R403 |
+| Dietetics | 3 | 31.0% | 55.1% | 80.4% | R243 | R709 |
 
 | Practitioner | Discipline | Site | Session rate | Fill | Cost per visit | Against peers |
 |---|---|---|---|---|---|---|
