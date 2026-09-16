@@ -13,8 +13,8 @@ All money is South African rand, excluding VAT.
 | Measure | TTM |
 |---|---|
 | Revenue | R243,339,163 |
-| Cost | R215,770,826 |
-| Contribution | R27,568,337 (11.3%) |
+| Cost | R215,766,292 |
+| Contribution | R27,572,871 (11.3%) |
 | Kilometres | 12,435,053 |
 | Earned per kilometre | R19.57 |
 | Spent per kilometre | R17.35 |
@@ -29,14 +29,14 @@ turns is carrying nothing, and until today nobody was charged for it.
 
 | Driver | Worth | Share | Finding |
 |---|---|---|---|
-| _Contribution earned in the last twelve months_ | _R27,568,337_ | | |
+| _Contribution earned in the last twelve months_ | _R27,572,871_ | | |
 | Corridors that fund their own empty return | R5,525,148 | 25.2% | 1 |
 | Deliveries that had to be done twice | R6,509,247 | 29.7% | 2 |
 | Vehicles burning more than their class | R4,663,684 | 21.3% | 3 |
 | Service penalties on the anchor account | R5,213,459 | 23.8% | 4 |
-| **Contribution with the same fleet and the same customers** | **R49,479,875** | | |
+| **Contribution with the same fleet and the same customers** | **R49,484,409** | | |
 
-**R21,911,538 identified against R27,568,337 earned, or 79.5% of
+**R21,911,538 identified against R27,572,871 earned, or 79.5% of
 contribution.** Four findings, each worth a fifth to a third of the total, on the same fleet
 serving the same customers with nothing new bought.
 
@@ -145,7 +145,7 @@ Penalty exposure on the anchor account, at 2% of monthly spend per point below 9
 | Class | Air trips | Weight used | Volume used | Cost |
 |---|---|---|---|---|
 | Superlink 34t | 3,576 | 69.0% | 82.6% | R54,803,779 |
-| Tri-axle 24t | 3,620 | 68.8% | 82.4% | R25,292,005 |
+| Tri-axle 24t | 3,620 | 68.8% | 82.4% | R25,289,738 |
 | Rigid 14t | 209 | 76.7% | 74.9% | R799,312 |
 | Rigid 8t | 113 | 76.6% | 75.0% | R360,653 |
 | LDV 1.5t | 97 | 65.8% | 70.7% | R223,229 |

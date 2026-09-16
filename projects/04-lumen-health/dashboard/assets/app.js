@@ -698,6 +698,7 @@ async function render() {
 
     ${figure({
       id: 'fig-quality',
+      hasChart: false,
       title: 'Defects in the source files, and what was done about each',
       note: `Every one of these exists in the exports and every one survives into the warehouse
              as a flag rather than a deletion. Publishing it is the whole argument: a dashboard

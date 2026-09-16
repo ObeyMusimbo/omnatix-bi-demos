@@ -43,14 +43,41 @@ typed as (
 
 ),
 
--- Defect 3: a receipt posted twice writes the row twice. Cast before deduplicating, because
--- the copies can differ in how the amount happens to be written.
-deduped as (
+flagged as (
 
-    select distinct
-        payment_id, loan_id, instalment_no, due_date, paid_date,
-        amount_due_zar, amount_paid_zar, payment_method, status, failure_reason,
-    from typed
+    select
+        t.*,
+        -- Defect 8: about 110 receipts quote a loan that is not in the book. Kept and
+        -- flagged, because money that arrived against an unknown account is a reconciliation
+        -- problem somebody has to own, not a row to delete.
+        k.loan_id is not null as loan_is_known,
+    from typed t
+    left join known_loans k on t.loan_id = k.loan_id
+
+),
+
+-- Defect 3: a receipt posted twice writes the row twice.
+--
+-- Deduplicating on every column, which is the obvious way, is not enough, and it took a
+-- unique test on payment_id to prove it. Most double posts are byte-identical once cast and
+-- a distinct does collapse them, but a handful are not: the same receipt number appears
+-- against two different loan references, because the copy was re-keyed against the wrong
+-- account. A distinct keeps both, the grain quietly breaks, and the receipt is counted twice.
+--
+-- So the deduplication is on the receipt number itself, which is what the source system
+-- guarantees to be unique. Where the copies disagree about the loan, the one naming a loan
+-- that actually exists wins, and loan_id breaks the tie after that so the choice is
+-- deterministic across rebuilds rather than whatever order the scan happened to produce.
+ranked as (
+
+    select
+        *,
+        row_number() over (
+            partition by payment_id
+            order by loan_is_known desc, loan_id
+        ) as dup_rank,
+        count(*) over (partition by payment_id) as posting_count,
+    from flagged
 
 ),
 
@@ -73,12 +100,11 @@ final as (
         -- means the loan should never have been written, or the debit order was set for the
         -- wrong day.
         d.instalment_no = 1 and d.status in ('Failed', 'Partial') as is_first_payment_default,
-        -- Defect 8: about 110 receipts quote a loan that is not in the book. Kept and
-        -- flagged, because money that arrived against an unknown account is a reconciliation
-        -- problem somebody has to own, not a row to delete.
-        k.loan_id is not null as loan_is_known,
-    from deduped d
-    left join known_loans k on d.loan_id = k.loan_id
+        d.loan_is_known,
+        d.posting_count,
+        d.posting_count > 1 as was_posted_twice,
+    from ranked d
+    where d.dup_rank = 1
 
 )
 

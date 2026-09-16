@@ -1,10 +1,14 @@
 name: Refresh dashboards
 
-# Rebuilds the warehouse from whatever is in data/raw, re-exports what the browser reads,
+# Rebuilds each warehouse from whatever is in data/raw, re-exports what the browser reads,
 # and commits the result. Cloudflare Pages redeploys on the push.
 #
-# A failing dbt test fails the job and commits nothing, so the live dashboard keeps serving
-# the last numbers that passed rather than publishing unchecked ones.
+# A failing dbt test fails that project's job and commits nothing for it, so the live
+# dashboard keeps serving the last numbers that passed rather than publishing unchecked ones.
+#
+# Every project refreshes, not just the first one. A nightly job that quietly refreshed one of
+# four would leave three dashboards stating a freshness they had not earned, which is worse
+# than not refreshing at all.
 
 on:
   schedule:
@@ -13,11 +17,11 @@ on:
   workflow_dispatch:
     inputs:
       project:
-        description: Project folder to refresh
-        default: 01-meridian-provisions
+        description: One project folder, or "all"
+        default: all
         required: true
   push:
-    branches: [main]
+    branches: [main, master]
     paths:
       - 'projects/*/data/raw/**'
       - 'projects/*/dbt/**'
@@ -25,30 +29,64 @@ on:
 permissions:
   contents: write
 
+# Each project commits to the same branch, so they cannot run at once without racing the push.
+concurrency:
+  group: refresh-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   refresh:
     runs-on: ubuntu-latest
+    strategy:
+      # Serial on purpose: the commit step pushes, and parallel pushes to one branch reject.
+      max-parallel: 1
+      # One project failing its tests must not stop the other three from refreshing.
+      fail-fast: false
+      matrix:
+        project:
+          - 01-meridian-provisions
+          - 02-kestrel-logistics
+          - 03-sable-finch-credit
+          - 04-lumen-health
+
     steps:
       - uses: actions/checkout@v4
 
+      # A manual run naming one project skips the other three rather than refreshing them.
+      - name: Decide whether this project is in scope
+        id: scope
+        run: |
+          want='${{ inputs.project }}'
+          if [ -z "$want" ] || [ "$want" = 'all' ] || [ "$want" = '${{ matrix.project }}' ]; then
+            echo 'run=yes' >> "$GITHUB_OUTPUT"
+          else
+            echo 'run=no' >> "$GITHUB_OUTPUT"
+            echo "Skipping ${{ matrix.project }}, this run targets $want."
+          fi
+
       - uses: actions/setup-python@v5
+        if: steps.scope.outputs.run == 'yes'
         with:
           python-version: '3.12'
 
       - name: Install dbt
+        if: steps.scope.outputs.run == 'yes'
         run: |
           python -m venv .venv
           .venv/bin/python -m pip install --quiet --upgrade pip
           .venv/bin/python -m pip install --quiet dbt-core dbt-duckdb duckdb
 
       - name: Check house style
+        if: steps.scope.outputs.run == 'yes'
         run: .venv/bin/python scripts/no_em_dashes.py
 
       - name: Refresh
         # build_site.py runs as part of this; Cloudflare re-runs it on its own image too
-        run: .venv/bin/python scripts/refresh.py --project ${{ inputs.project || '01-meridian-provisions' }}
+        if: steps.scope.outputs.run == 'yes'
+        run: .venv/bin/python scripts/refresh.py --project ${{ matrix.project }}
 
       - name: Commit the rebuilt artefacts
+        if: steps.scope.outputs.run == 'yes'
         run: |
           git config user.name  'omnatix-bot'
           git config user.email 'marshalldube9@gmail.com'
@@ -56,6 +94,7 @@ jobs:
           if git diff --staged --quiet; then
             echo 'Nothing changed, no commit.'
           else
-            git commit -m "Refresh: data through $(date -u +%Y-%m-%d)"
+            git commit -m "Refresh ${{ matrix.project }}: data through $(date -u +%Y-%m-%d)"
+            git pull --rebase
             git push
           fi

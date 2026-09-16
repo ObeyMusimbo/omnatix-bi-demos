@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-09-16T00:13:14+00:00",
+  "built_at": "2026-09-16T04:22:58+00:00",
   "data_from": "2024-09-01",
   "data_through": "2026-08-31",
   "loans": 19880,
@@ -11,19 +11,19 @@
     },
     "mart_vintage": {
       "rows": 2691,
-      "bytes": 37608
+      "bytes": 37822
     },
     "mart_branch_risk": {
       "rows": 216,
-      "bytes": 10173
+      "bytes": 10195
     },
     "mart_affordability": {
       "rows": 648,
-      "bytes": 22372
+      "bytes": 22416
     },
     "mart_topup_masking": {
       "rows": 852,
-      "bytes": 34754
+      "bytes": 34717
     },
     "mart_debit_order": {
       "rows": 12,

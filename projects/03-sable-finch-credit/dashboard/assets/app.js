@@ -144,6 +144,14 @@ const scaleLegend = (from, to, steps) => `
 function sectionBook(h, book, vintage) {
   const last = book[book.length - 1];
   const tenAgo = book[Math.max(0, book.length - 11)];
+  // Width of the PAR 30 band over the window the copy talks about, measured rather than
+  // asserted. An earlier version of this lede claimed arrears were within a point of a year
+  // earlier; they are nearly two points above it. The ten month window is the one that is
+  // genuinely flat, and the number below says how flat.
+  const window = book.slice(-11);
+  const bandLo = Math.min(...window.map((r) => r.par30_pct));
+  const bandHi = Math.max(...window.map((r) => r.par30_pct));
+  const bandWidth = bandHi - bandLo;
   // Cohorts old enough to have a month six reading, which is the only fair comparison.
   const atSix = {};
   for (const r of vintage) if (r.months_on_book === 6) atSix[r.cohort_label] = r.bad_rate_pct;
@@ -162,9 +170,10 @@ function sectionBook(h, book, vintage) {
       <div class="tile-value">${val}</div><div class="tile-delta">${d}</div></div>`).join('');
 
   return `<section id="book">
-    ${head('01', 'The book, and what it is not telling you', `Arrears have barely moved in ten
-      months. PAR 30 sits at <b>${fmtPct(last.par30_pct)}</b>, within a point of where it was
-      last year, and on that number alone this book looks stable. It is not. Every cohort
+    ${head('01', 'The book, and what it is not telling you', `Arrears have barely moved for
+      ten months. PAR 30 sits at <b>${fmtPct(last.par30_pct)}</b> and has stayed inside a
+      <b>${fmtPct(bandWidth)}</b> band the whole time, between ${fmtPct(bandLo)} and
+      ${fmtPct(bandHi)}. On that number alone this book looks stable. It is not. Every cohort
       written this year is losing more by month six than the cohorts written a year ago:
       <b>${fmtPct(avg(recent))}</b> against <b>${fmtPct(avg(early))}</b>.`)}
     <div class="hero">
@@ -195,7 +204,7 @@ function sectionBook(h, book, vintage) {
     })}
     ${figure({
       id: 'c-par', title: 'Portfolio at risk, month by month',
-      note: 'The number the board sees. Flat for ten months, while the chart above moves.',
+      note: 'The number the board sees. It ends the window close to where it started while the cohort curves above climb steadily. Both charts are true. Only one of them is about the credit being written.',
       tableHtml: table([
         { key: 'year_month', label: 'Month' },
         { key: 'gross_book_zar', label: 'Gross book', align: 'right', fmt: fmtRc },

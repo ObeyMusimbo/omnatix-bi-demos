@@ -76,12 +76,31 @@ export async function connect(onProgress = () => {}) {
 }
 
 /**
+ * Arrow hands a DECIMAL column to JavaScript as a 128 bit integer in a Uint32Array plus a
+ * scale on the field, not as a number. It looks like an object, it fails silently on
+ * arithmetic, and the first sign of trouble is toFixed throwing inside a formatter several
+ * layers away. So decimals are converted here, once, at the boundary.
+ *
+ * Any SQL that produces a decimal is worth fixing in the model as well, because a double is
+ * what the rest of the page expects. This is the safety net, not the answer.
+ */
+function decimalToNumber(words, scale) {
+  let n = 0n;
+  for (let i = words.length - 1; i >= 0; i--) n = (n << 32n) | BigInt(words[i] >>> 0);
+  // Two's complement: the top bit of the most significant word is the sign.
+  const bits = BigInt(words.length * 32);
+  if (n >= 1n << (bits - 1n)) n -= 1n << bits;
+  return Number(n) / 10 ** scale;
+}
+
+/**
  * Run SQL and return plain JS objects.
  *
- * Two conversions matter. BigInt is narrowed to Number so values can be charted and
- * formatted. DATE columns come back from Arrow as epoch milliseconds rather than Date
- * objects or strings, so they are read off the schema by name and turned into ISO date
- * strings, which sort correctly and format predictably.
+ * Three conversions matter. BigInt is narrowed to Number so values can be charted and
+ * formatted. DECIMAL is converted from its Arrow representation, as above. And DATE columns
+ * come back as epoch milliseconds rather than Date objects or strings, so they are read off
+ * the schema by name and turned into ISO date strings, which sort correctly and format
+ * predictably.
  */
 export async function q(sql) {
   const c = await connect();
@@ -92,12 +111,20 @@ export async function q(sql) {
       .filter((f) => f.type?.typeId === 8 || /^Date/i.test(String(f.type)))
       .map((f) => f.name)
   );
+  const decimalScale = new Map(
+    result.schema.fields
+      .filter((f) => f.type?.typeId === 7 || /^Decimal/i.test(String(f.type)))
+      .map((f) => [f.name, f.type?.scale ?? 0])
+  );
 
   return result.toArray().map((row) => {
     const o = row.toJSON();
     for (const k of Object.keys(o)) {
       let val = o[k];
       if (typeof val === 'bigint') val = Number(val);
+      if (val != null && decimalScale.has(k) && typeof val === 'object' && 'length' in val) {
+        val = decimalToNumber(val, decimalScale.get(k));
+      }
       if (val instanceof Date) val = val.toISOString().slice(0, 10);
       else if (dateFields.has(k) && typeof val === 'number') {
         val = new Date(val).toISOString().slice(0, 10);

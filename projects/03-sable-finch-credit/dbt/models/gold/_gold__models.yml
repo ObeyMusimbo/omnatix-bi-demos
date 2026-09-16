@@ -1,0 +1,316 @@
+version: 2
+
+models:
+  - name: dim_date
+    description: The reporting calendar, one row per month in the observation window.
+    columns:
+      - name: month_start_date
+        data_tests: [unique, not_null]
+      - name: month_num
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 1
+                max_value: 12
+
+  - name: dim_branch
+    description: One row per branch, with the agent headcount behind it.
+    columns:
+      - name: branch_code
+        data_tests: [unique, not_null]
+      - name: branch_name
+        data_tests: [not_null]
+
+  - name: dim_agent
+    description: One row per loan officer, denormalised onto their branch.
+    columns:
+      - name: agent_id
+        data_tests: [unique, not_null]
+
+  - name: dim_client
+    description: >
+      One row per borrower. Carries no identifying attribute: reference, age band, sector and
+      income are everything the analysis needs.
+    columns:
+      - name: client_ref
+        data_tests: [unique, not_null]
+      - name: income_band
+        data_tests: [not_null]
+
+  - name: dim_loan
+    description: >
+      The loan, and everything that ever happened to it, on one row. This is the table the
+      whole close is computed from, so its grain is the thing most worth asserting.
+    columns:
+      - name: loan_id
+        description: >
+          The grain. If this is not unique, one of the many-to-one joins onto the affordability
+          assessment, the arrears history or the write-off file has fanned out, and every rand
+          figure on the page is multiplied.
+        data_tests: [unique, not_null]
+      - name: client_ref
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_client')
+                field: client_ref
+      - name: branch_code
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_branch')
+                field: branch_code
+      - name: cohort_month
+        description: Disbursement month. The axis every vintage curve is drawn on.
+        data_tests: [not_null]
+      - name: status
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Active', 'Settled', 'Written off']
+      - name: ever_90
+        description: >
+          Reached ninety days past due at any point. The bad definition used throughout, and
+          fixed once here rather than restated per mart, because two marts disagreeing about
+          what counts as bad is how a portfolio report loses an audience.
+        data_tests: [not_null]
+      - name: peak_days_past_due
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 400
+      - name: current_balance_zar
+        data_tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 0
+      - name: net_loss_zar
+        description: >
+          Written off less recovered. Zero on a loan that never went bad, and never negative,
+          because a recovery cannot exceed the balance it recovers against.
+        data_tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 0
+      - name: breaches_affordability_floor
+        description: >
+          The agreement left the client below the regulated expense norm once the instalment
+          came off. Section 81 of the National Credit Act, and a court can set it aside under
+          section 83, which is why the exposure is reported and never added to credit loss.
+        data_tests: [not_null]
+      - name: instalment_to_income_pct
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 200
+
+  - name: fct_loan_month
+    description: >
+      One row per loan per month end it was on the book. The panel behind the portfolio at
+      risk series and the arrears roll rates.
+    columns:
+      - name: loan_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_loan')
+                field: loan_id
+      - name: months_on_book
+        description: >
+          Months since disbursement. This is the x axis of the vintage chart, and it must not
+          be negative: a snapshot dated before the loan existed would mean the two source
+          systems disagree about when the money went out.
+        data_tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 0
+      - name: arrears_bucket
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Current', '1-30', '31-60', '61-90', '90+']
+
+  - name: agg_book_monthly
+    description: "The book by month: size, portfolio at risk at three cut-offs, and what was written."
+    data_tests: [not_empty]
+    columns:
+      - name: month_start_date
+        data_tests: [unique, not_null]
+      - name: par90_pct
+        description: >
+          Share of the book ninety or more days past due. A snapshot measure, and the reason
+          the page opens on vintage curves instead: this number cannot tell you whether the
+          business is writing better or worse loans than it was a year ago.
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
+      - name: topup_share_pct
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
+
+  - name: mart_vintage
+    description: >
+      Cumulative bad rate by disbursement cohort and months on book. A cohort is drawn only
+      for the months it has actually been observed. Extending a young cohort with zeroes to
+      fill the x axis is the single most common way a vintage chart lies, so the model simply
+      has no row there.
+    data_tests: [not_empty]
+    columns:
+      - name: cumulative_bad_rate_pct
+        data_tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
+      - name: months_on_book
+        data_tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 0
+
+  - name: mart_branch_risk
+    description: >
+      Branch by cohort, against the book. bad_rate_vs_book_x is the multiple that carries
+      finding 1, and income_inflated_pct is the reason for it.
+    data_tests: [not_empty]
+    columns:
+      - name: bad_rate_pct
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
+      - name: income_inflated_pct
+        description: >
+          Share of the cohort where income declared at origination exceeds the income on file
+          by more than the tolerance. One branch runs this at nearly two thirds and every
+          other branch at zero, which is not a credit problem, it is a conduct one.
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
+
+  - name: mart_affordability
+    description: >
+      Cohort by branch by affordability band, with the bad rate of each. The band that
+      breaches the floor is reported as regulatory exposure, never as expected loss.
+    data_tests: [not_empty]
+    columns:
+      - name: affordability_band
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Within policy', 'Under R500 headroom', 'Breaches floor']
+      - name: bad_rate_pct
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
+
+  - name: mart_topup_masking
+    description: >
+      One row per top-up, paired with the loan it settled. The finding is that almost every
+      one of them settled an account that was already delinquent, which resets the arrears
+      clock: the old loan closes as Settled and the new one starts Current.
+    data_tests: [not_empty]
+    columns:
+      - name: topup_loan_id
+        data_tests: [unique, not_null]
+      - name: settled_loan_id
+        description: One settled loan per top-up. Two would mean the pairing has fanned out.
+        data_tests: [not_null]
+      - name: settled_account_was_delinquent
+        data_tests: [not_null]
+
+  - name: mart_debit_order
+    description: >
+      Loans grouped by how many days after payday the debit order is presented. Presenting
+      before the salary lands fails for insufficient funds regardless of intent.
+    data_tests: [not_empty]
+    columns:
+      - name: timing_band
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['On or next day', 'Within 3 days', '4 to 7 days',
+                         'Over a week after payday']
+      - name: first_payment_default_pct
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
+
+  - name: mart_collections
+    description: >
+      Collections effort and what it bought, by the arrears bucket it was spent in. The
+      finding is the cost per cure: cheap while the account is barely late, and three orders
+      of magnitude more once it is past ninety, with almost all the spend at the expensive end.
+    data_tests: [not_empty]
+    columns:
+      - name: arrears_bucket
+        data_tests:
+          - unique
+          - not_null
+      - name: cure_rate_pct
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
+      - name: share_of_spend_pct
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
+
+  - name: mart_exposure_bridge
+    description: >
+      The closing view, and deliberately two numbers rather than one. Credit loss and
+      regulatory exposure are different things: the bridge carries the loss, and the reckless
+      lending exposure is reported alongside it rather than added into it.
+    data_tests: [not_empty]
+    columns:
+      - name: step_order
+        data_tests: [unique, not_null]
+      - name: step_type
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['anchor', 'increase', 'total']
+      - name: total_loss_zar
+        description: >
+          Net credit loss recognised. The bridge must land on exactly this, and the anchor is
+          the whole book at the clean slice's loss rate. Anchoring on the clean slice's own
+          loss instead leaves the bridge short by everything the other slices would have lost
+          anyway, which it did until it was corrected.
+        data_tests: [not_null]
+      - name: reckless_exposure_zar
+        description: >
+          Outstanding balance on agreements a court could set aside. Reported separately and
+          never summed with the loss: treating it as credit loss understates it, adding it to
+          credit loss overstates that.
+        data_tests: [not_null]

@@ -1,0 +1,361 @@
+version: 2
+
+models:
+  - name: sl_branches
+    description: The nine branches. One of them is the subject of finding 1.
+    columns:
+      - name: branch_code
+        description: The join key everywhere. Clean in the source and kept that way.
+        data_tests: [unique, not_null]
+      - name: branch_name
+        data_tests: [not_null]
+      - name: province
+        data_tests: [not_null]
+
+  - name: sl_agents
+    description: Loan officers, and the branch each one books business at.
+    columns:
+      - name: agent_id
+        data_tests: [unique, not_null]
+      - name: branch_code
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('sl_branches')
+                field: branch_code
+
+  - name: sl_clients
+    description: >
+      Borrowers. There is no name, no date of birth and no identity number in this table by
+      design: a client is a reference, an age band, an employer sector and an income. A demo
+      dataset for a lender should not carry a shape that could be mistaken for the real thing.
+    columns:
+      - name: client_ref
+        data_tests: [unique, not_null]
+      - name: home_branch_code
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('sl_branches')
+                field: branch_code
+      - name: monthly_income_zar
+        description: >
+          Income on file. Finding 1 turns on the ratio between this and the income declared at
+          origination, so a null here would quietly remove a loan from that comparison.
+        data_tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 0
+      - name: payday_day
+        description: >
+          Day of the month the salary lands. A debit order presented before it fails for
+          insufficient funds no matter how willing the client is, which is finding 4.
+        data_tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 1
+                max_value: 31
+      - name: employment_type
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Permanent', 'Contract', 'Government', 'Pensioner']
+      - name: age_band
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['18-24', '25-34', '35-44', '45-54', '55-64', '65+']
+
+  - name: sl_loans
+    description: >
+      The loan book. Disbursement dates arrive in two formats, a slice of rows lost their
+      interest rate on migration and are imputed with the flag set, and amounts are sometimes
+      written with thousands separators.
+    columns:
+      - name: loan_id
+        data_tests: [unique, not_null]
+      - name: client_ref
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('sl_clients')
+                field: client_ref
+      - name: branch_code
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('sl_branches')
+                field: branch_code
+      - name: agent_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('sl_agents')
+                field: agent_id
+      - name: disbursement_date
+        description: >
+          Parsed from ISO or DD/MM/YYYY by a macro that handles both. A null here would drop a
+          loan out of its cohort, and the vintage chart is the opening visual.
+        data_tests: [not_null]
+      - name: principal_zar
+        data_tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 500
+                max_value: 250000
+      - name: interest_rate_annual
+        description: >
+          The National Credit Act caps unsecured credit at the repo rate plus 21%. The upper
+          bound here is that cap with headroom for the repo moving; a rate above it would be
+          the single most embarrassing number in this demo, because the buyer is a lender.
+        data_tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 0.32
+      - name: rate_is_imputed
+        description: True where the rate was missing on migration and filled from the cohort median.
+        data_tests: [not_null]
+      - name: initiation_fee_zar
+        description: >
+          Capped by the Act at R1 207.50 plus 10% of the amount above R1 000, to a maximum of
+          R5 175. The range test is that statutory maximum.
+        data_tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 5175
+      - name: monthly_service_fee_zar
+        description: Capped by the Act at R69 a month.
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 69
+      - name: term_months
+        data_tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 1
+                max_value: 72
+      - name: debit_order_day
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 1
+                max_value: 31
+      - name: status
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Active', 'Settled', 'Written off']
+      - name: purpose
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Debt consolidation', 'School fees', 'Medical', 'Funeral',
+                         'Home improvement', 'Vehicle repair', 'Business', 'Other']
+      - name: settles_loan_id
+        description: >
+          On a top-up, the loan this one paid off. Finding 3 is that almost every one of these
+          settled an account that was already delinquent, which resets the arrears clock and
+          makes a bad book look like a performing one.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('sl_loans')
+                field: loan_id
+
+  - name: sl_affordability
+    description: >
+      The National Credit Act assessment recorded at origination: declared income, declared
+      expenses, existing obligations, and what is left after the new instalment.
+    columns:
+      - name: assessment_id
+        data_tests: [unique, not_null]
+      - name: loan_id
+        description: One assessment per loan. Two would mean an application was reassessed and both kept.
+        data_tests:
+          - unique
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('sl_loans')
+                field: loan_id
+      - name: disposable_after_instalment_zar
+        description: >
+          What the client has left once the regulated expense norm and the new instalment come
+          off. Below zero is reckless lending under section 81, and finding 2 is the count.
+        data_tests: [not_null]
+      - name: breaches_affordability_floor
+        data_tests: [not_null]
+
+  - name: sl_repayments
+    description: >
+      Instalment level collection history. Contains double posted receipts, reversals as
+      negative amounts, and rows quoting loans absent from the book.
+    columns:
+      - name: payment_id
+        description: >
+          Unique after the double postings are resolved. If this fails, receipts are being
+          counted twice and every collection figure on the page is overstated.
+        data_tests: [unique, not_null]
+      - name: loan_id
+        description: >
+          Some rows quote a loan that is not in the book. That is a real capture fault, so the
+          test warns rather than fails: the rows are kept, flagged by loan_is_known, and
+          excluded from anything that joins through a loan.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('sl_loans')
+                field: loan_id
+              config:
+                severity: warn
+      - name: due_date
+        data_tests: [not_null]
+      - name: status
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Paid', 'Partial', 'Failed', 'Reversed']
+      - name: payment_method
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Debit order', 'EFT', 'Cash']
+      - name: instalment_no
+        data_tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 1
+                max_value: 72
+      - name: loan_is_known
+        description: The flag that keeps the orphan rows visible instead of silently dropping them.
+        data_tests: [not_null]
+
+  - name: sl_arrears_snapshots
+    description: >
+      Month end arrears file from the loan management system. This is a second system of
+      record and it does not always agree with the repayment history, which is the point:
+      conflicts_with_payment_history is computed rather than assumed, by reconstructing days
+      past due from the instalments themselves with a gaps-and-islands window.
+    columns:
+      - name: loan_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('sl_loans')
+                field: loan_id
+      - name: snapshot_date
+        data_tests: [not_null]
+      - name: days_past_due
+        data_tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 400
+      - name: arrears_bucket
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Current', '1-30', '31-60', '61-90', '90+']
+      - name: outstanding_balance_zar
+        data_tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 0
+      - name: conflicts_with_payment_history
+        description: >
+          True where the reported bucket and the bucket implied by the instalments disagree.
+          An earlier reconstruction used row_number() minus one, which assumed a leading paid
+          row and produced about four thousand false conflicts on loans that never paid at
+          all. The current version counts unpaid runs directly.
+        data_tests: [not_null]
+
+  - name: sl_collections_activity
+    description: Every call, SMS, letter and field visit, with what it cost.
+    columns:
+      - name: activity_id
+        data_tests: [unique, not_null]
+      - name: loan_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('sl_loans')
+                field: loan_id
+      - name: channel
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Call', 'SMS', 'Letter', 'Field']
+      - name: outcome
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Paid in full', 'Partial payment', 'Promise to pay', 'Refused',
+                         'Left message', 'No answer', 'Number unobtainable']
+      - name: cost_zar
+        description: >
+          What the activity cost. Finding 5 divides this by cures, and a field visit costs
+          three orders of magnitude more than an SMS, so a null would distort the ratio badly.
+        data_tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 1000
+      - name: arrears_bucket_at_time
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Current', '1-30', '31-60', '61-90', '90+']
+
+  - name: sl_writeoffs
+    description: Loans written off, the balance at write off, and anything recovered since.
+    columns:
+      - name: loan_id
+        description: One write-off per loan. Two would double count the loss.
+        data_tests:
+          - unique
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('sl_loans')
+                field: loan_id
+      - name: writeoff_date
+        data_tests: [not_null]
+      - name: outstanding_at_writeoff_zar
+        data_tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 0
+      - name: recovery_to_date_zar
+        description: >
+          Recovered after write-off. Cannot exceed the balance written off, and net loss is
+          the difference, so a breach here would understate the loss on the closing bridge.
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0

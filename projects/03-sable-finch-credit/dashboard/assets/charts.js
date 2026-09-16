@@ -458,8 +458,14 @@ export function table(cols, rows, { caption = '', totalRow = null } = {}) {
   return s + `</tbody></table>`;
 }
 
-/** A figure block: title, note, chart mount point, legend, and a toggleable table twin. */
-export function figure({ id, title, note, legendHtml = '', tableHtml = '' }) {
+/**
+ * A figure block: title, note, chart mount point, legend, and a toggleable table twin.
+ *
+ * hasChart exists for the figures that are only a table. Emitting the mount point anyway
+ * leaves an empty div behind, which is invisible but is exactly the shape of the bug where a
+ * chart was meant to be drawn and never was, so the two cases are declared apart.
+ */
+export function figure({ id, title, note, legendHtml = '', tableHtml = '', hasChart = true }) {
   return `
   <div class="figure">
     <div class="figure-head">
@@ -468,7 +474,7 @@ export function figure({ id, title, note, legendHtml = '', tableHtml = '' }) {
     </div>
     ${note ? `<p class="figure-note">${note}</p>` : ''}
     ${legendHtml}
-    <div class="chart" id="${id}"></div>
+    ${hasChart ? `<div class="chart" id="${id}"></div>` : ''}
     ${tableHtml ? `<div class="data-table" id="${id}-table" hidden>${tableHtml}</div>` : ''}
   </div>`;
 }

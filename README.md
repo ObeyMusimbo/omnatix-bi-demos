@@ -64,6 +64,25 @@ It opens on the map. **23.7% of every kilometre carried nothing**, and twelve co
 priced as though the truck comes home loaded when it does not. The close: **R21.9m identified
 against R27.6m earned**, which is 79.5% of everything the business currently makes.
 
+**Sable & Finch Credit** is an unsecured lender: R602m disbursed over 19,880 loans through nine
+branches, 24 months to 2026-08-31. 16.0% of loans ever reach 90 days past due and 7.7% are
+written off, which is a normal looking book until it is cut by cohort.
+
+It opens on vintage curves, because a portfolio-at-risk snapshot cannot tell you whether the
+business is writing better or worse loans than it was a year ago. The close: **net credit loss
+R37.5m, of which R10.3m is above what the same money would have lost at the clean book rate.**
+Reported alongside it and never added to it: **R34.8m outstanding on 3,201 agreements written
+outside the affordability floor**, which is a regulatory exposure rather than an expected loss.
+
+**Lumen Health Network** is a private primary care group: six sites, 32 practitioners, 232,558
+booked appointments and R160.8m billed over 24 months to 2026-08-31.
+
+It opens on a number the group cannot explain: it billed R160.8m for care it delivered and
+collected R143.4m. The close: **R17.4m never collected, 10.8% of everything invoiced**, every
+rand of it attributed to one of three people who could do something about it. Reported
+separately and never summed with it: R31.1m of clinician time in chairs nobody sat in, because
+cost incurred and revenue foregone are different quantities.
+
 ## Visual identity per project
 
 Deliberately distinct. The point is to show range, not a template.
@@ -113,33 +132,52 @@ still fetches nothing from anyone.
 
 ### 03, Sable & Finch Credit · theme "Institutional"
 
-A regulator-ready pack. Navy and bone, dense, auditable, no decoration.
+A credit committee pack. Bone paper, navy ink, tight leading, dense tables, no decoration. It
+should look like it expects to be checked, because somebody is going to have to defend it line
+by line to a board or to the National Credit Regulator.
 
 | Token | Value |
 |---|---|
-| Page | `#F7F6F3` |
-| Navy | `#1E3A5F` |
-| Bone | `#E8E4DC` |
-| Risk ramp | `#15803D` → `#CA8A04` → `#B91C1C` for arrears buckets |
-| Type | Inter throughout · tight leading · heavy table use |
+| Page | `#F7F6F3` · panel `#FFFFFF` |
+| Navy | `#1A3A5C` · ink `#14212E` |
+| Series 1 to 4 | `#1F6392` navy blue · `#B04F14` rust · `#77419A` plum · `#3C7C33` moss |
+| Cohort ramp | `#94ADC8` `#7797B6` `#5A7CA2` `#405F87` `#2A4769` `#16354F` |
+| Risk heat | `#3C7C33` current · `#7D8A22` 1-30 · `#B0821A` 31-60 · `#B35A16` 61-90 · `#A3271F` 90+ |
+| Type | Inter throughout · IBM Plex Mono figures · tight leading · heavy table use |
+
+Three separate colour jobs and they are not interchangeable. The categorical series are
+validated as a set, worst adjacent pair clearing delta E 17.9. Disbursement month is an ordered
+dimension, so cohorts take a single hue running light to dark rather than unrelated colours, and
+it is validated as an ordinal ramp. Arrears buckets are semantic heat, which is the one case
+where a multi-hue sequential scale is right, and it always ships with a scale legend.
 
 Signature visual: vintage curves by disbursement cohort, one branch diverging from the book.
 
 ### 04, Lumen Health Network · theme "Clinical"
 
-Calm and glanceable, readable from across a ward. WCAG AA on every pairing, large number tiles,
-generous whitespace.
+Calm, white and wide. A briefing for a clinician and a finance director sitting in the same
+room, read on a laptop between patients with the blinds open. Nothing dense, nothing rounded
+past 6px, nothing that moves.
 
 | Token | Value |
 |---|---|
-| Page | `#FFFFFF` |
-| Surface | `#F1F5F9` |
-| Slate | `#334155` |
-| Teal | `#0D9488` |
-| Alert | `#DC2626` |
-| Type | Inter · 18px base · large tiles |
+| Page | `#F2F6F7` · panel `#FFFFFF` |
+| Ink | `#10222B` · accent `#00919A` |
+| Series 1 to 4 | `#00919A` teal · `#C0521C` rust · `#6B46C6` violet · `#57802C` moss |
+| Fill ramp | `#83BEC6` `#62AAB6` `#4395A3` `#277D8E` `#126474` `#004C59` |
+| Wait ramp | `#E3A882` `#D48E63` `#C17447` `#A95A2D` `#8E4218` `#732706` |
+| Status | `#1C7A44` good · `#9A6200` watch · `#B3261E` poor |
+| Type | Inter · 16px base · IBM Plex Mono figures · large tiles |
 
-Signature visual: no-show rate by appointment slot, Monday mornings empty, Thursdays queueing.
+Four colour jobs. The categorical set clears delta E 25.4 in normal vision and 8.3 under
+tritanopia. Both ramps are validated as ordinal: monotone lightness, every adjacent gap above
+0.06, and a light end clearing 2:1 against white, which is why neither starts near white. Slot
+fill and waiting time get separate hues on purpose, because they are different quantities and a
+shared ramp would invite reading them as one.
+
+Signature visual: the consulting week as a grid of weekday against hour, built as a real table
+so it keeps its headers and reads to a screen reader. Monday at eight is 17% full, Friday at
+four is 92% full with a 33 minute wait.
 
 ## Demo craft rules
 
@@ -163,14 +201,25 @@ Applied to every project in this repo.
 |---|---|---|---|---|---|---|
 | 01 Meridian | ✅ | ✅ | ✅ | ✅ | ✅ | ⬜ |
 | 02 Kestrel | ✅ | ✅ | ✅ | ✅ | ✅ | ⬜ |
-| 03 Sable & Finch | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
-| 04 Lumen | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 03 Sable & Finch | ✅ | ✅ | ✅ | ✅ | ✅ | ⬜ |
+| 04 Lumen | ✅ | ✅ | ✅ | ✅ | ✅ | ⬜ |
 
-Meridian: 31 models, 97 data tests. Kestrel: 35 models, 57 tests. Each has one warning by
-design, the orphan reference test. A full build of either takes under 25 seconds.
+| Project | Models | Tests | Parquet shipped |
+|---|---|---|---|
+| 01 Meridian | 31 | 97 | 1.2 MB |
+| 02 Kestrel | 35 | 57 | 228 KB |
+| 03 Sable & Finch | 32 | 158 | 140 KB |
+| 04 Lumen | 36 | 125 | 84 KB |
+
+Each project carries at least one warning by design rather than a failure, because the defect it
+catches is meant to be in the data: an orphan reference, a missing diagnosis code, a payment
+against a visit that is not in the file. A dashboard that deletes what it cannot reconcile is
+how a business ends up believing a number that is several per cent short.
+
+A full build of any one project takes under 30 seconds.
 
 The dashboard is a static site: gold tables export to Parquet and DuckDB-WASM runs the SQL in
-the browser. No server, no database to host. Meridian ships 1.2 MB of Parquet, Kestrel 268 KB.
+the browser. No server, no database to host, and the whole four-demo site is under 2 MB.
 
 See [SETUP.md](SETUP.md) to install and run it, and [REFRESH.md](REFRESH.md) for what happens
 when new data arrives and how the dashboard reports its own freshness.
