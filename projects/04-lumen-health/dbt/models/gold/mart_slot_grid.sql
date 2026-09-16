@@ -21,6 +21,15 @@ with cells as (
         sum(slots_unfilled) as slots_unfilled,
         sum(capacity_cost_zar) as capacity_cost_zar,
         sum(capacity_cost_zar) / nullif(sum(slots_offered), 0) as cost_per_slot_zar,
+        -- Cost the empty chairs at the rate of the session each one actually sat in, then
+        -- add up. Taking the cell's average rate and multiplying by its unfilled count is
+        -- the obvious way and it is wrong: a slot costs between R129 and R621 depending on
+        -- who was rostered, and the expensive practitioners have the emptiest diaries, so
+        -- the unfilled slots are not a random sample of the rate. Averaging first
+        -- understated this by R1.75m. Two independent methods, session grain and
+        -- session-hour grain, agree to the rand on the figures below.
+        sum(slots_unfilled * capacity_cost_zar / nullif(slots_offered, 0)) as unfilled_cost_zar,
+        sum(slots_no_show * capacity_cost_zar / nullif(slots_offered, 0)) as no_show_cost_zar,
     from {{ ref('fct_capacity_hour') }}
     group by all
 
@@ -55,7 +64,7 @@ final as (
         c.slots_unfilled,
         round(c.capacity_cost_zar, 2) as capacity_cost_zar,
         round(c.cost_per_slot_zar, 2) as cost_per_slot_zar,
-        round(c.slots_unfilled * c.cost_per_slot_zar, 2) as unfilled_cost_zar,
+        round(c.unfilled_cost_zar, 2) as unfilled_cost_zar,
         round(c.slots_booked::double / nullif(c.slots_offered, 0) * 100, 1) as fill_pct,
         round(c.slots_attended::double / nullif(c.slots_offered, 0) * 100, 1) as attended_pct,
         round(c.slots_no_show::double / nullif(c.slots_booked, 0) * 100, 1) as no_show_pct,

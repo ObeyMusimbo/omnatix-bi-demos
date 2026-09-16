@@ -57,8 +57,8 @@ result and it costs nothing but a process.
 | Booked and not arrived | 36,922 |
 | **Chairs with nobody in them** | **44.8%** |
 | Clinician cost of the whole roster | R69,219,700 |
-| Cost of slots never booked | R23,911,841 |
-| Cost of slots booked and not arrived | R7,191,112 |
+| Cost of slots never booked | R25,664,345 |
+| Cost of slots booked and not arrived | R6,862,836 |
 | Capacity above a diary running at 85% | 83,091 slots, R16,322,601 |
 
 This is a cost that was incurred, not revenue that was foregone, so it never gets added to the

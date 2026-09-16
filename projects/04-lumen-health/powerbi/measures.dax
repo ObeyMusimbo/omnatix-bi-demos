@@ -1,0 +1,199 @@
+// Lumen Health Network, DAX measures
+// ---------------------------------------------------------------------------------------
+// Paste these into Power BI Desktop. Create a blank table called "_Measures" first
+// (Home > Enter Data > name it _Measures > Load), then add each measure to it, so the
+// measures sit in one place rather than scattered across the fact tables.
+//
+// Format strings are given per measure. Set them in Measure tools > Format, because a rand
+// figure shown without its unit is the single easiest way to have a room stop trusting a page.
+//
+// Every measure here reproduces something the web dashboard computes in SQL. Where the two
+// deliberately differ, the comment says so and why.
+// ---------------------------------------------------------------------------------------
+
+
+// ---- Money. Format: "R"#,##0
+
+Billed = SUM ( fct_appointment[billed_zar] )
+
+Scheme Claimed = SUM ( fct_appointment[claimed_zar] )
+
+Scheme Paid = SUM ( fct_appointment[scheme_paid_zar] )
+
+Scheme Shortfall = SUM ( fct_appointment[scheme_shortfall_zar] )
+
+Patient Due = SUM ( fct_appointment[patient_due_zar] )
+
+Patient Paid = SUM ( fct_appointment[patient_paid_zar] )
+
+Patient Shortfall = [Patient Due] - [Patient Paid]
+
+Cash Received = [Scheme Paid] + [Patient Paid]
+
+Total Leakage = [Billed] - [Cash Received]
+
+// Format: 0.0%
+Leakage % = DIVIDE ( [Total Leakage], [Billed] )
+
+
+// ---- Activity. Format: #,##0
+
+Appointments = COUNTROWS ( fct_appointment )
+
+Attended = CALCULATE ( COUNTROWS ( fct_appointment ), fct_appointment[is_attended] = TRUE () )
+
+No Shows = CALCULATE ( COUNTROWS ( fct_appointment ), fct_appointment[is_no_show] = TRUE () )
+
+// Format: 0.0%
+No Show % = DIVIDE ( [No Shows], [Appointments] )
+
+// Format: 0.0%
+Reminded % =
+DIVIDE (
+    CALCULATE ( COUNTROWS ( fct_appointment ), fct_appointment[reminder_sent] = TRUE () ),
+    [Appointments]
+)
+
+// Format: "R"#,##0.00
+Revenue per Visit = DIVIDE ( [Billed], [Attended] )
+
+// Format: #,##0.0
+Avg Wait Minutes = AVERAGE ( fct_appointment[wait_minutes] )
+
+// Format: #,##0.0
+Avg Booking Lead Days = AVERAGE ( fct_appointment[booking_lead_days] )
+
+
+// ---- Claims recovery
+// The denominator is every claim that ever came back, including the ones that were fixed and
+// paid. Measuring against the claims still outstanding flatters the sites that work their
+// inbox, because they have fewer left.
+
+Ever Rejected =
+CALCULATE ( COUNTROWS ( fct_appointment ), NOT ISBLANK ( fct_appointment[rejection_reason] ) )
+
+Recovered Claims =
+CALCULATE ( COUNTROWS ( fct_appointment ), fct_appointment[claim_status] = "Paid on resubmission" )
+
+// Format: 0.0%
+Recovery % = DIVIDE ( [Recovered Claims], [Ever Rejected] )
+
+// Format: "R"#,##0
+Fixable Outstanding =
+CALCULATE ( [Scheme Shortfall], fct_appointment[rejection_class] = "Fixable at the practice" )
+
+// Format: "R"#,##0
+No Cover Outstanding =
+CALCULATE (
+    [Scheme Shortfall],
+    fct_appointment[rejection_class] = "No cover, becomes a patient account"
+)
+
+// Format: #,##0.0
+Avg Days to Settle = AVERAGE ( fct_appointment[days_to_settle] )
+
+
+// ---- Capacity, from fct_session
+// Session grain is where the cost is exact: a session has one rate, so unfilled slots times
+// that rate is right. Do not rebuild these from an averaged rate over a group of sessions.
+// The SQL model did exactly that and understated the empty chairs by R1.75m, because a slot
+// costs between R129 and R621 depending on who was rostered and the expensive practitioners
+// have the emptiest diaries.
+
+Slots Offered = SUM ( fct_session[slots_offered] )
+
+Slots Booked = SUM ( fct_session[slots_booked] )
+
+Slots Attended = SUM ( fct_session[slots_attended] )
+
+Slots Unfilled = SUM ( fct_session[slots_unfilled] )
+
+Slots No Show = SUM ( fct_session[slots_no_show] )
+
+// Format: 0.0%
+Fill % = DIVIDE ( [Slots Booked], [Slots Offered] )
+
+// Format: 0.0%
+// Chairs with nobody in them: never booked, plus booked and not arrived.
+Empty % = DIVIDE ( [Slots Unfilled] + [Slots No Show], [Slots Offered] )
+
+// Format: "R"#,##0
+Clinician Cost = SUM ( fct_session[sessional_cost_zar] )
+
+// Format: "R"#,##0
+Unfilled Cost = SUM ( fct_session[unfilled_cost_zar] )
+
+// Format: "R"#,##0
+No Show Cost = SUM ( fct_session[no_show_cost_zar] )
+
+// Format: "R"#,##0
+Empty Chair Cost = [Unfilled Cost] + [No Show Cost]
+
+// Format: "R"#,##0.00
+Cost per Attended = DIVIDE ( [Clinician Cost], [Slots Attended] )
+
+// Format: 0.0%
+Clinician Cost % of Billed = DIVIDE ( [Clinician Cost], [Billed] )
+
+
+// ---- The weekday and hour grid, from fct_capacity_hour
+// Use these on a matrix with dim_date[day_short] on rows and fct_capacity_hour[slot_hour] on
+// columns, with conditional formatting on Grid Fill %. That is the Power BI equivalent of the
+// heat grid on the web page.
+
+Grid Slots Offered = SUM ( fct_capacity_hour[slots_offered] )
+
+Grid Slots Booked = SUM ( fct_capacity_hour[slots_booked] )
+
+// Format: 0.0%
+Grid Fill % = DIVIDE ( [Grid Slots Booked], [Grid Slots Offered] )
+
+// Format: "R"#,##0
+// Costed at each session-hour's own rate and then summed, for the reason in the block above.
+Grid Unfilled Cost =
+SUMX (
+    fct_capacity_hour,
+    fct_capacity_hour[slots_unfilled]
+        * DIVIDE ( fct_capacity_hour[capacity_cost_zar], fct_capacity_hour[slots_offered] )
+)
+
+
+// ---- Two measures worth having for the demo itself
+
+// Format: "R"#,##0
+// What a diary running at the target fill rate would not need. Deliberately assumes no patient
+// moves to a quieter hour: it asks only what the roster carries above what today's demand,
+// exactly where it already falls, would require.
+Excess Capacity Cost =
+VAR Target = 0.85
+RETURN
+    SUMX (
+        SUMMARIZE (
+            fct_capacity_hour,
+            dim_date[day_of_week],
+            fct_capacity_hour[slot_hour],
+            "Offered", SUM ( fct_capacity_hour[slots_offered] ),
+            "Booked", SUM ( fct_capacity_hour[slots_booked] ),
+            "Cost", SUM ( fct_capacity_hour[capacity_cost_zar] )
+        ),
+        VAR Needed = ROUNDUP ( [Booked] / Target, 0 )
+        VAR Excess = MAX ( 0, [Offered] - Needed )
+        RETURN Excess * DIVIDE ( [Cost], [Offered] )
+    )
+
+// Format: 0.0%
+// Gap collection, split by charge type rather than blended. Blending gives about 72% at every
+// site, which describes neither of the two behaviours inside it: a self funded patient owes
+// the whole bill and pays it nearly nine times in ten, a scheme gap patient owes the small
+// remainder and pays it about half the time.
+Scheme Gap Collected % =
+CALCULATE (
+    DIVIDE ( [Patient Paid], [Patient Due] ),
+    fct_appointment[payment_type] = "Scheme gap"
+)
+
+Self Funded Collected % =
+CALCULATE (
+    DIVIDE ( [Patient Paid], [Patient Due] ),
+    fct_appointment[payment_type] = "Self funded"
+)

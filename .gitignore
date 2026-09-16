@@ -18,3 +18,8 @@ projects/*/dbt/logs/
 
 # Assembled by scripts/build_site.py; Cloudflare builds it, so it is not committed
 dist/
+
+# Row level Parquet for Power BI. A .pbix stores its own copy of the data, so the workbook
+# opens and demos without these; they are only needed to refresh it, and regenerating them
+# takes ten seconds. Committing 12 MB per project to avoid that would be the wrong trade.
+projects/*/powerbi/data/
