@@ -1,0 +1,307 @@
+/*
+  Institutional, the Sable & Finch theme.
+
+  A credit committee pack. Bone paper, navy ink, tight leading, dense tables, and no
+  decoration whatsoever. Where Meridian's Ledger is a document you read once and Kestrel's
+  Control Tower is a screen you glance at all day, this is a thing somebody has to defend
+  line by line to a board, an auditor, or the National Credit Regulator. It should look like
+  it expects to be checked.
+
+  Three separate colour jobs, and they are not interchangeable:
+
+    Categorical  branches and channels. Validated for lightness band, chroma floor, colour
+                 vision separation and surface contrast. Worst adjacent pair clears delta E 17.9.
+    Cohort ramp  disbursement month is ordered, so it takes a single hue running light to
+                 dark rather than a set of unrelated colours. Validated as an ordinal ramp:
+                 monotone lightness, visible gaps between steps, and a light end that still
+                 clears the paper.
+    Risk heat    arrears buckets are semantic heat, which is the one case where a multi hue
+                 sequential scale is right. It always ships with a scale legend.
+*/
+
+:root {
+  --paper:      #F7F6F3;
+  --paper-2:    #EFEDE8;
+  --panel:      #FFFFFF;
+  --navy:       #1A3A5C;
+  --ink:        #14212E;
+  --ink-2:      #4A5A68;
+  --ink-3:      #7A8894;
+  --rule:       #DFDCD5;
+  --rule-strong:#C6C2B8;
+
+  /* Categorical, fixed order, never cycled */
+  --s1: #1F6392;   /* navy blue */
+  --s2: #B04F14;   /* rust      */
+  --s3: #77419A;   /* plum      */
+  --s4: #3C7C33;   /* moss      */
+
+  /* Cohort ramp, oldest to newest. Ordered dimension, single hue. */
+  --c1: #94ADC8;
+  --c2: #7797B6;
+  --c3: #5A7CA2;
+  --c4: #405F87;
+  --c5: #2A4769;
+  --c6: #16354F;
+
+  /* Arrears severity. Semantic heat, always with a scale legend. */
+  --risk-0: #3C7C33;   /* current */
+  --risk-1: #7D8A22;   /* 1-30    */
+  --risk-2: #B0821A;   /* 31-60   */
+  --risk-3: #B35A16;   /* 61-90   */
+  --risk-4: #A3271F;   /* 90+     */
+
+  --pos: #3C7C33;
+  --neg: #A3271F;
+  --neutral: #4A5A68;
+  --warn: #B0821A;
+
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+  --measure: 1180px;
+
+  /* charts.js is shared across the demo projects and reads the token names the first one
+     established. Aliasing here keeps one chart library working against four themes. */
+  --font-serif: var(--font-sans);
+  --paper-3: var(--paper-2);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap { max-width: var(--measure); margin: 0 auto; padding: 0 2rem; }
+
+/* ---------------------------------------------------------------- masthead */
+
+.masthead {
+  border-bottom: 3px double var(--navy);
+  padding: 2rem 0 1rem;
+  margin-bottom: 2.25rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+.masthead h1 {
+  font-size: 1.62rem;
+  font-weight: 600;
+  letter-spacing: -0.012em;
+  color: var(--navy);
+  margin: 0 0 0.1rem;
+}
+.masthead .sub { color: var(--ink-2); font-size: 0.9rem; margin: 0; }
+.masthead .meta {
+  text-align: right;
+  font-size: 0.78rem;
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  line-height: 1.6;
+}
+
+.freshness { display: inline-flex; align-items: center; gap: 0.4rem; font-weight: 500; color: var(--ink-2); }
+.fresh-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ink-3); flex: none; }
+.freshness.is-current { color: var(--pos); }
+.freshness.is-current .fresh-dot { background: var(--pos); }
+.freshness.is-lagging { color: var(--warn); }
+.freshness.is-lagging .fresh-dot { background: var(--warn); }
+.freshness.is-stale { color: var(--neg); }
+.freshness.is-stale .fresh-dot { background: var(--neg); }
+
+/* ---------------------------------------------------------------- sections */
+
+section { margin: 0 0 3.25rem; }
+
+.section-head {
+  border-top: 1px solid var(--navy);
+  padding-top: 0.7rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.8rem;
+}
+.section-num {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: var(--ink-3);
+  letter-spacing: 0.08em;
+}
+.section-head h2 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--navy);
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+.lede { color: var(--ink-2); max-width: 76ch; margin: 0 0 1.35rem; font-size: 0.96rem; }
+.lede b, .lede strong { color: var(--ink); font-weight: 600; }
+
+/* ---------------------------------------------------------------- figures */
+
+.hero { display: flex; align-items: baseline; gap: 1.1rem; flex-wrap: wrap; margin: 1.4rem 0 0.4rem; }
+.hero-value {
+  font-family: var(--font-sans);
+  font-size: 3.9rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.035em;
+  color: var(--neg);
+}
+.hero-label { color: var(--ink-2); font-size: 1rem; max-width: 34ch; }
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(168px, 1fr));
+  border: 1px solid var(--rule-strong);
+  background: var(--panel);
+  margin: 1.6rem 0;
+}
+.tile { padding: 0.85rem 1.1rem; border-right: 1px solid var(--rule); }
+.tile:last-child { border-right: none; }
+.tile-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 0.2rem;
+}
+.tile-value { font-family: var(--font-mono); font-size: 1.32rem; font-weight: 500; line-height: 1.2; }
+.tile-delta { font-size: 0.78rem; color: var(--ink-3); margin-top: 0.1rem; }
+.tile-delta .up { color: var(--pos); }
+.tile-delta .down { color: var(--neg); }
+
+.figure { margin: 1.4rem 0; }
+.figure-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin-bottom: 0.15rem; }
+.figure-title { font-size: 1rem; font-weight: 600; color: var(--navy); margin: 0; }
+.figure-note { color: var(--ink-3); font-size: 0.83rem; margin: 0 0 0.85rem; max-width: 80ch; }
+
+.chart { position: relative; width: 100%; }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+.legend { display: flex; gap: 1rem; flex-wrap: wrap; margin: 0.35rem 0 0.8rem; font-size: 0.82rem; color: var(--ink-2); }
+.legend-item { display: inline-flex; align-items: center; gap: 0.4rem; }
+.legend-key { width: 11px; height: 11px; border-radius: 2px; flex: none; }
+.legend-key.line { height: 2px; width: 17px; border-radius: 1px; }
+
+/* A continuous scale needs a scale legend, not a set of swatches. */
+.scale-legend { display: flex; align-items: center; gap: 0.5rem; margin: 0.35rem 0 0.9rem; font-size: 0.8rem; color: var(--ink-3); }
+.scale-swatches { display: flex; }
+.scale-swatches span { width: 26px; height: 11px; }
+
+.tbl-toggle {
+  background: none;
+  border: 1px solid var(--rule-strong);
+  color: var(--ink-3);
+  font: inherit;
+  font-size: 0.76rem;
+  padding: 0.1rem 0.5rem;
+  cursor: pointer;
+}
+.tbl-toggle:hover { color: var(--navy); border-color: var(--ink-3); }
+
+/* ---------------------------------------------------------------- tables */
+
+table { border-collapse: collapse; width: 100%; font-size: 0.85rem; margin: 0.55rem 0 0; background: var(--panel); }
+caption { text-align: left; color: var(--ink-3); font-size: 0.79rem; padding-bottom: 0.4rem; }
+th, td { padding: 0.42rem 0.8rem; text-align: left; border-bottom: 1px solid var(--rule); }
+th {
+  font-size: 0.71rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  font-weight: 600;
+  border-bottom: 1.5px solid var(--navy);
+  white-space: nowrap;
+  background: var(--paper-2);
+}
+td.num, th.num { text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+tbody tr:nth-child(even) { background: var(--paper); }
+tr.total td { border-top: 1.5px solid var(--navy); border-bottom: none; font-weight: 600; background: var(--paper-2); }
+.neg { color: var(--neg); }
+.pos { color: var(--pos); }
+.warn { color: var(--warn); }
+.muted { color: var(--ink-3); }
+.data-table[hidden] { display: none; }
+
+.flag {
+  display: inline-block;
+  border: 1px solid currentColor;
+  padding: 0 0.4rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.callout {
+  border-left: 3px solid var(--navy);
+  background: var(--panel);
+  padding: 0.9rem 1.1rem;
+  margin: 1.2rem 0;
+  font-size: 0.92rem;
+  color: var(--ink-2);
+  border-radius: 0;
+}
+.callout b { color: var(--ink); }
+.callout.statute { border-left-color: var(--neg); }
+
+/* ---------------------------------------------------------------- tooltip */
+
+.tip {
+  position: fixed; pointer-events: none; z-index: 40;
+  background: var(--panel);
+  border: 1px solid var(--rule-strong);
+  padding: 0.5rem 0.7rem;
+  font-size: 0.81rem;
+  line-height: 1.5;
+  color: var(--ink);
+  max-width: 290px;
+  opacity: 0;
+  transition: opacity 0.1s;
+  box-shadow: 0 2px 8px rgb(20 33 46 / 0.10);
+}
+.tip[data-show] { opacity: 1; }
+.tip b { font-weight: 600; }
+.tip .tip-row { display: flex; justify-content: space-between; gap: 1.2rem; }
+.tip .tip-row span:last-child { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+/* ---------------------------------------------------------------- states */
+
+.loading { padding: 5rem 0; text-align: center; color: var(--ink-3); }
+.err { border-left: 3px solid var(--neg); padding: 0.85rem 1.1rem; background: var(--panel); margin: 2rem 0; }
+
+footer {
+  border-top: 3px double var(--navy);
+  margin-top: 3rem;
+  padding: 1.4rem 0 3.5rem;
+  color: var(--ink-3);
+  font-size: 0.82rem;
+}
+footer p { margin: 0 0 0.5rem; max-width: 80ch; }
+.badge {
+  display: inline-block;
+  border: 1px solid var(--rule-strong);
+  padding: 0.05rem 0.45rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+@media (max-width: 760px) {
+  .wrap { padding: 0 1rem; }
+  .hero-value { font-size: 2.7rem; }
+  .masthead .meta { text-align: left; }
+  .tile { border-right: none; border-bottom: 1px solid var(--rule); }
+}
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }

@@ -1,0 +1,47 @@
+{
+  "built_at": "2026-09-16T00:13:14+00:00",
+  "data_from": "2024-09-01",
+  "data_through": "2026-08-31",
+  "loans": 19880,
+  "disbursed_zar": 602356500,
+  "tables": {
+    "mart_exposure_bridge": {
+      "rows": 6,
+      "bytes": 3398
+    },
+    "mart_vintage": {
+      "rows": 2691,
+      "bytes": 37608
+    },
+    "mart_branch_risk": {
+      "rows": 216,
+      "bytes": 10173
+    },
+    "mart_affordability": {
+      "rows": 648,
+      "bytes": 22372
+    },
+    "mart_topup_masking": {
+      "rows": 852,
+      "bytes": 34754
+    },
+    "mart_debit_order": {
+      "rows": 12,
+      "bytes": 2340
+    },
+    "mart_collections": {
+      "rows": 4,
+      "bytes": 2150
+    },
+    "agg_book_monthly": {
+      "rows": 23,
+      "bytes": 3763
+    },
+    "dim_branch": {
+      "rows": 9,
+      "bytes": 1381
+    }
+  },
+  "currency": "ZAR",
+  "vat": "excluded"
+}

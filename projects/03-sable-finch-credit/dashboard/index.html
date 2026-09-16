@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en-ZA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portfolio Risk Review · Sable &amp; Finch Credit</title>
+<meta name="description" content="Credit risk on a South African unsecured lending book: cohort performance, affordability compliance, refinancing, and where collections effort actually works. Demonstration built on synthetic data.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/institutional.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%231A3A5C'/><path d='M6 23V9M11 23v-7M16 23V13M21 23v-4M26 23V6' stroke='%23F7F6F3' stroke-width='2.4' stroke-linecap='round'/></svg>">
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div>
+      <h1>Portfolio Risk Review</h1>
+      <p class="sub">Sable &amp; Finch Credit · unsecured lending · nine branches</p>
+    </div>
+    <div class="meta">
+      <div id="freshness" class="freshness">
+        <span class="fresh-dot" aria-hidden="true"></span>
+        <span id="fresh-label">Checking data freshness</span>
+      </div>
+      <div id="data-through"></div>
+      <div id="last-run"></div>
+    </div>
+  </header>
+
+  <main id="main">
+    <div class="loading" id="loading">
+      <p id="loading-msg">Starting the query engine</p>
+      <p class="muted" style="font-size:0.82rem">
+        The warehouse is running in your browser. Nothing is being sent to a server.
+      </p>
+    </div>
+  </main>
+
+  <footer>
+    <p>
+      <span class="badge">Synthetic data</span>
+      Sable &amp; Finch Credit is a fictional lender. Every figure on this page is generated
+      and contains deliberately planted findings. No real borrower or client data appears
+      here, and no identity numbers exist anywhere in this dataset.
+    </p>
+    <p>
+      Built by Omnatix. Loan, affordability, repayment, arrears, collections and write off
+      exports land as CSV, are modelled through bronze, silver and gold layers in dbt on
+      DuckDB, tested on every build, and published as Parquet. This page loads those files
+      and runs SQL against them in your browser using DuckDB-WASM. There is no backend and
+      no database server.
+    </p>
+    <p>
+      Pricing follows the National Credit Act caps for unsecured credit: interest at the repo
+      rate plus 21%, an initiation fee of R1 207.50 plus 10% above R1 000 capped at R5 175,
+      and a monthly service fee of R69. Affordability is assessed against the regulated
+      minimum expense norms. Nothing on this page is legal advice.
+    </p>
+  </footer>
+
+</div>
+
+<script type="module" src="assets/app.js"></script>
+</body>
+</html>
