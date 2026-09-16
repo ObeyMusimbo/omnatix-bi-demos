@@ -290,9 +290,15 @@ def textbox(x, y, w, h, text, size=14, bold=False):
             "config": json.dumps(cfg, ensure_ascii=False)}
 
 
-def build_report(spec: dict) -> dict:
+def build_report(spec: dict, model_only: bool = False) -> dict:
+    # A report with no visuals is the diagnostic version. Report/Layout is the part of this
+    # format I am least sure of, and it is also the part that is quickest to rebuild by hand:
+    # dragging fields onto a canvas takes minutes, wiring seven queries, ten relationships and
+    # twenty eight measures does not. If the model-only file opens and the full one does not,
+    # the fault is in the visual configs and the model is sound either way.
+    pages = [{"name": "Report", "visuals": []}] if model_only else spec["pages"]
     sections = []
-    for i, page in enumerate(spec["pages"]):
+    for i, page in enumerate(pages):
         sections.append({
             "name": f"page{i}",
             "displayName": page["name"],
@@ -326,9 +332,10 @@ def build_report(spec: dict) -> dict:
     }
 
 
-def write_pbit(project: str, spec: dict, columns: dict, out: Path, version: str) -> None:
+def write_pbit(project: str, spec: dict, columns: dict, out: Path, version: str,
+               model_only: bool = False) -> None:
     model = build_model(project, spec, columns)
-    report = build_report(spec)
+    report = build_report(spec, model_only)
 
     content_types = (
         '<?xml version="1.0" encoding="utf-8"?>\r\n'
@@ -357,7 +364,7 @@ def write_pbit(project: str, spec: dict, columns: dict, out: Path, version: str)
     n_tab = len(spec["tables"])
     print(f"  {out.name}  {kb:.0f} KB   pbix format version {version}")
     print(f"  {n_tab} tables, {n_rel} relationships, {n_meas} measures, "
-          f"{len(spec['pages'])} report pages")
+          f"{0 if model_only else len(spec['pages'])} report pages")
 
 
 def columns_for(project: str, tables: list[str]) -> dict:
@@ -382,6 +389,8 @@ def main() -> int:
     # current version", so this is the number to walk down if that happens. 1.28 was too
     # new for Desktop 2.148; 1.22 is the long standing value most tooling writes.
     ap.add_argument("--format-version", default="1.22")
+    ap.add_argument("--model-only", action="store_true",
+                    help="ship the model with an empty report page, to isolate a bad visual")
     args = ap.parse_args()
 
     sys.path.insert(0, str(ROOT / "scripts"))
@@ -393,7 +402,8 @@ def main() -> int:
 
     out = ROOT / "projects" / args.project / "powerbi" / f"{spec['file_name']}.pbit"
     print(f"\n{args.project}")
-    write_pbit(args.project, spec, cols, out, args.format_version)
+    out = out.with_name(out.stem + (' model only' if args.model_only else '') + '.pbit')
+    write_pbit(args.project, spec, cols, out, args.format_version, args.model_only)
     print(f"\n  Open it in Power BI Desktop. It will prompt for the folder and default to:")
     print(f"  {spec['default_folder']}")
     return 0
