@@ -9,6 +9,11 @@ name: Refresh dashboards
 # Every project refreshes, not just the first one. A nightly job that quietly refreshed one of
 # four would leave three dashboards stating a freshness they had not earned, which is worse
 # than not refreshing at all.
+#
+# Budget: four projects at roughly two minutes each, nightly, is about 240 of the 2 000 Actions
+# minutes a free account gets each month. Note also that GitHub disables a scheduled workflow
+# after 60 days with no repository activity, so if the refresh ever goes quiet, check that
+# before looking for a bug.
 
 on:
   schedule:
