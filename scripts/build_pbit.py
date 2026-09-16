@@ -14,9 +14,17 @@ What the template carries:
     the measures, with format strings
     a report with several pages of visuals
 
-Encoding matters and is easy to get wrong. Power BI writes the JSON parts as UTF-16 LE with a
-byte order mark, and refuses a file that uses UTF-8. [Content_Types].xml is the exception and
-is UTF-8.
+Two things about this format cost a round trip each, so they are worth stating plainly.
+
+Encoding. Every part except [Content_Types].xml is UTF-16 LE with **no** byte order mark.
+Power BI reads them with Encoding.Unicode.GetString, which does not strip a BOM, so one does
+not get ignored: it ends up as a U+FEFF character inside the value. The symptom is the whole
+file being refused as "encrypted or corrupted".
+
+Format version. The Version part is the pbix package format, not the product version, and
+Desktop refuses anything claiming a format newer than the build supports. 1.28 was too new for
+Desktop 2.148. 1.22 is the long standing value most tooling writes, and --format-version is
+there to walk it down again if a build ever objects.
 
     .venv/Scripts/python.exe scripts/build_pbit.py --project 04-lumen-health
 """
@@ -318,7 +326,7 @@ def build_report(spec: dict) -> dict:
     }
 
 
-def write_pbit(project: str, spec: dict, columns: dict, out: Path) -> None:
+def write_pbit(project: str, spec: dict, columns: dict, out: Path, version: str) -> None:
     model = build_model(project, spec, columns)
     report = build_report(spec)
 
@@ -337,7 +345,7 @@ def write_pbit(project: str, spec: dict, columns: dict, out: Path) -> None:
     out.parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
         z.writestr("[Content_Types].xml", content_types.encode("utf-8"))
-        z.writestr("Version", utf16("1.28"))
+        z.writestr("Version", utf16(version))
         z.writestr("Settings", utf16({}))
         z.writestr("Metadata", utf16({"Version": 3, "AutoCreatedRelationships": []}))
         z.writestr("DataModelSchema", utf16(model))
@@ -347,7 +355,7 @@ def write_pbit(project: str, spec: dict, columns: dict, out: Path) -> None:
     n_meas = len(spec["measures"])
     n_rel = len(spec["relationships"])
     n_tab = len(spec["tables"])
-    print(f"  {out.name}  {kb:.0f} KB")
+    print(f"  {out.name}  {kb:.0f} KB   pbix format version {version}")
     print(f"  {n_tab} tables, {n_rel} relationships, {n_meas} measures, "
           f"{len(spec['pages'])} report pages")
 
@@ -369,6 +377,11 @@ def columns_for(project: str, tables: list[str]) -> dict:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--project", default="04-lumen-health", choices=sorted(DB_NAME))
+    # The pbix package format version, not the product version. Desktop refuses a file
+    # claiming a format newer than the build supports, with "incompatible with your
+    # current version", so this is the number to walk down if that happens. 1.28 was too
+    # new for Desktop 2.148; 1.22 is the long standing value most tooling writes.
+    ap.add_argument("--format-version", default="1.22")
     args = ap.parse_args()
 
     sys.path.insert(0, str(ROOT / "scripts"))
@@ -380,7 +393,7 @@ def main() -> int:
 
     out = ROOT / "projects" / args.project / "powerbi" / f"{spec['file_name']}.pbit"
     print(f"\n{args.project}")
-    write_pbit(args.project, spec, cols, out)
+    write_pbit(args.project, spec, cols, out, args.format_version)
     print(f"\n  Open it in Power BI Desktop. It will prompt for the folder and default to:")
     print(f"  {spec['default_folder']}")
     return 0
