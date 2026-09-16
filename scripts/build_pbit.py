@@ -14,19 +14,22 @@ What the template carries:
     the measures, with format strings
     a report with several pages of visuals
 
-Two things about this format cost a round trip each, so they are worth stating plainly.
+This file builds the semantic model. pbit_package.py assembles the package around it, and it
+does that by copying a real file rather than inferring the format, because inferring it cost
+three failed attempts:
 
-Encoding. Every part except [Content_Types].xml is UTF-16 LE with **no** byte order mark.
-Power BI reads them with Encoding.Unicode.GetString, which does not strip a BOM, so one does
-not get ignored: it ends up as a U+FEFF character inside the value. The symptom is the whole
-file being refused as "encrypted or corrupted".
+    a byte order mark on every part, read as a character rather than skipped, which Desktop
+    reported as "the file is encrypted or corrupted"
+    a package version of 1.28, then 1.22, both refused as incompatible. This build writes 1.32
+    a report written as Report/Layout, which this build does not produce any more. With the
+    enhanced report format enabled it writes PBIR, under Report/definition/
 
-Format version. The Version part is the pbix package format, not the product version, and
-Desktop refuses anything claiming a format newer than the build supports. 1.28 was too new for
-Desktop 2.148. 1.22 is the long standing value most tooling writes, and --format-version is
-there to walk it down again if a build ever objects.
+So --reference-pbix is required, and it should be any .pbix saved by the Power BI Desktop the
+template has to open in. When a future release moves the format again, the fix is a fresh
+reference file rather than another guess.
 
-    .venv/Scripts/python.exe scripts/build_pbit.py --project 04-lumen-health
+    .venv/Scripts/python.exe scripts/build_pbit.py --project 04-lumen-health \\
+        --reference-pbix C:/path/to/any-file-saved-by-power-bi.pbix
 """
 
 from __future__ import annotations
@@ -332,39 +335,22 @@ def build_report(spec: dict, model_only: bool = False) -> dict:
     }
 
 
-def write_pbit(project: str, spec: dict, columns: dict, out: Path, version: str,
-               model_only: bool = False) -> None:
+def write_pbit(project, spec, columns, out, reference_pbix, model_only=False):
+    from pbit_package import read_reference, write_template, describe    # noqa: PLC0415
+
     model = build_model(project, spec, columns)
-    report = build_report(spec, model_only)
+    # Report/Layout, the format the earlier attempts targeted, is not what this Power BI
+    # writes any more. Pages are emitted in PBIR by the packager; visuals are not, yet, which
+    # is why the pages come out empty and the model comes out complete.
+    pages = [{"name": "Report"}] if model_only else [{"name": pg["name"]} for pg in spec["pages"]]
 
-    content_types = (
-        '<?xml version="1.0" encoding="utf-8"?>\r\n'
-        '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'
-        '<Default Extension="json" ContentType="" />'
-        '<Override PartName="/Version" ContentType="" />'
-        '<Override PartName="/Settings" ContentType="" />'
-        '<Override PartName="/Metadata" ContentType="" />'
-        '<Override PartName="/DataModelSchema" ContentType="" />'
-        '<Override PartName="/Report/Layout" ContentType="" />'
-        "</Types>"
-    )
-
-    out.parent.mkdir(parents=True, exist_ok=True)
-    with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
-        z.writestr("[Content_Types].xml", content_types.encode("utf-8"))
-        z.writestr("Version", utf16(version))
-        z.writestr("Settings", utf16({}))
-        z.writestr("Metadata", utf16({"Version": 3, "AutoCreatedRelationships": []}))
-        z.writestr("DataModelSchema", utf16(model))
-        z.writestr("Report/Layout", utf16(report))
+    reference = read_reference(Path(reference_pbix))
+    write_template(out, model, pages, reference)
 
     kb = out.stat().st_size / 1024
-    n_meas = len(spec["measures"])
-    n_rel = len(spec["relationships"])
-    n_tab = len(spec["tables"])
-    print(f"  {out.name}  {kb:.0f} KB   pbix format version {version}")
-    print(f"  {n_tab} tables, {n_rel} relationships, {n_meas} measures, "
-          f"{0 if model_only else len(spec['pages'])} report pages")
+    print(f"  {out.name}  {kb:.0f} KB   {describe(out)}")
+    print(f"  {len(spec['tables'])} tables, {len(spec['relationships'])} relationships, "
+          f"{len(spec['measures'])} measures, {len(pages)} pages")
 
 
 def columns_for(project: str, tables: list[str]) -> dict:
@@ -384,13 +370,13 @@ def columns_for(project: str, tables: list[str]) -> dict:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--project", default="04-lumen-health", choices=sorted(DB_NAME))
-    # The pbix package format version, not the product version. Desktop refuses a file
-    # claiming a format newer than the build supports, with "incompatible with your
-    # current version", so this is the number to walk down if that happens. 1.28 was too
-    # new for Desktop 2.148; 1.22 is the long standing value most tooling writes.
-    ap.add_argument("--format-version", default="1.22")
     ap.add_argument("--model-only", action="store_true",
-                    help="ship the model with an empty report page, to isolate a bad visual")
+                    help="ship the model with an empty report page")
+    # Calibration, not decoration. The package format moves with the product, and three
+    # attempts were lost inferring it. Point this at any .pbix saved by the installed
+    # Desktop and the parts that are the product's business get copied rather than guessed.
+    ap.add_argument("--reference-pbix", required=True,
+                    help="a .pbix saved by the Power BI Desktop this template must open in")
     args = ap.parse_args()
 
     sys.path.insert(0, str(ROOT / "scripts"))
@@ -403,7 +389,7 @@ def main() -> int:
     out = ROOT / "projects" / args.project / "powerbi" / f"{spec['file_name']}.pbit"
     print(f"\n{args.project}")
     out = out.with_name(out.stem + (' model only' if args.model_only else '') + '.pbit')
-    write_pbit(args.project, spec, cols, out, args.format_version, args.model_only)
+    write_pbit(args.project, spec, cols, out, args.reference_pbix, args.model_only)
     print(f"\n  Open it in Power BI Desktop. It will prompt for the folder and default to:")
     print(f"  {spec['default_folder']}")
     return 0
