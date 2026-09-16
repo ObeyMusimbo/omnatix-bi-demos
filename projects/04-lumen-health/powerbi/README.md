@@ -31,7 +31,39 @@ so the exporter casts them to 64 bit.
 **Not committed.** A `.pbix` stores its own copy of the data, so the workbook opens and demos
 standalone. These files are only needed to refresh it, and regenerating them takes ten seconds.
 
-## Build it
+## The quick way: open the template
+
+`Lumen Health Network.pbit` builds the whole model for you. Double click it, or File > Open in
+Power BI Desktop.
+
+It will prompt for **DataFolder** and default to the right path on this machine. Accept it and
+Power BI loads the Parquet, creates the seven tables, draws all ten relationships, adds the 28
+measures with their format strings, and opens on a five page report.
+
+The data folder has to exist first, and it is not committed, so on a fresh clone run the
+export before opening the template:
+
+```bash
+.venv/Scripts/python.exe scripts/export_powerbi.py --project 04-lumen-health
+```
+
+Regenerate the template itself, after changing measures or pages, with:
+
+```bash
+.venv/Scripts/python.exe scripts/build_pbit.py --project 04-lumen-health
+```
+
+The pages are written for Power BI rather than copied from the web dashboard, because a report
+with pages and cross filtering is a different medium from one scrolling page: **Where the money
+went**, **The consulting week**, **Claims nobody worked**, **Patients who never arrived**, and
+**Schemes and capacity**.
+
+Save as `.pbix` once it opens and you have a workbook that no longer needs the template.
+
+Everything below is the manual route, and it is also the reference for what the template
+actually built, which is worth reading before changing anything.
+
+## Build it by hand
 
 ### 1. Export
 
