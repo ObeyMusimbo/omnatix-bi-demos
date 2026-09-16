@@ -57,9 +57,18 @@ TYPE_MAP = {
 
 
 def utf16(obj) -> bytes:
-    """UTF-16 LE with a BOM, which is what Power BI writes and what it will accept back."""
+    """UTF-16 LE with no byte order mark.
+
+    Power BI writes these parts with Encoding.Unicode.GetBytes, which never emits a preamble,
+    and reads them back with Encoding.Unicode.GetString, which does not strip one either. A
+    BOM is therefore not ignored: it becomes a U+FEFF character at the front of the value.
+
+    The first build of this file included one, and Desktop refused the whole template with
+    "Either the file is encrypted or corrupted". The real cause was two bytes, visible only in
+    the inner exception: '﻿1.28' is not a valid .pbix file version number.
+    """
     text = obj if isinstance(obj, str) else json.dumps(obj, ensure_ascii=False)
-    return b"\xff\xfe" + text.encode("utf-16-le")
+    return text.encode("utf-16-le")
 
 
 def m_expression(table: str) -> list[str]:
