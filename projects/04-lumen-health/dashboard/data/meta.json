@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-09-17T07:19:09+00:00",
+  "built_at": "2026-09-18T07:10:45+00:00",
   "data_from": "2024-09-02",
   "data_through": "2026-08-31",
   "appointments": 232558,
@@ -29,7 +29,7 @@
     },
     "mart_patient_charges": {
       "rows": 12,
-      "bytes": 3460
+      "bytes": 3469
     },
     "mart_scheme": {
       "rows": 6,
