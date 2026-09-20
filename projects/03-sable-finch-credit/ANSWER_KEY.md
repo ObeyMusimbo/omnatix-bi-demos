@@ -111,8 +111,8 @@ From May 2025, by branch:
 | Pretoria Central | 1,866 | 1.24x | 0.0% | R2,429,595 |
 | Pietermaritzburg | 1,031 | 0.93x | 0.0% | R1,581,980 |
 | Johannesburg CBD | 2,414 | 0.85x | 0.0% | R3,553,920 |
-| Gqeberha Govan Mbeki | 1,280 | 0.79x | 0.0% | R1,915,874 |
 | Bloemfontein | 1,053 | 0.79x | 0.0% | R1,497,937 |
+| Gqeberha Govan Mbeki | 1,280 | 0.79x | 0.0% | R1,915,874 |
 | Polokwane | 1,115 | 0.77x | 0.0% | R1,415,185 |
 | Durban Point | 2,016 | 0.73x | 0.0% | R3,310,750 |
 
