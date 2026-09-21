@@ -118,10 +118,21 @@ export function networkMap(el, { lanes, depots, cities, height = 560 }) {
         + `tabindex="0" data-tip="${esc(lane.tip)}" style="cursor:pointer"/>`;
     }
 
-    // Destination cities
+    // Destination cities.
+    //
+    // A city that already has a hub on it does not get a second label. Cape Town and Kestrel
+    // Cape Hub are the same dot, and writing both put one string through the other. The
+    // condensed face this map used to set labels in hid the overlap; Verdana is wide enough
+    // to expose it. Dropping the redundant label is the fix either way, because the hub name
+    // is the one that means something here.
+    const depotPoints = depots.map((d) => project(d.lon, d.lat));
+    const hasHub = ([x, y]) =>
+      depotPoints.some(([dx, dy]) => Math.hypot(dx - x, dy - y) < 14);
+
     for (const c of cities) {
       const [x, y] = project(c.lon, c.lat);
       s += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.5" fill="${cssVar('--text-3')}"/>`;
+      if (hasHub([x, y])) continue;
       s += `<text x="${(x + 7).toFixed(1)}" y="${(y + 3.5).toFixed(1)}" font-size="10.5" `
         + `fill="${cssVar('--text-3')}" font-family="${cssVar('--font-sans')}">${esc(c.name)}</text>`;
     }

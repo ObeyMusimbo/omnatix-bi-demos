@@ -87,6 +87,11 @@ cost incurred and revenue foregone are different quantities.
 
 Deliberately distinct. The point is to show range, not a template.
 
+All four set type in **Verdana**, which is a system font on Windows and macOS. That is a
+deliberate trade: the four themes used to be separated partly by typeface, and now they are
+separated by colour, density and layout alone. In exchange the pages fetch no webfonts at all,
+so they render immediately, never flash, and make one fewer external request.
+
 ### 01, Meridian Provisions · theme "Ledger"
 
 A printed financial report. Warm paper, hairline rules, dense tabular figures, restrained colour
@@ -101,7 +106,7 @@ used only where it carries meaning.
 | Series 3, ochre | `#96690A` | `#AE8A2A` |
 | Series 4, teal | `#0A7D5E` | `#1F9C79` |
 | Rule | `#E5DFD3` | `#332E25` |
-| Type | Source Serif 4 headings · Inter body · tabular figures in tables only |
+| Type | Verdana throughout · tabular figures in tables only |
 
 The series colours are **validated, not chosen**, lightness band, chroma floor, colour-vision
 separation, normal-vision separation and surface contrast, checked independently per mode. Dark
@@ -121,7 +126,7 @@ A live operations screen. Dark, map-first, monospace numerics, status as colour.
 | Land | `#151D26` |
 | Series 1 to 4 | `#1C9DB8` cyan · `#A88818` gold · `#D65F92` rose · `#8478DE` violet |
 | Status | `#34D399` ok · `#FBBF24` warn · `#F87171` breach |
-| Type | Barlow Condensed labels · JetBrains Mono figures · Inter body |
+| Type | Verdana throughout · tabular figures in tables and axis ticks |
 
 Series colours validated against this exact surface, worst adjacent pair clearing delta E 11.9.
 Status colours are reserved and always ship with a label, never colour alone.
@@ -143,7 +148,7 @@ by line to a board or to the National Credit Regulator.
 | Series 1 to 4 | `#1F6392` navy blue · `#B04F14` rust · `#77419A` plum · `#3C7C33` moss |
 | Cohort ramp | `#94ADC8` `#7797B6` `#5A7CA2` `#405F87` `#2A4769` `#16354F` |
 | Risk heat | `#3C7C33` current · `#7D8A22` 1-30 · `#B0821A` 31-60 · `#B35A16` 61-90 · `#A3271F` 90+ |
-| Type | Inter throughout · IBM Plex Mono figures · tight leading · heavy table use |
+| Type | Verdana throughout · tight leading · heavy table use |
 
 Three separate colour jobs and they are not interchangeable. The categorical series are
 validated as a set, worst adjacent pair clearing delta E 17.9. Disbursement month is an ordered
@@ -167,7 +172,7 @@ past 6px, nothing that moves.
 | Fill ramp | `#83BEC6` `#62AAB6` `#4395A3` `#277D8E` `#126474` `#004C59` |
 | Wait ramp | `#E3A882` `#D48E63` `#C17447` `#A95A2D` `#8E4218` `#732706` |
 | Status | `#1C7A44` good · `#9A6200` watch · `#B3261E` poor |
-| Type | Inter · 16px base · IBM Plex Mono figures · large tiles |
+| Type | Verdana · 16px base · large tiles |
 
 Four colour jobs. The categorical set clears delta E 25.4 in normal vision and 8.3 under
 tritanopia. Both ramps are validated as ordinal: monotone lightness, every adjacent gap above

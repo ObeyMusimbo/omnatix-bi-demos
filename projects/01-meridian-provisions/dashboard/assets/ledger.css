@@ -29,8 +29,8 @@
   --pos: #0A7D5E;
   --neutral: #57534E;
 
-  --font-serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
-  --font-sans:  'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-serif: Verdana, Geneva, 'DejaVu Sans', sans-serif;
+  --font-sans:  Verdana, Geneva, 'DejaVu Sans', sans-serif;
 
   --measure: 1120px;
   --gap: 2rem;

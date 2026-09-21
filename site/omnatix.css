@@ -15,8 +15,8 @@
   --text-3:  #6E6D6A;
   --rule:    #262629;
   --rule-2:  #3A393D;
-  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --serif: 'Source Serif 4', Georgia, serif;
+  --font: Verdana, Geneva, 'DejaVu Sans', sans-serif;
+  --serif: Verdana, Geneva, 'DejaVu Sans', sans-serif;
 }
 
 * { box-sizing: border-box; }

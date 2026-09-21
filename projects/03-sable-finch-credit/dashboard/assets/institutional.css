@@ -56,13 +56,13 @@
   --neutral: #4A5A68;
   --warn: #B0821A;
 
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+  --font-sans: Verdana, Geneva, 'DejaVu Sans', sans-serif;
+  --font-mono: Verdana, Geneva, 'DejaVu Sans', sans-serif;
   --measure: 1180px;
 
   /* charts.js is shared across the demo projects and reads the token names the first one
      established. Aliasing here keeps one chart library working against four themes. */
-  --font-serif: var(--font-sans);
+  --font-serif: Verdana, Geneva, 'DejaVu Sans', sans-serif;
   --paper-3: var(--paper-2);
 }
 

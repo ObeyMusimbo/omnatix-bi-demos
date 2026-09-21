@@ -35,9 +35,9 @@
   --warn:   #FBBF24;
   --breach: #F87171;
 
-  --font-sans: 'Barlow Condensed', 'Inter', -apple-system, sans-serif;
-  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --font-sans: Verdana, Geneva, 'DejaVu Sans', sans-serif;
+  --font-body: Verdana, Geneva, 'DejaVu Sans', sans-serif;
+  --font-mono: Verdana, Geneva, 'DejaVu Sans', sans-serif;
 
   --measure: 1200px;
 
