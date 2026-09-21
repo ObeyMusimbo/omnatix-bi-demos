@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-09-20T07:32:58+00:00",
+  "built_at": "2026-09-21T07:44:32+00:00",
   "data_from": "2024-09-02",
   "data_through": "2026-09-01",
   "trips": 50652,
@@ -11,27 +11,27 @@
     },
     "mart_lane_economics": {
       "rows": 50,
-      "bytes": 10520
+      "bytes": 10457
     },
     "mart_failed_deliveries": {
       "rows": 10431,
-      "bytes": 120777
+      "bytes": 120748
     },
     "mart_fuel_outliers": {
       "rows": 124,
-      "bytes": 7533
+      "bytes": 7537
     },
     "mart_sla_performance": {
       "rows": 288,
-      "bytes": 8826
+      "bytes": 8850
     },
     "mart_load_factor": {
       "rows": 68,
-      "bytes": 6804
+      "bytes": 6802
     },
     "agg_trip_monthly": {
       "rows": 505,
-      "bytes": 27345
+      "bytes": 27342
     },
     "dim_lane": {
       "rows": 29,
