@@ -13,13 +13,13 @@ All money is South African rand, excluding VAT.
 | Measure | TTM |
 |---|---|
 | Revenue | R243,339,163 |
-| Cost | R215,767,227 |
-| Contribution | R27,571,936 (11.3%) |
+| Cost | R215,771,361 |
+| Contribution | R27,567,802 (11.3%) |
 | Kilometres | 12,435,053 |
 | Earned per kilometre | R19.57 |
 | Spent per kilometre | R17.35 |
 | **Kilometres run empty** | **23.9%** of 12,435,053 km |
-| Cost of those empty kilometres | R47,395,918 |
+| Cost of those empty kilometres | R47,395,784 |
 
 Open on the map, not on a number. Colour the corridors by what they contribute as a round trip
 and four of them are red. Then say the line: nearly a quarter of every kilometre this fleet
@@ -29,14 +29,14 @@ turns is carrying nothing, and until today nobody was charged for it.
 
 | Driver | Worth | Share | Finding |
 |---|---|---|---|
-| _Contribution earned in the last twelve months_ | _R27,571,936_ | | |
-| Corridors that fund their own empty return | R5,525,786 | 25.2% | 1 |
+| _Contribution earned in the last twelve months_ | _R27,567,802_ | | |
+| Corridors that fund their own empty return | R5,525,387 | 25.2% | 1 |
 | Deliveries that had to be done twice | R6,509,220 | 29.7% | 2 |
 | Vehicles burning more than their class | R4,663,684 | 21.3% | 3 |
 | Service penalties on the anchor account | R5,213,459 | 23.8% | 4 |
-| **Contribution with the same fleet and the same customers** | **R49,484,085** | | |
+| **Contribution with the same fleet and the same customers** | **R49,479,551** | | |
 
-**R21,912,148 identified against R27,571,936 earned, or 79.5% of
+**R21,911,749 identified against R27,567,802 earned, or 79.5% of
 contribution.** Four findings, each worth a fifth to a third of the total, on the same fleet
 serving the same customers with nothing new bought.
 
@@ -59,9 +59,9 @@ by corridor. On these lanes the outbound leg looks healthy and the round trip lo
 | Durban to Gqeberha | 39.3% | 60% | R2,262,709 | **-R256,723** |
 | Durban to Pietermaritzburg | 74.0% | 60% | R174,564 | **-R247,688** |
 | Cape Town to Bloemfontein | 30.2% | 60% | R1,670,736 | **-R237,661** |
-| Cape Town to Paarl | 65.6% | 60% | R77,623 | **-R225,835** |
+| Cape Town to Paarl | 65.6% | 60% | R77,623 | **-R225,569** |
 | Durban to Bloemfontein | 42.3% | 60% | R952,530 | **-R213,925** |
-| Cape Town to Worcester | 60.1% | 60% | R277,004 | **-R40,603** |
+| Cape Town to Worcester | 60.1% | 60% | R277,004 | **-R40,470** |
 | Johannesburg to Rustenburg | 64.4% | 60% | R397,365 | **-R28,799** |
 
 The whole reveal is one join: pair an outbound trip with the return it caused, and charge the
@@ -145,7 +145,7 @@ Penalty exposure on the anchor account, at 2% of monthly spend per point below 9
 | Class | Air trips | Weight used | Volume used | Cost |
 |---|---|---|---|---|
 | Superlink 34t | 3,576 | 69.0% | 82.6% | R54,803,779 |
-| Tri-axle 24t | 3,620 | 68.8% | 82.4% | R25,287,411 |
+| Tri-axle 24t | 3,620 | 68.8% | 82.4% | R25,289,678 |
 | Rigid 14t | 209 | 76.7% | 74.9% | R799,871 |
 | Rigid 8t | 113 | 76.6% | 75.0% | R360,653 |
 | LDV 1.5t | 97 | 65.8% | 70.7% | R223,229 |
