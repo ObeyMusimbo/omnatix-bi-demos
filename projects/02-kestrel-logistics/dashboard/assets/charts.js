@@ -15,6 +15,27 @@
 
 const NS = 'http://www.w3.org/2000/svg';
 const M = { top: 16, right: 24, bottom: 38, left: 78 };
+
+/**
+ * Margins for the width actually available.
+ *
+ * A phone is 375px. Spending 78 of them on a left gutter leaves a plot too narrow to label,
+ * so the axis gets less room when there is less room to give. The breakpoint matches the one
+ * the stylesheets use, so a chart reflows at the same width as everything around it.
+ */
+const margins = (W) => (W < 460
+  ? { top: 12, right: 14, bottom: 34, left: 46 }
+  : M);
+
+/**
+ * Draw every nth label, where n is whatever stops them touching.
+ *
+ * Emitting a label per category and hoping is how a chart ends up with twenty three
+ * overlapping strings on a phone. minPx is the narrowest a label may be before it needs a
+ * neighbour skipped.
+ */
+const labelStride = (count, innerWidth, minPx) =>
+  Math.max(1, Math.ceil(count / Math.max(1, Math.floor(innerWidth / minPx))));
 const BAR_MAX = 24;
 const GAP = 2;
 
@@ -68,6 +89,9 @@ function showTip(html, ev) {
   t.style.top = Math.max(8, y) + 'px';
 }
 function hideTip() { if (tipEl) tipEl.removeAttribute('data-show'); }
+
+// Exported so a project can add a chart primitive of its own and still share the tooltip.
+export { showTip, hideTip, esc };
 
 const tipRow = (k, v) => `<div class="tip-row"><span>${esc(k)}</span><span>${esc(v)}</span></div>`;
 
@@ -171,8 +195,10 @@ const axisText = (x, y, s, anchor = 'middle', cls = '') =>
  */
 export function waterfall(el, { rows, height = 320, valueFmt = fmtRc, showValues = true, zeroBaseline = true }) {
   mount(el, (W) => {
-    const iw = W - M.left - M.right;
-    const ih = height - M.top - M.bottom;
+    const m = margins(W);
+    const iw = W - m.left - m.right;
+    const xStride = labelStride(rows.length, iw, 52);
+    const ih = height - m.top - m.bottom;
     const slot = iw / rows.length;
     const bw = Math.min(BAR_MAX * 2.2, slot - 18);
 
@@ -204,21 +230,21 @@ export function waterfall(el, { rows, height = 320, valueFmt = fmtRc, showValues
     const tks = ticks(lo, hi, 5).filter((t) => t >= lo && t <= hi);
     const yLo = zeroBaseline ? Math.min(...tks, ...vals) : lo;
     const yHi = zeroBaseline ? Math.max(...tks, ...vals) : hi;
-    const y = (v) => M.top + ih - ((v - yLo) / (yHi - yLo)) * ih;
-    const floorY = M.top + ih;
+    const y = (v) => m.top + ih - ((v - yLo) / (yHi - yLo)) * ih;
+    const floorY = m.top + ih;
 
     let s = `<svg width="${W}" height="${height}" role="img" aria-label="Waterfall chart">`;
 
     for (const t of tks) {
-      s += `<line x1="${M.left}" y1="${y(t)}" x2="${W - M.right}" y2="${y(t)}" stroke="${cssVar('--rule')}" stroke-width="1"/>`;
-      s += axisText(M.left - 10, y(t) + 4, valueFmt(t), 'end');
+      s += `<line x1="${m.left}" y1="${y(t)}" x2="${W - m.right}" y2="${y(t)}" stroke="${cssVar('--rule')}" stroke-width="1"/>`;
+      s += axisText(m.left - 10, y(t) + 4, valueFmt(t), 'end');
     }
     if (yLo < 0 && yHi > 0) {
-      s += `<line x1="${M.left}" y1="${y(0)}" x2="${W - M.right}" y2="${y(0)}" stroke="${cssVar('--rule-strong')}" stroke-width="1"/>`;
+      s += `<line x1="${m.left}" y1="${y(0)}" x2="${W - m.right}" y2="${y(0)}" stroke="${cssVar('--rule-strong')}" stroke-width="1"/>`;
     }
 
     geo.forEach((g, i) => {
-      const cx = M.left + slot * i + slot / 2;
+      const cx = m.left + slot * i + slot / 2;
       const x = cx - bw / 2;
       const anchored = g.type === 'anchor' || g.type === 'total';
       // On a truncated axis the anchors run off the bottom rather than floating.
@@ -231,10 +257,12 @@ export function waterfall(el, { rows, height = 320, valueFmt = fmtRc, showValues
 
       s += `<path d="${barPath(x, top, bw, h, 4, !anchored)}" fill="${fill}"/>`;
       // Generous hit target, bigger than the mark
-      s += `<rect x="${cx - slot / 2 + 1}" y="${M.top}" width="${slot - 2}" height="${ih}" fill="transparent" ` +
+      s += `<rect x="${cx - slot / 2 + 1}" y="${m.top}" width="${slot - 2}" height="${ih}" fill="transparent" ` +
            `tabindex="0" data-tip="${esc(t)}"/>`;
 
-      if (showValues) {
+      // A value printed on a 30px bar is a smear. Below that it is dropped and the
+      // table twin carries the number instead.
+      if (showValues && slot >= 52) {
         // Floating steps always label above their top edge. Labelling a short negative step
         // below its bottom puts the text straight into the x-axis label band.
         const above = anchored ? g.value >= 0 : true;
@@ -243,8 +271,9 @@ export function waterfall(el, { rows, height = 320, valueFmt = fmtRc, showValues
              `style="font-variant-numeric:tabular-nums">${esc(valueFmt(g.value))}</text>`;
       }
 
-      wrap(g.label, slot - 6, 11, 2).forEach((ln, k) => {
-        s += axisText(cx, height - M.bottom + 16 + k * 13, ln);
+      if (i % xStride !== 0) return;
+      wrap(g.label, Math.max(slot, 52) - 6, 11, 2).forEach((ln, k) => {
+        s += axisText(cx, height - m.bottom + 16 + k * 13, ln);
       });
     });
 
@@ -260,8 +289,10 @@ export function waterfall(el, { rows, height = 320, valueFmt = fmtRc, showValues
  */
 export function columns(el, { rows, height = 300, valueFmt = fmtNum, refLine = null, xEvery = 1, yLabel = '' }) {
   mount(el, (W) => {
-    const iw = W - M.left - M.right;
-    const ih = height - M.top - M.bottom;
+    const m = margins(W);
+    const iw = W - m.left - m.right;
+    const xStride = Math.max(xEvery, labelStride(rows.length, iw, 44));
+    const ih = height - m.top - m.bottom;
     const slot = iw / rows.length;
     const bw = Math.max(1.5, Math.min(BAR_MAX, slot - GAP));
 
@@ -274,24 +305,24 @@ export function columns(el, { rows, height = 300, valueFmt = fmtNum, refLine = n
     const tks = ticks(lo, hi, 4);
     const yLo = Math.min(...tks, lo);
     const yHi = Math.max(...tks, hi);
-    const y = (v) => M.top + ih - ((v - yLo) / (yHi - yLo || 1)) * ih;
+    const y = (v) => m.top + ih - ((v - yLo) / (yHi - yLo || 1)) * ih;
     const zeroY = y(0);
 
     let s = `<svg width="${W}" height="${height}" role="img" aria-label="Column chart">`;
     for (const t of tks) {
-      s += `<line x1="${M.left}" y1="${y(t)}" x2="${W - M.right}" y2="${y(t)}" stroke="${cssVar('--rule')}" stroke-width="1"/>`;
-      s += axisText(M.left - 10, y(t) + 4, valueFmt(t), 'end');
+      s += `<line x1="${m.left}" y1="${y(t)}" x2="${W - m.right}" y2="${y(t)}" stroke="${cssVar('--rule')}" stroke-width="1"/>`;
+      s += axisText(m.left - 10, y(t) + 4, valueFmt(t), 'end');
     }
     if (lo < 0) {
-      s += `<line x1="${M.left}" y1="${zeroY}" x2="${W - M.right}" y2="${zeroY}" stroke="${cssVar('--rule-strong')}" stroke-width="1"/>`;
+      s += `<line x1="${m.left}" y1="${zeroY}" x2="${W - m.right}" y2="${zeroY}" stroke="${cssVar('--rule-strong')}" stroke-width="1"/>`;
     }
     if (yLabel) {
-      s += `<text x="${M.left - 10}" y="${M.top - 4}" text-anchor="end" font-size="10.5" ` +
+      s += `<text x="${m.left - 10}" y="${m.top - 4}" text-anchor="end" font-size="10.5" ` +
            `fill="${cssVar('--ink-3')}" font-family="${cssVar('--font-sans')}">${esc(yLabel)}</text>`;
     }
 
     rows.forEach((r, i) => {
-      const cx = M.left + slot * i + slot / 2;
+      const cx = m.left + slot * i + slot / 2;
       // A bar grows from the zero line in whichever direction its value points. The rounded
       // data end is always the end away from zero.
       const positive = r.y >= 0;
@@ -301,15 +332,22 @@ export function columns(el, { rows, height = 300, valueFmt = fmtNum, refLine = n
         ? barPath(cx - bw / 2, top, bw, h, 4)
         : `M${cx - bw / 2} ${top}h${bw}v${h - 4}a4 4 0 0 1 -4 4h${-(bw - 8)}a4 4 0 0 1 -4 -4z`;
       s += `<path d="${d}" fill="${r.color}"/>`;
-      s += `<rect x="${cx - slot / 2}" y="${M.top}" width="${slot}" height="${ih}" fill="transparent" ` +
+      s += `<rect x="${cx - slot / 2}" y="${m.top}" width="${slot}" height="${ih}" fill="transparent" ` +
            `tabindex="0" data-tip="${esc(r.tip || `<b>${esc(r.x)}</b>${tipRow('Value', valueFmt(r.y))}`)}"/>`;
-      if (i % xEvery === 0 && r.x) s += axisText(cx, height - M.bottom + 16, r.x);
+      // Wrapped, not truncated. "1 to 2 weeks" is 80px of Verdana against a 31px bar, so
+      // without this the band labels sit on top of each other on a phone. waterfall has
+      // always wrapped; columns drew a single line and hoped.
+      if (i % xStride === 0 && r.x) {
+        wrap(String(r.x), Math.max(slot * xStride, 48) - 6, 11, 2).forEach((ln, k) => {
+          s += axisText(cx, height - m.bottom + 16 + k * 13, ln);
+        });
+      }
     });
 
     if (refLine) {
       const ry = y(refLine.value);
-      s += `<line x1="${M.left}" y1="${ry}" x2="${W - M.right}" y2="${ry}" stroke="${cssVar('--ink-3')}" stroke-width="1"/>`;
-      s += `<text x="${W - M.right}" y="${ry - 6}" text-anchor="end" font-size="10.5" ` +
+      s += `<line x1="${m.left}" y1="${ry}" x2="${W - m.right}" y2="${ry}" stroke="${cssVar('--ink-3')}" stroke-width="1"/>`;
+      s += `<text x="${W - m.right}" y="${ry - 6}" text-anchor="end" font-size="10.5" ` +
            `fill="${cssVar('--ink-3')}" font-family="${cssVar('--font-sans')}">${esc(refLine.label)}</text>`;
     }
     return s + '</svg>';
@@ -358,25 +396,30 @@ export function barsH(el, { rows, valueFmt = fmtRc, rowHeight = 46, labelWidth =
  */
 export function lines(el, { series, height = 300, valueFmt = fmtPct, xFmt = (v) => v, xEvery = 3, endLabels = true }) {
   mount(el, (W) => {
-    const iw = W - M.left - M.right;
-    const ih = height - M.top - M.bottom;
+    const m = margins(W);
+    const iw = W - m.left - m.right;
+    // series[0].points rather than xs, which is not declared until two lines down.
+    // Reading it here threw "Cannot access 'xs' before initialization" and took every
+    // page with a line chart down with it, which is every page.
+    const xStride = Math.max(xEvery, labelStride(series[0].points.length, iw, 52));
+    const ih = height - m.top - m.bottom;
     const xs = series[0].points.map((p) => p.x);
     const n = xs.length;
-    const xAt = (i) => M.left + (n === 1 ? iw / 2 : (i / (n - 1)) * iw);
+    const xAt = (i) => m.left + (n === 1 ? iw / 2 : (i / (n - 1)) * iw);
 
     const all = series.flatMap((s) => s.points.map((p) => p.y)).filter((v) => v != null);
     const tks = ticks(Math.min(...all), Math.max(...all), 4);
     const yLo = Math.min(...tks, ...all), yHi = Math.max(...tks, ...all);
-    const y = (v) => M.top + ih - ((v - yLo) / (yHi - yLo || 1)) * ih;
+    const y = (v) => m.top + ih - ((v - yLo) / (yHi - yLo || 1)) * ih;
 
     let s = `<svg width="${W}" height="${height}" role="img" aria-label="Line chart">`;
     for (const t of tks) {
-      s += `<line x1="${M.left}" y1="${y(t)}" x2="${W - M.right}" y2="${y(t)}" stroke="${cssVar('--rule')}" stroke-width="1"/>`;
-      s += axisText(M.left - 10, y(t) + 4, valueFmt(t, 0), 'end');
+      s += `<line x1="${m.left}" y1="${y(t)}" x2="${W - m.right}" y2="${y(t)}" stroke="${cssVar('--rule')}" stroke-width="1"/>`;
+      s += axisText(m.left - 10, y(t) + 4, valueFmt(t, 0), 'end');
     }
-    xs.forEach((xv, i) => { if (i % xEvery === 0) s += axisText(xAt(i), height - M.bottom + 16, xFmt(xv)); });
+    xs.forEach((xv, i) => { if (i % xStride === 0) s += axisText(xAt(i), height - m.bottom + 16, xFmt(xv)); });
 
-    s += `<g id="crosshair" style="display:none"><line y1="${M.top}" y2="${M.top + ih}" stroke="${cssVar('--rule-strong')}" stroke-width="1"/></g>`;
+    s += `<g id="crosshair" style="display:none"><line y1="${m.top}" y2="${m.top + ih}" stroke="${cssVar('--rule-strong')}" stroke-width="1"/></g>`;
 
     for (const ser of series) {
       const d = ser.points.map((p, i) => (p.y == null ? null : `${i ? 'L' : 'M'}${xAt(i)} ${y(p.y)}`))
@@ -398,7 +441,7 @@ export function lines(el, { series, height = 300, valueFmt = fmtPct, xFmt = (v) 
     xs.forEach((xv, i) => {
       const half = iw / Math.max(1, n - 1) / 2;
       const rows = series.map((ser) => tipRow(ser.name, ser.points[i].y == null ? '-' : valueFmt(ser.points[i].y))).join('');
-      s += `<rect x="${xAt(i) - half}" y="${M.top}" width="${half * 2}" height="${ih}" fill="transparent" ` +
+      s += `<rect x="${xAt(i) - half}" y="${m.top}" width="${half * 2}" height="${ih}" fill="transparent" ` +
            `tabindex="0" data-x="${xAt(i)}" data-tip="${esc(`<b>${xFmt(xv)}</b>${rows}`)}"/>`;
     });
 

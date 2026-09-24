@@ -331,3 +331,35 @@ footer p { margin: 0 0 0.5rem; max-width: 75ch; }
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
 }
+
+
+/* ---------------------------------------------------------------- narrow screens
+
+   Measured at 375px rather than guessed at, and every problem came from desktop
+   proportions surviving onto a phone.
+
+   A data table 593px wide dragged the whole page sideways, which is the worst thing a page
+   can do on a phone: every section then sits off centre and the reader fights the page
+   instead of reading it. Tables now scroll inside their own box, the way the weekday grid
+   already did, so the table moves and the page does not.
+
+   Header and label text sat at 11.7px. Twelve is the floor worth holding to on a handset.
+
+   The charts fix themselves in charts.js, which tightens margins and thins labels once the
+   width stops justifying them.
+*/
+
+.data-table { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+@media (max-width: 460px) {
+  .tile-label,
+  th,
+  th.num,
+  .badge { font-size: 12px; }
+
+  /* A caption is the one label that can wrap instead of scrolling, so let it. */
+  caption { font-size: 12px; white-space: normal; }
+
+  /* Tap targets. A toggle at 22px high is a coin toss with a thumb. */
+  .tbl-toggle { padding: 0.4rem 0.7rem; min-height: 40px; }
+}

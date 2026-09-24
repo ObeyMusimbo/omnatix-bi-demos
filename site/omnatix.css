@@ -203,3 +203,14 @@ footer p { margin: 0 0 0.5rem; max-width: 74ch; }
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }
 }
+
+/* ---------------------------------------------------------------- narrow screens */
+
+@media (max-width: 460px) {
+  /* The two eyebrow labels sat at 11.5 and 11.8px. Twelve is the floor on a handset, and
+     these are the first words a prospect reads on a card. */
+  .badge,
+  .card-industry,
+  .how h3 { font-size: 12px; }
+  a.card { padding: 1.1rem 1.2rem; }
+}
