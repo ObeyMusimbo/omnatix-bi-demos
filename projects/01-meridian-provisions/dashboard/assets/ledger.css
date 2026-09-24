@@ -349,12 +349,14 @@ footer p { margin: 0 0 0.5rem; max-width: 75ch; }
    width stops justifying them.
 */
 
-.data-table { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.data-table,
+.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
 @media (max-width: 460px) {
   .tile-label,
   th,
   th.num,
+  .section-num,
   .badge { font-size: 12px; }
 
   /* A caption is the one label that can wrap instead of scrolling, so let it. */

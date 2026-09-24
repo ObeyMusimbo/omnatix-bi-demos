@@ -46,6 +46,38 @@ const esc = (s) => String(s).replace(/[&<>"]/g, (c) =>
   ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const cssVar = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 
+// Labels are placed, not just drawn. Each tries the right of its dot, then the left, and is
+// dropped if both would run off the edge or through something already placed. On a phone the
+// map is 343px wide: the east coast sits about 30px from the edge, so "Kestrel KZN Hub" was
+// cut off mid word, and Kimberley is a few pixels from Bloemfontein, so one of them has to go
+// quiet. The dot stays, and the lane table below the map names every destination.
+let measureCtx;
+function labelPlacer(w, obstacles) {
+  const placed = [...obstacles];
+  const clear = (b) => b.l >= 2 && b.r <= w - 2 && !placed.some((p) =>
+    b.l < p.r + 3 && p.l < b.r + 3 && b.t < p.b + 1 && p.t < b.b + 1);
+  // Returns the x attributes for the label, or null when there is nowhere clean to put it.
+  // force is for the hubs: they are the names that mean something, so they are never dropped.
+  return (x, baseline, gap, text, px, weight = 400, force = false) => {
+    measureCtx ||= document.createElement('canvas').getContext('2d');
+    measureCtx.font = `${weight} ${px}px ${cssVar('--font-sans')}`;
+    const tw = measureCtx.measureText(text).width;
+    const t = baseline - px * 0.8;
+    const bot = baseline + px * 0.25;
+    const right = { l: x + gap, r: x + gap + tw, t, b: bot };
+    const left = { l: x - gap - tw, r: x - gap, t, b: bot };
+    const attrs = (b) => (b === right
+      ? `x="${(x + gap).toFixed(1)}"` : `x="${(x - gap).toFixed(1)}" text-anchor="end"`);
+    for (const b of [right, left]) {
+      if (clear(b)) { placed.push(b); return attrs(b); }
+    }
+    if (!force) return null;
+    const b = right.r <= w - 2 ? right : left;
+    placed.push(b);
+    return attrs(b);
+  };
+}
+
 /** Build a projector that fits the country into a w by h box with padding. */
 function projector(w, h, pad = 16) {
   const spanLon = (BOUNDS.lonMax - BOUNDS.lonMin) * LON_SCALE;
@@ -129,25 +161,36 @@ export function networkMap(el, { lanes, depots, cities, height = 560 }) {
     const hasHub = ([x, y]) =>
       depotPoints.some(([dx, dy]) => Math.hypot(dx - x, dy - y) < 14);
 
-    for (const c of cities) {
-      const [x, y] = project(c.lon, c.lat);
+    // Every dot is an obstacle, and the hub labels are placed before any city's.
+    const cityPoints = cities.map((c) => project(c.lon, c.lat));
+    const place = labelPlacer(w, [
+      ...depotPoints.map(([x, y]) => ({ l: x - 7, r: x + 7, t: y - 7, b: y + 7 })),
+      ...cityPoints.map(([x, y]) => ({ l: x - 2.5, r: x + 2.5, t: y - 2.5, b: y + 2.5 })),
+    ]);
+    const hubLabels = depots.map((d, i) =>
+      place(depotPoints[i][0], depotPoints[i][1] + 4, 12, d.name, 12, 600, true));
+
+    cities.forEach((c, i) => {
+      const [x, y] = cityPoints[i];
       s += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.5" fill="${cssVar('--text-3')}"/>`;
-      if (hasHub([x, y])) continue;
-      s += `<text x="${(x + 7).toFixed(1)}" y="${(y + 3.5).toFixed(1)}" font-size="10.5" `
+      if (hasHub([x, y])) return;
+      const at = place(x, y + 3.5, 7, c.name, 10.5);
+      if (!at) return;
+      s += `<text ${at} y="${(y + 3.5).toFixed(1)}" font-size="10.5" `
         + `fill="${cssVar('--text-3')}" font-family="${cssVar('--font-sans')}">${esc(c.name)}</text>`;
-    }
+    });
 
     // Hubs, drawn last so they sit above every lane
-    for (const d of depots) {
-      const [x, y] = project(d.lon, d.lat);
+    depots.forEach((d, i) => {
+      const [x, y] = depotPoints[i];
       s += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="7" fill="none" `
         + `stroke="${cssVar('--s1')}" stroke-width="1.5" opacity="0.5"/>`;
       s += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.5" fill="${cssVar('--s1')}" `
         + `stroke="${cssVar('--panel')}" stroke-width="2"/>`;
-      s += `<text x="${(x + 12).toFixed(1)}" y="${(y + 4).toFixed(1)}" font-size="12" `
+      s += `<text ${hubLabels[i]} y="${(y + 4).toFixed(1)}" font-size="12" `
         + `font-weight="600" fill="${cssVar('--text')}" `
         + `font-family="${cssVar('--font-sans')}">${esc(d.name)}</text>`;
-    }
+    });
 
     return s + '</svg>';
   };

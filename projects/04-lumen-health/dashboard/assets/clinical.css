@@ -392,7 +392,8 @@ footer p { margin: 0 0 0.7rem; max-width: 82ch; }
    width stops justifying them.
 */
 
-.data-table { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.data-table,
+.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
 @media (max-width: 460px) {
   .tile-label,

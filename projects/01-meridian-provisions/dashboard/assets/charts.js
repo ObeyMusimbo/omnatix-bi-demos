@@ -36,6 +36,14 @@ const margins = (W) => (W < 460
  */
 const labelStride = (count, innerWidth, minPx) =>
   Math.max(1, Math.ceil(count / Math.max(1, Math.floor(innerWidth / minPx))));
+
+// Measured rather than estimated. Verdana runs wide, and a per-character guess undershoots it.
+let measureCtx;
+const textWidth = (str, font) => {
+  measureCtx ||= document.createElement('canvas').getContext('2d');
+  measureCtx.font = font;
+  return measureCtx.measureText(String(str)).width;
+};
 const BAR_MAX = 24;
 const GAP = 2;
 
@@ -265,7 +273,10 @@ export function waterfall(el, { rows, height = 320, valueFmt = fmtRc, showValues
       if (showValues && slot >= 52) {
         // Floating steps always label above their top edge. Labelling a short negative step
         // below its bottom puts the text straight into the x-axis label band.
-        const above = anchored ? g.value >= 0 : true;
+        // A negative total labels below itself unless it reaches the floor of the plot, where
+        // below is the axis band too: Meridian's net contribution printed "-R3.8m" through its
+        // own category name.
+        const above = anchored ? g.value >= 0 || bot + 14 > floorY - 4 : true;
         s += `<text x="${cx}" y="${above ? top - 7 : bot + 14}" text-anchor="middle" font-size="11.5" ` +
              `font-weight="600" fill="${cssVar('--ink-2')}" font-family="${cssVar('--font-sans')}" ` +
              `style="font-variant-numeric:tabular-nums">${esc(valueFmt(g.value))}</text>`;
@@ -316,8 +327,11 @@ export function columns(el, { rows, height = 300, valueFmt = fmtNum, refLine = n
     if (lo < 0) {
       s += `<line x1="${m.left}" y1="${zeroY}" x2="${W - m.right}" y2="${zeroY}" stroke="${cssVar('--rule-strong')}" stroke-width="1"/>`;
     }
+    // Left aligned at the chart's edge rather than right aligned to the gutter. A caption like
+    // "first instalment failed" is wider than a phone's 46px gutter, and right aligned it ran
+    // off the left of the screen.
     if (yLabel) {
-      s += `<text x="${m.left - 10}" y="${m.top - 4}" text-anchor="end" font-size="10.5" ` +
+      s += `<text x="0" y="${m.top - 4}" text-anchor="start" font-size="10.5" ` +
            `fill="${cssVar('--ink-3')}" font-family="${cssVar('--font-sans')}">${esc(yLabel)}</text>`;
     }
 
@@ -363,25 +377,46 @@ export function columns(el, { rows, height = 300, valueFmt = fmtNum, refLine = n
  */
 export function barsH(el, { rows, valueFmt = fmtRc, rowHeight = 46, labelWidth = 240 }) {
   mount(el, (W) => {
-    const height = rows.length * rowHeight + 28;
+    const labelFont = `12.5px ${cssVar('--font-sans')}`;
+    const valueFont = `600 12px ${cssVar('--font-sans')}`;
+    const widest = Math.max(0, ...rows.map((r) => textWidth(r.label, labelFont)));
     const left = Math.min(labelWidth, W * 0.34);
-    const iw = W - left - 96;
-    const maxV = Math.max(...rows.map((r) => r.value));
+    // Labels beside the bars when they fit the gutter, above the bars when they do not. A phone
+    // gives the gutter about 115px and a practitioner's name and clinic need twice that, so
+    // right aligned they ran off the left of the screen where nobody could scroll to them.
+    const stacked = widest > left - 12;
+    const valueRoom = Math.ceil(Math.max(0, ...rows.map((r) => textWidth(valueFmt(r.value), valueFont)))) + 16;
     const bh = Math.min(BAR_MAX, rowHeight - 18);
+    const rowH = stacked ? bh + 30 : rowHeight;
+    const x0 = stacked ? 0 : left;
+    const iw = W - x0 - (stacked ? valueRoom : 96);
+    const height = rows.length * rowH + (stacked ? 8 : 28);
+    const maxV = Math.max(...rows.map((r) => r.value));
+    // Last resort for a label wider than the whole chart. The table twin carries it in full.
+    const fit = (str) => {
+      let t = String(str);
+      if (textWidth(t, labelFont) <= W - 4) return t;
+      while (t.length > 4 && textWidth(`${t}…`, labelFont) > W - 4) t = t.slice(0, -1);
+      return `${t.trimEnd()}…`;
+    };
 
     let s = `<svg width="${W}" height="${height}" role="img" aria-label="Bar chart">`;
     rows.forEach((r, i) => {
-      const cy = 14 + i * rowHeight + rowHeight / 2;
+      const top = (stacked ? 0 : 14) + i * rowH;
+      const cy = stacked ? top + 20 + bh / 2 : top + rowH / 2;
       const w = Math.max(2, (r.value / maxV) * iw);
       // Rotated 90deg: the data end is the right edge, square at the left baseline.
-      s += `<g transform="translate(${left + w} ${cy - bh / 2}) rotate(90)">` +
+      s += `<g transform="translate(${x0 + w} ${cy - bh / 2}) rotate(90)">` +
            `<path d="${barPath(0, 0, bh, w, 4)}" fill="${r.color}"/></g>`;
-      s += `<text x="${left - 12}" y="${cy + 4}" text-anchor="end" font-size="12.5" ` +
-           `fill="${cssVar('--ink')}" font-family="${cssVar('--font-sans')}">${esc(r.label)}</text>`;
-      s += `<text x="${left + w + 10}" y="${cy + 4}" font-size="12" font-weight="600" ` +
+      s += stacked
+        ? `<text x="0" y="${top + 13}" font-size="12.5" ` +
+          `fill="${cssVar('--ink')}" font-family="${cssVar('--font-sans')}">${esc(fit(r.label))}</text>`
+        : `<text x="${left - 12}" y="${cy + 4}" text-anchor="end" font-size="12.5" ` +
+          `fill="${cssVar('--ink')}" font-family="${cssVar('--font-sans')}">${esc(r.label)}</text>`;
+      s += `<text x="${x0 + w + 10}" y="${cy + 4}" font-size="12" font-weight="600" ` +
            `fill="${cssVar('--ink-2')}" font-family="${cssVar('--font-sans')}" ` +
            `style="font-variant-numeric:tabular-nums">${esc(valueFmt(r.value))}</text>`;
-      s += `<rect x="0" y="${cy - rowHeight / 2}" width="${W}" height="${rowHeight}" ` +
+      s += `<rect x="0" y="${top}" width="${W}" height="${rowH}" ` +
            `fill="transparent" tabindex="0" data-tip="${esc(r.tip || `<b>${esc(r.label)}</b>${tipRow('Value', valueFmt(r.value))}`)}"/>`;
     });
     return s + '</svg>';
@@ -396,7 +431,18 @@ export function barsH(el, { rows, valueFmt = fmtRc, rowHeight = 46, labelWidth =
  */
 export function lines(el, { series, height = 300, valueFmt = fmtPct, xFmt = (v) => v, xEvery = 3, endLabels = true }) {
   mount(el, (W) => {
-    const m = margins(W);
+    // The end labels sit to the right of the last point, so the plot has to stop short of the
+    // edge by their width. Without this they hung past the chart, and on a phone past the
+    // screen, which is what gave two pages a sideways scroll.
+    const endFont = `600 11px ${cssVar('--font-sans')}`;
+    const endW = endLabels
+      ? Math.max(0, ...series.map((ser) => {
+        const lp = ser.points[ser.points.length - 1];
+        return lp.y == null ? 0 : textWidth(valueFmt(lp.y), endFont);
+      }))
+      : 0;
+    const m = { ...margins(W) };
+    m.right = Math.max(m.right, Math.ceil(endW) + 13);
     const iw = W - m.left - m.right;
     // series[0].points rather than xs, which is not declared until two lines down.
     // Reading it here threw "Cannot access 'xs' before initialization" and took every
@@ -476,7 +522,10 @@ export function legend(items, asLine = false) {
  * Every chart ships one so no value is gated behind a tooltip.
  */
 export function table(cols, rows, { caption = '', totalRow = null } = {}) {
-  let s = `<table>`;
+  // Wrapped so a table wider than a phone scrolls inside its own box. Only the twins inside
+  // figure() had that, and the tables placed straight into a section dragged the whole page
+  // sideways.
+  let s = `<div class="table-scroll"><table>`;
   if (caption) s += `<caption>${esc(caption)}</caption>`;
   s += `<thead><tr>` + cols.map((c) =>
     `<th class="${c.align === 'right' ? 'num' : ''}">${esc(c.label)}</th>`).join('') + `</tr></thead><tbody>`;
@@ -495,7 +544,7 @@ export function table(cols, rows, { caption = '', totalRow = null } = {}) {
       return `<td class="${c.align === 'right' ? 'num' : ''}">${v == null ? '' : esc(v)}</td>`;
     }).join('') + `</tr>`;
   }
-  return s + `</tbody></table>`;
+  return s + `</tbody></table></div>`;
 }
 
 /**
