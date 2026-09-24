@@ -45,6 +45,10 @@ final as (
         -- A site that turns away a quarter of what arrives is not having bad luck. It has no
         -- booked receiving slot, and that is a conversation, not an analysis.
         b.failed_drops * 1.0 / nullif(b.drops, 0) > 0.15 as is_problem_site,
+        -- The twelve months the closing bridge counts, defined once so the section and the
+        -- bridge cannot disagree about which months a figure covers. They did: the page said
+        -- R13.0m over two years while the bridge counted R6.5m over one.
+        b.month_start_date > date '{{ var("period_end") }}'::date - interval 365 day as is_trailing_twelve_months,
     from base b
     left join reasons r on b.customer_id = r.customer_id
 

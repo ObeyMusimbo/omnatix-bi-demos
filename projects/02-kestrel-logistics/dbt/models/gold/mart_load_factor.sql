@@ -4,11 +4,15 @@
 -- of axle allowance on light, bulky cargo. Where volume utilisation is high and weight
 -- utilisation is not, the truck is full and the invoice is small.
 
+--
+-- Trailing twelve months, like every other section of the page, so "a year" means a year.
+
 with laden as (
 
     select * from {{ ref('fct_trip') }}
     where not is_empty
       and distance_km > 0
+      and trip_date > date '{{ var("period_end") }}'::date - interval 365 day
 
 ),
 

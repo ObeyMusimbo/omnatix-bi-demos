@@ -39,6 +39,25 @@ async function renderFreshness() {
   const today = new Date();
   const behind = Math.max(0, Math.floor((today - asDate(m.data_through)) / DAY_MS));
   const buildAge = Math.max(0, Math.floor((today - asDate(m.built_at)) / DAY_MS));
+
+  // A demo covers a closed, synthetic period, so its newest row never moves and a days-behind
+  // count would only measure how long ago the demo was made: it went red within a fortnight of
+  // launch and read as a broken pipeline. What is live is the nightly rebuild, so on a fixed
+  // period the badge tracks that and names the period plainly. Live client data carries no
+  // fixed_period flag and gets the days-behind alarm below.
+  if (m.fixed_period) {
+    const box = el('freshness');
+    box.classList.remove('is-current', 'is-lagging', 'is-stale');
+    box.classList.add(buildAge <= 2 ? 'is-current' : buildAge <= 14 ? 'is-lagging' : 'is-stale');
+    box.title = `Demonstration data for a fixed period, ${longDate(m.data_from)} to `
+      + `${longDate(m.data_through)}. The badge tracks the nightly rebuild. On live data it `
+      + `counts the days since the newest transaction.`;
+    el('fresh-label').textContent = buildAge === 0 ? 'Rebuilt today'
+      : buildAge === 1 ? 'Rebuilt yesterday' : `Rebuilt ${plural(buildAge, 'day')} ago`;
+    el('data-through').textContent = `Demo period to ${longDate(m.data_through)}`;
+    el('last-run').textContent = 'Fixed data, rebuilt and tested nightly';
+    return m;
+  }
   const state = behind <= 2 ? 'is-current' : behind <= 14 ? 'is-lagging' : 'is-stale';
   const box = el('freshness');
   box.classList.remove('is-current', 'is-lagging', 'is-stale');
@@ -254,8 +273,8 @@ async function render() {
   <section>
     <div class="section-head"><span class="section-num">01</span><h2>Where the money went</h2></div>
     <p class="lede">
-      Over the ${monthly.length} months to ${longDate(m.data_through)} the group saw
-      <b>${fmtNum(clinics.reduce((t, c) => t + c.attended, 0))}</b> patients across six sites and
+      Over the ${monthly.length} months to ${longDate(m.data_through)} the group saw patients
+      <b>${fmtNum(clinics.reduce((t, c) => t + c.attended, 0))}</b> times across six sites and
       billed <b>${fmtR(b.billed_zar)}</b> for the care it delivered. It collected
       <b>${fmtR(b.cash_received_zar)}</b> of that. Nothing was stolen and nobody was negligent.
       It leaked out through a claims inbox nobody opens and a card machine nobody reaches for.
@@ -672,7 +691,7 @@ async function render() {
           { key: 'clinic_name', label: 'Site' },
           { key: 'session_rate_zar', label: 'Session rate', align: 'right', fmt: fmtR },
           { key: 'fill_pct', label: 'Fill', align: 'right', fmt: (n) => fmtPct(n) },
-          { key: 'cost_per_attended_zar', label: 'Cost per patient', align: 'right', fmt: fmtR },
+          { key: 'cost_per_attended_zar', label: 'Cost per visit', align: 'right', fmt: fmtR },
           { key: 'cost_ratio_vs_peers', label: 'Against peers', align: 'right', fmt: (n) => `${n}x` },
         ],
         practitioners.filter((p) => p.peers >= 3)
@@ -892,7 +911,7 @@ async function render() {
         tip: `<b>${esc(p.practitioner_name)}</b>, ${esc(p.discipline)}`
           + `<div class="tip-row"><span>Session rate</span><span>${fmtR(p.session_rate_zar)}</span></div>`
           + `<div class="tip-row"><span>Fill</span><span>${fmtPct(p.fill_pct)}</span></div>`
-          + `<div class="tip-row"><span>Cost per patient</span><span>${fmtR(p.cost_per_attended_zar)}</span></div>`
+          + `<div class="tip-row"><span>Cost per visit</span><span>${fmtR(p.cost_per_attended_zar)}</span></div>`
           + `<div class="tip-row"><span>Discipline median</span><span>${fmtR(p.peer_median_cost_per_attended_zar)}</span></div>`
           + `<div class="tip-row"><span>Against peers</span><span>${p.cost_ratio_vs_peers}x</span></div>`,
       })),

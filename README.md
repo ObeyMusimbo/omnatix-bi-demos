@@ -60,9 +60,10 @@ explain the gap. The reveal script is in `projects/01-meridian-provisions/ANSWER
 **Kestrel Logistics** is a road freight operator: R243m revenue, 124 vehicles, 12.4m kilometres
 a year, three hubs, 25 line-haul corridors and 4 metro distribution runs.
 
-It opens on the map. **23.7% of every kilometre carried nothing**, and twelve corridors are
-priced as though the truck comes home loaded when it does not. The close: **R21.9m identified
-against R27.6m earned**, which is 79.5% of everything the business currently makes.
+It opens on the map. **23.9% of every kilometre carried nothing**, and twelve corridors are
+priced as though the truck comes home loaded when it does not. The close: **R19.7m identified
+against R27.6m earned**, which is 71.5% of everything the business currently makes, every step
+measured over the same twelve months.
 
 **Sable & Finch Credit** is an unsecured lender: R602m disbursed over 19,880 loans through nine
 branches, 24 months to 2026-08-31. 16.0% of loans ever reach 90 days past due and 7.7% are
@@ -212,7 +213,7 @@ Applied to every project in this repo.
 | Project | Models | Tests | Parquet shipped |
 |---|---|---|---|
 | 01 Meridian | 31 | 97 | 1.2 MB |
-| 02 Kestrel | 35 | 57 | 228 KB |
+| 02 Kestrel | 35 | 60 | 228 KB |
 | 03 Sable & Finch | 32 | 158 | 140 KB |
 | 04 Lumen | 36 | 125 | 84 KB |
 

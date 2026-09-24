@@ -13,13 +13,13 @@ All money is South African rand, excluding VAT.
 | Measure | TTM |
 |---|---|
 | Revenue | R243,339,163 |
-| Cost | R215,771,361 |
-| Contribution | R27,567,802 (11.3%) |
+| Cost | R215,767,810 |
+| Contribution | R27,571,353 (11.3%) |
 | Kilometres | 12,435,053 |
 | Earned per kilometre | R19.57 |
 | Spent per kilometre | R17.35 |
 | **Kilometres run empty** | **23.9%** of 12,435,053 km |
-| Cost of those empty kilometres | R47,395,784 |
+| Cost of those empty kilometres | R47,395,918 |
 
 Open on the map, not on a number. Colour the corridors by what they contribute as a round trip
 and four of them are red. Then say the line: nearly a quarter of every kilometre this fleet
@@ -29,20 +29,21 @@ turns is carrying nothing, and until today nobody was charged for it.
 
 | Driver | Worth | Share | Finding |
 |---|---|---|---|
-| _Contribution earned in the last twelve months_ | _R27,567,802_ | | |
-| Corridors that fund their own empty return | R5,525,387 | 25.2% | 1 |
-| Deliveries that had to be done twice | R6,509,220 | 29.7% | 2 |
-| Vehicles burning more than their class | R4,663,684 | 21.3% | 3 |
-| Service penalties on the anchor account | R5,213,459 | 23.8% | 4 |
-| **Contribution with the same fleet and the same customers** | **R49,479,551** | | |
+| _Contribution earned in the last twelve months_ | _R27,571,353_ | | |
+| Corridors that fund their own empty return | R5,526,107 | 28.0% | 1 |
+| Deliveries that had to be done twice | R6,509,247 | 33.0% | 2 |
+| Vehicles burning more than their class | R2,467,347 | 12.5% | 3 |
+| Service penalties on the anchor account | R5,213,459 | 26.4% | 4 |
+| **Contribution with the same fleet and the same customers** | **R47,287,513** | | |
 
-**R21,911,749 identified against R27,567,802 earned, or 79.5% of
-contribution.** Four findings, each worth a fifth to a third of the total, on the same fleet
-serving the same customers with nothing new bought.
+**R19,716,160 identified against R27,571,353 earned, or 71.5% of
+contribution.** Four findings, each worth 13% to 33% of the
+total, on the same fleet serving the same customers with nothing new bought. Every step covers
+the same twelve months.
 
 Do not promise full recovery. A lane can be repriced or dropped, a receiving problem is a
 conversation, an injector is a workshop booking. Half of this inside a year is a serious result
-and still doubles their margin.
+and still lifts contribution by 36%.
 
 ## Finding 1: corridors that fund their own empty return
 
@@ -59,9 +60,9 @@ by corridor. On these lanes the outbound leg looks healthy and the round trip lo
 | Durban to Gqeberha | 39.3% | 60% | R2,262,709 | **-R256,723** |
 | Durban to Pietermaritzburg | 74.0% | 60% | R174,564 | **-R247,688** |
 | Cape Town to Bloemfontein | 30.2% | 60% | R1,670,736 | **-R237,661** |
-| Cape Town to Paarl | 65.6% | 60% | R77,623 | **-R225,569** |
+| Cape Town to Paarl | 65.6% | 60% | R77,623 | **-R225,835** |
 | Durban to Bloemfontein | 42.3% | 60% | R952,530 | **-R213,925** |
-| Cape Town to Worcester | 60.1% | 60% | R277,004 | **-R40,470** |
+| Cape Town to Worcester | 60.1% | 60% | R276,683 | **-R40,925** |
 | Johannesburg to Rustenburg | 64.4% | 60% | R397,365 | **-R28,799** |
 
 The whole reveal is one join: pair an outbound trip with the return it caused, and charge the
@@ -75,16 +76,16 @@ rate card is.
 ## Finding 2: deliveries that had to be done twice
 
 3,334 drops failed on first attempt in the last twelve months, 4.0% of
-everything delivered, costing **R6,509,220** in journeys that earned nothing.
+everything delivered, costing **R6,509,247** in journeys that earned nothing.
 
 | Site | Failure rate | Failed drops | Cost | Usual reason |
 |---|---|---|---|---|
-| Atlantis Industries | 45.6% | 411 | R1,046,186 | No booked slot |
-| Midrand Holdings | 44.5% | 318 | R559,986 | No booked slot |
-| Midrand Supplies 3 | 45.5% | 270 | R484,974 | No booked slot |
-| Karoo Supplies | 46.3% | 300 | R461,825 | No booked slot |
-| Springfield Manufacturing | 32.2% | 156 | R297,941 | Receiving closed |
-| Montague Wholesalers | 39.9% | 110 | R212,278 | No booked slot |
+| Atlantis Industries | 27.1% | 221 | R680,539 | No booked slot |
+| Midrand Supplies 3 | 33.2% | 127 | R256,910 | No booked slot |
+| Midrand Holdings | 31.6% | 158 | R232,605 | No booked slot |
+| Karoo Supplies | 35.1% | 158 | R226,970 | No booked slot |
+| Springfield Manufacturing | 23.1% | 78 | R141,149 | Receiving closed |
+| Montague Wholesalers | 25.5% | 63 | R127,408 | No booked slot |
 
 These sites are not having bad luck. They have no booked receiving slot, or a goods-in desk
 with one person on it. This is a conversation with six customers, not an analysis.
@@ -98,13 +99,13 @@ fleet, because consumption only means anything against like work.
 
 | Registration | Class | L/100km | Class median | Excess | Cost |
 |---|---|---|---|---|---|
-| CA219803 | Superlink 34t | 58.22 | 45.9 | +26.7% | R993,267 |
-| GP837939 | Superlink 34t | 58.82 | 45.9 | +28.0% | R919,818 |
-| GP153377 | Superlink 34t | 55.51 | 45.9 | +20.8% | R716,291 |
-| GP993548 | Tri-axle 24t | 45.25 | 37.1 | +22.1% | R632,088 |
-| ND548557 | Superlink 34t | 57.29 | 45.9 | +24.7% | R541,316 |
-| CA591856 | Tri-axle 24t | 48.11 | 37.1 | +29.8% | R453,583 |
-| ND132999 | Tri-axle 24t | 45.61 | 37.1 | +23.0% | R407,321 |
+| CA219803 | Superlink 34t | 58.33 | 45.8 | +27.3% | R540,038 |
+| GP837939 | Superlink 34t | 58.41 | 45.8 | +27.5% | R471,170 |
+| GP153377 | Superlink 34t | 55.96 | 45.8 | +22.1% | R428,702 |
+| ND548557 | Superlink 34t | 57.48 | 45.8 | +25.4% | R291,074 |
+| GP993548 | Tri-axle 24t | 44.26 | 37.4 | +18.4% | R284,887 |
+| CA591856 | Tri-axle 24t | 48.69 | 37.4 | +30.2% | R258,707 |
+| ND132999 | Tri-axle 24t | 45.5 | 37.4 | +21.7% | R192,769 |
 
 The dashboard cannot say whether this is injectors, dragging brakes, or diesel walking off the
 forecourt. It can say these seven are worth the price of a workshop booking to find out.
@@ -113,9 +114,9 @@ forecourt. It can say these seven are worth the price of a workshop booking to f
 
 | Dispatch day | On time | Drops |
 |---|---|---|
-| Month end run | 65.2% | 15,337 |
-| Friday | 73.9% | 25,510 |
-| Normal day | 95.7% | 119,040 |
+| Month end run | 65.2% | 8,030 |
+| Friday | 74.1% | 13,279 |
+| Normal day | 95.8% | 61,792 |
 
 Dispatch batches whatever is still standing into one run, trucks leave hours late, and every
 drop on the route is late together.
@@ -124,15 +125,15 @@ The part that matters commercially is who it lands on:
 
 | Contract | Dispatch day | On time |
 |---|---|---|
-| Contract | Friday | 56.3% |
-| Contract | Month end run | 47.0% |
-| Contract | Normal day | 96.0% |
-| Dedicated | Friday | 18.2% |
-| Dedicated | Month end run | 15.2% |
-| Dedicated | Normal day | 95.6% |
+| Contract | Friday | 56.8% |
+| Contract | Month end run | 46.5% |
+| Contract | Normal day | 96.2% |
+| Dedicated | Friday | 19.2% |
+| Dedicated | Month end run | 15.0% |
+| Dedicated | Normal day | 96.1% |
 | Spot | Friday | 94.8% |
-| Spot | Month end run | 86.4% |
-| Spot | Normal day | 95.4% |
+| Spot | Month end run | 86.7% |
+| Spot | Normal day | 95.5% |
 
 Dedicated accounts book a two hour window, Contract four, Spot eight. So the customers paying
 most for service are the ones failed first, and the ones on the loosest terms barely notice.
@@ -144,11 +145,11 @@ Penalty exposure on the anchor account, at 2% of monthly spend per point below 9
 
 | Class | Air trips | Weight used | Volume used | Cost |
 |---|---|---|---|---|
-| Superlink 34t | 3,576 | 69.0% | 82.6% | R54,803,779 |
-| Tri-axle 24t | 3,620 | 68.8% | 82.4% | R25,289,678 |
-| Rigid 14t | 209 | 76.7% | 74.9% | R799,871 |
-| Rigid 8t | 113 | 76.6% | 75.0% | R360,653 |
-| LDV 1.5t | 97 | 65.8% | 70.7% | R223,229 |
+| Superlink 34t | 1,843 | 69.1% | 82.6% | R28,575,280 |
+| Tri-axle 24t | 1,855 | 68.7% | 82.2% | R13,340,763 |
+| Rigid 14t | 112 | 76.5% | 74.9% | R427,084 |
+| Rigid 8t | 63 | 76.3% | 75.3% | R206,668 |
+| LDV 1.5t | 48 | 65.5% | 70.4% | R110,567 |
 
 Freight is billed by weight, but a trailer runs out of deck space long before it runs out of
 axle allowance on light, bulky cargo. These trips are full and the invoice is small.

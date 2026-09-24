@@ -76,6 +76,17 @@ The days-behind figure is computed in the browser against the reader's own clock
 at build time. A page left open overnight, or opened from a bookmark next month, tells the truth
 rather than the truth as of the build.
 
+### The demos: a fixed period
+
+The four demos run on synthetic data for a closed period, September 2024 to August 2026, and
+it never advances. Counted the live way, the badge went red within a fortnight of launch and
+read as a broken pipeline, when all it measured was how long ago the demo was made.
+
+So each demo's `meta.json` carries `"fixed_period": true`, written by `export_parquet.py`. With
+that flag the badge tracks the nightly rebuild instead (**Rebuilt today**, green within 2 days,
+amber to 14, red beyond), and the second line names the period: **Demo period to 31 Aug 2026**.
+A client deployment on live data leaves the flag out and gets the days-behind behaviour above.
+
 **Say this out loud in a demo.** Most dashboards a prospect has seen do not admit how old they
 are, and several of them are quietly stale. A dashboard that volunteers "15 days behind" is
 making an argument about your engineering.

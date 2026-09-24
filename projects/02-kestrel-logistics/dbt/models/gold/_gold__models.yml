@@ -171,11 +171,19 @@ models:
         description: >
           More than 15% of drops refused. A site at this level is not having bad luck, it has
           no booked receiving slot, and that is a conversation rather than an analysis.
+      - name: is_trailing_twelve_months
+        description: >
+          The month falls in the twelve months the closing bridge counts. The page and the
+          bridge both filter on this column, so a figure in the section and the same figure in
+          the close always cover the same months.
+        data_tests: [not_null]
 
   - name: mart_fuel_outliers
     description: >
-      Finding 3. One row per vehicle, compared against the median of its own class rather than
-      the fleet, because consumption only means something against like work.
+      Finding 3. One row per vehicle over the trailing twelve months, compared against the
+      median of its own class rather than the fleet, because consumption only means something
+      against like work. Twelve months because the closing bridge adds this to a year of
+      contribution, and the page calls it a year.
     columns:
       - name: excess_pct
         description: How far above the class median this vehicle burns.
@@ -201,11 +209,18 @@ models:
           2% of monthly spend for every percentage point below 90% on-time, on the one account
           whose contract carries the clause. Everyone else's late delivery costs goodwill,
           which does not appear here.
+      - name: is_trailing_twelve_months
+        description: >
+          The month falls in the twelve months the closing bridge counts. Section 4 and the
+          bridge both filter on it, so the penalty quoted in the section is the penalty in the
+          close.
+        data_tests: [not_null]
 
   - name: mart_load_factor
     description: >
-      Finding 5. Vehicle class by lane. Freight is billed by weight, but a trailer runs out of
-      deck space long before it runs out of axle allowance on light, bulky cargo.
+      Finding 5. Vehicle class by lane, over the trailing twelve months. Freight is billed by
+      weight, but a trailer runs out of deck space long before it runs out of axle allowance on
+      light, bulky cargo.
     columns:
       - name: utilisation_gap_pts
         description: Volume utilisation less weight utilisation. A large positive gap is a truck full of air.
@@ -223,7 +238,8 @@ models:
       So this runs the other way. It starts at what Kestrel actually earned and adds what each
       finding identified, ending at what the same fleet and the same customers could contribute
       with nothing new bought. The figures are what the findings are worth in full; recovery
-      assumptions belong in the conversation with the client, not baked into a mart.
+      assumptions belong in the conversation with the client, not baked into a mart. Every
+      step covers the same trailing twelve months as the contribution it starts from.
     columns:
       - name: step_order
         data_tests: [unique, not_null]
@@ -238,3 +254,10 @@ models:
     description: >
       Monthly trading summary by lane type, vehicle class and hub. Small enough to ship to a
       browser whole, which is what the dashboard overview reads.
+    columns:
+      - name: is_trailing_twelve_months
+        description: >
+          The month falls in the twelve months the headline counts. The empty kilometre share
+          on the map reads only these months, so it describes the same kilometres printed
+          beside it.
+        data_tests: [not_null]

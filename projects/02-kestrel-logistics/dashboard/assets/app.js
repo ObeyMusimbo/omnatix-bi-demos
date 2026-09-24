@@ -32,6 +32,25 @@ async function renderFreshness() {
   const daysBehind = Math.max(0, Math.floor((today - asDate(m.data_through)) / DAY_MS));
   const buildAge = Math.max(0, Math.floor((today - asDate(m.built_at)) / DAY_MS));
 
+  // A demo covers a closed, synthetic period, so its newest row never moves and a days-behind
+  // count would only measure how long ago the demo was made: it went red within a fortnight of
+  // launch and read as a broken pipeline. What is live is the nightly rebuild, so on a fixed
+  // period the badge tracks that and names the period plainly. Live client data carries no
+  // fixed_period flag and gets the days-behind alarm below.
+  if (m.fixed_period) {
+    const box = el('freshness');
+    box.classList.remove('is-current', 'is-lagging', 'is-stale');
+    box.classList.add(buildAge <= 2 ? 'is-current' : buildAge <= 14 ? 'is-lagging' : 'is-stale');
+    box.title = `Demonstration data for a fixed period, ${longDate(m.data_from)} to `
+      + `${longDate(m.data_through)}. The badge tracks the nightly rebuild. On live data it `
+      + `counts the days since the newest transaction.`;
+    el('fresh-label').textContent = buildAge === 0 ? 'Rebuilt today'
+      : buildAge === 1 ? 'Rebuilt yesterday' : `Rebuilt ${plural(buildAge, 'day')} ago`;
+    el('data-through').textContent = `Demo period to ${longDate(m.data_through)}`;
+    el('last-run').textContent = 'Fixed data, rebuilt and tested nightly';
+    return m;
+  }
+
   const state = daysBehind <= 2 ? 'is-current' : daysBehind <= 14 ? 'is-lagging' : 'is-stale';
   const label = daysBehind === 0 ? 'Up to date'
     : daysBehind <= 2 ? `Current, ${plural(daysBehind, 'day')} behind`
@@ -50,7 +69,7 @@ async function renderFreshness() {
 // ---------------------------------------------------------------- render
 
 async function render() {
-  const [bridge, lanesTtm, depots, cities, sites, thirsty, sla, slaContract, air, monthly] =
+  const [bridge, lanesTtm, depots, cities, sites, thirsty, sla, slaContract, air, monthly, [ttmKm]] =
     await Promise.all([
       q(`select * from mart_opportunity_bridge order by step_order`),
 
@@ -69,12 +88,17 @@ async function render() {
                 any_value(destination_lon) as lon
          from mart_lane_economics where lane_type = 'Line-haul' group by 1`),
 
+      // Every section reads the twelve months the closing bridge counts, through the flag the
+      // marts carry, so a figure here and the same figure in the close cannot disagree.
+      // A problem site is judged on the year as a whole. Flagging any site with one bad month
+      // swept in 186 of them, which contradicted the six the page talks about.
       q(`select customer_name, contract_type, sum(drops) as drops, sum(failed_drops) as failed,
                 round(sum(failed_drops) * 100.0 / nullif(sum(drops), 0), 1) as failure_rate_pct,
                 round(sum(failed_cost_zar), 2) as failed_cost_zar,
                 any_value(top_failure_reason) as reason,
-                bool_or(is_problem_site) as is_problem_site
-         from mart_failed_deliveries group by 1, 2 order by failed_cost_zar desc`),
+                sum(failed_drops) * 1.0 / nullif(sum(drops), 0) > 0.15 as is_problem_site
+         from mart_failed_deliveries where is_trailing_twelve_months
+         group by 1, 2 order by failed_cost_zar desc`),
 
       q(`select registration, vehicle_class, depot_name, trips, distance_km,
                 litres_per_100km, class_median_l100, excess_pct, excess_cost_zar, is_outlier
@@ -84,11 +108,11 @@ async function render() {
                 sum(drops) as drops, sum(on_time_drops) as on_time_drops,
                 round(sum(on_time_drops) * 100.0 / nullif(sum(drops), 0), 1) as on_time_pct,
                 round(sum(penalty_exposure_zar), 2) as penalty_zar
-         from mart_sla_performance group by 1`),
+         from mart_sla_performance where is_trailing_twelve_months group by 1`),
 
       q(`select contract_type, dispatch_day_bucket,
                 round(sum(on_time_drops) * 100.0 / nullif(sum(drops), 0), 1) as on_time_pct
-         from mart_sla_performance group by 1, 2`),
+         from mart_sla_performance where is_trailing_twelve_months group by 1, 2`),
 
       q(`select vehicle_class, sum(air_trips) as air_trips, sum(trips) as trips,
                 round(avg(avg_weight_utilisation_pct), 1) as weight_pct,
@@ -113,15 +137,19 @@ async function render() {
          from m
          where distance_km > (select median(distance_km) from m) * 0.3
          order by month_start_date`),
+
+      // The headline share covers the same twelve months as the kilometres printed beside it.
+      // It used to be taken over the whole chart, two years, against one year of kilometres.
+      q(`select sum(empty_distance_km) as empty_km, sum(distance_km) as km
+         from agg_trip_monthly where is_trailing_twelve_months`),
     ]);
 
   const h = bridge[0];
   const linehaul = lanesTtm.filter((l) => l.lane_type === 'Line-haul');
   const traps = linehaul.filter((l) => l.is_backhaul_trap)
     .sort((a, b) => a.contribution_zar - b.contribution_zar);
-  const emptyKm = monthly.reduce((a, m) => a + m.empty_distance_km, 0);
-  const totalKm = monthly.reduce((a, m) => a + m.distance_km, 0);
-  const emptyPct = emptyKm / totalKm * 100;
+  const emptyKm = ttmKm.empty_km;
+  const emptyPct = ttmKm.empty_km / ttmKm.km * 100;
   const trapLoss = traps.reduce((a, l) => a + l.contribution_zar, 0);
 
   el('main').innerHTML =
@@ -246,14 +274,15 @@ function sectionDoors(sites) {
   const totalCost = sites.reduce((a, s) => a + s.failed_cost_zar, 0);
   const problemCost = problem.reduce((a, s) => a + s.failed_cost_zar, 0);
   return `<section id="doors">
-    ${head('02', 'Deliveries that had to be done twice', `<b>${fmtNum(totalFailed)}</b> drops were
-      refused on first attempt, <b>${fmtPct(totalFailed / totalDrops * 100)}</b> of everything
-      delivered, costing <b>${fmtRc(totalCost)}</b> in journeys that earned nothing. It does not
-      appear in a revenue report, because a failed delivery has no revenue to report.
-      <b>${problem.length} sites</b> account for <b>${fmtRc(problemCost)}</b> of it.`)}
+    ${head('02', 'Deliveries that had to be done twice', `In the last twelve months
+      <b>${fmtNum(totalFailed)}</b> drops were refused on first attempt,
+      <b>${fmtPct(totalFailed / totalDrops * 100)}</b> of everything delivered, costing
+      <b>${fmtRc(totalCost)}</b> in journeys that earned nothing. It does not appear in a revenue
+      report, because a failed delivery has no revenue to report. The worst
+      <b>${problem.length} sites</b> account for <b>${fmtRc(problemCost)}</b> of it on their own.`)}
     ${figure({
       id: 'c-doors', title: 'Sites refusing more than 15% of deliveries',
-      note: 'These are not having bad luck. No booked receiving slot, a yard that shuts early, or a goods-in desk with one person on it. This is a conversation with six customers, not an analysis.',
+      note: `These are not having bad luck. No booked receiving slot, a yard that shuts early, or a goods-in desk with one person on it. This is a conversation with ${problem.length} customers, not an analysis.`,
       tableHtml: table([
         { key: 'customer_name', label: 'Site' },
         { key: 'contract_type', label: 'Contract' },
@@ -262,7 +291,7 @@ function sectionDoors(sites) {
         { key: 'failure_rate_pct', label: 'Failure rate', align: 'right', fmt: (x) => fmtPct(x), cls: () => 'breach' },
         { key: 'failed_cost_zar', label: 'Wasted', align: 'right', fmt: fmtR, cls: () => 'breach' },
         { key: 'reason', label: 'Usual reason' },
-      ], problem, { caption: 'Problem receiving sites, full period' }),
+      ], problem, { caption: 'Problem receiving sites, last twelve months' }),
     })}
   </section>`;
 }
@@ -271,8 +300,8 @@ function sectionThirsty(rows) {
   const out = rows.filter((r) => r.is_outlier);
   const total = out.reduce((a, r) => a + r.excess_cost_zar, 0);
   return `<section id="thirsty">
-    ${head('03', 'Seven vehicles drinking', `Compared against the median of their own class, on
-      the same lanes and the same loads, <b>${out.length} vehicles</b> burn
+    ${head('03', 'Seven vehicles drinking', `Over the last twelve months, compared against the
+      median of their own class on the same lanes and the same loads, <b>${out.length} vehicles</b> burn
       <b>${fmtPct(Math.min(...out.map((r) => r.excess_pct)), 0)} to
       ${fmtPct(Math.max(...out.map((r) => r.excess_pct)), 0)}</b> more diesel than they should.
       That gap is worth <b>${fmtRc(total)}</b> a year.`)}
@@ -325,7 +354,7 @@ function sectionFriday(sla, contract) {
       the month end run <b class="breach">${fmtPct(monthEnd.on_time_pct)}</b>. Dispatch batches
       whatever is still standing into one run, trucks leave hours late, and every drop on the
       route is late together. On the one account whose contract carries a service clause, that
-      is worth <b>${fmtRc(penalty)}</b>.`)}
+      was worth <b>${fmtRc(penalty)}</b> in penalties over the last twelve months.`)}
     ${figure({
       id: 'c-friday', title: 'On time delivery by dispatch day',
       note: 'Nothing about the road changed. The trucks left late.',
@@ -337,7 +366,7 @@ function sectionFriday(sla, contract) {
           cls: (x) => (x < 80 ? 'breach' : 'pos') },
         { key: 'penalty_zar', label: 'Penalty exposure', align: 'right', fmt: fmtR,
           cls: (x) => (x > 0 ? 'breach' : 'muted') },
-      ], sla, { caption: 'Full period' }),
+      ], sla, { caption: 'Last twelve months' }),
     })}
     ${grid}
   </section>`;
@@ -349,8 +378,8 @@ function sectionAir(rows) {
   return `<section id="air">
     ${head('05', 'Paying to move air', `Freight is billed by weight, but a trailer runs out of deck
       space long before it runs out of axle allowance on light, bulky cargo.
-      <b>${fmtNum(trips)} trips</b> ran over 85% full by volume and under 55% by weight. The truck
-      was full. The invoice was not.`)}
+      In the last twelve months <b>${fmtNum(trips)} trips</b> ran over 85% full by volume and
+      under 55% by weight. The truck was full. The invoice was not.`)}
     <p class="figure-note" style="max-width:74ch">Unlike the four findings above, this is not
       money sitting on the table today. It is the case for consolidating loads onto fewer, fuller
       trucks, and it is the one item here that needs an operations change rather than a phone
@@ -375,7 +404,9 @@ function sectionClose(h, bridge) {
       makes, on the same fleet serving the same customers with nothing new bought.`)}
     ${figure({
       id: 'c-bridge', title: 'Earned today, against what is available',
-      note: 'These are what the findings are worth in full. Nobody recovers all of a number like this: a lane can be repriced or dropped, a receiving problem is a conversation, an injector is a workshop booking. Half of it inside a year would still roughly double the margin.',
+      // The recovery line is computed, not asserted. It used to say half the total would
+      // "roughly double the margin", which the arithmetic never supported.
+      note: `These are what the findings are worth in full, over the same twelve months. Nobody recovers all of a number like this: a lane can be repriced or dropped, a receiving problem is a conversation, an injector is a workshop booking. Half of it inside a year would still lift contribution by ${fmtPct(h.identified_zar / 2 / h.ttm_contribution_zar * 100, 0)}.`,
       tableHtml: table([
         { key: 'driver', label: 'Driver' },
         { key: 'effect_zar', label: 'Worth', align: 'right', fmt: fmtR,

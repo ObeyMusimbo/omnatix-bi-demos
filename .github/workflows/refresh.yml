@@ -93,7 +93,9 @@ jobs:
           if git diff --staged --quiet; then
             echo 'Nothing changed, no commit.'
           else
-            git commit -m "Refresh: data through $(date -u +%Y-%m-%d)"
+            # The build date, not the data date. The demos cover a fixed period, so "data through
+            # today" was a claim the data did not support.
+            git commit -m "Refresh: rebuilt $(date -u +%Y-%m-%d)"
             git pull --rebase
             git push
           fi

@@ -74,6 +74,10 @@ meta = {
     "built_at": datetime.now(timezone.utc).replace(microsecond=0).isoformat(),
     "data_from": data_from.isoformat(),
     "data_through": data_through.isoformat(),
+    # Synthetic demo data covers a closed period and never advances, so the dashboard tracks
+    # the nightly rebuild rather than counting days since the newest row. A client deployment
+    # on live data leaves this out and gets the days-behind alarm.
+    "fixed_period": True,
     "appointments": appointments,
     "billed_zar": int(billed),
     "clinics": clinics,

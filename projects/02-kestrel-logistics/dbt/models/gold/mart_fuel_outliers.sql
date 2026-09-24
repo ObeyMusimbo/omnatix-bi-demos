@@ -3,6 +3,10 @@
 -- Consumption is only meaningful against like work, so each vehicle is compared with the
 -- median of its own class rather than with the fleet. Excess litres are valued at the price
 -- that vehicle actually paid, not at an average, because diesel moved across the window.
+--
+-- Trailing twelve months, the window every other step of the closing bridge counts. This mart
+-- used to read the whole two years, so the bridge added two years of excess diesel to one
+-- year of everything else and the page called it "a year".
 
 with vehicle_usage as (
 
@@ -18,6 +22,7 @@ with vehicle_usage as (
     from {{ ref('fct_trip') }} t
     where t.fuel_litres > 0
       and t.distance_km > 0
+      and t.trip_date > date '{{ var("period_end") }}'::date - interval 365 day
     group by 1, 2
 
 ),

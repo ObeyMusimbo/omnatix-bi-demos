@@ -15,6 +15,10 @@
   like this: a lane can be repriced or dropped, a receiving problem is a conversation, an
   injector is a workshop booking. Recovery assumptions belong in the conversation with the
   client, not baked into a mart.
+
+  Every step covers the same trailing twelve months as the anchor. The thirsty vehicle step
+  once summed two years against one year of everything else, which overstated the total by
+  about a year of excess diesel.
 #}
 
 with actual as (
@@ -42,7 +46,7 @@ redeliveries as (
 
     select coalesce(sum(failed_cost_zar), 0) as effect_zar
     from {{ ref('mart_failed_deliveries') }}
-    where month_start_date > date '{{ var("period_end") }}'::date - interval 365 day
+    where is_trailing_twelve_months
 
 ),
 
@@ -58,7 +62,7 @@ penalties as (
 
     select coalesce(sum(penalty_exposure_zar), 0) as effect_zar
     from {{ ref('mart_sla_performance') }}
-    where month_start_date > date '{{ var("period_end") }}'::date - interval 365 day
+    where is_trailing_twelve_months
 
 ),
 

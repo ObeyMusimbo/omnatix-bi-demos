@@ -51,7 +51,7 @@ PROJECTS = [
         "client": "Kestrel Logistics",
         "industry": "Freight and fleet",
         "problem": "Delivery is treated as fixed overhead, so nobody knows which routes lose money.",
-        "headline_value": "R21.9m",
+        "headline_value": "R19.7m",
         "headline_label": "identified against R27.6m of contribution",
         "accent": "#22D3EE",
     },
@@ -101,7 +101,9 @@ def card(project: dict, built: bool, meta: dict | None) -> str:
 
     if built:
         through = meta.get("data_through", "") if meta else ""
-        foot_right = f"Data to {e(through)}" if through else ""
+        # Same words as the demo's own badge: a fixed synthetic period is named as one.
+        lead = "Demo period to" if meta and meta.get("fixed_period") else "Data to"
+        foot_right = f"{lead} {e(through)}" if through else ""
         head = (
             f'<a class="card" href="{project["slug"]}/" style="--accent:{accent}">'
         )

@@ -33,6 +33,25 @@ async function renderFreshness() {
   const today = new Date();
   const behind = Math.max(0, Math.floor((today - asDate(m.data_through)) / DAY_MS));
   const buildAge = Math.max(0, Math.floor((today - asDate(m.built_at)) / DAY_MS));
+
+  // A demo covers a closed, synthetic period, so its newest row never moves and a days-behind
+  // count would only measure how long ago the demo was made: it went red within a fortnight of
+  // launch and read as a broken pipeline. What is live is the nightly rebuild, so on a fixed
+  // period the badge tracks that and names the period plainly. Live client data carries no
+  // fixed_period flag and gets the days-behind alarm below.
+  if (m.fixed_period) {
+    const box = el('freshness');
+    box.classList.remove('is-current', 'is-lagging', 'is-stale');
+    box.classList.add(buildAge <= 2 ? 'is-current' : buildAge <= 14 ? 'is-lagging' : 'is-stale');
+    box.title = `Demonstration data for a fixed period, ${longDate(m.data_from)} to `
+      + `${longDate(m.data_through)}. The badge tracks the nightly rebuild. On live data it `
+      + `counts the days since the newest transaction.`;
+    el('fresh-label').textContent = buildAge === 0 ? 'Rebuilt today'
+      : buildAge === 1 ? 'Rebuilt yesterday' : `Rebuilt ${plural(buildAge, 'day')} ago`;
+    el('data-through').textContent = `Demo period to ${longDate(m.data_through)}`;
+    el('last-run').textContent = 'Fixed data, rebuilt and tested nightly';
+    return m;
+  }
   const state = behind <= 2 ? 'is-current' : behind <= 14 ? 'is-lagging' : 'is-stale';
   const box = el('freshness');
   box.classList.remove('is-current', 'is-lagging', 'is-stale');

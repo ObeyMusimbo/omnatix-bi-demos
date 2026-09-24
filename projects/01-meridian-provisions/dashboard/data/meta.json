@@ -2,6 +2,7 @@
   "built_at": "2026-09-23T07:29:24+00:00",
   "data_from": "2024-09-02",
   "data_through": "2026-08-31",
+  "fixed_period": true,
   "orders": 56217,
   "sales_lines": 282650,
   "tables": {

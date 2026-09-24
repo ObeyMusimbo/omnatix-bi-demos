@@ -69,18 +69,22 @@ traps = rows("""
     order by contribution_zar
 """)
 
+# Every query below reads the same twelve months as the page and the bridge, through the flag
+# the marts carry, so this script cannot quote a two year figure beside a one year close.
 sites = rows("""
-    select customer_name, round(avg(failure_rate_pct), 1), sum(failed_drops),
+    select customer_name, round(sum(failed_drops) * 100.0 / sum(drops), 1), sum(failed_drops),
            round(sum(failed_cost_zar)), any_value(top_failure_reason)
     from main_gold.mart_failed_deliveries
-    where is_problem_site
-    group by 1 order by 4 desc limit 6
+    where is_trailing_twelve_months
+    group by 1
+    having sum(failed_drops) * 1.0 / sum(drops) > 0.15
+    order by 4 desc limit 6
 """)
 fail_all = one("""
     select round(sum(failed_cost_zar)), sum(failed_drops),
            round(sum(failed_drops) * 100.0 / sum(drops), 2)
     from main_gold.mart_failed_deliveries
-    where month_start_date > date '2025-08-31'
+    where is_trailing_twelve_months
 """)
 
 thirsty = rows("""
@@ -91,20 +95,18 @@ thirsty = rows("""
 
 sla = rows("""
     select dispatch_day_bucket, round(sum(on_time_drops) * 100.0 / sum(drops), 1), sum(drops)
-    from main_gold.mart_sla_performance group by 1 order by 2
+    from main_gold.mart_sla_performance where is_trailing_twelve_months group by 1 order by 2
 """)
 sla_contract = rows("""
-    select cu.contract_type, d.dispatch_day_bucket,
-           round(count(*) filter (where c.is_on_time) * 100.0 / count(*), 1)
-    from main_gold.fct_consignment c
-    join main_gold.dim_date d on c.trip_date = d.date_day
-    join main_gold.dim_customer cu on c.customer_id = cu.customer_id
-    where c.trip_is_known
+    select contract_type, dispatch_day_bucket,
+           round(sum(on_time_drops) * 100.0 / sum(drops), 1)
+    from main_gold.mart_sla_performance
+    where is_trailing_twelve_months
     group by 1, 2 order by 1, 2
 """)
 penalty = one("""
     select round(sum(penalty_exposure_zar))
-    from main_gold.mart_sla_performance where month_start_date > date '2025-08-31'
+    from main_gold.mart_sla_performance where is_trailing_twelve_months
 """)[0]
 
 air = rows("""
@@ -112,6 +114,10 @@ air = rows("""
            round(avg(avg_volume_utilisation_pct), 1), round(sum(air_trip_cost_zar))
     from main_gold.mart_load_factor group by 1 having sum(air_trips) > 0 order by 5 desc
 """)
+
+# Computed rather than typed. The script used to say each finding was "a fifth to a third" of
+# the total and that half of it "doubles their margin"; neither survived the numbers changing.
+shares = [s for _, _, t, _, s, _ in bridge if t == "increase"]
 
 bridge_rows = ""
 for step, driver, step_type, effect, share, ref in bridge:
@@ -171,12 +177,13 @@ turns is carrying nothing, and until today nobody was charged for it.
 |---|---|---|---|
 {bridge_rows}
 **{rand(identified)} identified against {rand(ttm_contrib)} earned, or {pct(identified_pct)} of
-contribution.** Four findings, each worth a fifth to a third of the total, on the same fleet
-serving the same customers with nothing new bought.
+contribution.** Four findings, each worth {pct(min(shares), 0)} to {pct(max(shares), 0)} of the
+total, on the same fleet serving the same customers with nothing new bought. Every step covers
+the same twelve months.
 
 Do not promise full recovery. A lane can be repriced or dropped, a receiving problem is a
 conversation, an injector is a workshop booking. Half of this inside a year is a serious result
-and still doubles their margin.
+and still lifts contribution by {pct(identified / 2 / ttm_contrib * 100, 0)}.
 
 ## Finding 1: corridors that fund their own empty return
 

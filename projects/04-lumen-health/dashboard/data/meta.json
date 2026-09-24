@@ -2,6 +2,7 @@
   "built_at": "2026-09-23T07:30:10+00:00",
   "data_from": "2024-09-02",
   "data_through": "2026-08-31",
+  "fixed_period": true,
   "appointments": 232558,
   "billed_zar": 160784568,
   "clinics": 6,

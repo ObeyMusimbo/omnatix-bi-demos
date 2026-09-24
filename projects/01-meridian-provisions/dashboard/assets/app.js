@@ -54,6 +54,25 @@ async function renderFreshness() {
   const daysBehind = Math.max(0, Math.floor((today - asDate(m.data_through)) / DAY_MS));
   const buildAge = Math.max(0, Math.floor((today - asDate(m.built_at)) / DAY_MS));
 
+  // A demo covers a closed, synthetic period, so its newest row never moves and a days-behind
+  // count would only measure how long ago the demo was made: it went red within a fortnight of
+  // launch and read as a broken pipeline. What is live is the nightly rebuild, so on a fixed
+  // period the badge tracks that and names the period plainly. Live client data carries no
+  // fixed_period flag and gets the days-behind alarm below.
+  if (m.fixed_period) {
+    const box = el('freshness');
+    box.classList.remove('is-current', 'is-lagging', 'is-stale');
+    box.classList.add(buildAge <= 2 ? 'is-current' : buildAge <= 14 ? 'is-lagging' : 'is-stale');
+    box.title = `Demonstration data for a fixed period, ${longDate(m.data_from)} to `
+      + `${longDate(m.data_through)}. The badge tracks the nightly rebuild. On live data it `
+      + `counts the days since the newest transaction.`;
+    el('fresh-label').textContent = buildAge === 0 ? 'Rebuilt today'
+      : buildAge === 1 ? 'Rebuilt yesterday' : `Rebuilt ${plural(buildAge, 'day')} ago`;
+    el('data-through').textContent = `Demo period to ${longDate(m.data_through)}`;
+    el('last-run').textContent = 'Fixed data, rebuilt and tested nightly';
+    return m;
+  }
+
   const state = daysBehind <= 2 ? 'is-current' : daysBehind <= 14 ? 'is-lagging' : 'is-stale';
   const label = daysBehind === 0 ? 'Up to date'
     : daysBehind <= 2 ? `Current, ${plural(daysBehind, 'day')} behind`
@@ -304,10 +323,12 @@ function sectionDiscount(rows) {
   return `<section id="discount">
     ${head('03', 'The discount nobody reset', `Summit Cash &amp; Carry is the largest account on
       the book. Its realised discount drifted from <b>${fmtPct(firstRow.realised_discount_pct)}</b>
-      to <b>${fmtPct(lastRow.realised_discount_pct)}</b> over two years, <b>${signed(ownCreep)} points</b>, against <b>${signed(chanCreep)} points</b> across the
-      rest of Wholesale. Some of this is market-wide and unavoidable. The
-      <b>${(ownCreep - chanCreep).toFixed(1)} points</b> of excess is not, and it is worth
-      <b>${fmtRc(forgone)}</b>.`)}
+      to <b>${fmtPct(lastRow.realised_discount_pct)}</b> over two years,
+      <b>${signed(ownCreep).replace('%', '')} points</b>, and nobody reset it. Held at the opening
+      rate, it would have kept <b>${fmtRc(forgone)}</b> of revenue over those two years. Some of
+      the drift is market-wide: the rest of Wholesale moved
+      <b>${signed(chanCreep).replace('%', '')} points</b>. The
+      <b>${(ownCreep - chanCreep).toFixed(1)} points</b> above that are this account's alone.`)}
     ${legend([
       { name: 'Summit Cash & Carry', color: v('--s1') },
       { name: 'Rest of Wholesale', color: v('--s2') },

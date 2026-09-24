@@ -21,6 +21,9 @@ with final as (
         round(sum(revenue_zar) / nullif(sum(distance_km), 0), 3) as revenue_per_km_zar,
         round(avg(weight_utilisation_pct) filter (where not is_empty), 2) as avg_weight_utilisation_pct,
         round(avg(volume_utilisation_pct) filter (where not is_empty), 2) as avg_volume_utilisation_pct,
+        -- Last in the list so the positional group by below is untouched. The headline empty
+        -- share reads the same twelve months as the kilometres printed beside it.
+        month_start_date > date '{{ var("period_end") }}'::date - interval 365 day as is_trailing_twelve_months,
     from {{ ref('fct_trip') }}
     group by 1, 2, 3, 4, 5
 

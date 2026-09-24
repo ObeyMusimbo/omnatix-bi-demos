@@ -68,6 +68,10 @@ final as (
              then round(greatest({{ penalty_threshold }} - on_time_drops * 100.0 / nullif(drops, 0), 0)
                         * {{ penalty_rate_per_point }} * revenue_zar, 2)
              else 0 end as penalty_exposure_zar,
+        -- The twelve months the closing bridge counts, defined once for the same reason as in
+        -- mart_failed_deliveries: the page quoted R9.8m over two years beside a bridge that
+        -- counted R5.2m over one.
+        month_start_date > date '{{ var("period_end") }}'::date - interval 365 day as is_trailing_twelve_months,
     from by_bucket
 
 )
