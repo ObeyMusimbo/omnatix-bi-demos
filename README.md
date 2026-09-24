@@ -212,7 +212,7 @@ Applied to every project in this repo.
 
 | Project | Models | Tests | Parquet shipped |
 |---|---|---|---|
-| 01 Meridian | 31 | 97 | 1.2 MB |
+| 01 Meridian | 31 | 102 | 1.2 MB |
 | 02 Kestrel | 35 | 60 | 228 KB |
 | 03 Sable & Finch | 32 | 158 | 140 KB |
 | 04 Lumen | 36 | 125 | 84 KB |

@@ -138,18 +138,26 @@ f2_windows = one("""
 
 # ----------------------------------------------------------------- finding 3
 
+# The same figures the page prints: first and last month rather than the peak, and the revenue
+# forgone split into the twelve months the bridge counts and the two years the section quotes.
+# This table used to be headed TTM while summing both years.
 f3 = one("""
     select
-        sum(revenue_forgone_vs_baseline_zar),
-        max(discount_creep_pct_pts),
+        sum(revenue_forgone_vs_baseline_zar) filter (where month_start_date > date '2025-08-31'),
+        arg_max(realised_discount_pct, month_start_date)
+            - arg_min(realised_discount_pct, month_start_date),
         max(group_share_of_company_revenue_pct),
-        min(baseline_discount_pct),
-        max(realised_discount_pct)
+        arg_min(realised_discount_pct, month_start_date),
+        arg_max(realised_discount_pct, month_start_date),
+        sum(revenue_forgone_vs_baseline_zar)
     from main_gold.mart_discount_trend
     where customer_group = 'Summit Cash & Carry'
 """)
 f3_peers = rows("""
-    select customer_group, sum(revenue_forgone_vs_baseline_zar), max(discount_creep_pct_pts)
+    select customer_group,
+           sum(revenue_forgone_vs_baseline_zar) filter (where month_start_date > date '2025-08-31'),
+           arg_max(realised_discount_pct, month_start_date)
+               - arg_min(realised_discount_pct, month_start_date)
     from main_gold.mart_discount_trend
     group by 1
     order by 2 desc nulls last
@@ -280,23 +288,27 @@ before anyone reads a number.
 
 ## Finding 3: Discount creep on the largest account
 
-| Measure | TTM |
+| Measure | Value |
 |---|---|
 | Share of company revenue | {pct(f3[2])} |
-| Discount at the start of the window | {pct(f3[3])} |
-| Discount now | {pct(f3[4])} |
+| Discount in the first month of the window | {pct(f3[3])} |
+| Discount in the last month | {pct(f3[4])} |
 | Creep | **+{f3[1]:.1f} percentage points** |
-| Revenue forgone vs holding the opening rate | **{rand(f3[0])}** |
+| Revenue forgone vs holding the opening rate, last twelve months | **{rand(f3[0])}** |
+| The same, over the two years | {rand(f3[5])} |
+
+The twelve month figure is the one in the bridge. Quote the two year figure only as the second
+number, and say which is which.
 
 Nobody ever reset it. Revenue kept growing, so nobody looked.
 
 For contrast, the same measure across the largest groups:
 
-| Customer group | Revenue forgone | Creep |
+| Customer group | Revenue forgone, last twelve months | Creep |
 |---|---|---|
 """
 for g, fo, cr in f3_peers:
-    doc += f"| {g} | {rand(fo or 0)} | +{cr:.1f} pts |\n"
+    doc += f"| {g} | {rand(fo or 0)} | {cr:+.1f} pts |\n"
 
 doc += f"""
 Reveal with realised discount by month for this group against the channel average excluding

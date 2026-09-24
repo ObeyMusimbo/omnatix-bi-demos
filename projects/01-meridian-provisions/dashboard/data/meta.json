@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-09-24T01:36:06+00:00",
+  "built_at": "2026-09-24T01:48:26+00:00",
   "data_from": "2024-09-02",
   "data_through": "2026-08-31",
   "fixed_period": true,
@@ -12,15 +12,15 @@
     },
     "mart_margin_waterfall": {
       "rows": 238,
-      "bytes": 15989
+      "bytes": 16066
     },
     "mart_promo_performance": {
       "rows": 2558,
-      "bytes": 234390
+      "bytes": 234954
     },
     "mart_discount_trend": {
       "rows": 9114,
-      "bytes": 609344
+      "bytes": 610144
     },
     "mart_stockout_impact": {
       "rows": 108,
@@ -28,15 +28,15 @@
     },
     "mart_dead_stock": {
       "rows": 393,
-      "bytes": 22575
+      "bytes": 22719
     },
     "agg_sales_monthly": {
       "rows": 834,
-      "bytes": 56937
+      "bytes": 57265
     },
     "agg_product_month": {
       "rows": 3096,
-      "bytes": 209926
+      "bytes": 210328
     },
     "dim_product": {
       "rows": 131,

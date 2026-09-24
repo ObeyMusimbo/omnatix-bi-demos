@@ -8,17 +8,25 @@
   Read the drivers as gross-profit effects against the counterfactual "margin simply held
   at last year's rate". They are deliberately not mutually exclusive to the last cent -
   the residual row absorbs the overlap and the drivers this does not name.
+
+  Every step covers the same trailing twelve months as the gap it explains. The promotion
+  and discount steps once summed the whole two year window inside a one year gap, which
+  overstated both by about R2.8m between them and understated the residual by the same.
+  The windows come from period_end rather than typed dates, so they cannot drift apart.
 #}
+
+{%- set ttm_after = "(date '" ~ var('period_end') ~ "' - interval 12 month)::date" -%}
+{%- set prior_after = "(date '" ~ var('period_end') ~ "' - interval 24 month)::date" %}
 
 with periods as (
 
     select
-        sum(case when order_date > date '2025-08-31' then revenue_zar else 0 end) as ttm_revenue,
-        sum(case when order_date > date '2025-08-31' then gross_profit_zar else 0 end) as ttm_gp,
-        sum(case when order_date <= date '2025-08-31' then revenue_zar else 0 end) as prior_revenue,
-        sum(case when order_date <= date '2025-08-31' then gross_profit_zar else 0 end) as prior_gp
+        sum(case when order_date > {{ ttm_after }} then revenue_zar else 0 end) as ttm_revenue,
+        sum(case when order_date > {{ ttm_after }} then gross_profit_zar else 0 end) as ttm_gp,
+        sum(case when order_date <= {{ ttm_after }} then revenue_zar else 0 end) as prior_revenue,
+        sum(case when order_date <= {{ ttm_after }} then gross_profit_zar else 0 end) as prior_gp
     from {{ ref('fct_sales_line') }}
-    where order_date > date '2024-08-31'
+    where order_date > {{ prior_after }}
 
 ),
 
@@ -34,21 +42,25 @@ gap as (
 
 ),
 
--- Driver 1: units sold on deal below cost
+-- Driver 1: units sold on deal below cost, in promotion weeks inside the twelve months.
+-- Weeks start on a Monday and 1 September 2025 is one, so no week straddles the boundary.
 promo as (
 
     select sum(gp_forgone_vs_baseline_zar) as effect_zar
     from {{ ref('mart_promo_performance') }}
     where promo_phase = 'On promotion'
+      and week_start_date > {{ ttm_after }}
 
 ),
 
--- Driver 2: the largest account's discount drifting upward and never being reset
+-- Driver 2: the largest account's discount drifting upward and never being reset, valued
+-- over the twelve months against the rate it opened the window on
 discount_creep as (
 
     select sum(revenue_forgone_vs_baseline_zar) as effect_zar
     from {{ ref('mart_discount_trend') }}
     where customer_group = 'Summit Cash & Carry'
+      and month_start_date > {{ ttm_after }}
 
 ),
 

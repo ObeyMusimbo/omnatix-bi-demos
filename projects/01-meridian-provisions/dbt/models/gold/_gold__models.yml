@@ -645,3 +645,38 @@ models:
         description: Plain wording of why the row is flagged - "Discontinued and no sale in 180+ days", "No sale in 180+ days" or "Never sold". Empty where the stock is not dead. Written out so it can be dropped straight into a report without being decoded.
       - name: dead_stock_value_zar
         description: The stock value in rand where the row is dead, and zero where it is not. Sum this column to get the working capital that could be released, without needing a filter on the chart.
+
+  - name: mart_gp_bridge
+    description: >
+      The closing visual. Why gross profit grew 4.1% while revenue grew 11.9%, as a bridge from
+      what gross profit would have been had margin held at last year's rate down to what was
+      actually earned. The difference is the gap, and each step is a driver's share of it.
+
+      Every step covers the same trailing twelve months as the gap, taken from period_end. The
+      promotion and discount steps once summed the whole two year window inside a one year gap,
+      which overstated both and left the residual too small. The residual row, other discount
+      drift and mix, absorbs overlap between the named drivers and everything they do not name,
+      so the bridge closes to the rand by construction and a test holds it there.
+    columns:
+      - name: step_order
+        description: Position of the step in the bridge, anchor first and actual gross profit last.
+        data_tests: [unique, not_null]
+      - name: step_type
+        description: "anchor is gross profit at last year's margin, decrease is a driver, total is actual gross profit."
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['anchor', 'decrease', 'total']
+      - name: effect_zar
+        description: >
+          In rand. For the anchor and the total, a level of gross profit. For a driver, the gross
+          profit it cost over the trailing twelve months, negative because it pulls the bridge down.
+        data_tests: [not_null]
+      - name: pct_of_gap
+        description: >
+          The driver's share of the gap, in percent. Empty on the anchor and the total, which are
+          levels rather than movements. The shares of the four drivers sum to 100.
+      - name: finding_ref
+        description: The dashboard section that examines this driver. Empty on the residual, which has no section of its own.
+      - name: total_gap_zar
+        description: Gross profit at last year's margin less actual gross profit, the headline the page opens on.

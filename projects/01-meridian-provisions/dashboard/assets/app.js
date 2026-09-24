@@ -147,7 +147,7 @@ async function render() {
     sectionGap(h, revGrowth, gpGrowth, bridge) +
     sectionWater(cascadeSteps, brands) +
     sectionPromo(promoWeekly, promoDetail(promoWeekly)) +
-    sectionDiscount(discount) +
+    sectionDiscount(discount, bridge) +
     sectionStock(stock) +
     sectionDead(dead);
 
@@ -195,6 +195,13 @@ function sectionGap(h, revGrowth, gpGrowth, bridge) {
       <div class="tile-delta"><span class="${dir}">${d}</span></div>
     </div>`).join('');
 
+  // Computed from the bridge rather than typed. The note used to say four drivers accounted for
+  // the gap and each had its own section; the residual has no section, and once every step was
+  // put on the same twelve months it became the largest of the four.
+  const named = bridge.filter((r) => r.step_type === 'decrease' && r.finding_ref);
+  const namedShare = named.reduce((a, r) => a + r.pct_of_gap, 0);
+  const namedCount = ['No', 'One', 'Two', 'Three', 'Four', 'Five'][named.length] ?? named.length;
+
   const bridgeTable = table(
     [
       { key: 'driver', label: 'Driver' },
@@ -218,7 +225,7 @@ function sectionGap(h, revGrowth, gpGrowth, bridge) {
     <div class="tiles">${tiles}</div>
     ${figure({
       id: 'c-bridge', title: 'Where the gross profit went',
-      note: 'Four drivers account for the gap. Each is examined in the sections that follow. Bars run from last year’s margin rate applied to this year’s revenue, down to what was actually earned. The vertical axis is truncated so the steps stay legible, the two dark bars continue below the plot.',
+      note: `${namedCount} named drivers account for ${fmtPct(namedShare, 0)} of the gap, and each is examined in the sections that follow. The rest is discount drift and mix spread across the wider book. Every step covers the same twelve months as the gap. Bars run from last year’s margin rate applied to this year’s revenue, down to what was actually earned. The vertical axis is truncated so the steps stay legible, the two dark bars continue below the plot.`,
       tableHtml: bridgeTable,
     })}
     ${figure({
@@ -314,10 +321,14 @@ function sectionPromo(weekly, phases) {
   </section>`;
 }
 
-function sectionDiscount(rows) {
+function sectionDiscount(rows, bridge) {
   const lastRow = rows[rows.length - 1];
   const firstRow = rows[0];
   const forgone = rows.reduce((a, r) => a + (r.revenue_forgone_vs_baseline_zar || 0), 0);
+  // The twelve month figure is read off the bridge step itself, so this section and the
+  // closing bar can never quote different numbers for the same finding.
+  const creepStep = bridge.find((r) => r.finding_ref === '3');
+  const forgoneTtm = creepStep ? -creepStep.effect_zar : null;
   const ownCreep = lastRow.realised_discount_pct - firstRow.realised_discount_pct;
   const chanCreep = lastRow.channel_pct - firstRow.channel_pct;
   return `<section id="discount">
@@ -325,7 +336,8 @@ function sectionDiscount(rows) {
       the book. Its realised discount drifted from <b>${fmtPct(firstRow.realised_discount_pct)}</b>
       to <b>${fmtPct(lastRow.realised_discount_pct)}</b> over two years,
       <b>${signed(ownCreep).replace('%', '')} points</b>, and nobody reset it. Held at the opening
-      rate, it would have kept <b>${fmtRc(forgone)}</b> of revenue over those two years. Some of
+      rate, it would have kept <b>${fmtRc(forgoneTtm)}</b> of revenue in the last twelve months
+      alone, and ${fmtRc(forgone)} across the two years. Some of
       the drift is market-wide: the rest of Wholesale moved
       <b>${signed(chanCreep).replace('%', '')} points</b>. The
       <b>${(ownCreep - chanCreep).toFixed(1)} points</b> above that are this account's alone.`)}

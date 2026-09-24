@@ -34,10 +34,10 @@ the two can never disagree.
 | Driver | Gross profit effect | Share of gap | Finding |
 |---|---|---|---|
 | _Gross profit at last year's margin_ | _R180,672,793_ | | |
-| Promotion sold below cost | -R3,659,274 | 29.0% | 2 |
-| Discount creep on the largest account | -R4,805,686 | 38.1% | 3 |
+| Promotion sold below cost | -R1,796,197 | 14.2% | 2 |
+| Discount creep on the largest account | -R3,894,718 | 30.9% | 3 |
 | Bulk water taking share at a low margin | -R2,046,619 | 16.2% | 1 |
-| Other discount drift and mix | -R2,104,041 | 16.7% |  |
+| Other discount drift and mix | -R4,878,086 | 38.7% |  |
 | **Actual gross profit** | **R168,057,174** | **7.5% below** | |
 
 Note the bulk water line carefully. That range did not lose gross profit, its gross profit
@@ -101,24 +101,28 @@ before anyone reads a number.
 
 ## Finding 3: Discount creep on the largest account
 
-| Measure | TTM |
+| Measure | Value |
 |---|---|
 | Share of company revenue | 7.9% |
-| Discount at the start of the window | 8.1% |
-| Discount now | 15.7% |
-| Creep | **+7.6 percentage points** |
-| Revenue forgone vs holding the opening rate | **R4,805,686** |
+| Discount in the first month of the window | 8.1% |
+| Discount in the last month | 15.3% |
+| Creep | **+7.2 percentage points** |
+| Revenue forgone vs holding the opening rate, last twelve months | **R3,894,718** |
+| The same, over the two years | R4,805,686 |
+
+The twelve month figure is the one in the bridge. Quote the two year figure only as the second
+number, and say which is which.
 
 Nobody ever reset it. Revenue kept growing, so nobody looked.
 
 For contrast, the same measure across the largest groups:
 
-| Customer group | Revenue forgone | Creep |
+| Customer group | Revenue forgone, last twelve months | Creep |
 |---|---|---|
-| Summit Cash & Carry | R4,805,686 | +7.6 pts |
-| Apex Depot | R2,483,770 | +3.4 pts |
-| Ironstone Wholesale | R1,754,863 | +3.2 pts |
-| Karoo Supply Co | R1,451,649 | +3.5 pts |
+| Summit Cash & Carry | R3,894,718 | +7.2 pts |
+| Apex Depot | R1,934,300 | +2.9 pts |
+| Ironstone Wholesale | R1,410,387 | +2.9 pts |
+| Karoo Supply Co | R1,128,928 | +2.8 pts |
 
 Reveal with realised discount by month for this group against the channel average excluding
 them. One line climbs, the other is flat.
