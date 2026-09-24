@@ -37,14 +37,20 @@ body {
 
 header { padding: 5rem 0 0; }
 
+/* The lockup from the business card: the silver mark, then the name set wide and heavy. The
+   mark is the silver one because this page is dark; the black one is for white paper. */
 .mark {
-  font-size: 0.82rem;
-  font-weight: 500;
-  letter-spacing: 0.32em;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
   text-transform: uppercase;
   color: var(--text);
   margin: 0 0 3rem;
 }
+.mark img { width: 48px; height: 48px; flex: none; }
 
 h1 {
   font-family: var(--serif);

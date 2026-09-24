@@ -154,6 +154,8 @@ def main() -> int:
     template = (SITE / "index.html").read_text(encoding="utf-8")
     (DIST / "index.html").write_text(template.replace("{{CARDS}}", "\n".join(cards)), encoding="utf-8")
     shutil.copy2(SITE / "omnatix.css", DIST / "omnatix.css")
+    # The Omnatix mark, favicon and home screen icon, cut from the business card artwork.
+    shutil.copytree(SITE / "brand", DIST / "brand", dirs_exist_ok=True)
 
     # Without this, Cloudflare Pages answers an unknown path with the landing page and a 200.
     # A mistyped link then looks like it worked, which is worse than an honest failure: the
