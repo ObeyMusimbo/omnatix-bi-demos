@@ -80,7 +80,7 @@ everything delivered, costing **R6,509,220** in journeys that earned nothing.
 
 | Site | Failure rate | Failed drops | Cost | Usual reason |
 |---|---|---|---|---|
-| Atlantis Industries | 27.1% | 221 | R680,539 | Goods-in queue timeout |
+| Atlantis Industries | 27.1% | 221 | R680,539 | No booked slot |
 | Midrand Supplies 3 | 33.2% | 127 | R256,910 | No booked slot |
 | Midrand Holdings | 31.6% | 158 | R232,605 | No booked slot |
 | Karoo Supplies | 35.1% | 158 | R226,970 | No booked slot |
