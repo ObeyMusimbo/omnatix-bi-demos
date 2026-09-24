@@ -9,8 +9,10 @@
   Colours are read from CSS custom properties, so the same code renders Ledger on paper and
   Control Tower on near-black without knowing which it is in.
 
-  Every chart here renders at the container's true pixel width (no viewBox scaling), so
-  measured text width is the width that ships. Charts re-render on resize.
+  Every chart here renders at the container's true pixel width, so measured text width is the
+  width that ships. Charts re-render on resize. Each SVG also carries a viewBox matching that
+  width, which changes nothing on screen and lets a printed page scale the chart to the paper
+  instead of cropping it.
 */
 
 const NS = 'http://www.w3.org/2000/svg';
@@ -162,7 +164,11 @@ function wrap(text, maxPx, fontPx = 11, maxLines = 2) {
 /** Mount a render function, re-running it when the container resizes. */
 export function mount(el, render) {
   let last = 0;
+  // A filter redraws the whole page, so a chart can be removed from the DOM while its
+  // observers are still listening. They disconnect themselves the first time they notice,
+  // rather than accumulating one pair per chart per filter change.
   const run = () => {
+    if (!el.isConnected) { ro.disconnect(); mo.disconnect(); return; }
     const w = el.clientWidth;
     if (!w) return;
     if (Math.abs(w - last) < 2) return;
@@ -170,12 +176,20 @@ export function mount(el, render) {
     el.innerHTML = render(w);
     bind(el);
   };
-  run();
   const ro = new ResizeObserver(() => run());
-  ro.observe(el);
   // Theme changes alter the palette, so redraw on toggle.
-  new MutationObserver(() => { last = 0; run(); })
-    .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  const mo = new MutationObserver(() => { last = 0; run(); });
+  run();
+  ro.observe(el);
+  mo.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+}
+
+/**
+ * What a chart shows when a filter leaves it nothing to draw. Every chart primitive checks,
+ * because Math.max over an empty list is -Infinity and the SVG that follows is garbage.
+ */
+export function emptyState(el, message = 'Nothing to show for this selection.') {
+  el.innerHTML = `<p class="chart-empty">${esc(message)}</p>`;
 }
 
 /** Wire hover on any element carrying data-tip. */
@@ -202,6 +216,7 @@ const axisText = (x, y, s, anchor = 'middle', cls = '') =>
  * Anchor and total bars sit on the baseline; steps float between running totals.
  */
 export function waterfall(el, { rows, height = 320, valueFmt = fmtRc, showValues = true, zeroBaseline = true }) {
+  if (!rows?.length) return emptyState(el);
   mount(el, (W) => {
     const m = margins(W);
     const iw = W - m.left - m.right;
@@ -241,7 +256,7 @@ export function waterfall(el, { rows, height = 320, valueFmt = fmtRc, showValues
     const y = (v) => m.top + ih - ((v - yLo) / (yHi - yLo)) * ih;
     const floorY = m.top + ih;
 
-    let s = `<svg width="${W}" height="${height}" role="img" aria-label="Waterfall chart">`;
+    let s = `<svg width="${W}" height="${height}" viewBox="0 0 ${W} ${height}" role="img" aria-label="Waterfall chart">`;
 
     for (const t of tks) {
       s += `<line x1="${m.left}" y1="${y(t)}" x2="${W - m.right}" y2="${y(t)}" stroke="${cssVar('--rule')}" stroke-width="1"/>`;
@@ -299,6 +314,7 @@ export function waterfall(el, { rows, height = 320, valueFmt = fmtRc, showValues
  * refLine: optional { value, label }
  */
 export function columns(el, { rows, height = 300, valueFmt = fmtNum, refLine = null, xEvery = 1, yLabel = '' }) {
+  if (!rows?.length) return emptyState(el);
   mount(el, (W) => {
     const m = margins(W);
     const iw = W - m.left - m.right;
@@ -319,7 +335,7 @@ export function columns(el, { rows, height = 300, valueFmt = fmtNum, refLine = n
     const y = (v) => m.top + ih - ((v - yLo) / (yHi - yLo || 1)) * ih;
     const zeroY = y(0);
 
-    let s = `<svg width="${W}" height="${height}" role="img" aria-label="Column chart">`;
+    let s = `<svg width="${W}" height="${height}" viewBox="0 0 ${W} ${height}" role="img" aria-label="Column chart">`;
     for (const t of tks) {
       s += `<line x1="${m.left}" y1="${y(t)}" x2="${W - m.right}" y2="${y(t)}" stroke="${cssVar('--rule')}" stroke-width="1"/>`;
       s += axisText(m.left - 10, y(t) + 4, valueFmt(t), 'end');
@@ -376,6 +392,7 @@ export function columns(el, { rows, height = 300, valueFmt = fmtNum, refLine = n
  * horizontally at full length instead of being truncated under a column.
  */
 export function barsH(el, { rows, valueFmt = fmtRc, rowHeight = 46, labelWidth = 240 }) {
+  if (!rows?.length) return emptyState(el);
   mount(el, (W) => {
     const labelFont = `12.5px ${cssVar('--font-sans')}`;
     const valueFont = `600 12px ${cssVar('--font-sans')}`;
@@ -400,7 +417,7 @@ export function barsH(el, { rows, valueFmt = fmtRc, rowHeight = 46, labelWidth =
       return `${t.trimEnd()}…`;
     };
 
-    let s = `<svg width="${W}" height="${height}" role="img" aria-label="Bar chart">`;
+    let s = `<svg width="${W}" height="${height}" viewBox="0 0 ${W} ${height}" role="img" aria-label="Bar chart">`;
     rows.forEach((r, i) => {
       const top = (stacked ? 0 : 14) + i * rowH;
       const cy = stacked ? top + 20 + bh / 2 : top + rowH / 2;
@@ -430,6 +447,7 @@ export function barsH(el, { rows, valueFmt = fmtRc, rowHeight = 46, labelWidth =
  * Crosshair tooltip reads every series at the hovered index.
  */
 export function lines(el, { series, height = 300, valueFmt = fmtPct, xFmt = (v) => v, xEvery = 3, endLabels = true }) {
+  if (!series?.length || !series[0].points.length) return emptyState(el);
   mount(el, (W) => {
     // The end labels sit to the right of the last point, so the plot has to stop short of the
     // edge by their width. Without this they hung past the chart, and on a phone past the
@@ -458,7 +476,7 @@ export function lines(el, { series, height = 300, valueFmt = fmtPct, xFmt = (v) 
     const yLo = Math.min(...tks, ...all), yHi = Math.max(...tks, ...all);
     const y = (v) => m.top + ih - ((v - yLo) / (yHi - yLo || 1)) * ih;
 
-    let s = `<svg width="${W}" height="${height}" role="img" aria-label="Line chart">`;
+    let s = `<svg width="${W}" height="${height}" viewBox="0 0 ${W} ${height}" role="img" aria-label="Line chart">`;
     for (const t of tks) {
       s += `<line x1="${m.left}" y1="${y(t)}" x2="${W - m.right}" y2="${y(t)}" stroke="${cssVar('--rule')}" stroke-width="1"/>`;
       s += axisText(m.left - 10, y(t) + 4, valueFmt(t, 0), 'end');
@@ -521,22 +539,42 @@ export function legend(items, asLine = false) {
  * Table-view twin for a chart. cols: [{ key, label, align?, fmt?, cls? }]
  * Every chart ships one so no value is gated behind a tooltip.
  */
-export function table(cols, rows, { caption = '', totalRow = null } = {}) {
+let tableSeq = 0;
+
+export function table(cols, rows, { caption = '', totalRow = null, limit = 0 } = {}) {
   // Wrapped so a table wider than a phone scrolls inside its own box. Only the twins inside
   // figure() had that, and the tables placed straight into a section dragged the whole page
   // sideways.
-  let s = `<div class="table-scroll"><table>`;
+  //
+  // limit shows the first rows and folds the rest behind a button, so a 25 row table does not
+  // push the story three screens down. The folded rows are in the markup from the start, so
+  // printing, searching the page and a screen reader all still reach them.
+  const id = `tbl${++tableSeq}`;
+  const folded = limit > 0 && rows.length > limit + 2;
+
+  // An in-cell bar is scaled to the largest magnitude in its own column, so it reads as
+  // "share of the biggest row" and a negative value draws in the negative colour.
+  const barMax = Object.fromEntries(cols.filter((c) => c.bar).map((c) =>
+    [c.key, Math.max(0, ...rows.map((r) => Math.abs(Number(r[c.key]) || 0)))]));
+
+  let s = `<div class="table-scroll" id="${id}"><table>`;
   if (caption) s += `<caption>${esc(caption)}</caption>`;
   s += `<thead><tr>` + cols.map((c) =>
     `<th class="${c.align === 'right' ? 'num' : ''}">${esc(c.label)}</th>`).join('') + `</tr></thead><tbody>`;
-  for (const r of rows) {
-    s += `<tr>` + cols.map((c) => {
+  rows.forEach((r, i) => {
+    s += `<tr${folded && i >= limit ? ' class="row-more"' : ''}>` + cols.map((c) => {
       const raw = r[c.key];
       const v = c.fmt ? c.fmt(raw, r) : raw;
       const cls = [c.align === 'right' ? 'num' : '', c.cls ? c.cls(raw, r) : ''].filter(Boolean).join(' ');
-      return `<td class="${cls}">${v == null ? '-' : esc(v)}</td>`;
+      let bar = '';
+      if (c.bar && barMax[c.key] > 0 && raw != null) {
+        const pct = Math.abs(Number(raw)) / barMax[c.key] * 100;
+        bar = `<span class="cbar${Number(raw) < 0 ? ' is-neg' : ''}" aria-hidden="true">`
+          + `<i style="width:${pct.toFixed(1)}%"></i></span>`;
+      }
+      return `<td class="${cls}">${bar}${v == null ? '-' : esc(v)}</td>`;
     }).join('') + `</tr>`;
-  }
+  });
   if (totalRow) {
     s += `<tr class="total">` + cols.map((c) => {
       const raw = totalRow[c.key];
@@ -544,7 +582,12 @@ export function table(cols, rows, { caption = '', totalRow = null } = {}) {
       return `<td class="${c.align === 'right' ? 'num' : ''}">${v == null ? '' : esc(v)}</td>`;
     }).join('') + `</tr>`;
   }
-  return s + `</tbody></table></div>`;
+  s += `</tbody></table></div>`;
+  if (folded) {
+    s += `<button class="tbl-toggle tbl-more" type="button" data-more="${id}" aria-expanded="false">`
+      + `Show all ${rows.length}</button>`;
+  }
+  return s;
 }
 
 /**
@@ -554,11 +597,13 @@ export function table(cols, rows, { caption = '', totalRow = null } = {}) {
  * leaves an empty div behind, which is invisible but is exactly the shape of the bug where a
  * chart was meant to be drawn and never was, so the two cases are declared apart.
  */
-export function figure({ id, title, note, legendHtml = '', tableHtml = '', hasChart = true }) {
+export function figure({ id, title, note, legendHtml = '', tableHtml = '', hasChart = true, scope = '' }) {
+  // scope is the filter label for this one figure: which slice it shows, or that it shows the
+  // whole business because its data does not break down that way. Empty when no filter is set.
   return `
   <div class="figure">
     <div class="figure-head">
-      <h3 class="figure-title">${esc(title)}</h3>
+      <h3 class="figure-title">${esc(title)}${scope}</h3>
       ${tableHtml ? `<button class="tbl-toggle" data-table="${id}" aria-expanded="false">Show data</button>` : ''}
     </div>
     ${note ? `<p class="figure-note">${note}</p>` : ''}
@@ -570,13 +615,23 @@ export function figure({ id, title, note, legendHtml = '', tableHtml = '', hasCh
 
 /** Wire every Show data toggle on the page. */
 export function wireTableToggles(root = document) {
-  root.querySelectorAll('.tbl-toggle').forEach((btn) => {
+  root.querySelectorAll('.tbl-toggle[data-table]').forEach((btn) => {
     btn.addEventListener('click', () => {
       const t = document.getElementById(btn.dataset.table + '-table');
       const open = !t.hidden;
       t.hidden = open;
       btn.textContent = open ? 'Show data' : 'Hide data';
       btn.setAttribute('aria-expanded', String(!open));
+    });
+  });
+  // The fold on long tables. Rows are toggled by class, so the label can say how many.
+  root.querySelectorAll('.tbl-more[data-more]').forEach((btn) => {
+    const wrapEl = document.getElementById(btn.dataset.more);
+    const total = wrapEl.querySelectorAll('tbody tr:not(.total)').length;
+    btn.addEventListener('click', () => {
+      const open = wrapEl.classList.toggle('is-open');
+      btn.textContent = open ? 'Show fewer' : `Show all ${total}`;
+      btn.setAttribute('aria-expanded', String(open));
     });
   });
 }

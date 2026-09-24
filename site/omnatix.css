@@ -220,3 +220,40 @@ footer p { margin: 0 0 0.5rem; max-width: 74ch; }
   .how h3 { font-size: 12px; }
   a.card { padding: 1.1rem 1.2rem; }
 }
+
+/* ---------------------------------------------------------------- call to action
+
+   The page used to end on a footnote. A visitor the demos have convinced now has somewhere to
+   go: the emerald from the mark, on the one button that matters. */
+.cta {
+  margin: 4rem 0 0;
+  padding: 2rem 2.2rem;
+  border: 1px solid var(--rule-2);
+  border-radius: 8px;
+  background: var(--panel);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1.5rem 2.5rem;
+  align-items: center;
+}
+.cta h2 { margin: 0 0 0.5rem; font-size: 1.35rem; letter-spacing: -0.01em; }
+.cta p { margin: 0; color: var(--text-2); max-width: 60ch; }
+.cta-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.cta-primary,
+.cta-secondary {
+  display: inline-block;
+  padding: 0.75rem 1.1rem;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 700;
+  white-space: nowrap;
+}
+/* White on this emerald measures 5.4:1. */
+.cta-primary { background: #0F7A55; color: #FFFFFF; }
+.cta-primary:hover { background: #0B6446; }
+.cta-secondary { color: var(--text); border: 1px solid var(--rule-2); }
+.cta-secondary:hover { border-color: var(--text-2); }
+.cta a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+@media (max-width: 760px) {
+  .cta { grid-template-columns: 1fr; padding: 1.5rem 1.25rem; }
+}

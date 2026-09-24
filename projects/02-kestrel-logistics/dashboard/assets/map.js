@@ -105,8 +105,12 @@ const pathFrom = (pts, project) =>
  *   weight  0..1, drives stroke width, normally revenue share
  *   status  'loss' | 'thin' | 'healthy', drives colour. Colour is never the only channel:
  *           loss-making lanes are also labelled on the map and listed in the table below it.
- * depots: [{ name, lat, lon }]
+ * depots: [{ name, lat, lon, dim? }]
  * cities: [{ name, lat, lon }]
+ *
+ * A lane or hub carrying dim is drawn faintly rather than removed. The hub filter uses it:
+ * showing one hub's corridors against the ghost of the rest keeps the network readable, where
+ * deleting the other lanes would leave three lines floating on an empty country.
  */
 export function networkMap(el, { lanes, depots, cities, height = 560 }) {
   const render = (w) => {
@@ -114,7 +118,7 @@ export function networkMap(el, { lanes, depots, cities, height = 560 }) {
     const colourFor = (s) =>
       s === 'loss' ? cssVar('--breach') : s === 'thin' ? cssVar('--warn') : cssVar('--s1');
 
-    let s = `<svg width="${w}" height="${height}" role="img" `
+    let s = `<svg width="${w}" height="${height}" viewBox="0 0 ${w} ${height}" role="img" `
       + `aria-label="Freight network across South Africa, with corridors coloured by contribution">`;
 
     // Land
@@ -124,8 +128,10 @@ export function networkMap(el, { lanes, depots, cities, height = 560 }) {
       + `stroke="${cssVar('--land-edge')}" stroke-width="1"/>`;
 
     // Lanes, drawn healthy first so the loss-making corridors sit on top and read first
+    // Dimmed lanes go down first of all, so a selected hub's corridors always sit on top.
     const order = { healthy: 0, thin: 1, loss: 2 };
-    for (const lane of [...lanes].sort((a, b) => order[a.status] - order[b.status])) {
+    const rank = (l) => (l.dim ? -1 : order[l.status]);
+    for (const lane of [...lanes].sort((a, b) => rank(a) - rank(b))) {
       const [x1, y1] = project(lane.origin_lon, lane.origin_lat);
       const [x2, y2] = project(lane.destination_lon, lane.destination_lat);
       const dx = x2 - x1, dy = y2 - y1;
@@ -143,7 +149,7 @@ export function networkMap(el, { lanes, depots, cities, height = 560 }) {
       s += `<path d="M${x1.toFixed(1)} ${y1.toFixed(1)} Q${mx.toFixed(1)} ${my.toFixed(1)} `
         + `${x2.toFixed(1)} ${y2.toFixed(1)}" fill="none" stroke="${colour}" `
         + `stroke-width="${width.toFixed(2)}" stroke-linecap="round" `
-        + `opacity="${lane.status === 'healthy' ? 0.55 : 0.95}"/>`;
+        + `opacity="${lane.dim ? 0.12 : lane.status === 'healthy' ? 0.55 : 0.95}"/>`;
       // A wide invisible hit path, so a 1px lane is still easy to hover
       s += `<path d="M${x1.toFixed(1)} ${y1.toFixed(1)} Q${mx.toFixed(1)} ${my.toFixed(1)} `
         + `${x2.toFixed(1)} ${y2.toFixed(1)}" fill="none" stroke="transparent" stroke-width="16" `
@@ -183,11 +189,12 @@ export function networkMap(el, { lanes, depots, cities, height = 560 }) {
     // Hubs, drawn last so they sit above every lane
     depots.forEach((d, i) => {
       const [x, y] = depotPoints[i];
+      const fade = d.dim ? ' opacity="0.45"' : '';
       s += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="7" fill="none" `
         + `stroke="${cssVar('--s1')}" stroke-width="1.5" opacity="0.5"/>`;
       s += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.5" fill="${cssVar('--s1')}" `
-        + `stroke="${cssVar('--panel')}" stroke-width="2"/>`;
-      s += `<text ${hubLabels[i]} y="${(y + 4).toFixed(1)}" font-size="12" `
+        + `stroke="${cssVar('--panel')}" stroke-width="2"${fade}/>`;
+      s += `<text ${hubLabels[i]} y="${(y + 4).toFixed(1)}" font-size="12"${fade} `
         + `font-weight="600" fill="${cssVar('--text')}" `
         + `font-family="${cssVar('--font-sans')}">${esc(d.name)}</text>`;
     });

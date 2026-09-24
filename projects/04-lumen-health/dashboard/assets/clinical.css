@@ -417,3 +417,14 @@ footer p { margin: 0 0 0.7rem; max-width: 82ch; }
   table.heat th { font-size: 12px; }   /* the 12px floor set above applies here too */
   table.heat th.rowhead { padding-right: 0.4rem; }
 }
+
+/* ---------------------------------------------------------------- the Omnatix frame
+
+   omnatix-frame.css draws the summary, the section bar and the filter in whatever tokens a
+   theme declares. Cards here are white panels, the accent is the clinic teal, and the page
+   gutter is wider than the frame's default. */
+:root {
+  --ox-card: var(--panel);
+  --ox-accent: var(--accent);
+  --ox-gutter: 2.5rem;
+}

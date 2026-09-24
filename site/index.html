@@ -63,6 +63,22 @@
     </div>
   </section>
 
+  <!-- The one thing a convinced visitor needs, and the page did not have: a way to act. -->
+  <section class="cta" id="talk">
+    <div>
+      <h2>See what this finds in your own data.</h2>
+      <p>
+        Send us a few of the exports your systems already produce, and we will show you what the
+        same review finds in your own numbers, with every finding ranked by what it is worth.
+      </p>
+    </div>
+    <div class="cta-actions">
+      <a class="cta-primary" href="mailto:info@omnatix.co.za?subject=Walkthrough%3A%20what%20would%20the%20review%20find%20in%20our%20data%3F&amp;body=I%20have%20looked%20at%20the%20Omnatix%20demos%20and%20would%20like%20to%20book%20a%20walkthrough.">Book a walkthrough</a>
+      <a class="cta-secondary" href="https://wa.me/27813471724?text=Hi%20Omnatix%2C%20I%20have%20seen%20the%20demos%20and%20would%20like%20to%20book%20a%20walkthrough." rel="noopener">WhatsApp us</a>
+      <a class="cta-secondary" href="https://omnatix.co.za" rel="noopener">omnatix.co.za</a>
+    </div>
+  </section>
+
   <footer>
     <p>
       Omnatix builds the pipeline as well as the dashboard. Figures in rand, excluding VAT.
@@ -75,5 +91,32 @@
 
 </div>
 
+<script>
+  // Fetch the in-browser query engine before a demo is opened, so it opens without the wait.
+  // It is 6.8 MB, so this waits for a sign of intent or a few seconds of reading, and never runs
+  // when the browser reports data saver or a 2G connection.
+  (() => {
+    const c = navigator.connection || {};
+    if (c.saveData || /2g/.test(c.effectiveType || '')) return;
+    const base = 'https://cdn.jsdelivr.net/npm/@duckdb/duckdb-wasm@1.32.0/';
+    let done = false;
+    const warm = () => {
+      if (done) return;
+      done = true;
+      for (const [href, cors] of [[base + '+esm', true], [base + 'dist/duckdb-eh.wasm', true],
+                                  [base + 'dist/duckdb-browser-eh.worker.js', false]]) {
+        const l = document.createElement('link');
+        l.rel = 'prefetch';
+        l.href = href;
+        if (cors) l.crossOrigin = 'anonymous';
+        document.head.appendChild(l);
+      }
+    };
+    for (const ev of ['pointerenter', 'focusin', 'touchstart']) {
+      document.querySelectorAll('a.card').forEach((a) => a.addEventListener(ev, warm, { once: true, passive: true }));
+    }
+    setTimeout(warm, 4000);
+  })();
+</script>
 </body>
 </html>

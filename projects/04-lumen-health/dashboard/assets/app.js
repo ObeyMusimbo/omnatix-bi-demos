@@ -16,6 +16,9 @@ import {
   waterfall, columns, barsH, lines, legend, table, figure, wireTableToggles,
   showTip, hideTip, esc, fmtR, fmtRc, fmtR2, fmtNum, fmtPct,
 } from './charts.js';
+import {
+  renderSummary, renderNav, onFilterChange, readParam, writeParam, scope, spy, keepScroll,
+} from './shell.js';
 
 const el = (id) => document.getElementById(id);
 const v = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -138,6 +141,44 @@ function wireHeat(root) {
   });
 }
 
+// ---------------------------------------------------------------- the clinic filter
+//
+// Clinic is the cut three of Lumen's marts carry: claims by reason, patient charges and
+// practitioners. Those figures follow the filter. The two charts that compare sites keep every
+// site and pick the chosen one out, because a comparison of one is not a comparison. The diary
+// grid, the no-show mart, the schemes and the bridge are group-wide, and their figures say
+// "All clinics" rather than appearing to follow a filter they cannot follow.
+
+const SECTIONS = [
+  ['ox-top', '', 'Summary'],
+  ['money', '01', 'The money'],
+  ['week', '02', 'The week'],
+  ['claims', '03', 'Claims'],
+  ['noshow', '04', 'No-shows'],
+  ['reception', '05', 'Reception'],
+  ['diaries', '06', 'Diaries'],
+  ['trend', '07', 'Trend and data'],
+];
+const ALL_CLINICS = 'All clinics';
+const clinic = { code: '', label: '' };
+
+// The code arrives in the query string, so it is checked against the published options and
+// only a known code ever reaches SQL.
+function setClinic(code, options = []) {
+  const o = options.find((x) => x.value === code);
+  clinic.code = o ? o.value : '';
+  clinic.label = o ? o.label : '';
+}
+const byClinic = (col) => (clinic.code ? ` where ${col} = '${clinic.code}'` : '');
+const sc = (applies) => scope(clinic.label, applies, ALL_CLINICS);
+const atClinic = (sentence) => (clinic.code ? `At ${clinic.label}, ${sentence}` : sentence);
+// On the two charts that compare sites, the chosen site keeps its colour and the rest recede.
+const pick = (c, colour) => (clinic.code && c.clinic_code !== clinic.code ? v('--rule-strong') : colour);
+
+// The practitioner chart shows the dearest first and folds the rest, 32 bars being three
+// screens on a phone. The button redraws it whole.
+let showAllPractitioners = false;
+
 // ---------------------------------------------------------------- render
 
 async function render() {
@@ -148,10 +189,10 @@ async function render() {
       q(`select * from mart_slot_grid order by day_of_week, slot_hour`),
       q(`select * from mart_capacity_cost order by day_of_week, slot_hour`),
       q(`select * from mart_no_show order by booking_lead_order, reminder_sent`),
-      q(`select * from mart_claim_recovery`),
-      q(`select * from mart_patient_charges order by payment_type, collected_pct`),
+      q(`select * from mart_claim_recovery${byClinic('clinic_code')}`),
+      q(`select * from mart_patient_charges${byClinic('clinic_code')} order by payment_type, collected_pct`),
       q(`select * from mart_scheme order by claimed_zar desc`),
-      q(`select * from mart_practitioner order by discipline, fill_pct desc`),
+      q(`select * from mart_practitioner${byClinic('clinic_code')} order by discipline, fill_pct desc`),
       q(`select * from mart_clinic order by billed_zar desc`),
       q(`select * from mart_data_quality order by issue_order`),
       q(`select * from agg_monthly order by month_start`),
@@ -218,9 +259,10 @@ async function render() {
     const rows = charges.filter((c) => c.payment_type === name);
     const due = rows.reduce((t, r) => t + r.due_zar, 0);
     const lines = rows.reduce((t, r) => t + r.charge_lines, 0);
+    const paid = rows.reduce((t, r) => t + r.paid_zar, 0);
     return {
       name,
-      collected_pct: rows[0].type_collected_pct,
+      collected_pct: clinic.code ? (due ? paid / due * 100 : 0) : rows[0].type_collected_pct,
       due,
       paid: rows.reduce((t, r) => t + r.paid_zar, 0),
       lo: Math.min(...rows.map((r) => r.collected_pct)),
@@ -230,7 +272,7 @@ async function render() {
   };
   const selfFunded = chargeType('Self funded');
   const schemeGap = chargeType('Scheme gap');
-  const gapTotals = clinics.reduce((t, c) => ({
+  const gapTotals = clinics.filter((c) => !clinic.code || c.clinic_code === clinic.code).reduce((t, c) => ({
     due: t.due + c.patient_due_zar, paid: t.paid + c.patient_paid_zar,
   }), { due: 0, paid: 0 });
 
@@ -260,8 +302,21 @@ async function render() {
     leadCells.reduce((t, g) => t + (g.avg_booking_lead_days - meanLead) ** 2, 0);
 
   const gps = practitioners.filter((x) => x.discipline === 'General practice');
-  const gpCostSpread = Math.max(...gps.map((x) => x.cost_per_attended_zar))
-    / Math.min(...gps.map((x) => x.cost_per_attended_zar));
+  const gpCostSpread = gps.length > 1
+    ? Math.max(...gps.map((x) => x.cost_per_attended_zar)) / Math.min(...gps.map((x) => x.cost_per_attended_zar))
+    : null;
+
+  // Claims outstanding by what it takes to get them, for the clinic chosen or the group.
+  const outstandingBy = (cls) => byReason.filter((r) => (r.rejection_class === 'Fixable at the practice') === cls)
+    .reduce((t, r) => t + r.outstanding_zar, 0);
+  const fixable = clinic.code ? outstandingBy(true) : rec.all_fixable_outstanding_zar;
+  const noCover = clinic.code ? outstandingBy(false) : rec.all_no_cover_outstanding_zar;
+
+  // The headline painted from meta.json in the first second must be the number the
+  // warehouse gives. If they ever drift, say so in the console rather than on a prospect's screen.
+  if (m.summary && Math.abs(m.summary.hero.v - b.total_leakage_zar) > 1) {
+    console.warn('Headline differs from the warehouse', m.summary.hero.v, b.total_leakage_zar);
+  }
 
   const slowest = [...schemes].sort((a, b2) => b2.avg_days_to_settle - a.avg_days_to_settle)[0];
   const workingCapital = schemes.reduce((t, s) => t + s.working_capital_zar, 0);
@@ -270,7 +325,7 @@ async function render() {
 
   el('main').innerHTML = `
 
-  <section>
+  <section id="money">
     <div class="section-head"><span class="section-num">01</span><h2>Where the money went</h2></div>
     <p class="lede">
       Over the ${monthly.length} months to ${longDate(m.data_through)} the group saw patients
@@ -279,14 +334,6 @@ async function render() {
       <b>${fmtR(b.cash_received_zar)}</b> of that. Nothing was stolen and nobody was negligent.
       It leaked out through a claims inbox nobody opens and a card machine nobody reaches for.
     </p>
-
-    <div class="hero">
-      <div class="hero-value">${fmtR(b.total_leakage_zar)}</div>
-      <div class="hero-label">
-        billed for care already delivered and never collected, which is
-        <b>${fmtPct(b.leakage_pct_of_billed, 1)}</b> of everything the group invoiced.
-      </div>
-    </div>
 
     <div class="tiles">
       <div class="tile">
@@ -312,7 +359,7 @@ async function render() {
     </div>
 
     ${figure({
-      id: 'fig-bridge',
+      id: 'fig-bridge', scope: sc(false),
       title: 'From care delivered to cash received',
       note: `Every rand of the shortfall lands in exactly one bucket, and the buckets are set by
              who has to do something about it. The three steps belong to three different people:
@@ -343,7 +390,7 @@ async function render() {
     </div>
   </section>
 
-  <section>
+  <section id="week">
     <div class="section-head"><span class="section-num">02</span><h2>The week is lopsided, and the roster is not</h2></div>
     <p class="lede">
       The roster barely changes from Monday to Friday. Demand is nothing like it. On a
@@ -355,7 +402,7 @@ async function render() {
     </p>
 
     ${figure({
-      id: 'fig-grid',
+      id: 'fig-grid', scope: sc(false),
       title: 'Slot fill by weekday and hour',
       note: `Every consulting slot the group offered over the window, placed in the hour it
              starts in. A slot that crosses the hour is counted in the hour it begins, because
@@ -365,7 +412,7 @@ async function render() {
     })}
 
     ${figure({
-      id: 'fig-wait',
+      id: 'fig-wait', scope: sc(false),
       title: 'Average wait by weekday and hour',
       note: `The same grid measured the other way, and a deliberately different hue: waiting
              time and slot fill are different quantities, and sharing a ramp would invite you to
@@ -377,7 +424,7 @@ async function render() {
     })}
 
     ${figure({
-      id: 'fig-day',
+      id: 'fig-day', scope: sc(false),
       title: 'What the empty chairs cost, by weekday',
       note: `A session is bought whole. The group pays the sessional rate whether twenty
              patients come through it or four, so an unfilled slot is money that left the bank
@@ -428,7 +475,7 @@ async function render() {
     </div>
   </section>
 
-  <section>
+  <section id="claims">
     <div class="section-head"><span class="section-num">03</span><h2>Rejected claims that nobody worked</h2></div>
     <p class="lede">
       <b>${fmtNum(rec.all_rejected)}</b> claims came back rejected or short paid,
@@ -439,7 +486,7 @@ async function render() {
     </p>
 
     ${figure({
-      id: 'fig-recovery',
+      id: 'fig-recovery', scope: sc(true),
       title: 'Share of rejections recovered, by site',
       note: `The denominator is every claim that ever came back, including the ones that were
              fixed and paid. Measuring against the claims still outstanding would flatter the
@@ -465,7 +512,7 @@ async function render() {
     </p>
 
     ${figure({
-      id: 'fig-reasons',
+      id: 'fig-reasons', scope: sc(true),
       title: 'What is still outstanding, and what it would take to get it',
       note: `Split by the work required rather than by what the scheme said, because a claim
              rejected for a missing referral and a claim rejected because the member had no cover
@@ -487,17 +534,17 @@ async function render() {
     })}
 
     <div class="callout">
-      <b>${fmtR(rec.all_fixable_outstanding_zar)} is fixable at the practice.</b> A diagnosis code,
+      ${clinic.code ? `At ${clinic.label}, ` : ''}<b>${fmtR(fixable)} is fixable at the practice.</b> A diagnosis code,
       a referral, an authorisation, a practice number. That is one clerk and a working week.
       <br><br>
-      <b>${fmtR(rec.all_no_cover_outstanding_zar)} was never the scheme's to pay.</b> The member had
+      <b>${fmtR(noCover)} was never the scheme's to pay.</b> The member had
       no cover, the benefit was exhausted, the service was not on the plan. The scheme is right to
       refuse it. But the patient was treated, and nobody ever raised an account. That money is not
       a claims problem at all, and it is the half of this finding most people miss.
     </div>
   </section>
 
-  <section>
+  <section id="noshow">
     <div class="section-head"><span class="section-num">04</span><h2>The patients who never arrived</h2></div>
     <p class="lede">
       <b>${fmtNum(ns.all_no_shows)}</b> booked appointments were no-shows,
@@ -510,7 +557,7 @@ async function render() {
     </p>
 
     ${figure({
-      id: 'fig-noshow',
+      id: 'fig-noshow', scope: sc(false),
       title: 'No-show rate by booking lead time and reminder',
       note: `Each pair of bars is one lead band: the bookings that got a reminder beside the ones
              that did not. The gap between them is the lever.`,
@@ -557,7 +604,7 @@ async function render() {
     </div>
 
     ${figure({
-      id: 'fig-reminders',
+      id: 'fig-reminders', scope: sc(true),
       title: 'Reminder coverage by site',
       note: `Reminder discipline is a front desk habit and it is in no source file. The only
              trace of it is the flag on the bookings each site takes. Mind the range: front desk
@@ -591,10 +638,10 @@ async function render() {
     </div>
   </section>
 
-  <section>
+  <section id="reception">
     <div class="section-head"><span class="section-num">05</span><h2>The gap at reception, and the scheme that pays late</h2></div>
     <p class="lede">
-      A patient with no scheme owes the whole bill, an average of
+      ${clinic.code ? `At ${clinic.label}, a` : 'A'} patient with no scheme owes the whole bill, an average of
       <b>${fmtR(selfFunded.avg_charge)}</b>, and pays it
       <b>${fmtPct(selfFunded.collected_pct)}</b> of the time. A patient whose scheme covers most
       of it owes only the remainder, an average of <b>${fmtR(schemeGap.avg_charge)}</b>, and pays
@@ -604,9 +651,14 @@ async function render() {
     </p>
 
     ${figure({
-      id: 'fig-gap',
+      id: 'fig-gap', scope: sc(true),
       title: 'Share of the patient charge collected, by site and charge type',
-      note: `Every site, both charge types, sorted by collection rate. The two clusters do not
+      // The every-site claim only holds when every site is on screen.
+      note: clinic.code
+        ? `${clinic.label} alone. The gap is collected ${fmtPct(schemeGap.collected_pct)} of the
+           time and the self funded charge ${fmtPct(selfFunded.collected_pct)}, the same split
+           every other site shows. Clear the clinic filter to see all six side by side.`
+        : `Every site, both charge types, sorted by collection rate. The two clusters do not
              overlap and they do not cross: the gap runs between ${fmtPct(schemeGap.lo)} and
              ${fmtPct(schemeGap.hi)} everywhere, the self funded charge between
              ${fmtPct(selfFunded.lo)} and ${fmtPct(selfFunded.hi)}. That is what makes this a
@@ -633,7 +685,7 @@ async function render() {
     })}
 
     ${figure({
-      id: 'fig-schemes',
+      id: 'fig-schemes', scope: sc(false),
       title: 'How long each scheme takes to settle',
       note: `Measured from submission to payment, not from the date of service, so a slow scheme
              and a slow practice stay two different numbers.`,
@@ -666,7 +718,7 @@ async function render() {
     </div>
   </section>
 
-  <section>
+  <section id="diaries">
     <div class="section-head"><span class="section-num">06</span><h2>The same session rate, very different diaries</h2></div>
     <p class="lede">
       Compare within a discipline and never across one. A radiologist and a dietician are bought
@@ -675,12 +727,13 @@ async function render() {
     </p>
 
     ${figure({
-      id: 'fig-prac',
+      id: 'fig-prac', scope: sc(true),
       title: 'Sessional cost per patient actually seen',
       note: `What the group paid in clinician time for each patient who sat down, against the
-             median of that practitioner's own discipline. Across general practice alone, where
-             the session rates sit within a few per cent of each other, the dearest patient
-             costs <b>${gpCostSpread.toFixed(1)} times</b> the cheapest.`,
+             median of that practitioner's own discipline.${gpCostSpread ? ` Across general practice
+             ${clinic.code ? `at ${clinic.label}` : 'alone'}, where the session rates sit within a few
+             per cent of each other, the dearest patient costs <b>${gpCostSpread.toFixed(1)} times</b>
+             the cheapest.` : ''}`,
       legendHtml: legend(disciplines.map((d, i) => ({
         name: d.discipline, color: v(['--s1', '--s2', '--s3', '--s4'][i % 4]),
       }))),
@@ -705,11 +758,11 @@ async function render() {
     </div>
   </section>
 
-  <section>
+  <section id="trend">
     <div class="section-head"><span class="section-num">07</span><h2>The trend, and the state of the data</h2></div>
 
     ${figure({
-      id: 'fig-monthly',
+      id: 'fig-monthly', scope: sc(false),
       title: 'Slot fill, no-shows and collection, month by month',
       note: `Partial months at either end of the export are dropped rather than plotted short: a
              partial month beside a whole one reads as a collapse. Every rate is against its own
@@ -734,7 +787,7 @@ async function render() {
     })}
 
     ${figure({
-      id: 'fig-quality',
+      id: 'fig-quality', scope: sc(false),
       hasChart: false,
       title: 'Defects in the source files, and what was done about each',
       note: `Every one of these exists in the exports and every one survives into the warehouse
@@ -814,7 +867,7 @@ async function render() {
     rows: recoveryBySite.map((c) => ({
       label: c.clinic_name.replace('Lumen ', ''),
       value: c.recovery_pct,
-      color: v(c.recovery_pct < 10 ? '--s2' : '--s1'),
+      color: pick(c, v(c.recovery_pct < 10 ? '--s2' : '--s1')),
       tip: `<b>${esc(c.clinic_name)}</b>`
         + `<div class="tip-row"><span>Ever rejected</span><span>${fmtNum(c.ever_rejected)}</span></div>`
         + `<div class="tip-row"><span>Recovered</span><span>${fmtNum(c.recovered_claims)}</span></div>`
@@ -900,10 +953,12 @@ async function render() {
   const discColor = Object.fromEntries(
     disciplines.map((d, i) => [d.discipline, v(['--s1', '--s2', '--s3', '--s4'][i % 4])])
   );
-  barsH(el('fig-prac'), {
-    rows: practitioners
-      .filter((p) => p.peers >= 3)
-      .sort((a, b2) => b2.cost_per_attended_zar - a.cost_per_attended_zar)
+  const pracRows = practitioners
+    .filter((p) => p.peers >= 3)
+    .sort((a, b2) => b2.cost_per_attended_zar - a.cost_per_attended_zar);
+  const PRAC_FOLD = 12;
+  const drawPractitioners = () => barsH(el('fig-prac'), {
+    rows: (showAllPractitioners ? pracRows : pracRows.slice(0, PRAC_FOLD))
       .map((p) => ({
         label: `${p.practitioner_name.replace('Dr ', '')} · ${p.clinic_name.replace('Lumen ', '')}`,
         value: p.cost_per_attended_zar,
@@ -919,12 +974,28 @@ async function render() {
     rowHeight: 30,
     labelWidth: 260,
   });
+  drawPractitioners();
+  if (pracRows.length > PRAC_FOLD + 2) {
+    const btn = document.createElement('button');
+    btn.className = 'tbl-toggle tbl-more';
+    btn.type = 'button';
+    const label = () => (showAllPractitioners ? 'Show fewer' : `Show all ${pracRows.length}`);
+    btn.textContent = label();
+    btn.setAttribute('aria-expanded', String(showAllPractitioners));
+    btn.addEventListener('click', () => {
+      showAllPractitioners = !showAllPractitioners;
+      btn.textContent = label();
+      btn.setAttribute('aria-expanded', String(showAllPractitioners));
+      drawPractitioners();
+    });
+    el('fig-prac').after(btn);
+  }
 
   barsH(el('fig-reminders'), {
     rows: [...clinics].sort((a, b2) => a.reminded_pct - b2.reminded_pct).map((c) => ({
       label: c.clinic_name.replace('Lumen ', ''),
       value: c.reminded_pct,
-      color: v('--s1'),
+      color: pick(c, v('--s1')),
       tip: `<b>${esc(c.clinic_name)}</b>`
         + `<div class="tip-row"><span>Bookings</span><span>${fmtNum(c.appointments)}</span></div>`
         + `<div class="tip-row"><span>Reminders sent</span><span>${fmtPct(c.reminded_pct)}</span></div>`
@@ -959,13 +1030,44 @@ async function render() {
 
 // ---------------------------------------------------------------- boot
 
+// Renders are queued, so a filter changed while the engine is still loading waits its turn
+// instead of running beside the first render.
+let queue = Promise.resolve();
+const rerender = (nav) => {
+  queue = queue.then(() => keepScroll(render)).then(() => spy(nav)).catch((e) => console.error(e));
+  return queue;
+};
+
 try {
+  performance.mark('ox-start');
+  // The summary paints first and the engine starts straight after. Starting the engine first
+  // was measured slower: parsing its modules held the main thread while the tiny meta.json
+  // waited behind it, and the summary appeared three seconds late.
+  const m = await meta().catch(() => ({}));
   await renderFreshness().catch((e) => {
     el('fresh-label').textContent = 'Freshness unknown';
     console.warn('freshness', e);
   });
-  await connect((msg) => { el('loading-msg').textContent = msg; });
-  await render();
+
+  const nav = el('ox-nav');
+  const f = m.summary?.filter;
+  if (f) setClinic(readParam(f.param), f.options);
+  renderSummary(el('ox-top'), m.summary);
+  renderNav(nav, { sections: SECTIONS, filter: f && { ...f, value: clinic.code } });
+  onFilterChange(nav, (code) => {
+    setClinic(code, f.options);
+    writeParam(f.param, clinic.code);
+    rerender(nav);
+  });
+  // Marks, so how long a prospect waits can be measured rather than guessed.
+  performance.mark('ox-summary');
+  const engine = connect((msg) => { const n = el('loading-msg'); if (n) n.textContent = msg; });
+
+  await engine;
+  // The first render is awaited directly, so a failure reaches the message below instead of
+  // being swallowed by the queue.
+  queue = render().then(() => { performance.mark('ox-ready'); spy(nav); });
+  await queue;
 } catch (err) {
   el('main').innerHTML =
     `<div class="err"><b>Could not load the warehouse.</b><br>${String(err.message || err)}

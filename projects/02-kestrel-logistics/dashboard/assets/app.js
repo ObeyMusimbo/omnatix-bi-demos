@@ -12,6 +12,9 @@ import {
   fmtR, fmtRc, fmtR2, fmtNum, fmtPct, fmtMonth,
 } from './charts.js';
 import { networkMap } from './map.js';
+import {
+  renderSummary, renderNav, onFilterChange, readParam, writeParam, scope, spy, keepScroll,
+} from './shell.js';
 
 const el = (id) => document.getElementById(id);
 const v = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -66,6 +69,44 @@ async function renderFreshness() {
     : `Pipeline run ${longDate(m.built_at)}`;
 }
 
+// ---------------------------------------------------------------- the hub filter
+//
+// Hub is the one cut most of Kestrel's gold layer carries: lanes, failed deliveries, fuel and
+// the monthly trip summary all have it. The opportunity bridge, the service performance mart
+// and the load factor mart do not, so their figures say "All hubs" rather than appearing to
+// follow a filter they cannot follow. The headline and the summary stay network-wide.
+
+const SECTIONS = [
+  ['ox-top', '', 'Summary'],
+  ['network', '00', 'Network'],
+  ['corridors', '01', 'Empty returns'],
+  ['doors', '02', 'Redeliveries'],
+  ['thirsty', '03', 'Fuel'],
+  ['friday', '04', 'Friday'],
+  ['air', '05', 'Air'],
+  ['close', '06', 'What it is worth'],
+];
+const ALL_HUBS = 'All hubs';
+const hub = { code: '', label: '' };
+
+// The code arrives in the query string, so it is checked against the published options and
+// only a known code ever reaches SQL.
+function setHub(code, options = []) {
+  const o = options.find((x) => x.value === code);
+  hub.code = o ? o.value : '';
+  hub.label = o ? o.label : '';
+}
+const byHub = (col) => (hub.code ? ` and ${col} = '${hub.code}'` : '');
+// Fuel and the monthly summary carry the hub's name rather than its code.
+const byHubName = (col) => (hub.code
+  ? ` and ${col} = (select any_value(origin_depot_name) from mart_lane_economics
+                    where origin_depot_code = '${hub.code}')`
+  : '');
+const sc = (applies) => scope(hub.label, applies, ALL_HUBS);
+
+const numWord = (n) => ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight',
+  'Nine', 'Ten'][n] ?? String(n);
+
 // ---------------------------------------------------------------- render
 
 async function render() {
@@ -73,15 +114,16 @@ async function render() {
     await Promise.all([
       q(`select * from mart_opportunity_bridge order by step_order`),
 
-      q(`select lane_id, lane_name, lane_type, origin_depot_name, origin_lat, origin_lon,
-                destination_city, destination_lat, destination_lon,
+      q(`select lane_id, lane_name, lane_type, origin_depot_code, origin_depot_name,
+                origin_lat, origin_lon, destination_city, destination_lat, destination_lon,
                 round_trips, empty_returns, distance_km, revenue_zar, cost_zar,
                 contribution_zar, outbound_only_contribution_zar, empty_return_cost_zar,
                 actual_backhaul_pct, assumed_backhaul_pct, backhaul_shortfall_pts,
                 contribution_margin_pct, is_backhaul_trap, is_loss_making
          from mart_lane_economics where period_order = 1`),
 
-      q(`select distinct origin_depot_name as name, origin_lat as lat, origin_lon as lon
+      q(`select distinct origin_depot_code as code, origin_depot_name as name,
+                origin_lat as lat, origin_lon as lon
          from mart_lane_economics where origin_lat is not null`),
 
       q(`select destination_city as name, any_value(destination_lat) as lat,
@@ -97,12 +139,13 @@ async function render() {
                 round(sum(failed_cost_zar), 2) as failed_cost_zar,
                 any_value(top_failure_reason) as reason,
                 sum(failed_drops) * 1.0 / nullif(sum(drops), 0) > 0.15 as is_problem_site
-         from mart_failed_deliveries where is_trailing_twelve_months
+         from mart_failed_deliveries where is_trailing_twelve_months${byHub('origin_depot_code')}
          group by 1, 2 order by failed_cost_zar desc`),
 
       q(`select registration, vehicle_class, depot_name, trips, distance_km,
                 litres_per_100km, class_median_l100, excess_pct, excess_cost_zar, is_outlier
-         from mart_fuel_outliers order by excess_cost_zar desc`),
+         from mart_fuel_outliers where true${byHubName('depot_name')}
+         order by excess_cost_zar desc`),
 
       q(`select dispatch_day_bucket,
                 sum(drops) as drops, sum(on_time_drops) as on_time_drops,
@@ -130,7 +173,7 @@ async function render() {
                   sum(empty_distance_km) as empty_distance_km,
                   sum(revenue_zar) as revenue_zar,
                   sum(contribution_zar) as contribution_zar
-           from agg_trip_monthly group by 1, 2)
+           from agg_trip_monthly where true${byHubName('origin_depot_name')} group by 1, 2)
          select month_start_date, year_month, distance_km, empty_distance_km,
                 round(empty_distance_km * 100.0 / nullif(distance_km, 0), 2) as empty_pct,
                 revenue_zar, contribution_zar
@@ -145,15 +188,24 @@ async function render() {
     ]);
 
   const h = bridge[0];
-  const linehaul = lanesTtm.filter((l) => l.lane_type === 'Line-haul');
-  const traps = linehaul.filter((l) => l.is_backhaul_trap)
-    .sort((a, b) => a.contribution_zar - b.contribution_zar);
-  const emptyKm = ttmKm.empty_km;
+  const byTrap = (a, b) => a.contribution_zar - b.contribution_zar;
+  // The lede and tiles describe the whole network; the corridor figures follow the hub.
+  const linehaulAll = lanesTtm.filter((l) => l.lane_type === 'Line-haul');
+  const trapsAll = linehaulAll.filter((l) => l.is_backhaul_trap).sort(byTrap);
+  const linehaul = hub.code ? linehaulAll.filter((l) => l.origin_depot_code === hub.code) : linehaulAll;
+  const traps = linehaul.filter((l) => l.is_backhaul_trap).sort(byTrap);
+  const trapLossAll = trapsAll.reduce((a, l) => a + l.contribution_zar, 0);
+
+  // The headline painted from meta.json in the first second must be the number the
+  // warehouse gives. If they ever drift, say so in the console rather than on a prospect's screen.
+  const m = await meta().catch(() => ({}));
   const emptyPct = ttmKm.empty_km / ttmKm.km * 100;
-  const trapLoss = traps.reduce((a, l) => a + l.contribution_zar, 0);
+  if (m.summary && Math.abs(m.summary.hero.v - emptyPct) > 0.05) {
+    console.warn('Headline differs from the warehouse', m.summary.hero.v, emptyPct);
+  }
 
   el('main').innerHTML =
-    sectionNetwork(h, emptyPct, emptyKm, traps, trapLoss) +
+    sectionNetwork(h, trapsAll, trapLossAll, traps) +
     sectionCorridors(traps, linehaul) +
     sectionDoors(sites) +
     sectionThirsty(thirsty) +
@@ -180,12 +232,12 @@ const head = (num, title, lede) => `
   </div>
   <p class="lede">${lede}</p>`;
 
-function sectionNetwork(h, emptyPct, emptyKm, traps, trapLoss) {
+function sectionNetwork(h, trapsAll, trapLossAll, traps) {
   const tiles = [
     ['Revenue', fmtRc(h.ttm_revenue_zar), `${fmtR2(h.ttm_revenue_per_km_zar)} per km`],
     ['Cost', fmtRc(h.ttm_cost_zar), `${fmtR2(h.ttm_cost_per_km_zar)} per km`],
     ['Contribution', fmtRc(h.ttm_contribution_zar), `${fmtPct(h.ttm_contribution_margin_pct)} of revenue`],
-    ['Distance', fmtNum(h.ttm_km) + ' km', `${traps.length} corridors losing money`],
+    ['Distance', fmtNum(h.ttm_km) + ' km', `${trapsAll.length} corridors losing money`],
   ].map(([l, val, d]) => `
     <div class="tile">
       <div class="tile-label">${l}</div>
@@ -193,28 +245,38 @@ function sectionNetwork(h, emptyPct, emptyKm, traps, trapLoss) {
       <div class="tile-delta">${d}</div>
     </div>`).join('');
 
+  // The headline now paints from meta.json above this section, before the engine has loaded,
+  // so the section opens straight on the sentence that explains it.
   return `<section id="network">
     ${head('00', 'The network', `Kestrel turned <b>${fmtNum(h.ttm_km)} kilometres</b> in the last
       twelve months and earned <b>${fmtRc(h.ttm_revenue_zar)}</b> doing it. Nearly a quarter of
       those kilometres carried nothing. Some of that is unavoidable, but
-      <b>${traps.length} corridors</b> are priced as though the truck comes home loaded when it
-      does not, and they lose <b>${fmtRc(Math.abs(trapLoss))}</b> a year between them.`)}
-    <div class="hero">
-      <div class="hero-value">${fmtPct(emptyPct)}</div>
-      <div class="hero-label">of every kilometre this fleet turned was carrying nothing at all</div>
-    </div>
+      <b>${trapsAll.length} corridors</b> are priced as though the truck comes home loaded when it
+      does not, and they lose <b>${fmtRc(Math.abs(trapLossAll))}</b> a year between them.`)}
     <div class="tiles">${tiles}</div>
     ${legend([
       { name: 'Loses money as a round trip', color: v('--breach') },
       { name: 'Thin', color: v('--warn') },
       { name: 'Healthy', color: v('--s1') },
     ], true)}
+    <!-- A control tower opens on the map with the exceptions beside it, not on a report. -->
+    <div class="ox-split is-wide-left">
+      ${figure({
+        id: 'c-map', title: 'Corridors by round trip contribution', scope: sc(true),
+        note: 'Line thickness is revenue. Colour is what the corridor contributes once the return leg it caused is charged to it. Hover any line for the detail. Drawn from coordinates in the data, so nothing is fetched from a map provider.',
+      })}
+      <div class="figure">
+        <div class="figure-head"><h3 class="figure-title">Losing money as a round trip${sc(true)}</h3></div>
+        <p class="figure-note">Worst first. Measured one way, every one of these looks profitable.</p>
+        ${traps.length ? table([
+          { key: 'lane_name', label: 'Corridor' },
+          { key: 'actual_backhaul_pct', label: 'Backhaul', align: 'right', fmt: (x) => fmtPct(x, 0) },
+          { key: 'contribution_zar', label: 'Round trip', align: 'right', fmt: fmtRc, cls: () => 'breach', bar: true },
+        ], traps, { limit: 6 }) : '<p class="chart-empty">No corridor from this hub loses money as a round trip.</p>'}
+      </div>
+    </div>
     ${figure({
-      id: 'c-map', title: 'Corridors by round trip contribution',
-      note: 'Line thickness is revenue. Colour is what the corridor contributes once the return leg it caused is charged to it. Hover any line for the detail. Drawn from coordinates in the data, so nothing is fetched from a map provider.',
-    })}
-    ${figure({
-      id: 'c-empty', title: 'Share of kilometres run empty, by month',
+      id: 'c-empty', title: 'Share of kilometres run empty, by month', scope: sc(true),
       note: 'It moves a few points either way and never trends down. This is structural, not a bad quarter.',
       tableHtml: table([
         { key: 'year_month', label: 'Month' },
@@ -228,15 +290,19 @@ function sectionNetwork(h, emptyPct, emptyKm, traps, trapLoss) {
 
 function sectionCorridors(traps, linehaul) {
   const worst = traps[0];
-  return `<section id="corridors">
-    ${head('01', 'Corridors that fund their own empty return', `Every lane was priced assuming
+  const lede = worst
+    ? `Every lane was priced assuming
       <b>60%</b> of the return leg would sell. Nobody revisited that corridor by corridor. On
       ${worst.lane_name} the real fill is <b>${fmtPct(worst.actual_backhaul_pct)}</b>. Measured
       one way, that lane looks like <b>${fmtRc(worst.outbound_only_contribution_zar)}</b> of
       contribution. Charged with the empty truck it sends home, it is
-      <b class="breach">${fmtRc(worst.contribution_zar)}</b>.`)}
+      <b class="breach">${fmtRc(worst.contribution_zar)}</b>.`
+    : `Every lane was priced assuming <b>60%</b> of the return leg would sell. Every corridor
+      from this hub sells enough of its return to cover it.`;
+  return `<section id="corridors">
+    ${head('01', 'Corridors that fund their own empty return', lede)}
     ${figure({
-      id: 'c-corridors', title: 'What the outbound leg looks like, against the round trip',
+      id: 'c-corridors', title: 'What the outbound leg looks like, against the round trip', scope: sc(true),
       note: 'The reveal is one join: pair an outbound trip with the return it caused, and charge both legs against the revenue they jointly earned. Kestrel reports on legs, so the empty return has never been charged to anything.',
       tableHtml: table([
         { key: 'lane_name', label: 'Corridor' },
@@ -248,7 +314,7 @@ function sectionCorridors(traps, linehaul) {
         { key: 'contribution_zar', label: 'Actually', align: 'right', fmt: fmtRc, cls: () => 'breach' },
       ], traps, { caption: 'Loss making corridors, trailing twelve months' }),
     })}
-    <h3 class="figure-title" style="margin-top:2rem">Every line-haul corridor</h3>
+    <h3 class="figure-title" style="margin-top:2rem">Every line-haul corridor${sc(true)}</h3>
     <p class="figure-note">Sorted by what the round trip contributes. The healthy lanes are the
       ones where the return leg actually sells, which is what the rate card assumed everywhere.</p>
     ${table([
@@ -258,12 +324,12 @@ function sectionCorridors(traps, linehaul) {
         cls: (x) => (x < 40 ? 'breach' : x < 55 ? 'warn' : 'pos') },
       { key: 'backhaul_shortfall_pts', label: 'Short by', align: 'right',
         fmt: (x) => (x > 0 ? x.toFixed(1) + ' pts' : '-') },
-      { key: 'revenue_zar', label: 'Revenue', align: 'right', fmt: fmtRc },
+      { key: 'revenue_zar', label: 'Revenue', align: 'right', fmt: fmtRc, bar: true },
       { key: 'contribution_zar', label: 'Contribution', align: 'right', fmt: fmtRc,
         cls: (x) => (x < 0 ? 'breach' : 'pos') },
       { key: 'contribution_margin_pct', label: 'Margin', align: 'right', fmt: (x) => fmtPct(x),
         cls: (x) => (x < 0 ? 'breach' : '') },
-    ], [...linehaul].sort((a, b) => a.contribution_zar - b.contribution_zar))}
+    ], [...linehaul].sort((a, b) => a.contribution_zar - b.contribution_zar), { limit: 8 })}
   </section>`;
 }
 
@@ -273,16 +339,19 @@ function sectionDoors(sites) {
   const totalDrops = sites.reduce((a, s) => a + s.drops, 0);
   const totalCost = sites.reduce((a, s) => a + s.failed_cost_zar, 0);
   const problemCost = problem.reduce((a, s) => a + s.failed_cost_zar, 0);
+  const worstSites = problem.length
+    ? `The worst <b>${problem.length} ${problem.length === 1 ? 'site accounts' : 'sites account'}</b>
+      for <b>${fmtRc(problemCost)}</b> of it on their own.`
+    : 'No site refuses more than 15% of what arrives.';
   return `<section id="doors">
-    ${head('02', 'Deliveries that had to be done twice', `In the last twelve months
-      <b>${fmtNum(totalFailed)}</b> drops were refused on first attempt,
+    ${head('02', 'Deliveries that had to be done twice', `${hub.code ? `Out of the ${hub.label}, in` : 'In'}
+      the last twelve months <b>${fmtNum(totalFailed)}</b> drops were refused on first attempt,
       <b>${fmtPct(totalFailed / totalDrops * 100)}</b> of everything delivered, costing
       <b>${fmtRc(totalCost)}</b> in journeys that earned nothing. It does not appear in a revenue
-      report, because a failed delivery has no revenue to report. The worst
-      <b>${problem.length} sites</b> account for <b>${fmtRc(problemCost)}</b> of it on their own.`)}
+      report, because a failed delivery has no revenue to report. ${worstSites}`)}
     ${figure({
-      id: 'c-doors', title: 'Sites refusing more than 15% of deliveries',
-      note: `These are not having bad luck. No booked receiving slot, a yard that shuts early, or a goods-in desk with one person on it. This is a conversation with ${problem.length} customers, not an analysis.`,
+      id: 'c-doors', title: 'Sites refusing more than 15% of deliveries', scope: sc(true),
+      note: `These are not having bad luck. No booked receiving slot, a yard that shuts early, or a goods-in desk with one person on it. This is a conversation with ${problem.length} ${problem.length === 1 ? 'customer' : 'customers'}, not an analysis.`,
       tableHtml: table([
         { key: 'customer_name', label: 'Site' },
         { key: 'contract_type', label: 'Contract' },
@@ -299,15 +368,21 @@ function sectionDoors(sites) {
 function sectionThirsty(rows) {
   const out = rows.filter((r) => r.is_outlier);
   const total = out.reduce((a, r) => a + r.excess_cost_zar, 0);
-  return `<section id="thirsty">
-    ${head('03', 'Seven vehicles drinking', `Over the last twelve months, compared against the
-      median of their own class on the same lanes and the same loads, <b>${out.length} vehicles</b> burn
+  // The count is the title, so it is computed: "Seven" was typed, and a hub filter changes it.
+  const count = numWord(out.length);
+  const title = `${count} ${out.length === 1 ? 'vehicle' : 'vehicles'} drinking`;
+  const lede = out.length
+    ? `Over the last twelve months, compared against the
+      median of their own class on the same lanes and the same loads, <b>${out.length} ${out.length === 1 ? 'vehicle burns' : 'vehicles burn'}</b>
       <b>${fmtPct(Math.min(...out.map((r) => r.excess_pct)), 0)} to
       ${fmtPct(Math.max(...out.map((r) => r.excess_pct)), 0)}</b> more diesel than they should.
-      That gap is worth <b>${fmtRc(total)}</b> a year.`)}
+      That gap is worth <b>${fmtRc(total)}</b> a year.`
+    : 'Over the last twelve months every vehicle at this hub burned within 15% of its class.';
+  return `<section id="thirsty">
+    ${head('03', title, lede)}
     ${figure({
-      id: 'c-thirsty', title: 'Excess fuel cost by vehicle',
-      note: 'Compared within class, never against the fleet, because a rigid and a superlink are not doing the same work. Excess litres are valued at the price each vehicle actually paid, since diesel moved across the window. The dashboard cannot say whether this is injectors, dragging brakes, or diesel walking off the forecourt. It can say these seven are worth a workshop booking to find out.',
+      id: 'c-thirsty', title: 'Excess fuel cost by vehicle', scope: sc(true),
+      note: `Compared within class, never against the fleet, because a rigid and a superlink are not doing the same work. Excess litres are valued at the price each vehicle actually paid, since diesel moved across the window. The dashboard cannot say whether this is injectors, dragging brakes, or diesel walking off the forecourt. It can say these ${count.toLowerCase()} are worth a workshop booking to find out.`,
       tableHtml: table([
         { key: 'registration', label: 'Registration' },
         { key: 'vehicle_class', label: 'Class' },
@@ -331,7 +406,7 @@ function sectionFriday(sla, contract) {
 
   const order = { Dedicated: 0, Contract: 1, Spot: 2 };
   const grid = contract.length ? `
-    <h3 class="figure-title" style="margin-top:2rem">Who it lands on</h3>
+    <h3 class="figure-title">Who it lands on${sc(false)}</h3>
     <p class="figure-note">A dedicated account books a two hour window, a contract account four,
       a spot load eight. So the customers paying most for service are the ones failed first, and
       the ones on the loosest terms barely notice.</p>
@@ -355,8 +430,9 @@ function sectionFriday(sla, contract) {
       whatever is still standing into one run, trucks leave hours late, and every drop on the
       route is late together. On the one account whose contract carries a service clause, that
       was worth <b>${fmtRc(penalty)}</b> in penalties over the last twelve months.`)}
+    <div class="ox-split">
     ${figure({
-      id: 'c-friday', title: 'On time delivery by dispatch day',
+      id: 'c-friday', title: 'On time delivery by dispatch day', scope: sc(false),
       note: 'Nothing about the road changed. The trucks left late.',
       tableHtml: table([
         { key: 'dispatch_day_bucket', label: 'Dispatch day' },
@@ -368,7 +444,8 @@ function sectionFriday(sla, contract) {
           cls: (x) => (x > 0 ? 'breach' : 'muted') },
       ], sla, { caption: 'Last twelve months' }),
     })}
-    ${grid}
+    <div class="figure">${grid}</div>
+    </div>
   </section>`;
 }
 
@@ -384,6 +461,7 @@ function sectionAir(rows) {
       money sitting on the table today. It is the case for consolidating loads onto fewer, fuller
       trucks, and it is the one item here that needs an operations change rather than a phone
       call. ${fmtRc(total)} of running cost went into these trips.</p>
+    <h3 class="figure-title">Trips full of air, by vehicle class${sc(false)}</h3>
     ${table([
       { key: 'vehicle_class', label: 'Class' },
       { key: 'trips', label: 'Laden trips', align: 'right', fmt: fmtNum },
@@ -403,7 +481,7 @@ function sectionClose(h, bridge) {
       <b>${fmtPct(h.identified_pct_of_contribution)}</b> of everything the business currently
       makes, on the same fleet serving the same customers with nothing new bought.`)}
     ${figure({
-      id: 'c-bridge', title: 'Earned today, against what is available',
+      id: 'c-bridge', title: 'Earned today, against what is available', scope: sc(false),
       // The recovery line is computed, not asserted. It used to say half the total would
       // "roughly double the margin", which the arithmetic never supported.
       note: `These are what the findings are worth in full, over the same twelve months. Nobody recovers all of a number like this: a lane can be repriced or dropped, a receiving problem is a conversation, an injector is a workshop booking. Half of it inside a year would still lift contribution by ${fmtPct(h.identified_zar / 2 / h.ttm_contribution_zar * 100, 0)}.`,
@@ -430,6 +508,8 @@ function drawMap(lanes, depots, cities) {
       weight: l.revenue_zar / maxRev,
       status: l.contribution_zar < 0 ? 'loss'
         : l.contribution_margin_pct < 6 ? 'thin' : 'healthy',
+      // With a hub selected, the other hubs' corridors stay on the map as a faint ghost.
+      dim: !!hub.code && l.origin_depot_code !== hub.code,
       tip: `<b>${l.lane_name}</b>`
         + `<div class="tip-row"><span>Round trips</span><span>${fmtNum(l.round_trips)}</span></div>`
         + `<div class="tip-row"><span>Backhaul</span><span>${fmtPct(l.actual_backhaul_pct)} vs ${fmtPct(l.assumed_backhaul_pct, 0)}</span></div>`
@@ -437,7 +517,8 @@ function drawMap(lanes, depots, cities) {
         + `<div class="tip-row"><span>Looks like</span><span>${fmtRc(l.outbound_only_contribution_zar)}</span></div>`
         + `<div class="tip-row"><span>Actually</span><span>${fmtRc(l.contribution_zar)}</span></div>`,
     })),
-    depots, cities, height: 560,
+    depots: depots.map((d) => ({ ...d, dim: !!hub.code && d.code !== hub.code })),
+    cities, height: 560,
   });
   mount(el('c-map'), render);
 }
@@ -537,13 +618,44 @@ function drawBridge(bridge) {
 // Last in the file on purpose: the module body runs top to bottom, so starting the render
 // before the const helpers above are initialised throws a temporal dead zone error.
 
+// Renders are queued, so a filter changed while the engine is still loading waits its turn
+// instead of running beside the first render.
+let queue = Promise.resolve();
+const rerender = (nav) => {
+  queue = queue.then(() => keepScroll(render)).then(() => spy(nav)).catch((e) => console.error(e));
+  return queue;
+};
+
 try {
+  performance.mark('ox-start');
+  // The summary paints first and the engine starts straight after. Starting the engine first
+  // was measured slower: parsing its modules held the main thread while the tiny meta.json
+  // waited behind it, and the summary appeared three seconds late.
+  const m = await meta().catch(() => ({}));
   await renderFreshness().catch((e) => {
     el('fresh-label').textContent = 'Freshness unknown';
     console.warn('freshness', e);
   });
-  await connect((msg) => { el('loading-msg').textContent = msg; });
-  await render();
+
+  const nav = el('ox-nav');
+  const f = m.summary?.filter;
+  if (f) setHub(readParam(f.param), f.options);
+  renderSummary(el('ox-top'), m.summary);
+  renderNav(nav, { sections: SECTIONS, filter: f && { ...f, value: hub.code } });
+  // Marks, so how long a prospect waits can be measured rather than guessed.
+  performance.mark('ox-summary');
+  const engine = connect((msg) => { const n = el('loading-msg'); if (n) n.textContent = msg; });
+  onFilterChange(nav, (code) => {
+    setHub(code, f.options);
+    writeParam(f.param, hub.code);
+    rerender(nav);
+  });
+
+  await engine;
+  // The first render is awaited directly, so a failure reaches the message below instead of
+  // being swallowed by the queue.
+  queue = render().then(() => { performance.mark('ox-ready'); spy(nav); });
+  await queue;
 } catch (err) {
   el('main').innerHTML =
     `<div class="err"><b>Could not load the warehouse.</b><br>${String(err.message || err)}

@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-09-24T07:21:45+00:00",
+  "built_at": "2026-09-24T07:32:09+00:00",
   "data_from": "2024-09-02",
   "data_through": "2026-09-01",
   "fixed_period": true,
@@ -8,31 +8,31 @@
   "tables": {
     "mart_opportunity_bridge": {
       "rows": 6,
-      "bytes": 3955
+      "bytes": 3953
     },
     "mart_lane_economics": {
       "rows": 50,
-      "bytes": 10486
+      "bytes": 10583
     },
     "mart_failed_deliveries": {
       "rows": 10431,
-      "bytes": 120793
+      "bytes": 122377
     },
     "mart_fuel_outliers": {
       "rows": 124,
-      "bytes": 7543
+      "bytes": 7545
     },
     "mart_sla_performance": {
       "rows": 288,
-      "bytes": 9014
+      "bytes": 9034
     },
     "mart_load_factor": {
       "rows": 68,
-      "bytes": 6779
+      "bytes": 6794
     },
     "agg_trip_monthly": {
       "rows": 505,
-      "bytes": 27551
+      "bytes": 27731
     },
     "dim_lane": {
       "rows": 29,
@@ -48,5 +48,82 @@
     }
   },
   "currency": "ZAR",
-  "vat": "excluded"
+  "vat": "excluded",
+  "summary": {
+    "hero": {
+      "v": 23.934534094868756,
+      "f": "pct",
+      "label": "of every kilometre this fleet turned in the last twelve months carried nothing at all"
+    },
+    "findings": [
+      {
+        "n": "01",
+        "id": "corridors",
+        "title": "Empty return legs",
+        "v": 5526107.13,
+        "f": "Rc",
+        "note": "lost a year on 12 corridors"
+      },
+      {
+        "n": "02",
+        "id": "doors",
+        "title": "Deliveries done twice",
+        "v": 6509246.83,
+        "f": "Rc",
+        "note": "a year, 6 sites cause most of it"
+      },
+      {
+        "n": "03",
+        "id": "thirsty",
+        "title": "Thirsty trucks",
+        "v": 2467347.12,
+        "f": "Rc",
+        "note": "a year of excess diesel on 7 vehicles"
+      },
+      {
+        "n": "04",
+        "id": "friday",
+        "title": "Friday dispatch",
+        "v": 5213458.84,
+        "f": "Rc",
+        "note": "a year in service penalties"
+      },
+      {
+        "n": "05",
+        "id": "air",
+        "title": "Paying to move air",
+        "v": 3921,
+        "f": "num",
+        "note": "trips full by volume, light by weight"
+      },
+      {
+        "n": "06",
+        "id": "close",
+        "title": "What it is worth",
+        "close": true,
+        "v": 19716159.92,
+        "f": "Rc",
+        "note": "71.5% of the R27.6m the business earns"
+      }
+    ],
+    "filter": {
+      "param": "hub",
+      "label": "Hub",
+      "all": "All hubs",
+      "options": [
+        {
+          "value": "KES-CPT",
+          "label": "Cape Hub"
+        },
+        {
+          "value": "KES-JHB",
+          "label": "Gauteng Hub"
+        },
+        {
+          "value": "KES-DBN",
+          "label": "KZN Hub"
+        }
+      ]
+    }
+  }
 }

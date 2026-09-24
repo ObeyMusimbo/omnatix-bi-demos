@@ -78,5 +78,70 @@ meta = {
     "currency": "ZAR",
     "vat": "excluded",
 }
+
+# ---------------------------------------------------------------- summary
+#
+# The headline and one figure per finding, painted from this file in the first second, before
+# the in-browser query engine has downloaded. Every number is read from the same gold column
+# the page itself reads for that section, so the strip and the section cannot disagree. The
+# page formats them, by the name in "f", with the same functions it uses everywhere else.
+
+
+def one(sql):
+    return con.execute(sql).fetchone()
+
+
+bridge = {r[0]: r[1] for r in con.execute(
+    "select driver_short, effect_zar from main_gold.mart_opportunity_bridge").fetchall()}
+head = one("""
+    select identified_zar, ttm_contribution_zar, identified_pct_of_contribution
+    from main_gold.mart_opportunity_bridge where step_order = 1
+""")
+empty_pct = one("""
+    select sum(empty_distance_km) * 100.0 / sum(distance_km)
+    from main_gold.agg_trip_monthly where is_trailing_twelve_months
+""")[0]
+traps = one("""
+    select count(*) from main_gold.mart_lane_economics
+    where period_order = 1 and lane_type = 'Line-haul' and is_backhaul_trap
+""")[0]
+problem_sites = one("""
+    select count(*) from (
+        select customer_name from main_gold.mart_failed_deliveries
+        where is_trailing_twelve_months group by 1
+        having sum(failed_drops) * 1.0 / sum(drops) > 0.15)
+""")[0]
+thirsty = one("select count(*) from main_gold.mart_fuel_outliers where is_outlier")[0]
+air_trips = one("select sum(air_trips) from main_gold.mart_load_factor")[0]
+
+meta["summary"] = {
+    "hero": {
+        "v": empty_pct, "f": "pct",
+        "label": "of every kilometre this fleet turned in the last twelve months carried nothing at all",
+    },
+    "findings": [
+        {"n": "01", "id": "corridors", "title": "Empty return legs",
+         "v": bridge["Empty returns"], "f": "Rc", "note": f"lost a year on {traps} corridors"},
+        {"n": "02", "id": "doors", "title": "Deliveries done twice",
+         "v": bridge["Redeliveries"], "f": "Rc", "note": f"a year, {problem_sites} sites cause most of it"},
+        {"n": "03", "id": "thirsty", "title": "Thirsty trucks",
+         "v": bridge["Thirsty vehicles"], "f": "Rc", "note": f"a year of excess diesel on {thirsty} vehicles"},
+        {"n": "04", "id": "friday", "title": "Friday dispatch",
+         "v": bridge["Service penalties"], "f": "Rc", "note": "a year in service penalties"},
+        {"n": "05", "id": "air", "title": "Paying to move air",
+         "v": air_trips, "f": "num", "note": "trips full by volume, light by weight"},
+        {"n": "06", "id": "close", "title": "What it is worth", "close": True,
+         "v": head[0], "f": "Rc",
+         "note": f"{head[2]:.1f}% of the R{head[1] / 1e6:.1f}m the business earns"},
+    ],
+    # The one filter this demo offers. Hub is the only cut most of Kestrel's gold layer carries.
+    "filter": {
+        "param": "hub", "label": "Hub", "all": "All hubs",
+        "options": [{"value": c, "label": n.replace("Kestrel ", "")} for c, n in con.execute(
+            "select distinct origin_depot_code, origin_depot_name "
+            "from main_gold.mart_lane_economics order by 2").fetchall()],
+    },
+}
+
 (OUT / "meta.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
 print(f"  data through {meta['data_through']}, built {meta['built_at']}")

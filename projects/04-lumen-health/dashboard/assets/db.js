@@ -7,7 +7,10 @@
   and it is worth saying out loud in a demo.
 */
 
-import * as duckdb from 'https://cdn.jsdelivr.net/npm/@duckdb/duckdb-wasm@1.32.0/+esm';
+// Loaded on demand rather than imported at the top. A static import made the whole page wait
+// for this module before any of it could run, so nothing painted until the engine arrived.
+// Now the page draws its frame and summary first and the engine loads alongside.
+const DUCKDB_ESM = 'https://cdn.jsdelivr.net/npm/@duckdb/duckdb-wasm@1.32.0/+esm';
 
 const TABLES = [
   'mart_collection_bridge',
@@ -39,10 +42,21 @@ export async function meta() {
   return metaCache;
 }
 
-export async function connect(onProgress = () => {}) {
-  if (conn) return conn;
+let connecting = null;
 
+/**
+ * Start the engine once. The page calls this early, before it has anything to query, and
+ * every query calls it again; they all share the one promise instead of racing to start two
+ * engines.
+ */
+export function connect(onProgress = () => {}) {
+  connecting ||= start(onProgress);
+  return connecting;
+}
+
+async function start(onProgress) {
   onProgress('Starting the query engine');
+  const duckdb = await import(DUCKDB_ESM);
   const bundles = duckdb.getJsDelivrBundles();
   const bundle = await duckdb.selectBundle(bundles);
 

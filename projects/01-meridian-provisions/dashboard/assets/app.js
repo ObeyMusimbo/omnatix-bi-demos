@@ -11,6 +11,9 @@ import {
   waterfall, columns, barsH, lines, legend, table, figure, wireTableToggles,
   fmtR, fmtRc, fmtR2, fmtNum, fmtPct, fmtMonth,
 } from './charts.js';
+import {
+  renderSummary, renderNav, onFilterChange, readParam, writeParam, scope, spy, keepScroll,
+} from './shell.js';
 
 const el = (id) => document.getElementById(id);
 const v = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -93,6 +96,35 @@ async function renderFreshness() {
   return m;
 }
 
+// ---------------------------------------------------------------- the warehouse filter
+//
+// Warehouse is the one cut Meridian's stock marts carry: the weekend stock-outs and the dead
+// stock both sit in a particular distribution centre, and the filter shows which. The margin
+// bridge, the brand waterfall, the promotion and the discount are company-wide, and their
+// figures say "All warehouses" rather than appearing to follow a filter they cannot follow.
+
+const SECTIONS = [
+  ['ox-top', '', 'Summary'],
+  ['gap', '00', 'The gap'],
+  ['water', '01', 'Water'],
+  ['promo', '02', 'Promotion'],
+  ['discount', '03', 'Discount'],
+  ['stock', '04', 'Stock-outs'],
+  ['dead', '05', 'Dead stock'],
+];
+const ALL_DCS = 'All warehouses';
+const dc = { code: '', label: '' };
+
+// The code arrives in the query string, so it is checked against the published options and
+// only a known code ever reaches SQL.
+function setDc(code, options = []) {
+  const o = options.find((x) => x.value === code);
+  dc.code = o ? o.value : '';
+  dc.label = o ? o.label : '';
+}
+const byDc = (col) => (dc.code ? ` and ${col} = '${dc.code}'` : '');
+const sc = (applies) => scope(dc.label, applies, ALL_DCS);
+
 // ---------------------------------------------------------------- render
 
 async function render() {
@@ -130,10 +162,10 @@ async function render() {
     q(`select product_name, count(*) as weeks, sum(lost_units_est) as units,
               sum(lost_revenue_zar) as revenue_zar, sum(lost_gross_profit_zar) as gp_zar,
               max(stockout_week_pct) as week_pct
-       from mart_stockout_impact group by 1 order by 4 desc`),
+       from mart_stockout_impact where true${byDc('warehouse_code')} group by 1 order by 4 desc`),
     q(`select product_name, warehouse_name, units_on_hand, unit_cost_zar,
               dead_stock_value_zar, days_since_last_sale, dead_stock_reason
-       from mart_dead_stock where is_dead_stock
+       from mart_dead_stock where is_dead_stock${byDc('warehouse_code')}
        order by dead_stock_value_zar desc`),
   ]);
 
@@ -141,7 +173,12 @@ async function render() {
   const revGrowth = (h.ttm_revenue_zar / h.prior_revenue_zar - 1) * 100;
   const gpGrowth = (h.ttm_gross_profit_zar / h.prior_gross_profit_zar - 1) * 100;
 
-  // The masthead carries the period now, written by renderFreshness from meta.json.
+  // The headline painted from meta.json in the first second must be the number the
+  // warehouse gives. If they ever drift, say so in the console rather than on a prospect's screen.
+  const m = await meta().catch(() => ({}));
+  if (m.summary && Math.abs(m.summary.hero.v - h.total_gap_zar) > 1) {
+    console.warn('Headline differs from the warehouse', m.summary.hero.v, h.total_gap_zar);
+  }
 
   el('main').innerHTML =
     sectionGap(h, revGrowth, gpGrowth, bridge) +
@@ -214,22 +251,19 @@ function sectionGap(h, revGrowth, gpGrowth, bridge) {
     bridge, { caption: 'Gross profit bridge, trailing twelve months against last year’s margin rate' }
   );
 
+  // The growth figures and the headline now paint from meta.json above this section, before
+  // the engine has loaded, so the section opens on the sentence that sets up the gap.
   return `<section id="gap">
-    ${head('00', 'The gap', `Revenue grew <b>${signed(revGrowth)}</b>. Gross profit grew <b>${signed(gpGrowth)}</b>.
-      Had margin simply held at last year’s rate, gross profit would have been
-      <b>${fmtRc(bridge[0].effect_zar)}</b>. It did not.`)}
-    <div class="hero">
-      <div class="hero-value">${fmtRc(bridge[0].total_gap_zar)}</div>
-      <div class="hero-label">of gross profit did not arrive, despite the revenue that should have carried it</div>
-    </div>
+    ${head('00', 'The gap', `Had margin simply held at last year’s rate, gross profit would
+      have been <b>${fmtRc(bridge[0].effect_zar)}</b>. It did not.`)}
     <div class="tiles">${tiles}</div>
     ${figure({
-      id: 'c-bridge', title: 'Where the gross profit went',
+      id: 'c-bridge', title: 'Where the gross profit went', scope: sc(false),
       note: `${namedCount} named drivers account for ${fmtPct(namedShare, 0)} of the gap, and each is examined in the sections that follow. The rest is discount drift and mix spread across the wider book. Every step covers the same twelve months as the gap. Bars run from last year’s margin rate applied to this year’s revenue, down to what was actually earned. The vertical axis is truncated so the steps stay legible, the two dark bars continue below the plot.`,
       tableHtml: bridgeTable,
     })}
     ${figure({
-      id: 'c-margin', title: 'Gross margin by month',
+      id: 'c-margin', title: 'Gross margin by month', scope: sc(false),
       note: 'The erosion is gradual and never shows up as a bad month, which is exactly why it went unnoticed.',
       tableHtml: table([
         { key: 'year_month', label: 'Month' },
@@ -255,7 +289,7 @@ function sectionWater(steps, allBrands) {
       through wholesale accounts that earn a volume rebate. Allocate the freight by weight and
       the rebate by revenue, and the range turns negative.`)}
     ${figure({
-      id: 'c-water', title: 'Cascade Springs, from gross profit to contribution',
+      id: 'c-water', title: 'Cascade Springs, from gross profit to contribution', scope: sc(false),
       note: 'Freight is allocated to each line by its share of the order’s total weight; rebate by its share of the order’s revenue. Those two rules are the whole trick, and they are why this is invisible in the current reporting, the costs sit at order level in the finance export and never reach a product report.',
       tableHtml: table([
         { key: 'step_label', label: 'Step' },
@@ -265,20 +299,20 @@ function sectionWater(steps, allBrands) {
           cls: (x) => (x < 0 ? 'neg' : '') },
       ], steps, { caption: 'Trailing twelve months' }),
     })}
-    <h3 class="figure-title" style="margin-top:2.5rem">Every brand, ranked by contribution</h3>
+    <h3 class="figure-title" style="margin-top:2.5rem">Every brand, ranked by contribution${sc(false)}</h3>
     <p class="figure-note">A margin trap is a brand with positive gross profit and negative
       contribution, it looks profitable until delivery and rebates are counted.</p>
     ${table([
       { key: 'brand', label: 'Brand' },
-      { key: 'revenue_zar', label: 'Revenue', align: 'right', fmt: fmtRc },
+      { key: 'revenue_zar', label: 'Revenue', align: 'right', fmt: fmtRc, bar: true },
       { key: 'gm_pct', label: 'Gross margin', align: 'right', fmt: (x) => fmtPct(x) },
       { key: 'rev_per_kg', label: 'Revenue per kg', align: 'right', fmt: fmtR2 },
       { key: 'contribution_zar', label: 'Contribution', align: 'right', fmt: fmtRc,
-        cls: (x) => (x < 0 ? 'neg' : 'pos') },
+        cls: (x) => (x < 0 ? 'neg' : 'pos'), bar: true },
       { key: 'cm_pct', label: 'Contribution margin', align: 'right', fmt: (x) => fmtPct(x),
         cls: (x) => (x < 0 ? 'neg' : '') },
       { key: 'is_trap', label: '', fmt: (x) => (x ? 'Margin trap' : ''), cls: (x) => (x ? 'neg' : '') },
-    ], brands)}
+    ], brands, { limit: 8 })}
     <p class="figure-note" style="margin-top:0.9rem">
       ${traps.length} of ${brands.length} brands are margin traps this period.${orphan ? `
       A further <b>${fmtRc(orphan.revenue_zar)}</b> of revenue sits on order lines quoting
@@ -306,7 +340,7 @@ function sectionPromo(weekly, phases) {
       { name: 'Post-promotion (4 weeks)', color: v('--s3') },
     ])}
     ${figure({
-      id: 'c-promo', title: 'Weekly cases sold, by promotion phase',
+      id: 'c-promo', title: 'Weekly cases sold, by promotion phase', scope: sc(false),
       note: 'The shape tells the story before any number is read: a spike, then a trough of almost exactly the same size.',
       tableHtml: table([
         { key: 'promo_phase', label: 'Phase' },
@@ -346,7 +380,7 @@ function sectionDiscount(rows, bridge) {
       { name: 'Rest of Wholesale', color: v('--s2') },
     ], true)}
     ${figure({
-      id: 'c-discount', title: 'Realised discount by month',
+      id: 'c-discount', title: 'Realised discount by month', scope: sc(false),
       note: 'Both lines climb, which is why this was never questioned, discounting is drifting across the whole channel. The point is the widening space between them: the comparison is the same channel with this group excluded, so it is like for like, and the gap is the part that is specific to this account rather than to the market.',
       tableHtml: table([
         { key: 'year_month', label: 'Month' },
@@ -363,14 +397,20 @@ function sectionStock(rows) {
   const tot = rows.reduce((a, r) => ({
     units: a.units + r.units, revenue_zar: a.revenue_zar + r.revenue_zar, gp_zar: a.gp_zar + r.gp_zar,
   }), { units: 0, revenue_zar: 0, gp_zar: 0 });
-  return `<section id="stock">
-    ${head('04', 'The sales that never happened', `Replenishment into the Gauteng DC runs Monday
+  // A warehouse with no stock-outs says so, and says where they are instead. Before the
+  // filter this section could assume rows; Math.max over none printed "-Infinity%".
+  const lede = rows.length
+    ? `Replenishment into the Gauteng DC runs Monday
       to Wednesday. Three Modern Trade hero lines reach zero on hand on a Thursday in up to
       <b>${fmtPct(Math.max(...rows.map((r) => r.week_pct)), 0)}</b> of weeks and cannot be supplied
       on the Friday or Saturday. <b>${fmtRc(tot.revenue_zar)}</b> of revenue was never earned, and none of it appears anywhere in a sales report, because you cannot see sales that did
-      not happen.`)}
+      not happen.`
+    : `No weekend stock-outs at the ${dc.label}. The problem is specific to the Gauteng DC,
+      where replenishment runs Monday to Wednesday and three hero lines run dry every Thursday.`;
+  return `<section id="stock">
+    ${head('04', 'The sales that never happened', lede)}
     ${figure({
-      id: 'c-stock', title: 'Revenue forgone to weekend stock-outs',
+      id: 'c-stock', title: 'Revenue forgone to weekend stock-outs', scope: sc(true),
       note: 'Lost volume is estimated from each line’s own normal Friday and Saturday demand in weeks when stock was available, then valued at the realised Modern Trade price, not list.',
       tableHtml: table([
         { key: 'product_name', label: 'Product' },
@@ -385,20 +425,31 @@ function sectionStock(rows) {
 
 function sectionDead(rows) {
   const total = rows.reduce((a, r) => a + r.dead_stock_value_zar, 0);
-  return `<section id="dead">
-    ${head('05', 'Money sitting in the Coastal DC', `The Halo Shine aerosol range was
+  // The title names the warehouse holding the most, read from the rows. It was typed as the
+  // Coastal DC, which a warehouse filter would have made wrong on two of three choices.
+  const byDcValue = rows.reduce((acc, r) => {
+    acc[r.warehouse_name] = (acc[r.warehouse_name] || 0) + r.dead_stock_value_zar;
+    return acc;
+  }, {});
+  const top = Object.entries(byDcValue).sort((a, b) => b[1] - a[1])[0];
+  const where = top ? top[0].replace('Meridian ', 'the ') : 'the warehouses';
+  const lede = rows.length
+    ? `The Halo Shine aerosol range was
       discontinued. <b>${fmtRc(total)}</b> of it is still on a shelf and has not moved in over
       ${Math.min(...rows.map((r) => r.days_since_last_sale))} days. This is working capital rather
-      than profit, which makes it the easiest item on this page to act on.`)}
-    <h3 class="figure-title">Dead stock at cost</h3>
+      than profit, which makes it the easiest item on this page to act on.`
+    : `No dead stock at the ${dc.label}.`;
+  return `<section id="dead">
+    ${head('05', `Money sitting in ${where}`, lede)}
+    <h3 class="figure-title">Dead stock at cost${sc(true)}</h3>
     <p class="figure-note">Discontinued lines with no sale in the last 180 days.</p>
     ${table([
       { key: 'product_name', label: 'Product' },
       { key: 'warehouse_name', label: 'Warehouse' },
       { key: 'units_on_hand', label: 'Cases', align: 'right', fmt: fmtNum },
       { key: 'days_since_last_sale', label: 'Days since last sale', align: 'right', fmt: fmtNum },
-      { key: 'dead_stock_value_zar', label: 'Value at cost', align: 'right', fmt: fmtR, cls: () => 'neg' },
-    ], rows, { totalRow: { product_name: 'Total', dead_stock_value_zar: total } })}
+      { key: 'dead_stock_value_zar', label: 'Value at cost', align: 'right', fmt: fmtR, cls: () => 'neg', bar: true },
+    ], rows, { totalRow: { product_name: 'Total', dead_stock_value_zar: total }, limit: 8 })}
   </section>`;
 }
 
@@ -491,15 +542,44 @@ function drawStock(rows) {
 // render before the const helpers below are initialised throws a temporal dead zone
 // error rather than anything that looks like a data problem.
 
+// Renders are queued, so a filter changed while the engine is still loading waits its turn
+// instead of running beside the first render.
+let queue = Promise.resolve();
+const rerender = (nav) => {
+  queue = queue.then(() => keepScroll(render)).then(() => spy(nav)).catch((e) => console.error(e));
+  return queue;
+};
+
 try {
-  // Freshness first: it is one small fetch, and if the warehouse fails to load the reader
-  // should still be told how old the thing in front of them is.
+  performance.mark('ox-start');
+  // The summary paints first and the engine starts straight after. Starting the engine first
+  // was measured slower: parsing its modules held the main thread while the tiny meta.json
+  // waited behind it, and the summary appeared three seconds late.
+  const m = await meta().catch(() => ({}));
   await renderFreshness().catch((e) => {
     el('fresh-label').textContent = 'Freshness unknown';
     console.warn('freshness', e);
   });
-  await connect((msg) => { el('loading-msg').textContent = msg; });
-  await render();
+
+  const nav = el('ox-nav');
+  const f = m.summary?.filter;
+  if (f) setDc(readParam(f.param), f.options);
+  renderSummary(el('ox-top'), m.summary);
+  renderNav(nav, { sections: SECTIONS, filter: f && { ...f, value: dc.code } });
+  onFilterChange(nav, (code) => {
+    setDc(code, f.options);
+    writeParam(f.param, dc.code);
+    rerender(nav);
+  });
+  // Marks, so how long a prospect waits can be measured rather than guessed.
+  performance.mark('ox-summary');
+  const engine = connect((msg) => { const n = el('loading-msg'); if (n) n.textContent = msg; });
+
+  await engine;
+  // The first render is awaited directly, so a failure reaches the message below instead of
+  // being swallowed by the queue.
+  queue = render().then(() => { performance.mark('ox-ready'); spy(nav); });
+  await queue;
 } catch (err) {
   el('main').innerHTML =
     `<div class="err"><b>Could not load the warehouse.</b><br>${String(err.message || err)}

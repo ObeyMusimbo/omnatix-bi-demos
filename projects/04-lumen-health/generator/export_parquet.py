@@ -86,5 +86,60 @@ meta = {
     "currency": "ZAR",
     "vat": "excluded",
 }
+
+# ---------------------------------------------------------------- summary
+#
+# The headline and one figure per finding, painted from this file in the first second, before
+# the in-browser query engine has downloaded. Every number is read from the same gold column
+# the page itself reads for that section, so the strip and the section cannot disagree. The
+# page formats them, by the name in "f", with the same functions it uses everywhere else.
+
+
+def one(sql):
+    return con.execute(sql).fetchone()
+
+
+b = one("""
+    select total_leakage_zar, leakage_pct_of_billed
+    from main_gold.mart_collection_bridge where step_order = 1
+""")
+cap = one("select all_empty_pct, all_unfilled_cost_zar + all_no_show_cost_zar "
+          "from main_gold.mart_capacity_cost limit 1")
+claims = one("select all_outstanding_zar from main_gold.mart_claim_recovery limit 1")[0]
+noshow = one("select all_recoverable_zar from main_gold.mart_no_show limit 1")[0]
+gap = one("select sum(patient_due_zar) - sum(patient_paid_zar) from main_gold.mart_clinic")[0]
+dearest = one("""
+    select max(cost_ratio_vs_peers) from main_gold.mart_practitioner where peers >= 3
+""")[0]
+
+meta["summary"] = {
+    "hero": {
+        "v": b[0], "f": "R",
+        "label": f"billed for care already delivered and never collected, which is "
+                 f"{b[1]:.1f}% of everything the group invoiced",
+    },
+    "findings": [
+        {"n": "02", "id": "week", "title": "Empty chairs",
+         "v": cap[0], "f": "pct",
+         "note": f"of paid clinician time had nobody in the chair, R{cap[1] / 1e6:.1f}m of it"},
+        {"n": "03", "id": "claims", "title": "Claims nobody worked",
+         "v": claims, "f": "Rc", "note": "rejected or short paid and never recovered"},
+        {"n": "04", "id": "noshow", "title": "Patients who never arrived",
+         "v": noshow, "f": "Rc", "note": "of visits recoverable with a reminder SMS"},
+        {"n": "05", "id": "reception", "title": "The gap at reception",
+         "v": gap, "f": "Rc", "note": "owed by patients and never asked for"},
+        {"n": "06", "id": "diaries", "title": "Different diaries",
+         "v": dearest, "f": "x", "note": "the dearest cost per visit against discipline peers"},
+    ],
+    # Clinic is the cut the claims, patient charge and practitioner marts carry. The diary grid,
+    # the no-show mart, the schemes and the bridge are group-wide and say so.
+    "filter": {
+        "param": "clinic", "label": "Clinic", "all": "All clinics",
+        "options": [{"value": c, "label": n.replace("Lumen ", "")} for c, n in con.execute(
+            "select distinct clinic_code, clinic_name from main_gold.mart_clinic "
+            "order by 2").fetchall()],
+    },
+}
+
 (OUT / "meta.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
 print(f"  data through {meta['data_through']}, built {meta['built_at']}")

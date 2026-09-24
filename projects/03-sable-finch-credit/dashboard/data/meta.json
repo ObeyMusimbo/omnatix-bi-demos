@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-09-24T07:21:55+00:00",
+  "built_at": "2026-09-24T07:52:47+00:00",
   "data_from": "2024-09-01",
   "data_through": "2026-08-31",
   "fixed_period": true,
@@ -12,19 +12,19 @@
     },
     "mart_vintage": {
       "rows": 2691,
-      "bytes": 36768
+      "bytes": 37822
     },
     "mart_branch_risk": {
       "rows": 216,
-      "bytes": 10088
+      "bytes": 10195
     },
     "mart_affordability": {
       "rows": 648,
-      "bytes": 21956
+      "bytes": 22416
     },
     "mart_topup_masking": {
       "rows": 852,
-      "bytes": 34752
+      "bytes": 34717
     },
     "mart_debit_order": {
       "rows": 12,
@@ -32,7 +32,7 @@
     },
     "mart_collections": {
       "rows": 4,
-      "bytes": 2149
+      "bytes": 2150
     },
     "agg_book_monthly": {
       "rows": 23,
@@ -40,9 +40,110 @@
     },
     "dim_branch": {
       "rows": 9,
-      "bytes": 1372
+      "bytes": 1381
     }
   },
   "currency": "ZAR",
-  "vat": "excluded"
+  "vat": "excluded",
+  "summary": {
+    "hero": {
+      "v": 55.82668844269381,
+      "f": "signedPct0",
+      "label": "worse at month six than the cohorts written a year ago, on the same product"
+    },
+    "findings": [
+      {
+        "n": "02",
+        "id": "branch",
+        "title": "One branch turned",
+        "v": 1.62,
+        "f": "x",
+        "note": "Mahikeng's loss rate against the book, since May 2025"
+      },
+      {
+        "n": "03",
+        "id": "afford",
+        "title": "Nothing left over",
+        "v": 34848046.66,
+        "f": "Rc",
+        "note": "outstanding on 3 201 agreements a court could set aside"
+      },
+      {
+        "n": "04",
+        "id": "topups",
+        "title": "Arrears refinanced",
+        "v": 849,
+        "f": "num",
+        "note": "of 852 top-ups settled an account already in arrears"
+      },
+      {
+        "n": "05",
+        "id": "debit",
+        "title": "Debit order timing",
+        "v": 16.96,
+        "f": "pct",
+        "note": "of first instalments fail a week after payday, against 8.4%"
+      },
+      {
+        "n": "06",
+        "id": "collections",
+        "title": "Collections effort",
+        "v": 2052.18,
+        "f": "R",
+        "note": "to cure one account past 90 days, against R6 in month one"
+      },
+      {
+        "n": "07",
+        "id": "close",
+        "title": "What it adds up to",
+        "close": true,
+        "v": 10270077.18,
+        "f": "Rc",
+        "note": "of the R37.5m credit loss sits with these four conditions"
+      }
+    ],
+    "filter": {
+      "param": "branch",
+      "label": "Branch",
+      "all": "All branches",
+      "options": [
+        {
+          "value": "SF-BFN",
+          "label": "Bloemfontein"
+        },
+        {
+          "value": "SF-CPT",
+          "label": "Cape Town Parade"
+        },
+        {
+          "value": "SF-DBN",
+          "label": "Durban Point"
+        },
+        {
+          "value": "SF-GQE",
+          "label": "Gqeberha Govan Mbeki"
+        },
+        {
+          "value": "SF-JHB",
+          "label": "Johannesburg CBD"
+        },
+        {
+          "value": "SF-MAH",
+          "label": "Mahikeng"
+        },
+        {
+          "value": "SF-PMB",
+          "label": "Pietermaritzburg"
+        },
+        {
+          "value": "SF-PLK",
+          "label": "Polokwane"
+        },
+        {
+          "value": "SF-PTA",
+          "label": "Pretoria Central"
+        }
+      ]
+    }
+  }
 }

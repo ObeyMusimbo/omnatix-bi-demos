@@ -84,6 +84,20 @@ rand of it attributed to one of three people who could do something about it. Re
 separately and never summed with it: R31.1m of clinician time in chairs nobody sat in, because
 cost incurred and revenue foregone are different quantities.
 
+## The Omnatix frame
+
+Each demo keeps its own identity inside one shared frame, so a prospect always knows whose work
+they are looking at and what to do next.
+
+| Part | What it does |
+|---|---|
+| Omnatix bar | The mark, "All demos", Save as PDF, and Book a walkthrough, identical on every demo |
+| Summary strip | The headline and one card per finding, each linking to its section, painted from `meta.json` in about a second, before the query engine has loaded |
+| Section nav | Stays at the top while scrolling and marks the section on screen |
+| One filter | Warehouse, hub, branch or clinic. Figures whose data carries it follow it; the rest say they are company-wide. The filter lives in the URL, so a filtered view can be sent as a link |
+| Folded tables | Long tables show their first rows with Show all, and carry in-cell bars |
+| Print | Save as PDF drops the frame, unfolds every table and scales each chart to the page |
+
 ## Visual identity per project
 
 Deliberately distinct. The point is to show range, not a template.

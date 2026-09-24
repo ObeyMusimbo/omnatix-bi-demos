@@ -6,9 +6,26 @@
 <title>Margin &amp; Revenue Intelligence, Meridian Provisions Co.</title>
 <meta name="description" content="Where the gross profit went: a margin intelligence report for a South African FMCG distributor. Demonstration built on synthetic data.">
 <link rel="stylesheet" href="assets/ledger.css">
+<link rel="stylesheet" href="assets/omnatix-frame.css">
+<!-- Open the connection to the query engine's CDN early. The engine itself is not preloaded:
+     measured, a preloaded module is compiled on the main thread the moment it lands, and that
+     delayed the summary by three seconds. The page paints first, then fetches the engine. -->
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='5' fill='%23B5502C'/><path d='M8 22V10h3l5 8 5-8h3v12h-3v-7l-4 6h-2l-4-6v7z' fill='%23FBF9F4'/></svg>">
 </head>
 <body>
+
+<div class="ox-bar">
+  <div class="ox-bar-in">
+    <a class="ox-brand" href="../"><img src="../brand/omnatix-mark.png" alt="" width="26" height="26"><span>Omnatix</span></a>
+    <span class="ox-tag">Live demo on synthetic data</span>
+    <nav class="ox-actions" aria-label="Omnatix">
+      <a class="ox-link" href="../">All demos</a>
+      <button class="ox-link ox-print" type="button" onclick="window.print()">Save as PDF</button>
+      <a class="ox-cta" href="mailto:info@omnatix.co.za?subject=Walkthrough%3A%20Meridian%20Provisions%20demo&amp;body=I%20would%20like%20to%20see%20what%20the%20Meridian%20Provisions%20review%20would%20find%20in%20our%20own%20sales%2C%20margin%20and%20stock%20data.">Book a walkthrough</a>
+    </nav>
+  </div>
+</div>
 
 <div class="wrap">
 
@@ -27,6 +44,13 @@
       <button class="theme-toggle" id="theme-toggle" type="button">Dark</button>
     </div>
   </header>
+</div>
+
+<nav class="ox-nav" id="ox-nav" aria-label="Sections" hidden></nav>
+
+<div class="wrap">
+
+  <div class="ox-top" id="ox-top"></div>
 
   <main id="main">
     <div class="loading" id="loading">
@@ -34,6 +58,10 @@
       <p class="muted" style="font-size:0.82rem">
         The warehouse is running in your browser. Nothing is being sent to a server.
       </p>
+      <div class="ox-skel ox-skel-h"></div>
+      <div class="ox-skel ox-skel-p"></div>
+      <div class="ox-skel ox-skel-p is-short"></div>
+      <div class="ox-skel ox-skel-chart"></div>
     </div>
   </main>
 

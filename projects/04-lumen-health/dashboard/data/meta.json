@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-09-24T07:22:08+00:00",
+  "built_at": "2026-09-24T07:56:14+00:00",
   "data_from": "2024-09-02",
   "data_through": "2026-08-31",
   "fixed_period": true,
@@ -18,7 +18,7 @@
     },
     "mart_capacity_cost": {
       "rows": 50,
-      "bytes": 7639
+      "bytes": 7634
     },
     "mart_no_show": {
       "rows": 10,
@@ -30,7 +30,7 @@
     },
     "mart_patient_charges": {
       "rows": 12,
-      "bytes": 3460
+      "bytes": 3469
     },
     "mart_scheme": {
       "rows": 6,
@@ -54,5 +54,85 @@
     }
   },
   "currency": "ZAR",
-  "vat": "excluded"
+  "vat": "excluded",
+  "summary": {
+    "hero": {
+      "v": 17417434.82,
+      "f": "R",
+      "label": "billed for care already delivered and never collected, which is 10.8% of everything the group invoiced"
+    },
+    "findings": [
+      {
+        "n": "02",
+        "id": "week",
+        "title": "Empty chairs",
+        "v": 44.8,
+        "f": "pct",
+        "note": "of paid clinician time had nobody in the chair, R32.5m of it"
+      },
+      {
+        "n": "03",
+        "id": "claims",
+        "title": "Claims nobody worked",
+        "v": 11041078.53,
+        "f": "Rc",
+        "note": "rejected or short paid and never recovered"
+      },
+      {
+        "n": "04",
+        "id": "noshow",
+        "title": "Patients who never arrived",
+        "v": 9500265.71,
+        "f": "Rc",
+        "note": "of visits recoverable with a reminder SMS"
+      },
+      {
+        "n": "05",
+        "id": "reception",
+        "title": "The gap at reception",
+        "v": 6374295.889999995,
+        "f": "Rc",
+        "note": "owed by patients and never asked for"
+      },
+      {
+        "n": "06",
+        "id": "diaries",
+        "title": "Different diaries",
+        "v": 2.04,
+        "f": "x",
+        "note": "the dearest cost per visit against discipline peers"
+      }
+    ],
+    "filter": {
+      "param": "clinic",
+      "label": "Clinic",
+      "all": "All clinics",
+      "options": [
+        {
+          "value": "LUM-PTA",
+          "label": "Brooklyn"
+        },
+        {
+          "value": "LUM-CLR",
+          "label": "Claremont"
+        },
+        {
+          "value": "LUM-SAN",
+          "label": "Sandton"
+        },
+        {
+          "value": "LUM-GQE",
+          "label": "Summerstrand"
+        },
+        {
+          "value": "LUM-UMH",
+          "label": "Umhlanga"
+        },
+        {
+          "value": "LUM-BFN",
+          "label": "Westdene"
+        }
+      ]
+    }
+  }
 }

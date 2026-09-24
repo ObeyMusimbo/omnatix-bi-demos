@@ -339,3 +339,12 @@ footer p { margin: 0 0 0.5rem; max-width: 80ch; }
   /* Tap targets. A toggle at 22px high is a coin toss with a thumb. */
   .tbl-toggle { padding: 0.4rem 0.7rem; min-height: 40px; }
 }
+
+/* ---------------------------------------------------------------- the Omnatix frame
+
+   omnatix-frame.css draws the summary, the section bar and the filter in whatever tokens a
+   theme declares. Cards on this theme are white panels on bone paper, like the tiles. */
+:root {
+  --ox-card: var(--panel);
+  --ox-accent: var(--navy);
+}

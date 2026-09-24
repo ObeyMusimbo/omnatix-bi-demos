@@ -119,6 +119,27 @@ run: `node --check` every JS file, `py_compile` every Python file, `dbt parse`, 
 - A waterfall whose anchor dwarfs its steps needs `zeroBaseline: false`, and the axis must be
   labelled as truncated. The Cascade waterfall keeps a zero baseline because crossing zero is
   the finding.
+- **Do not preload the query engine on a demo page.** A `modulepreload` of DuckDB-WASM is
+  compiled on the main thread the moment it lands, and it held the summary back by three
+  seconds. The page paints its frame from `meta.json` first, then starts the engine.
+- A closing bridge and the sections it summarises must read **the same months**. Kestrel's
+  fuel step and Meridian's promotion and discount steps once summed two years inside a
+  one-year total. Kestrel carries an `is_trailing_twelve_months` flag for this; Meridian takes
+  its windows from `period_end`.
+
+### The Omnatix frame
+
+Every demo sits inside the same frame: `shell.js` and `omnatix-frame.css` (shared and kept
+identical, like `charts.js`), plus the static Omnatix bar in each `index.html`. It draws the
+bar, the sticky section nav, the one filter each demo offers, and the summary strip.
+
+- The summary paints from `meta.summary`, written by each `export_parquet.py` from the same gold
+  columns the page reads, so it appears before the engine loads. Each page compares its headline
+  with the warehouse after the first render and warns in the console if they differ.
+- A figure that cannot follow the filter says so with a scope label ("All clinics"). Never let
+  a figure look filtered when its mart does not carry the dimension.
+- The filter value comes from the query string, so it is checked against the published options
+  before it reaches SQL.
 
 ## Style
 
