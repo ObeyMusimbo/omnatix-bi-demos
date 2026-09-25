@@ -1,15 +1,18 @@
 /*
   Control Tower, the Kestrel Logistics theme.
 
-  An operations screen rather than a report. Near black, panels that read as instruments,
-  condensed labels in small caps, monospace figures so a column of numbers lines up, and
-  colour reserved for state. Where Meridian's Ledger theme is a printed document you read
-  once, this is a wall display somebody glances at all day.
+  An operations app rather than a report. A sidebar of views, one view on screen at a time, a
+  ticker across the top, and an alerts rail that stays beside every view, because a control
+  tower is somewhere you watch exceptions, not somewhere you read. Panels read as instruments,
+  labels sit in small caps, and colour is reserved for state.
+
+  Dark is the default, as it is on a wall display. Light mode exists for a laptop in a bright
+  office and has its own validated steps: it is not the dark palette flipped.
 
   Categorical colours are validated, not chosen: lightness band, chroma floor, colour vision
-  separation, normal vision separation and surface contrast, all against this exact surface.
-  Worst adjacent pair clears delta E 11.9. Re-validate before substituting any of them, and
-  keep the order, because adjacency is what is tested.
+  separation, normal vision separation and surface contrast, all against the panel surface of
+  each mode. Worst adjacent pair clears delta E 11.9 in dark and 11.1 in light. Re-validate
+  before substituting any of them, and keep the order, because adjacency is what is tested.
 */
 
 :root {
@@ -35,6 +38,8 @@
   --warn:   #FBBF24;
   --breach: #F87171;
 
+  --glow: rgb(28 157 184 / 0.12);
+
   --font-sans: Verdana, Geneva, 'DejaVu Sans', sans-serif;
   --font-body: Verdana, Geneva, 'DejaVu Sans', sans-serif;
   --font-mono: Verdana, Geneva, 'DejaVu Sans', sans-serif;
@@ -58,6 +63,31 @@
   --pos:          var(--ok);
 }
 
+/* Light mode, validated against white panels: worst adjacent pair delta E 11.1 (deutan). */
+:root[data-theme="light"] {
+  --bg:         #EEF2F6;
+  --panel:      #FFFFFF;
+  --panel-2:    #F3F6F9;
+  --land:       #E4EAF0;
+  --land-edge:  #C3CDD7;
+  --rule:       #DCE3EA;
+  --rule-2:     #C4CED8;
+  --text:       #111A24;
+  --text-2:     #4B5967;
+  --text-3:     #6B7785;
+
+  --s1: #0080A8;
+  --s2: #8A6D0B;
+  --s3: #B8457A;
+  --s4: #6556C4;
+
+  --ok:     #1B7F4B;
+  --warn:   #9A6200;
+  --breach: #C2342B;
+
+  --glow: rgb(0 128 168 / 0.08);
+}
+
 * { box-sizing: border-box; }
 
 body {
@@ -70,97 +100,277 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-.wrap { max-width: var(--measure); margin: 0 auto; padding: 0 1.75rem; }
+/* ---------------------------------------------------------------- the app shell */
 
-/* ---------------------------------------------------------------- masthead */
+.app { display: grid; grid-template-columns: 236px minmax(0, 1fr); min-height: calc(100vh - 46px); }
 
-.masthead {
-  border-bottom: 1px solid var(--rule-2);
-  padding: 1.75rem 0 1.1rem;
-  margin-bottom: 2.5rem;
+.side {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  background: var(--panel);
+  border-right: 1px solid var(--rule);
+  padding: 1.25rem 0.9rem 1rem;
   display: flex;
-  align-items: flex-end;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+.side-id { padding: 0 0.4rem; }
+.side-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.side-sub { font-size: 0.78rem; color: var(--text-3); }
+.side-foot { margin-top: auto; display: flex; flex-direction: column; gap: 0.9rem; padding: 0 0.4rem; }
+.side-status { font-size: 0.76rem; color: var(--text-3); line-height: 1.55; }
+
+/* The frame's section bar, turned into a vertical list of views. */
+.tower .side-nav { position: static; background: none; border: 0; }
+.tower .side-nav .ox-nav-in { flex-direction: column; align-items: stretch; gap: 1.1rem; padding: 0; max-width: none; }
+.tower .side-nav .ox-sections { flex-direction: column; overflow: visible; gap: 0.15rem; }
+.tower .side-nav .ox-sections a {
+  white-space: normal;
+  border-bottom: 0;
+  border-radius: 6px;
+  padding: 0.55rem 0.65rem;
+  font-size: 13px;
+  line-height: 1.3;
+  color: var(--text-2);
+}
+.tower .side-nav .ox-sections a .n { color: var(--text-3); font-size: 11px; }
+.tower .side-nav .ox-sections a:hover { background: var(--panel-2); color: var(--text); }
+.tower .side-nav .ox-sections a.is-active {
+  background: var(--panel-2);
+  color: var(--text);
+  box-shadow: inset 3px 0 0 var(--s1);
+  font-weight: 700;
+}
+.tower .side-nav .ox-sections a.is-active .n { color: var(--s1); }
+.tower .side-nav .ox-filter { flex-direction: column; align-items: stretch; gap: 0.3rem; padding: 0 0.4rem; }
+.tower .side-nav .ox-filter span { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-3); }
+.tower .ox-filter select { background: var(--panel-2); }
+
+.ox-theme {
+  background: var(--panel-2);
+  border: 1px solid var(--rule-2);
+  border-radius: 6px;
+  color: var(--text-2);
+  font-size: 0.74rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.5rem 0.7rem;
+}
+.ox-theme:hover { color: var(--text); border-color: var(--text-3); }
+.ox-theme:focus-visible { outline: 2px solid var(--s1); outline-offset: 2px; }
+
+.deck { min-width: 0; display: flex; flex-direction: column; }
+
+.deck-head {
+  position: sticky;
+  top: 0;
+  z-index: 25;
+  background: var(--bg);
+  border-bottom: 1px solid var(--rule-2);
+  padding: 0.7rem 1.5rem;
+  display: flex;
+  align-items: center;
   justify-content: space-between;
-  gap: 2rem;
+  gap: 1.25rem;
   flex-wrap: wrap;
 }
-.masthead h1 {
-  font-family: var(--font-sans);
-  font-size: 2.1rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
+.deck-where { display: flex; flex-direction: column; min-width: 0; }
+.deck-kicker { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3); }
+.deck-title { font-size: 1.15rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+
+/* The ticker: four numbers that describe the whole network, painted from meta.json. */
+.ticker { display: flex; gap: 1px; background: var(--rule); border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
+.tick { background: var(--panel); padding: 0.35rem 0.85rem; display: flex; flex-direction: column; min-width: 0; }
+.tick-l { font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-3); white-space: nowrap; }
+.tick-v { font-size: 0.98rem; font-weight: 700; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.tick-v.breach { color: var(--breach); }
+
+.deck-body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  align-items: start;
+}
+.deck-main { min-width: 0; container-type: inline-size; }
+
+/* Side by side only when the view itself is wide enough. The frame splits on the width of the
+   screen, but here the sidebar and the rail take 600px of it, and a map squeezed into 380px is
+   not the hero it is meant to be. */
+.tower .deck-main .ox-split { grid-template-columns: minmax(0, 1fr); gap: 0 1.25rem; }
+@container (min-width: 900px) {
+  .tower .deck-main .ox-split { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .tower .deck-main .ox-split.is-wide-left { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); }
+}
+
+/* ---------------------------------------------------------------- the alerts rail */
+
+.alerts {
+  position: sticky;
+  top: 76px;
+  max-height: calc(100vh - 92px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  scrollbar-width: thin;
+}
+.alert-list { display: flex; flex-direction: column; gap: 0.6rem; }
+.rail-head { display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem; }
+.rail-title { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3); font-weight: 700; }
+.rail-count { font-size: 11px; color: var(--text-3); }
+
+.status-card {
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 0.95rem 1rem;
+}
+.status-card .hero-value { font-size: 2.6rem; }
+.status-card .hero-label { font-size: 0.85rem; max-width: none; }
+
+.alert {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.15rem 0.75rem;
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--text-3);
+  border-radius: 6px;
+  padding: 0.65rem 0.8rem;
+  color: var(--text);
+  text-decoration: none;
+}
+.alert:hover { border-color: var(--rule-2); background: var(--panel-2); }
+.alert.is-active { background: var(--panel-2); box-shadow: 0 0 0 1px var(--s1); }
+.alert:focus-visible { outline: 2px solid var(--s1); outline-offset: 2px; }
+.alert-sev { grid-column: 1 / -1; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; }
+.alert-title { font-size: 0.86rem; font-weight: 700; line-height: 1.3; }
+.alert-v { font-size: 0.95rem; font-weight: 700; white-space: nowrap; text-align: right; }
+.alert-note { grid-column: 1 / -1; font-size: 0.76rem; color: var(--text-3); line-height: 1.4; }
+.alert.sev-critical { border-left-color: var(--breach); }
+.alert.sev-critical .alert-sev { color: var(--breach); }
+.alert.sev-warning { border-left-color: var(--warn); }
+.alert.sev-warning .alert-sev { color: var(--warn); }
+.alert.sev-watch { border-left-color: var(--s1); }
+.alert.sev-watch .alert-sev { color: var(--s1); }
+.alert.sev-total { border-left-color: var(--ok); background: var(--panel-2); }
+.alert.sev-total .alert-sev, .alert.sev-total .alert-v { color: var(--ok); }
+
+/* The AI dispatch brief: the same priorities, as a work queue. */
+.tower-brief {
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-top: 2px solid var(--s1);
+  border-radius: 8px;
+  padding: 0.9rem 1rem;
+  box-shadow: 0 0 0 4px var(--glow);
+}
+.tower-brief .ai-badge, .tower-rec .ai-badge {
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  margin: 0 0 0.15rem;
+  color: var(--s1);
 }
-.masthead .sub { color: var(--text-2); font-size: 0.92rem; margin: 0; }
-.masthead .meta {
-  text-align: right;
-  font-size: 0.78rem;
-  color: var(--text-3);
-  font-family: var(--font-mono);
-  line-height: 1.6;
-}
+.tower-brief .ai-headline { font-size: 0.9rem; font-weight: 700; line-height: 1.4; margin: 0.45rem 0; }
+.tower-brief .ai-why { font-size: 0.78rem; color: var(--text-2); margin: 0 0 0.6rem; }
+.tower-brief .ai-pris li { border-top: 1px solid var(--rule); }
+.tower-brief .ai-pri { padding: 0.5rem 0; gap: 0.55rem; }
+.tower-brief .ai-pri:hover .ai-do { color: var(--s1); }
+.tower-brief .ai-pri-n { color: var(--s1); font-size: 0.74rem; font-weight: 700; }
+.tower-brief .ai-do { font-size: 0.8rem; line-height: 1.35; }
+.tower-brief .ai-meta { font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-3); }
+.tower-brief .ai-pri-v { font-size: 0.8rem; color: var(--ok); }
+.ai-credit { font-size: 0.72rem; color: var(--text-3); margin-top: 0.6rem; }
 
-.freshness {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-family: var(--font-sans);
-  font-size: 0.92rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-2);
-  margin-bottom: 0.1rem;
-}
-.fresh-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text-3); flex: none; }
-.freshness.is-current { color: var(--ok); }
-.freshness.is-current .fresh-dot { background: var(--ok); }
-.freshness.is-lagging { color: var(--warn); }
-.freshness.is-lagging .fresh-dot { background: var(--warn); }
-.freshness.is-stale { color: var(--breach); }
-.freshness.is-stale .fresh-dot { background: var(--breach); }
+/* ---------------------------------------------------------------- views */
 
-/* ---------------------------------------------------------------- sections */
-
-section { margin: 0 0 3.5rem; }
+section { margin: 0; }
 
 .section-head {
   display: flex;
   align-items: baseline;
   gap: 0.9rem;
-  border-top: 1px solid var(--rule-2);
-  padding-top: 0.8rem;
-  margin-bottom: 1.1rem;
+  margin-bottom: 0.6rem;
 }
 .section-num {
   font-family: var(--font-mono);
   font-size: 0.75rem;
   color: var(--s1);
   letter-spacing: 0.1em;
+  border: 1px solid var(--rule-2);
+  border-radius: 4px;
+  padding: 0 0.4rem;
 }
 .section-head h2 {
   font-family: var(--font-sans);
-  font-size: 1.5rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
   margin: 0;
 }
-.lede { color: var(--text-2); max-width: 74ch; margin: 0 0 1.5rem; font-size: 0.97rem; }
+.lede { color: var(--text-2); max-width: 86ch; margin: 0 0 1.1rem; font-size: 0.93rem; }
 .lede b, .lede strong { color: var(--text); font-weight: 600; }
 
-/* ---------------------------------------------------------------- figures */
+/* The AI recommendation strip under each view's opening: what to do, as a checklist. */
+.tower-rec {
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--s1);
+  border-radius: 8px;
+  padding: 0.9rem 1.1rem;
+  margin: 0 0 1.25rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.5rem;
+}
+.tower-rec .ai-conf { font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-3); }
+.tower-rec .ai-insight { font-weight: 700; font-size: 0.92rem; }
+.tower-rec .ai-why { font-size: 0.84rem; color: var(--text-2); }
+.tower-rec .ai-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.5rem; }
+.tower-rec .ai-actions li {
+  background: var(--panel-2);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 0.55rem 0.7rem 0.55rem 1.9rem;
+  position: relative;
+}
+.tower-rec .ai-actions li::before {
+  content: '';
+  position: absolute;
+  left: 0.7rem;
+  top: 0.78rem;
+  width: 9px;
+  height: 9px;
+  border: 1.5px solid var(--s1);
+  border-radius: 2px;
+}
+.tower-rec .ai-do { font-size: 0.82rem; line-height: 1.4; }
+.tower-rec .ai-meta { font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-3); }
+.tower-rec .ai-value-n { font-size: 1.2rem; color: var(--ok); }
+.tower-rec .ai-value-note { font-size: 0.8rem; color: var(--text-2); }
+.tower-rec .ai-credit { margin: 0; }
+
+/* ---------------------------------------------------------------- instruments */
 
 .hero {
   display: flex;
   align-items: baseline;
   gap: 1.1rem;
   flex-wrap: wrap;
-  margin: 1.5rem 0 0.5rem;
+  margin: 0.25rem 0 0.4rem;
 }
 .hero-value {
-  /* Sans, not the condensed display face, and proportional figures. tabular at this size
-     makes a number look loose. */
+  /* Sans and proportional figures: tabular at this size makes a number look loose. */
   font-family: var(--font-body);
   font-size: 4.2rem;
   font-weight: 600;
@@ -172,18 +382,18 @@ section { margin: 0 0 3.5rem; }
 
 .tiles {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 1px;
   background: var(--rule);
   border: 1px solid var(--rule);
-  border-radius: 6px;
+  border-radius: 8px;
   overflow: hidden;
-  margin: 1.75rem 0;
+  margin: 0 0 1.25rem;
 }
-.tile { background: var(--panel); padding: 0.95rem 1.15rem; }
+.tile { background: var(--panel); padding: 0.85rem 1.05rem; }
 .tile-label {
   font-family: var(--font-sans);
-  font-size: 0.82rem;
+  font-size: 0.74rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--text-3);
@@ -191,8 +401,8 @@ section { margin: 0 0 3.5rem; }
 }
 .tile-value {
   font-family: var(--font-mono);
-  font-size: 1.45rem;
-  font-weight: 500;
+  font-size: 1.4rem;
+  font-weight: 600;
   line-height: 1.15;
   letter-spacing: -0.02em;
 }
@@ -200,34 +410,36 @@ section { margin: 0 0 3.5rem; }
 .tile-delta .up { color: var(--ok); }
 .tile-delta .down { color: var(--breach); }
 
-.panel {
+/* Every figure in a view is an instrument panel. */
+.figure {
   background: var(--panel);
   border: 1px solid var(--rule);
-  border-radius: 6px;
-  padding: 1.1rem 1.25rem 1.25rem;
-  margin: 1.25rem 0;
+  border-radius: 8px;
+  padding: 1rem 1.15rem 1.1rem;
+  margin: 0 0 1.25rem;
 }
-
-.figure { margin: 1.5rem 0; }
 .figure-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin-bottom: 0.15rem; }
 .figure-title {
   font-family: var(--font-sans);
-  font-size: 1.08rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   margin: 0;
 }
-.figure-note { color: var(--text-3); font-size: 0.85rem; margin: 0 0 0.9rem; max-width: 78ch; }
+.figure-note { color: var(--text-3); font-size: 0.8rem; margin: 0 0 0.85rem; max-width: 80ch; }
+section > .figure-title { margin: 0.5rem 0 0.25rem; }
+section > .figure-note { margin-bottom: 0.4rem; }
 
 .chart { position: relative; width: 100%; }
 .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+#c-map svg { border-radius: 6px; }
 
 .legend {
   display: flex; gap: 1.1rem; flex-wrap: wrap;
-  margin: 0.4rem 0 0.85rem;
+  margin: 0 0 0.85rem;
   font-family: var(--font-sans);
-  font-size: 0.88rem;
+  font-size: 0.78rem;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--text-2);
@@ -242,7 +454,7 @@ section { margin: 0 0 3.5rem; }
   border-radius: 4px;
   color: var(--text-3);
   font-family: var(--font-sans);
-  font-size: 0.82rem;
+  font-size: 0.74rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   padding: 0.15rem 0.6rem;
@@ -252,12 +464,12 @@ section { margin: 0 0 3.5rem; }
 
 /* ---------------------------------------------------------------- tables */
 
-table { border-collapse: collapse; width: 100%; font-size: 0.87rem; margin: 0.6rem 0 0; }
-caption { text-align: left; color: var(--text-3); font-size: 0.8rem; padding-bottom: 0.45rem; }
-th, td { padding: 0.48rem 0.85rem 0.48rem 0; text-align: left; border-bottom: 1px solid var(--rule); }
+table { border-collapse: collapse; width: 100%; font-size: 0.84rem; margin: 0.5rem 0 0; }
+caption { text-align: left; color: var(--text-3); font-size: 0.78rem; padding-bottom: 0.45rem; }
+th, td { padding: 0.45rem 0.85rem 0.45rem 0; text-align: left; border-bottom: 1px solid var(--rule); }
 th {
   font-family: var(--font-sans);
-  font-size: 0.82rem;
+  font-size: 0.74rem;
   letter-spacing: 0.07em;
   text-transform: uppercase;
   color: var(--text-3);
@@ -272,6 +484,15 @@ tr.total td { border-top: 1px solid var(--rule-2); border-bottom: none; font-wei
 .warn { color: var(--warn); }
 .muted { color: var(--text-3); }
 .data-table[hidden] { display: none; }
+
+/* A table placed straight into a view sits on a panel like everything else. */
+section > .table-scroll {
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 0.25rem 1rem 0.5rem;
+  margin-bottom: 1.25rem;
+}
 
 .pill {
   display: inline-block;
@@ -308,61 +529,93 @@ tr.total td { border-top: 1px solid var(--rule-2); border-bottom: none; font-wei
 
 /* ---------------------------------------------------------------- states */
 
-.loading { padding: 5rem 0; text-align: center; color: var(--text-3); }
+.freshness { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-2); }
+.freshness.is-current { color: var(--ok); }
+.freshness.is-lagging { color: var(--warn); }
+.freshness.is-stale { color: var(--breach); }
+
+.loading { padding: 3rem 0; text-align: center; color: var(--text-3); }
 .err {
   border-left: 3px solid var(--breach);
   padding: 0.85rem 1.1rem;
   background: var(--panel);
   color: var(--text);
-  margin: 2rem 0;
+  margin: 0 0 2rem;
 }
 
 footer {
   border-top: 1px solid var(--rule-2);
-  margin-top: 3.5rem;
-  padding: 1.5rem 0 3.5rem;
+  margin: 1rem 1.5rem 0;
+  padding: 1.25rem 0 3rem;
   color: var(--text-3);
-  font-size: 0.83rem;
+  font-size: 0.8rem;
 }
-footer p { margin: 0 0 0.5rem; max-width: 78ch; }
+footer p { margin: 0 0 0.5rem; max-width: 90ch; }
 .badge {
   display: inline-block;
   border: 1px solid var(--rule-2);
   border-radius: 3px;
   padding: 0.05rem 0.45rem;
   font-family: var(--font-sans);
-  font-size: 0.76rem;
+  font-size: 0.72rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--text-2);
 }
 
-@media (max-width: 760px) {
-  .wrap { padding: 0 1rem; }
+/* ---------------------------------------------------------------- smaller screens
+
+   Below a wide desktop the alerts rail stops being a column and sits above the network view
+   only, where it is the summary. Below a tablet the sidebar folds into a bar across the top
+   and the views become a row of tabs that scrolls sideways. */
+
+@media (max-width: 1279px) {
+  .deck-body { grid-template-columns: minmax(0, 1fr); }
+  .alerts { position: static; max-height: none; overflow: visible; order: -1; }
+  .alerts .alert-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.6rem; }
+  html:not([data-view="network"]) .alerts { display: none; }
+}
+
+@media (max-width: 900px) {
+  .app { grid-template-columns: minmax(0, 1fr); }
+  .side {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    height: auto;
+    overflow: visible;
+    padding: 0.6rem 1rem 0;
+    gap: 0.4rem;
+    border-right: 0;
+    border-bottom: 1px solid var(--rule-2);
+  }
+  .side-id { display: flex; align-items: baseline; gap: 0.6rem; padding: 0; }
+  .side-sub, .side-status { display: none; }
+  .side-foot { position: absolute; right: 1rem; top: 0.5rem; padding: 0; }
+  .ox-theme { padding: 0.35rem 0.6rem; }
+  /* nowrap, because the frame wraps the nav on a phone, and a wrapping column sizes its line to
+     the widest row of tabs: 721px on a 375px screen, dragging the whole page sideways. */
+  .tower .side-nav .ox-nav-in { gap: 0.4rem; flex-wrap: nowrap; }
+  .tower .side-nav .ox-sections { max-width: 100%; }
+  .tower .side-nav .ox-sections { flex-direction: row; overflow-x: auto; gap: 0.2rem; padding-bottom: 0.4rem; }
+  .tower .side-nav .ox-sections a { white-space: nowrap; padding: 0.45rem 0.6rem; }
+  .tower .side-nav .ox-filter { flex-direction: row; align-items: center; padding: 0 0 0.6rem; }
+  .deck-head { position: static; padding: 0.7rem 1rem; }
+  .ticker { width: 100%; overflow-x: auto; }
+  .deck-body { padding: 1rem; }
+  footer { margin: 0.5rem 1rem 0; }
   .hero-value { font-size: 2.9rem; }
-  .masthead .meta { text-align: left; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }
 }
 
-
 /* ---------------------------------------------------------------- narrow screens
 
-   Measured at 375px rather than guessed at, and every problem came from desktop
-   proportions surviving onto a phone.
-
-   A data table 593px wide dragged the whole page sideways, which is the worst thing a page
-   can do on a phone: every section then sits off centre and the reader fights the page
-   instead of reading it. Tables now scroll inside their own box, the way the weekday grid
-   already did, so the table moves and the page does not.
-
-   Header and label text sat at 11.7px. Twelve is the floor worth holding to on a handset.
-
-   The charts fix themselves in charts.js, which tightens margins and thins labels once the
-   width stops justifying them.
-*/
+   Measured at 375px rather than guessed at. Tables scroll inside their own box so the table
+   moves and the page does not, and no label goes below twelve pixels on a handset. The charts
+   fix themselves in charts.js, which tightens margins once the width stops justifying them. */
 
 .data-table,
 .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
@@ -371,13 +624,25 @@ footer p { margin: 0 0 0.5rem; max-width: 78ch; }
   .tile-label,
   th,
   th.num,
-  .badge { font-size: 12px; }
+  .badge,
+  .alert-sev,
+  .tick-l,
+  .ai-meta,
+  .deck-kicker { font-size: 12px; }
 
   /* A caption is the one label that can wrap instead of scrolling, so let it. */
   caption { font-size: 12px; white-space: normal; }
 
   /* Tap targets. A toggle at 22px high is a coin toss with a thumb. */
   .tbl-toggle { padding: 0.4rem 0.7rem; min-height: 40px; }
+  .figure { padding: 0.85rem 0.8rem; }
+}
+
+@media print {
+  .app { display: block; }
+  .side, .deck-head, .alerts { display: none !important; }
+  .deck-body { display: block; padding: 0; }
+  section { margin-bottom: 2rem; }
 }
 
 /* ---------------------------------------------------------------- the Omnatix frame
@@ -389,6 +654,7 @@ footer p { margin: 0 0 0.5rem; max-width: 78ch; }
   --ox-page: var(--bg);
   --ox-card: var(--panel);
   --ox-accent: var(--s1);
-  --ox-gutter: 1.75rem;
+  --ox-gutter: 1.5rem;
   --ox-shimmer: rgba(255, 255, 255, 0.06);
 }
+:root[data-theme="light"] { --ox-shimmer: rgba(255, 255, 255, 0.6); }

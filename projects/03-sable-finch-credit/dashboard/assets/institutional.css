@@ -64,6 +64,53 @@
      established. Aliasing here keeps one chart library working against four themes. */
   --font-serif: Verdana, Geneva, 'DejaVu Sans', sans-serif;
   --paper-3: var(--paper-2);
+  --shadow: 0 1px 0 var(--rule), 0 12px 32px rgb(20 33 46 / 0.09);
+}
+
+/*
+  Dark mode: the same pack read at night. Every colour job has its own dark steps, validated
+  against the dark sheet (#161E28), not flipped from the light ones.
+
+    Categorical  worst adjacent pair delta E 16.3 (deutan), all inside the lightness band.
+    Cohort ramp  runs dim to bright rather than light to dark, so the newest cohort is still
+                 the one that stands out. Monotone, visible steps, dimmest end at 2.5:1.
+    Risk heat    monotone in lightness with visible steps, current dimmest and 90+ brightest.
+                 Multi hue on purpose, as in light mode, and always shipped with its legend.
+*/
+:root[data-theme="dark"] {
+  --paper:      #0F151C;
+  --paper-2:    #1C2632;
+  --panel:      #161E28;
+  --navy:       #9DB8D6;
+  --ink:        #E6ECF2;
+  --ink-2:      #A9B6C3;
+  --ink-3:      #7D8B99;
+  --rule:       #253140;
+  --rule-strong:#34424F;
+
+  --s1: #5292CA;
+  --s2: #D0773F;
+  --s3: #A77BC9;
+  --s4: #6FA65E;
+
+  --c1: #3F5E80;
+  --c2: #4B7096;
+  --c3: #5A84AC;
+  --c4: #6E99C1;
+  --c5: #88B0D5;
+  --c6: #A9CAEA;
+
+  --risk-0: #2F6A2B;
+  --risk-1: #687C24;
+  --risk-2: #9E8225;
+  --risk-3: #DC8A45;
+  --risk-4: #FF9384;
+
+  --pos: #72B865;
+  --neg: #F0766A;
+  --neutral: #A9B6C3;
+  --warn: #D9A441;
+  --shadow: 0 1px 0 #000, 0 12px 32px rgb(0 0 0 / 0.45);
 }
 
 * { box-sizing: border-box; }
@@ -80,46 +127,203 @@ body {
 
 .wrap { max-width: var(--measure); margin: 0 auto; padding: 0 2rem; }
 
-/* ---------------------------------------------------------------- masthead */
+/* ---------------------------------------------------------------- the pack bar
 
-.masthead {
-  border-bottom: 3px double var(--navy);
-  padding: 2rem 0 1rem;
-  margin-bottom: 2.25rem;
+   A committee pack is turned a page at a time. Previous and next, the page you are on, and a
+   strip of page numbers like a document viewer, all in one bar that stays at the top. */
+
+.pack-bar { position: sticky; top: 0; z-index: 30; background: var(--paper-2); border-bottom: 1px solid var(--rule-strong); }
+.pack-bar-in {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0.5rem 1.5rem;
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 2rem;
+  align-items: center;
+  gap: 0.75rem;
   flex-wrap: wrap;
 }
-.masthead h1 {
-  font-size: 1.62rem;
-  font-weight: 600;
-  letter-spacing: -0.012em;
+.pager {
+  font: inherit;
+  font-size: 0.8rem;
+  background: var(--panel);
+  border: 1px solid var(--rule-strong);
   color: var(--navy);
-  margin: 0 0 0.1rem;
+  font-weight: 600;
+  padding: 0.45rem 0.85rem;
+  cursor: pointer;
+  min-height: 36px;
 }
-.masthead .sub { color: var(--ink-2); font-size: 0.9rem; margin: 0; }
-.masthead .meta {
-  text-align: right;
-  font-size: 0.78rem;
-  color: var(--ink-3);
-  font-family: var(--font-mono);
-  line-height: 1.6;
-}
+.pager:hover:not(:disabled) { border-color: var(--navy); }
+.pager:disabled { opacity: 0.4; cursor: default; }
+.pager:focus-visible, .ox-theme:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
+.pack-where { display: flex; flex-direction: column; min-width: 11rem; line-height: 1.25; }
+.pack-count { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.pack-page { font-weight: 600; color: var(--navy); font-size: 0.9rem; }
 
-.freshness { display: inline-flex; align-items: center; gap: 0.4rem; font-weight: 500; color: var(--ink-2); }
-.fresh-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ink-3); flex: none; }
+.pack .pack-nav { position: static; background: none; border: 0; margin-left: auto; }
+.pack .pack-nav .ox-nav-in { padding: 0; gap: 0.9rem; max-width: none; }
+.pack .pack-nav .ox-sections { gap: 3px; }
+/* Page numbers only: the label stays in the markup for a screen reader and the tooltip. */
+.pack .pack-nav .ox-sections a {
+  font-size: 0;
+  padding: 0;
+  width: 28px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--rule-strong);
+  border-radius: 2px;
+  background: var(--panel);
+}
+.pack .pack-nav .ox-sections a .n { font-size: 11px; margin: 0; color: var(--ink-2); }
+.pack .pack-nav .ox-sections a:hover { border-color: var(--navy); }
+.pack .pack-nav .ox-sections a.is-active { background: var(--navy); border-color: var(--navy); }
+.pack .pack-nav .ox-sections a.is-active .n { color: var(--panel); font-weight: 700; }
+.pack .ox-filter span { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+
+.ox-theme {
+  background: var(--panel);
+  border: 1px solid var(--rule-strong);
+  color: var(--ink-2);
+  font-size: 0.74rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.45rem 0.7rem;
+  min-height: 36px;
+}
+.ox-theme:hover { color: var(--navy); border-color: var(--navy); }
+
+/* ---------------------------------------------------------------- the sheet */
+
+.desk { max-width: 1000px; margin: 0 auto; padding: 2rem 1.5rem 0; }
+.sheet {
+  background: var(--panel);
+  border: 1px solid var(--rule-strong);
+  box-shadow: var(--shadow);
+  padding: 1.4rem 3rem 1.2rem;
+  min-height: 72vh;
+  display: flex;
+  flex-direction: column;
+}
+.sheet-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  flex-wrap: wrap;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border-bottom: 3px double var(--navy);
+  padding-bottom: 0.6rem;
+  margin-bottom: 2rem;
+}
+.sheet main { flex: 1; }
+.sheet-foot {
+  margin-top: 2.5rem;
+  border-top: 1px solid var(--rule-strong);
+  padding-top: 0.6rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  flex-wrap: wrap;
+  font-size: 0.72rem;
+  color: var(--ink-3);
+}
+#page-foot { font-variant-numeric: tabular-nums; }
+/* On the cover and the sign-off page there is nothing to wait for. */
+html[data-view="ox-top"] #loading, html[data-view="signoff"] #loading { display: none; }
+
+.freshness { font-weight: 600; color: var(--ink-2); }
 .freshness.is-current { color: var(--pos); }
-.freshness.is-current .fresh-dot { background: var(--pos); }
 .freshness.is-lagging { color: var(--warn); }
-.freshness.is-lagging .fresh-dot { background: var(--warn); }
 .freshness.is-stale { color: var(--neg); }
-.freshness.is-stale .fresh-dot { background: var(--neg); }
+
+/* ---------------------------------------------------------------- the cover */
+
+.cover-kicker { font-size: 0.76rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); margin: 0; }
+.cover-title {
+  font-size: clamp(2rem, 5vw, 3.1rem);
+  color: var(--navy);
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  margin: 0.6rem 0 0.4rem;
+  font-weight: 700;
+}
+.cover-sub { color: var(--ink-2); margin: 0 0 1.5rem; }
+.cover-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0;
+  border-top: 1px solid var(--navy);
+  border-bottom: 1px solid var(--rule-strong);
+  margin: 0 0 1.75rem;
+}
+.cover-meta div { padding: 0.6rem 1rem 0.6rem 0; }
+.cover-meta dt { font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); }
+.cover-meta dd { margin: 0; font-size: 0.88rem; font-weight: 600; }
+.cover .hero { margin: 0 0 0.25rem; }
+.cover .hero-label { max-width: 44ch; }
+.cover > h2, .signoff > h2 {
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--navy);
+  margin: 2rem 0 0.4rem;
+  border-bottom: 1px solid var(--navy);
+  padding-bottom: 0.35rem;
+}
+.cover-exec { max-width: 72ch; }
+.cover-exec p { margin: 0 0 0.6rem; color: var(--ink-2); }
+.cover-exec .ai-headline { color: var(--ink); font-weight: 600; font-size: 1.02rem; }
+.cover-exec .ai-credit { font-size: 0.74rem; color: var(--ink-3); }
+.contents a { color: var(--ink); text-decoration: none; }
+.contents a:hover { color: var(--navy); text-decoration: underline; }
+.contents td.pg { width: 4rem; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+
+/* ---------------------------------------------------------------- recommendation and sign-off */
+
+/* Every matter closes on a recommendation to the committee, set out the way a board paper
+   sets one out: a finding, a reason, numbered actions with an owner and a date. */
+.pack-rec {
+  margin: 2.25rem 0 0;
+  border: 1px solid var(--navy);
+  border-top-width: 3px;
+  padding: 1rem 1.25rem 0.9rem;
+  background: var(--paper);
+}
+.pack-rec .ai-head { border-bottom: 1px solid var(--rule-strong); padding-bottom: 0.45rem; margin-bottom: 0.7rem; }
+.pack-rec .ai-badge, .signoff .ai-badge { color: var(--navy); text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.72rem; }
+.pack-rec .ai-conf { font-size: 0.72rem; color: var(--ink-3); }
+.pack-rec .ai-insight { font-weight: 600; }
+.pack-rec .ai-why { color: var(--ink-2); font-size: 0.9rem; margin-top: 0.4rem; }
+.pack-rec .ai-actions { counter-reset: r; margin-top: 0.8rem; border-top: 1px solid var(--rule-strong); }
+.pack-rec .ai-actions li {
+  counter-increment: r;
+  display: grid;
+  grid-template-columns: 2.4rem minmax(0, 1fr) minmax(0, 13rem);
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--rule);
+  font-size: 0.88rem;
+}
+.pack-rec .ai-actions li::before { content: 'R' counter(r); font-weight: 700; color: var(--navy); font-variant-numeric: tabular-nums; }
+.pack-rec .ai-meta { font-size: 0.78rem; color: var(--ink-3); text-align: right; }
+.pack-rec .ai-value { margin-top: 0.7rem; }
+.pack-rec .ai-value-n { font-size: 1.3rem; color: var(--navy); }
+.pack-rec .ai-value-note { font-size: 0.82rem; color: var(--ink-2); }
+.pack-rec .ai-credit { font-size: 0.72rem; color: var(--ink-3); margin-top: 0.6rem; }
+
+.signoff table.resolutions td:first-child { font-weight: 700; color: var(--navy); width: 3rem; }
+.signoff .ai-credit { font-size: 0.74rem; color: var(--ink-3); margin: 0.7rem 0 0; }
+.sign-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 1rem 2rem; margin-top: 1rem; }
+.sign-line { border-top: 1px solid var(--ink); padding-top: 0.4rem; margin-top: 3rem; font-size: 0.8rem; color: var(--ink-3); }
+.sign-line b { display: block; color: var(--ink); font-weight: 600; }
 
 /* ---------------------------------------------------------------- sections */
 
-section { margin: 0 0 3.25rem; }
+section { margin: 0; }
 
 .section-head {
   border-top: 1px solid var(--navy);
@@ -300,8 +504,23 @@ footer p { margin: 0 0 0.5rem; max-width: 80ch; }
 @media (max-width: 760px) {
   .wrap { padding: 0 1rem; }
   .hero-value { font-size: 2.7rem; }
-  .masthead .meta { text-align: left; }
   .tile { border-right: none; border-bottom: 1px solid var(--rule); }
+  .desk { padding: 1rem 0.5rem 0; }
+  .sheet { padding: 1rem 1rem 0.9rem; }
+  .pack-bar-in { padding: 0.45rem 0.75rem; gap: 0.5rem; }
+  .pager span { display: none; }
+  .pack-where { min-width: 0; flex: 1; }
+  /* The page strip does not fit a phone; previous, next and the counter do the same job. */
+  .pack .pack-nav { margin-left: 0; width: 100%; }
+  .pack .pack-nav .ox-sections { display: none; }
+  .pack-rec .ai-actions li { grid-template-columns: 2.4rem minmax(0, 1fr); }
+  .pack-rec .ai-meta { grid-column: 2; text-align: left; }
+}
+
+@media print {
+  .desk { max-width: none; padding: 0; }
+  .sheet { border: 0; box-shadow: none; padding: 0; min-height: 0; }
+  .sheet main > section, .signoff { break-before: page; }
 }
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }

@@ -37,6 +37,9 @@ on:
 
 permissions:
   contents: write
+  # Lets the job's own token call GitHub Models, the free provider the AI insights fall back to
+  # when no other key is configured. No secret is needed for it.
+  models: read
 
 concurrency:
   group: refresh-${{ github.ref }}
@@ -56,7 +59,7 @@ jobs:
         run: |
           python -m venv .venv
           .venv/bin/python -m pip install --quiet --upgrade pip
-          .venv/bin/python -m pip install --quiet dbt-core dbt-duckdb duckdb
+          .venv/bin/python -m pip install --quiet dbt-core dbt-duckdb duckdb anthropic
 
       - name: Check house style
         run: .venv/bin/python scripts/no_em_dashes.py
@@ -82,6 +85,23 @@ jobs:
             echo "::endgroup::"
           done
           echo "FAILED=$failed" >> "$GITHUB_ENV"
+
+      # The analyst's notes, recommendations and draft resolutions beside every section, written
+      # from the freshly exported gold tables. The first key found wins: Claude when an
+      # ANTHROPIC_API_KEY secret exists, then Gemini, Groq or OpenRouter if one of their free
+      # keys is set, and otherwise GitHub Models through this job's own token. A provider that
+      # fails leaves the last good insights in place and never fails the refresh.
+      - name: Write the AI insights
+        if: always()
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          GITHUB_TOKEN: ${{ github.token }}
+          AI_PROVIDER: ${{ vars.AI_PROVIDER }}
+          AI_MODEL: ${{ vars.AI_MODEL }}
+        run: .venv/bin/python scripts/ai_insights.py --project "${{ inputs.project || 'all' }}"
 
       # Runs even when a project failed, so the ones that did refresh still publish.
       - name: Commit the rebuilt artefacts

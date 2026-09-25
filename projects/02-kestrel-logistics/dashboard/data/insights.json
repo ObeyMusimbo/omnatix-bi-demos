@@ -1,0 +1,103 @@
+{
+  "version": 1,
+  "generated_at": "2026-09-25T09:00:00Z",
+  "generator": {
+    "provider": "Claude Code",
+    "model": "claude-opus-5-5",
+    "model_label": "Claude Opus 5.5"
+  },
+  "data_through": "2026-09-01",
+  "overview": {
+    "headline": "R19.7m a year is available on the same fleet and the same customers, 71.5% of the R27.6m contribution earned today.",
+    "summary": "Nearly a quarter of every kilometre runs empty. The money sits in four places: twelve corridors priced as if the truck comes home loaded, six sites that refuse deliveries, seven trucks burning far more diesel than their class, and Friday and month end dispatch that breaks the anchor account's service clause. None of it needs a new truck. Half of it inside a year lifts contribution by about 36%.",
+    "priorities": [
+      { "section": "doors", "action": "Agree booked receiving slots with the six sites that refuse more than 15% of drops, starting with Atlantis Industries.", "owner": "Key Account Managers", "horizon": "30 days", "value_zar": 6509247 },
+      { "section": "corridors", "action": "Reprice the loss-making corridors on real backhaul fill, starting with Johannesburg to Cape Town and to Gqeberha.", "owner": "Commercial Director", "horizon": "Next rate review", "value_zar": 5526107 },
+      { "section": "friday", "action": "Split Friday and month end dispatch into two waves and protect Dedicated accounts' windows first.", "owner": "Operations Manager", "horizon": "2 weeks", "value_zar": 5213459 },
+      { "section": "thirsty", "action": "Book the seven outlier trucks into the workshop and reconcile their fuel cards.", "owner": "Fleet Manager", "horizon": "This month", "value_zar": 2467347 },
+      { "section": "air", "action": "Pilot volumetric pricing and load consolidation on light, bulky freight.", "owner": "Planning Manager", "horizon": "Next quarter", "value_zar": null }
+    ]
+  },
+  "sections": {
+    "network": {
+      "insight": "23.9% of the 12.4m kilometres run in the last twelve months carried nothing, and twelve line-haul corridors lose money once their empty return is charged to them.",
+      "why": "Reporting is by leg, so an empty return is a cost that belongs to no lane. Charged as a round trip, the biggest lane by revenue, Johannesburg to Cape Town, is the worst by contribution.",
+      "actions": [
+        { "do": "Report contribution by round trip, not by leg, in the monthly lane review.", "owner": "Financial Controller", "when": "Next month end" },
+        { "do": "Set an empty running target per hub and review it weekly.", "owner": "Operations Manager", "when": "30 days" }
+      ],
+      "value_zar": null,
+      "value_note": "",
+      "confidence": "High"
+    },
+    "corridors": {
+      "insight": "Every lane was priced assuming 60% of the return leg would sell. On Johannesburg to Cape Town the real fill is 20%, turning a lane that looks like R8.8m into a R1.8m loss.",
+      "why": "The rate card was never revisited corridor by corridor. Twelve corridors lose R5.5m a year between them, and Johannesburg to Gqeberha runs at 14.7% backhaul.",
+      "actions": [
+        { "do": "Reprice the five worst corridors on actual backhaul fill.", "owner": "Commercial Director", "when": "Next rate review" },
+        { "do": "Sell return capacity on the Cape Town and Gqeberha legs through a load board or a partner carrier.", "owner": "Sales Manager", "when": "60 days" },
+        { "do": "Drop or consolidate the short corridors that still lose money after repricing.", "owner": "Operations Director", "when": "Next quarter" }
+      ],
+      "value_zar": 5526107,
+      "value_note": "lost a year on 12 corridors",
+      "confidence": "High"
+    },
+    "doors": {
+      "insight": "3,334 drops were refused on first attempt in twelve months, costing R6.5m in journeys that earned nothing.",
+      "why": "Six sites cause most of it, almost always for want of a booked receiving slot. A failed delivery has no revenue, so it never appears in a revenue report.",
+      "actions": [
+        { "do": "Require a booked receiving slot at the six problem sites.", "owner": "Key Account Managers", "when": "30 days" },
+        { "do": "Add a redelivery charge for sites above a 15% refusal rate.", "owner": "Commercial Director", "when": "Next renewal" },
+        { "do": "Call ahead on the morning of delivery to sites with a history of refusals.", "owner": "Dispatch", "when": "This week" }
+      ],
+      "value_zar": 6509247,
+      "value_note": "a year in wasted journeys",
+      "confidence": "High"
+    },
+    "thirsty": {
+      "insight": "Seven vehicles burn 18% to 30% more diesel than the median of their own class on the same work.",
+      "why": "Compared within class, never against the fleet. The data cannot say whether it is injectors, dragging brakes or fuel leaving the forecourt, but it is worth R2.5m a year to find out.",
+      "actions": [
+        { "do": "Workshop inspection for all seven, the four Superlinks first.", "owner": "Fleet Manager", "when": "This month" },
+        { "do": "Reconcile fuel card transactions against trip distance for the seven registrations.", "owner": "Fleet Controller", "when": "2 weeks" }
+      ],
+      "value_zar": 2467347,
+      "value_note": "a year of excess diesel",
+      "confidence": "Medium"
+    },
+    "friday": {
+      "insight": "On time delivery falls from 95.8% on a normal day to 74.1% on Fridays and 65.2% on the month end run.",
+      "why": "Dispatch batches everything still standing into one late run. It lands hardest on Dedicated accounts, who pay for a two hour window and fall to 19.2% on time on a Friday, and the anchor account's service clause turns that into penalties.",
+      "actions": [
+        { "do": "Split Friday and month end dispatch into two waves.", "owner": "Operations Manager", "when": "2 weeks" },
+        { "do": "Load Dedicated and anchor account drops into the first wave.", "owner": "Dispatch Supervisor", "when": "2 weeks" },
+        { "do": "Agree earlier month end cut-offs with the largest customers.", "owner": "Key Account Managers", "when": "Next quarter" }
+      ],
+      "value_zar": 5213459,
+      "value_note": "a year in service penalties",
+      "confidence": "High"
+    },
+    "air": {
+      "insight": "3,921 trips ran over 85% full by volume and under 55% by weight: the truck was full and the invoice was not.",
+      "why": "Freight is billed by weight, so light, bulky cargo fills a trailer before it earns its keep. This is not money on the table today in the way the other findings are. It is the case for consolidation and volumetric pricing.",
+      "actions": [
+        { "do": "Introduce volumetric pricing for light, bulky freight.", "owner": "Commercial Director", "when": "Next rate review" },
+        { "do": "Pilot load consolidation on Superlink and Tri-axle trips.", "owner": "Planning Manager", "when": "Next quarter" }
+      ],
+      "value_zar": null,
+      "value_note": "",
+      "confidence": "Medium"
+    },
+    "close": {
+      "insight": "The four findings are worth R19.7m a year against R27.6m of contribution earned today.",
+      "why": "Each is a phone call, a rate card or a workshop booking, not a new asset. Nobody recovers all of a number like this, and half inside a year would still lift contribution by about 36%.",
+      "actions": [
+        { "do": "Name one owner per finding and review progress monthly against this bridge.", "owner": "Managing Director", "when": "This month" },
+        { "do": "Run this view on the live dispatch and fuel feeds so recovery is tracked week by week.", "owner": "Omnatix", "when": "Onboarding" }
+      ],
+      "value_zar": 19716160,
+      "value_note": "identified a year",
+      "confidence": "High"
+    }
+  }
+}

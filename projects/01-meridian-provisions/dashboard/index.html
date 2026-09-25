@@ -3,8 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Margin &amp; Revenue Intelligence, Meridian Provisions Co.</title>
-<meta name="description" content="Where the gross profit went: a margin intelligence report for a South African FMCG distributor. Demonstration built on synthetic data.">
+<title>The Margin Review, Meridian Provisions Co.</title>
+<meta name="description" content="Where the gross profit went: a margin intelligence report for a South African FMCG distributor, with AI analyst notes. Demonstration built on synthetic data.">
+<!-- The theme is set before the stylesheet paints, so a reader who chose dark never sees a
+     flash of paper first. -->
+<script>(function(){var t;try{t=localStorage.getItem('ox-theme-meridian')}catch(e){}document.documentElement.setAttribute('data-theme',t==='dark'||t==='light'?t:'light')})();</script>
 <link rel="stylesheet" href="assets/ledger.css">
 <link rel="stylesheet" href="assets/omnatix-frame.css">
 <!-- Open the connection to the query engine's CDN early. The engine itself is not preloaded:
@@ -13,7 +16,7 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='5' fill='%23B5502C'/><path d='M8 22V10h3l5 8 5-8h3v12h-3v-7l-4 6h-2l-4-6v7z' fill='%23FBF9F4'/></svg>">
 </head>
-<body>
+<body class="ledger">
 
 <div class="ox-bar">
   <div class="ox-bar-in">
@@ -27,66 +30,67 @@
   </div>
 </div>
 
-<div class="wrap">
-
-  <header class="masthead">
-    <div>
-      <h1>Margin &amp; Revenue Intelligence</h1>
-      <p class="sub">Meridian Provisions Co. · FMCG distribution · Gauteng, KwaZulu-Natal, Western Cape</p>
+<!-- A newspaper nameplate rather than a dashboard header: this demo reads top to bottom, once,
+     like a feature in the business pages. -->
+<header class="nameplate">
+  <div class="wrap">
+    <div class="nameplate-line">
+      <span id="data-through">Demo period</span>
+      <span id="freshness" class="freshness"><span id="fresh-label">Checking data freshness</span></span>
+      <button class="ox-theme" id="theme-toggle" type="button" aria-pressed="false">Dark mode</button>
     </div>
-    <div class="meta">
-      <div id="freshness" class="freshness">
-        <span class="fresh-dot" aria-hidden="true"></span>
-        <span id="fresh-label">Checking data freshness</span>
+    <h1 class="nameplate-title">The Margin Review</h1>
+    <p class="nameplate-sub">
+      Meridian Provisions Co. <span aria-hidden="true">/</span> FMCG distribution
+      <span aria-hidden="true">/</span> Gauteng, KwaZulu-Natal, Western Cape
+      <span aria-hidden="true">/</span> <span id="last-run"></span>
+    </p>
+  </div>
+</header>
+
+<div class="wrap layout">
+
+  <nav class="ox-nav rail" id="ox-nav" aria-label="In this report" hidden></nav>
+
+  <article class="story">
+    <div class="ox-top front" id="ox-top"></div>
+    <div id="ai-brief"></div>
+
+    <main id="main">
+      <div class="loading" id="loading">
+        <p id="loading-msg">Starting the query engine</p>
+        <p class="muted" style="font-size:0.82rem">
+          The warehouse is running in your browser. Nothing is being sent to a server.
+        </p>
+        <div class="ox-skel ox-skel-h"></div>
+        <div class="ox-skel ox-skel-p"></div>
+        <div class="ox-skel ox-skel-p is-short"></div>
+        <div class="ox-skel ox-skel-chart"></div>
       </div>
-      <div id="data-through"></div>
-      <div id="last-run"></div>
-      <button class="theme-toggle" id="theme-toggle" type="button">Dark</button>
-    </div>
-  </header>
-</div>
-
-<nav class="ox-nav" id="ox-nav" aria-label="Sections" hidden></nav>
-
-<div class="wrap">
-
-  <div class="ox-top" id="ox-top"></div>
-
-  <main id="main">
-    <div class="loading" id="loading">
-      <p id="loading-msg">Starting the query engine</p>
-      <p class="muted" style="font-size:0.82rem">
-        The warehouse is running in your browser. Nothing is being sent to a server.
-      </p>
-      <div class="ox-skel ox-skel-h"></div>
-      <div class="ox-skel ox-skel-p"></div>
-      <div class="ox-skel ox-skel-p is-short"></div>
-      <div class="ox-skel ox-skel-chart"></div>
-    </div>
-  </main>
-
-  <footer>
-    <p>
-      <span class="badge">Synthetic data</span>
-      Meridian Provisions Co. is a fictional business. Every figure on this page is generated
-      and contains deliberately planted findings. No real company data appears here.
-    </p>
-    <p>
-      Built by Omnatix. Source files land as CSV, are modelled through bronze, silver and gold
-      layers in dbt on DuckDB, tested on every build, and exported to Parquet. This page loads
-      those files directly and runs SQL against them in your browser using DuckDB-WASM. There
-      is no backend, no database server, and no data leaves your machine.
-    </p>
-    <p>
-      New data is picked up by rebuilding the warehouse and republishing the files this page
-      reads. Every build runs the full test suite first: if a test fails nothing is published,
-      and the dashboard keeps serving the last figures that passed. The freshness note at the
-      top of this page is measured against your own clock, so it stays accurate however long
-      this page has been open.
-    </p>
-  </footer>
+    </main>
+  </article>
 
 </div>
+
+<footer class="wrap">
+  <p>
+    <span class="badge">Synthetic data</span>
+    Meridian Provisions Co. is a fictional business. Every figure on this page is generated
+    and contains deliberately planted findings. No real company data appears here.
+  </p>
+  <p>
+    Built by Omnatix. Source files land as CSV, are modelled through bronze, silver and gold
+    layers in dbt on DuckDB, tested on every build, and exported to Parquet. This page loads
+    those files directly and runs SQL against them in your browser using DuckDB-WASM. There
+    is no backend, no database server, and no data leaves your machine.
+  </p>
+  <p>
+    The analyst's notes are written by an AI model from the same gold tables this page reads,
+    after every rebuild, and each one names the model that wrote it. The figures on the page
+    are the ones to check them against. Every build runs the full test suite first: if a test
+    fails nothing is published, and the dashboard keeps serving the last figures that passed.
+  </p>
+</footer>
 
 <script type="module" src="assets/app.js"></script>
 </body>

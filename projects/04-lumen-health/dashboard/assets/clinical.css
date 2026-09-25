@@ -76,6 +76,59 @@
      established. Aliasing here keeps one chart library working against four themes. */
   --font-serif: Verdana, Geneva, 'DejaVu Sans', sans-serif;
   --paper-3: var(--paper-2);
+
+  /* Ink for a heat cell light enough to need it. White sits on the rest. */
+  --heat-on-light: var(--ink);
+}
+
+/*
+  Dark mode, for the same practice manager at the end of an evening clinic. Every colour job
+  has its own steps, validated against the dark panel (#15232A), not flipped from the light:
+
+    Categorical  worst adjacent pair delta E 14.6 (protan), 24.6 in normal vision.
+    Fill ramp    dim to bright, so the fullest hours still stand out. Dimmest end at 2.6:1.
+    Wait ramp    dim to bright in its own warm hue. Dimmest end at 2.5:1.
+
+  The heat grid's text flips with the ramp: in dark mode the two dimmest steps carry white and
+  the four brighter ones carry dark ink, each measured above 4.5:1.
+*/
+:root[data-theme="dark"] {
+  --paper:      #0E181D;
+  --paper-2:    #1B2A31;
+  --panel:      #15232A;
+  --ink:        #E4EEF1;
+  --ink-2:      #A7BCC4;
+  --ink-3:      #7C939C;
+  --rule:       #22343C;
+  --rule-strong:#31464F;
+  --accent:     #1BA2AB;
+  --accent-ink: #5CC6CE;
+
+  --s1: #1BA2AB;
+  --s2: #DB7440;
+  --s3: #9A7BE6;
+  --s4: #789F48;
+
+  --f1: #2E6A74;
+  --f2: #347F8A;
+  --f3: #3B95A1;
+  --f4: #4DABB6;
+  --f5: #6BC1CA;
+  --f6: #97D6DC;
+
+  --w1: #8E4E30;
+  --w2: #A65D36;
+  --w3: #BE6F41;
+  --w4: #D28652;
+  --w5: #E2A06F;
+  --w6: #F0BD94;
+
+  --pos:  #3FB27A;
+  --warn: #D9A13A;
+  --neg:  #EF6A5E;
+  --neutral: #A7BCC4;
+
+  --heat-on-light: #0E181D;
 }
 
 * { box-sizing: border-box; }
@@ -92,46 +145,163 @@ body {
 
 .wrap { max-width: var(--measure); margin: 0 auto; padding: 0 2.5rem; }
 
-/* ---------------------------------------------------------------- masthead */
+/* ---------------------------------------------------------------- the workbench header */
 
-.masthead {
-  padding: 2.5rem 0 1.5rem;
-  margin-bottom: 2rem;
+.bench-head { background: var(--panel); border-bottom: 1px solid var(--rule); }
+.bench-head-in {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
-  gap: 2rem;
+  gap: 1rem 2rem;
   flex-wrap: wrap;
-  border-bottom: 1px solid var(--rule-strong);
+  padding-top: 1.1rem;
+  padding-bottom: 1rem;
 }
-.masthead h1 {
-  font-size: 1.85rem;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  color: var(--ink);
-  margin: 0 0 0.25rem;
-}
-.masthead .sub { color: var(--ink-2); font-size: 0.95rem; margin: 0; }
-.masthead .meta {
-  text-align: right;
-  font-size: 0.8rem;
-  color: var(--ink-3);
-  font-family: var(--font-mono);
-  line-height: 1.7;
-}
+.bench-org { font-size: 0.8rem; color: var(--accent-ink); font-weight: 600; }
+.bench-id h1 { font-size: 1.5rem; font-weight: 600; letter-spacing: -0.02em; margin: 0.1rem 0 0; }
+.bench-meta { display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap; }
+.bench-status { display: flex; flex-direction: column; font-size: 0.78rem; color: var(--ink-3); line-height: 1.5; text-align: right; }
 
-.freshness { display: inline-flex; align-items: center; gap: 0.45rem; font-weight: 500; color: var(--ink-2); }
-.fresh-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ink-3); flex: none; }
+.freshness { font-weight: 600; color: var(--ink-2); }
 .freshness.is-current { color: var(--pos); }
-.freshness.is-current .fresh-dot { background: var(--pos); }
 .freshness.is-lagging { color: var(--warn); }
-.freshness.is-lagging .fresh-dot { background: var(--warn); }
 .freshness.is-stale { color: var(--neg); }
-.freshness.is-stale .fresh-dot { background: var(--neg); }
 
-/* ---------------------------------------------------------------- sections */
+.ox-theme {
+  background: var(--paper);
+  border: 1px solid var(--rule-strong);
+  border-radius: 999px;
+  color: var(--ink-2);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  min-height: 40px;
+}
+.ox-theme:hover { border-color: var(--accent); color: var(--accent-ink); }
+.ox-theme:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-section { margin: 0 0 4rem; }
+/* ---------------------------------------------------------------- folder tabs
+
+   The frame's section bar, dressed as tabs on a file: the open one joins the page below it. */
+
+.bench .tabs { background: var(--panel); border-bottom: 1px solid var(--rule-strong); }
+.bench .tabs .ox-nav-in { align-items: flex-end; }
+.bench .tabs .ox-sections { gap: 0.25rem; padding-top: 0.5rem; }
+.bench .tabs .ox-sections a {
+  font-size: 13.5px;
+  padding: 0.65rem 1rem;
+  border: 1px solid transparent;
+  border-bottom: 0;
+  border-radius: 6px 6px 0 0;
+  color: var(--ink-2);
+  margin-bottom: -1px;
+}
+.bench .tabs .ox-sections a .n { display: none; }
+.bench .tabs .ox-sections a:hover { background: var(--paper); color: var(--ink); }
+.bench .tabs .ox-sections a.is-active {
+  background: var(--paper);
+  border-color: var(--rule-strong);
+  color: var(--accent-ink);
+  font-weight: 700;
+  box-shadow: inset 0 3px 0 var(--accent);
+}
+.bench .tabs .ox-filter { padding-bottom: 0.45rem; }
+.bench .ox-filter select { background: var(--paper); border-radius: 999px; padding: 0.35rem 0.8rem; }
+
+/* ---------------------------------------------------------------- the overview tab */
+
+.overview { padding-top: 1.75rem; }
+.ov-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1rem; margin: 0 0 1.25rem; }
+.kpi {
+  background: var(--panel);
+  border-radius: 6px;
+  padding: 1.1rem 1.25rem 1rem;
+  border-top: 4px solid var(--accent);
+  color: var(--ink);
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.kpi:hover { box-shadow: 0 0 0 1px var(--accent); }
+.kpi:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.kpi-l { font-size: 0.74rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+.kpi-v { font-size: 1.8rem; font-weight: 600; line-height: 1.1; letter-spacing: -0.02em; }
+.kpi-note { font-size: 0.84rem; color: var(--ink-2); line-height: 1.45; }
+.kpi-go { margin-top: auto; padding-top: 0.4rem; font-size: 0.8rem; font-weight: 600; color: var(--accent-ink); }
+.kpi.is-hero { border-top-color: var(--neg); }
+.kpi.is-hero .kpi-v { color: var(--neg); font-size: 2.6rem; }
+@media (min-width: 900px) { .kpi.is-hero { grid-column: span 2; } }
+
+.ov-grid { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 1.25rem; align-items: start; }
+.panel { background: var(--panel); border-radius: 6px; padding: 1.3rem 1.5rem 1.2rem; }
+.panel h2 { font-size: 1.05rem; margin: 0 0 0.2rem; }
+.panel .figure-note { margin-bottom: 0.6rem; }
+.panel-go { display: inline-block; margin-top: 0.8rem; font-size: 0.85rem; font-weight: 600; color: var(--accent-ink); text-decoration: none; }
+.panel-go:hover { text-decoration: underline; }
+
+/* The priorities as a clinical handover list: numbered, owned, and dated. */
+.bench-brief { background: var(--panel); border-radius: 6px; overflow: hidden; }
+.bench-brief .ai-head { background: var(--accent); padding: 0.6rem 1.2rem; }
+.bench-brief .ai-badge { color: #FFFFFF; font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.bench-brief .ai-headline { font-weight: 600; font-size: 1rem; line-height: 1.45; padding: 1rem 1.2rem 0; }
+.bench-brief .ai-why { font-size: 0.86rem; color: var(--ink-2); padding: 0.5rem 1.2rem 0; margin: 0; }
+.bench-brief .ai-pris { padding: 0.5rem 1.2rem 0; }
+.bench-brief .ai-pris li + li { border-top: 1px solid var(--rule); }
+.bench-brief .ai-pri { padding: 0.7rem 0; }
+.bench-brief .ai-pri:hover .ai-do { color: var(--accent-ink); }
+.bench-brief .ai-pri-n {
+  background: var(--paper-2);
+  color: var(--accent-ink);
+  border-radius: 4px;
+  padding: 0.05rem 0.4rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+.bench-brief .ai-do { font-size: 0.88rem; line-height: 1.4; }
+.bench-brief .ai-meta { font-size: 0.76rem; color: var(--ink-3); }
+.bench-brief .ai-pri-v { font-size: 0.9rem; color: var(--accent-ink); }
+.bench-brief .ai-credit { font-size: 0.74rem; color: var(--ink-3); padding: 0.4rem 1.2rem 1rem; margin: 0; }
+
+/* ---------------------------------------------------------------- tabs, split into two panes
+
+   The analysis runs down the left, and decision support stays beside it on the right as the
+   reader scrolls, so the "what now" is never more than a glance away. */
+
+section { margin: 0; }
+.bench main > section { padding-top: 1.75rem; }
+
+.bench-rec { background: var(--panel); border-radius: 6px; overflow: hidden; margin: 0 0 1.6rem; border: 1px solid var(--rule); }
+.bench-rec .ai-head { background: var(--paper-2); padding: 0.6rem 1.1rem; border-bottom: 1px solid var(--rule); }
+.bench-rec .ai-badge { color: var(--accent-ink); font-size: 0.76rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.bench-rec .ai-conf { font-size: 0.74rem; color: var(--ink-3); }
+.bench-rec .ai-insight { font-weight: 600; font-size: 0.95rem; line-height: 1.5; padding: 0.9rem 1.1rem 0; }
+.bench-rec .ai-why { color: var(--ink-2); font-size: 0.86rem; padding: 0.5rem 1.1rem 0; }
+.bench-rec .ai-actions { padding: 0.6rem 1.1rem 0; display: flex; flex-direction: column; gap: 0.5rem; }
+.bench-rec .ai-actions li { background: var(--paper); border-radius: 4px; padding: 0.55rem 0.7rem; border-left: 3px solid var(--accent); }
+.bench-rec .ai-do { font-size: 0.86rem; line-height: 1.45; }
+.bench-rec .ai-meta { font-size: 0.74rem; color: var(--ink-3); margin-top: 0.15rem; }
+.bench-rec .ai-value { padding: 0.8rem 1.1rem 0; }
+.bench-rec .ai-value-n { font-size: 1.5rem; color: var(--accent-ink); }
+.bench-rec .ai-value-note { font-size: 0.82rem; color: var(--ink-2); }
+.bench-rec .ai-credit { font-size: 0.72rem; color: var(--ink-3); padding: 0.6rem 1.1rem 0.9rem; }
+
+@media (min-width: 1100px) {
+  .bench main > section {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 330px;
+    column-gap: 1.75rem;
+    row-gap: 0;
+    align-items: start;
+  }
+  .bench main > section > * { grid-column: 1; }
+  .bench main > section > .bench-rec { grid-column: 2; grid-row: 1 / span 60; position: sticky; top: 70px; }
+}
+
+@media (max-width: 899px) {
+  .ov-grid { grid-template-columns: minmax(0, 1fr); }
+  .bench-status { text-align: left; }
+}
 
 .section-head { margin-bottom: 1.1rem; display: flex; align-items: baseline; gap: 0.9rem; }
 .section-num {
@@ -266,7 +436,7 @@ table.heat td {
   cursor: default;
   min-width: 62px;
 }
-table.heat td.on-light { color: var(--ink); }
+table.heat td.on-light { color: var(--heat-on-light); }
 table.heat td.closed { background: var(--paper-2); color: var(--ink-3); font-weight: 400; }
 table.heat tbody tr:nth-child(even) { background: none; }
 table.heat td:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
@@ -369,8 +539,15 @@ footer p { margin: 0 0 0.7rem; max-width: 82ch; }
   body { font-size: 15px; }
   .hero { padding: 1.4rem 1.5rem; }
   .hero-value { font-size: 2.8rem; }
-  .masthead .meta { text-align: left; }
   .figure { padding: 1.1rem 1.1rem 0.9rem; }
+  .bench-id h1 { font-size: 1.25rem; }
+  .bench .tabs .ox-sections a { padding: 0.6rem 0.75rem; }
+}
+
+@media print {
+  .bench-head .ox-theme { display: none; }
+  .bench main > section { display: block; }
+  .bench-rec { position: static; }
 }
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }

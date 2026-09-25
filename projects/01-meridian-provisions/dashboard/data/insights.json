@@ -1,0 +1,91 @@
+{
+  "version": 1,
+  "generated_at": "2026-09-25T09:00:00Z",
+  "generator": {
+    "provider": "Claude Code",
+    "model": "claude-opus-5-5",
+    "model_label": "Claude Opus 5.5"
+  },
+  "data_through": "2026-08-31",
+  "overview": {
+    "headline": "Gross profit is R12.6m short of what last year's margin would have earned, and three named leaks explain 61% of the gap.",
+    "summary": "Revenue grew 11.9% but gross profit only 4.1%, because margin slid from 28.2% to 26.2% without a single bad month to flag it. The largest cause is discount creep on Summit Cash & Carry. Bottled water grew into a loss once freight and rebates are counted, and the quarterly Brightwash promotion sells every case below cost. Weekend stock-outs and dead stock are smaller, and the quickest to fix.",
+    "priorities": [
+      { "section": "discount", "action": "Reset Summit Cash & Carry's discount at the next contract review and put realised discount by account on a monthly exception report.", "owner": "Commercial Director", "horizon": "30 days", "value_zar": 3894718 },
+      { "section": "water", "action": "Reprice Cascade Springs for Wholesale to recover freight and rebate, or move it to collect-only terms.", "owner": "Category Manager with the CFO", "horizon": "60 days", "value_zar": 3849403 },
+      { "section": "promo", "action": "Cancel the next Buy 2 Get 1 Free window on Brightwash Powder 2kg and test a mechanic that stays above cost.", "owner": "Trade Marketing", "horizon": "Before the next window", "value_zar": 1796197 },
+      { "section": "stock", "action": "Add a Thursday replenishment run into the Gauteng DC for the three Modern Trade hero lines.", "owner": "Supply Chain Manager", "horizon": "2 weeks", "value_zar": 1074945 },
+      { "section": "dead", "action": "Clear the discontinued Halo Shine aerosols through a clearance buyer or a supplier return.", "owner": "Procurement", "horizon": "This month", "value_zar": 401258 }
+    ]
+  },
+  "sections": {
+    "gap": {
+      "insight": "Margin fell two points on revenue that grew almost 12%, so R12.6m of gross profit never arrived.",
+      "why": "No single month looks bad. The erosion is steady, which is exactly why a monthly P&L never raised it. Three named drivers explain 61% of the gap; the other 39% is discount drift and mix spread across the wider book.",
+      "actions": [
+        { "do": "Adopt the gross profit bridge as a standing monthly report, reconciled to the P&L.", "owner": "CFO", "when": "Next month end" },
+        { "do": "Set a margin floor per channel, with an alert when any month closes below it.", "owner": "Financial Controller", "when": "30 days" }
+      ],
+      "value_zar": 12615619,
+      "value_note": "gross profit gap, last twelve months",
+      "confidence": "High"
+    },
+    "water": {
+      "insight": "Cascade Springs looks like a 12.9% margin line and is losing R3.8m a year once freight and rebates are allocated to it.",
+      "why": "It is heavy and cheap, R6.45 of revenue per kilogram shipped, and sells mostly to Wholesale accounts that earn a volume rebate. Those costs sit at order level in the finance export, so no product report ever showed them. The range grew into the loss: a year earlier it lost R1.2m.",
+      "actions": [
+        { "do": "Reprice bulk water for Wholesale, or add a freight surcharge per pallet.", "owner": "Category Manager", "when": "60 days" },
+        { "do": "Review Sunveld, the second margin trap, on the same basis.", "owner": "Commercial Analyst", "when": "30 days" },
+        { "do": "Allocate freight by weight and rebate by revenue in the standard product P&L.", "owner": "Financial Controller", "when": "Next quarter" }
+      ],
+      "value_zar": 3849403,
+      "value_note": "contribution lost a year on the range",
+      "confidence": "High"
+    },
+    "promo": {
+      "insight": "Every case of Brightwash Powder 2kg sold on Buy 2 Get 1 Free loses R18 of gross profit, against R44 earned off deal.",
+      "why": "Volume roughly triples on deal, then falls to about 45% of baseline for four weeks while customers work through what they stocked up on. The spike is borrowed from the following month, not added to the year.",
+      "actions": [
+        { "do": "Cancel the next Buy 2 Get 1 Free window on this line.", "owner": "Trade Marketing", "when": "Before the next window" },
+        { "do": "Require a four week post-promotion volume check in every promotion approval.", "owner": "Commercial Director", "when": "30 days" }
+      ],
+      "value_zar": 1796197,
+      "value_note": "gross profit lost to the promotion, last twelve months",
+      "confidence": "High"
+    },
+    "discount": {
+      "insight": "Summit Cash & Carry's realised discount crept from 8.1% to 15.3% over two years, and nobody ever reset it.",
+      "why": "Some drift is market wide, but Summit moved well above the rest of Wholesale, and the difference belongs to this account alone. It is the largest account on the book, revenue kept growing, so nobody looked.",
+      "actions": [
+        { "do": "Reset Summit's terms at the next review, allowing only the channel's own drift.", "owner": "Key Account Manager", "when": "Next review" },
+        { "do": "Put realised discount by account on a monthly exception report with an approval threshold.", "owner": "Commercial Director", "when": "30 days" },
+        { "do": "Check Apex Depot, Ironstone Wholesale and Karoo Supply Co, each drifting about three points.", "owner": "Commercial Analyst", "when": "30 days" }
+      ],
+      "value_zar": 3894718,
+      "value_note": "revenue forgone in the last twelve months",
+      "confidence": "High"
+    },
+    "stock": {
+      "insight": "Three Modern Trade hero lines run dry at the Gauteng DC on Thursdays in up to 35% of weeks and cannot be supplied on Friday or Saturday.",
+      "why": "Replenishment runs Monday to Wednesday. A sale that never happened appears in no sales report, so this only shows up by joining Thursday stock to each line's normal weekend demand.",
+      "actions": [
+        { "do": "Add a Thursday replenishment run for Softleaf tissue, Sunveld maize meal and Meadowvale milk.", "owner": "Supply Chain Manager", "when": "2 weeks" },
+        { "do": "Raise the Thursday reorder point on the three lines.", "owner": "Inventory Planner", "when": "This week" }
+      ],
+      "value_zar": 1074945,
+      "value_note": "revenue lost, R216k of it gross profit",
+      "confidence": "Medium"
+    },
+    "dead": {
+      "insight": "R401k of discontinued Halo Shine aerosols is still on the shelf and has not sold in over 180 days.",
+      "why": "It is working capital rather than profit, 2.2% of stock at cost, and needs no further analysis before acting.",
+      "actions": [
+        { "do": "Sell through a clearance buyer or negotiate a return with the supplier.", "owner": "Procurement", "when": "This month" },
+        { "do": "Flag any discontinued line with no sale in 90 days for clearance automatically.", "owner": "Inventory Controller", "when": "30 days" }
+      ],
+      "value_zar": 401258,
+      "value_note": "cash tied up at cost",
+      "confidence": "High"
+    }
+  }
+}

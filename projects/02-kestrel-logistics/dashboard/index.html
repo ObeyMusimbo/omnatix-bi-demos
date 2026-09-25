@@ -1,19 +1,21 @@
 <!doctype html>
-<html lang="en-ZA">
+<html lang="en-ZA" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Control Tower · Kestrel Logistics</title>
-<meta name="description" content="Cost to serve across a South African road freight network: which corridors lose money, which doors will not receive, and which trucks are drinking. Demonstration built on synthetic data.">
+<meta name="description" content="Cost to serve across a South African road freight network: which corridors lose money, which doors will not receive, and which trucks are drinking, with AI dispatch recommendations. Demonstration built on synthetic data.">
+<!-- The theme is set before the stylesheet paints. A control tower defaults to dark. -->
+<script>(function(){var t;try{t=localStorage.getItem('ox-theme-kestrel')}catch(e){}document.documentElement.setAttribute('data-theme',t==='dark'||t==='light'?t:'dark')})();</script>
 <link rel="stylesheet" href="assets/control-tower.css">
 <link rel="stylesheet" href="assets/omnatix-frame.css">
 <!-- Open the connection to the query engine's CDN early. The engine itself is not preloaded:
      measured, a preloaded module is compiled on the main thread the moment it lands, and that
      delayed the summary by three seconds. The page paints first, then fetches the engine. -->
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='5' fill='%230B0F14'/><path d='M5 20h6l3-8 3 8h6' fill='none' stroke='%231C9DB8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/><circle cx='24' cy='11' r='2.5' fill='%23F87171'/></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='5' fill='%230B0F14'/><path d='M5 20h6l3-8 3 8h6' fill='none' stroke='%231C9DB8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/></svg>">
 </head>
-<body>
+<body class="tower">
 
 <div class="ox-bar">
   <div class="ox-bar-in">
@@ -27,58 +29,73 @@
   </div>
 </div>
 
-<div class="wrap">
+<!-- An operations app, not a report: a sidebar of views, one view on screen at a time, and an
+     alerts rail that stays in view beside every one of them. -->
+<div class="app">
 
-  <header class="masthead">
-    <div>
-      <h1>Control Tower</h1>
-      <p class="sub">Kestrel Logistics · road freight · Gauteng, KwaZulu-Natal, Western Cape</p>
+  <aside class="side" aria-label="Control tower">
+    <div class="side-id">
+      <div class="side-title">Control Tower</div>
+      <div class="side-sub">Kestrel Logistics · road freight</div>
     </div>
-    <div class="meta">
-      <div id="freshness" class="freshness">
-        <span class="fresh-dot" aria-hidden="true"></span>
-        <span id="fresh-label">Checking data freshness</span>
+    <nav class="ox-nav side-nav" id="ox-nav" aria-label="Views" hidden></nav>
+    <div class="side-foot">
+      <div class="side-status">
+        <div id="freshness" class="freshness"><span id="fresh-label">Checking data freshness</span></div>
+        <div id="data-through"></div>
+        <div id="last-run"></div>
       </div>
-      <div id="data-through"></div>
-      <div id="last-run"></div>
+      <button class="ox-theme" id="theme-toggle" type="button" aria-pressed="true">Light mode</button>
     </div>
-  </header>
-</div>
+  </aside>
 
-<nav class="ox-nav" id="ox-nav" aria-label="Sections" hidden></nav>
+  <div class="deck">
+    <header class="deck-head">
+      <div class="deck-where">
+        <span class="deck-kicker" id="view-kicker">Gauteng, KwaZulu-Natal, Western Cape</span>
+        <span class="deck-title" id="view-title">Network</span>
+      </div>
+      <div class="ticker" id="ticker" aria-label="Network at a glance"></div>
+    </header>
 
-<div class="wrap">
+    <div class="deck-body">
+      <div class="deck-main">
+        <main id="main">
+          <div class="loading" id="loading">
+            <p id="loading-msg">Starting the query engine</p>
+            <p class="muted" style="font-size:0.82rem">
+              The warehouse is running in your browser. Nothing is being sent to a server.
+            </p>
+            <div class="ox-skel ox-skel-h"></div>
+            <div class="ox-skel ox-skel-p"></div>
+            <div class="ox-skel ox-skel-p is-short"></div>
+            <div class="ox-skel ox-skel-chart"></div>
+          </div>
+        </main>
+      </div>
+      <aside class="alerts" id="ox-top" aria-label="Alerts"></aside>
+    </div>
 
-  <div class="ox-top" id="ox-top"></div>
-
-  <main id="main">
-    <div class="loading" id="loading">
-      <p id="loading-msg">Starting the query engine</p>
-      <p class="muted" style="font-size:0.82rem">
-        The warehouse is running in your browser. Nothing is being sent to a server.
+    <footer>
+      <p>
+        <span class="badge">Synthetic data</span>
+        Kestrel Logistics is a fictional operator. Every figure on this page is generated and
+        contains deliberately planted findings. No real company data appears here.
       </p>
-      <div class="ox-skel ox-skel-h"></div>
-      <div class="ox-skel ox-skel-p"></div>
-      <div class="ox-skel ox-skel-p is-short"></div>
-      <div class="ox-skel ox-skel-chart"></div>
-    </div>
-  </main>
-
-  <footer>
-    <p>
-      <span class="badge">Synthetic data</span>
-      Kestrel Logistics is a fictional operator. Every figure on this page is generated and
-      contains deliberately planted findings. No real company data appears here.
-    </p>
-    <p>
-      Built by Omnatix. Trip, fuel, workshop and delivery exports land as CSV, are modelled
-      through bronze, silver and gold layers in dbt on DuckDB, tested on every build, and
-      published as Parquet. This page loads those files and runs SQL against them in your
-      browser using DuckDB-WASM. There is no backend and no database server. The map is drawn
-      from coordinates in the data, not from map tiles, so nothing at all is fetched from a
-      third party.
-    </p>
-  </footer>
+      <p>
+        Built by Omnatix. Trip, fuel, workshop and delivery exports land as CSV, are modelled
+        through bronze, silver and gold layers in dbt on DuckDB, tested on every build, and
+        published as Parquet. This page loads those files and runs SQL against them in your
+        browser using DuckDB-WASM. There is no backend and no database server. The map is drawn
+        from coordinates in the data, not from map tiles.
+      </p>
+      <p>
+        The AI recommendations are written by a language model from the same gold tables, after
+        every rebuild, and each names the model that wrote it. Check them against the figures
+        on screen before acting on them.
+      </p>
+    </footer>
+  </div>
 
 </div>
 

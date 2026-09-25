@@ -1,10 +1,12 @@
 <!doctype html>
-<html lang="en-ZA">
+<html lang="en-ZA" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Capacity and Collection Review · Lumen Health Network</title>
-<meta name="description" content="Where a South African private clinic group loses money: an uneven consulting diary, rejected claims nobody reworks, patients who do not arrive, and the gap nobody asks for. Demonstration built on synthetic data.">
+<meta name="description" content="Where a South African private clinic group loses money: an uneven consulting diary, rejected claims nobody reworks, patients who do not arrive, and the gap nobody asks for, with AI decision support. Demonstration built on synthetic data.">
+<!-- The theme is set before the stylesheet paints, so there is no flash of the wrong one. -->
+<script>(function(){var t;try{t=localStorage.getItem('ox-theme-lumen')}catch(e){}document.documentElement.setAttribute('data-theme',t==='dark'||t==='light'?t:'light')})();</script>
 <link rel="stylesheet" href="assets/clinical.css">
 <link rel="stylesheet" href="assets/omnatix-frame.css">
 <!-- Open the connection to the query engine's CDN early. The engine itself is not preloaded:
@@ -13,7 +15,7 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%2300919A'/><path d='M4 18h5l2.5-7 4 13 3-9 2 3h7' stroke='%23FFFFFF' stroke-width='2.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
 </head>
-<body>
+<body class="bench">
 
 <div class="ox-bar">
   <div class="ox-bar-in">
@@ -27,29 +29,30 @@
   </div>
 </div>
 
-<div class="wrap">
-
-  <header class="masthead">
-    <div>
+<!-- A workbench: tabs across the top, an overview of cards and the week at a glance, and in
+     every tab the analysis on the left with decision support beside it on the right. -->
+<header class="bench-head">
+  <div class="wrap bench-head-in">
+    <div class="bench-id">
+      <span class="bench-org">Lumen Health Network · private primary care · six sites</span>
       <h1>Capacity and Collection Review</h1>
-      <p class="sub">Lumen Health Network · private primary care · six sites</p>
     </div>
-    <div class="meta">
-      <div id="freshness" class="freshness">
-        <span class="fresh-dot" aria-hidden="true"></span>
-        <span id="fresh-label">Checking data freshness</span>
+    <div class="bench-meta">
+      <div class="bench-status">
+        <span id="freshness" class="freshness"><span id="fresh-label">Checking data freshness</span></span>
+        <span id="data-through"></span>
+        <span id="last-run"></span>
       </div>
-      <div id="data-through"></div>
-      <div id="last-run"></div>
+      <button class="ox-theme" id="theme-toggle" type="button" aria-pressed="false">Dark mode</button>
     </div>
-  </header>
-</div>
+  </div>
+</header>
 
-<nav class="ox-nav" id="ox-nav" aria-label="Sections" hidden></nav>
+<nav class="ox-nav tabs" id="ox-nav" aria-label="Workbench tabs" hidden></nav>
 
 <div class="wrap">
 
-  <div class="ox-top" id="ox-top"></div>
+  <section class="overview" id="ox-top"></section>
 
   <main id="main">
     <div class="loading" id="loading">
@@ -81,7 +84,9 @@
     <p>
       Money figures are in rand and exclude VAT. Claim settlement is measured from submission
       to payment rather than from date of service, so a slow scheme and a slow practice stay
-      separate numbers. Nothing on this page is clinical or financial advice.
+      separate numbers. The decision support is written by a language model from the same gold
+      tables after every rebuild, names the model that wrote it, and is operational, not
+      clinical: nothing on this page is clinical or financial advice.
     </p>
   </footer>
 

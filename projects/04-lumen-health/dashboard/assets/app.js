@@ -17,8 +17,13 @@ import {
   showTip, hideTip, esc, fmtR, fmtRc, fmtR2, fmtNum, fmtPct,
 } from './charts.js';
 import {
-  renderSummary, renderNav, onFilterChange, readParam, writeParam, scope, spy, keepScroll,
+  renderNav, onFilterChange, readParam, writeParam, scope, keepScroll, fmtAny,
+  wireTheme, views, insights, attachInsights, aiBrief,
 } from './shell.js';
+
+// The AI decision support, loaded once beside meta.json, and the tab router.
+let INS = null;
+let V = null;
 
 const el = (id) => document.getElementById(id);
 const v = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -103,10 +108,13 @@ function heatGrid(cells, { key, ramp, domain, fmt, label }) {
         continue;
       }
       const i = step(c[key]);
-      // White text clears 4.5:1 from the fourth step of either ramp upward and fails below it,
-      // so the bottom three steps carry dark ink instead. Measured against the actual hexes
-      // rather than guessed: step three is 3.5:1 under white and 4.7:1 under ink.
-      const cls = i <= 2 ? ' on-light' : '';
+      // Light mode: white text clears 4.5:1 from the fourth step of either ramp upward and
+      // fails below it, so the bottom three steps carry dark ink instead. Measured against the
+      // actual hexes rather than guessed: step three is 3.5:1 under white and 4.7:1 under ink.
+      // Dark mode runs the ramps dim to bright, so the flip is at the other end: the two
+      // dimmest steps take white and the rest take dark ink.
+      const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const cls = (dark ? i >= 2 : i <= 2) ? ' on-light' : '';
       const tip = `<b>${DAYS.find(([d]) => d === dow)[1]} ${String(h).padStart(2, '0')}:00</b>`
         + `<div class="tip-row"><span>Slots offered</span><span>${fmtNum(c.slots_offered)}</span></div>`
         + `<div class="tip-row"><span>Booked</span><span>${fmtNum(c.slots_booked)}</span></div>`
@@ -150,7 +158,7 @@ function wireHeat(root) {
 // "All clinics" rather than appearing to follow a filter they cannot follow.
 
 const SECTIONS = [
-  ['ox-top', '', 'Summary'],
+  ['ox-top', '', 'Overview'],
   ['money', '01', 'The money'],
   ['week', '02', 'The week'],
   ['claims', '03', 'Claims'],
@@ -810,7 +818,13 @@ async function render() {
   </section>
   `;
 
+  // Decision support in the right hand pane of every tab. The support describes the whole
+  // group, so with a clinic chosen it says so.
+  attachInsights(el('main'), INS, { label: 'Decision support · AI', cls: 'bench-rec', scope: sc(false) });
+
   // ---------------------------------------------------------------- charts
+  //
+  // Drawn while every tab is visible, so each is already at its true width when opened.
 
   waterfall(el('fig-bridge'), {
     rows: bridge.map((r) => ({
@@ -847,6 +861,19 @@ async function render() {
   });
   wireHeat(el('fig-grid'));
   wireHeat(el('fig-wait'));
+
+  // The week at a glance is the overview's hero, drawn from the same cells as the week tab.
+  const ov = el('ov-heat');
+  if (ov) {
+    ov.innerHTML = scaleLegend(FILL_RAMP, 'Empty', 'Full') + heatGrid(grid, {
+      key: 'fill_pct',
+      ramp: FILL_RAMP,
+      domain: [Math.min(...grid.map((g) => g.fill_pct)), Math.max(...grid.map((g) => g.fill_pct))],
+      fmt: (n) => Math.round(n) + '%',
+      label: 'Percentage of offered slots that were booked, every clinic',
+    });
+    wireHeat(ov);
+  }
 
   barsH(el('fig-day'), {
     rows: byDay.map((d) => ({
@@ -1026,6 +1053,44 @@ async function render() {
   // the other way round the handler does not exist yet and the click silently does nothing.
   const qToggle = document.querySelector('[data-table="fig-quality"]');
   if (qToggle) qToggle.click();
+
+  V?.refresh();
+}
+
+// ---------------------------------------------------------------- the overview tab
+//
+// Paints from meta.json and insights.json in the first second: one card per finding with the
+// headline card twice the width, the week at a glance (filled in once the engine is up), and
+// the priorities in the order to act on them.
+
+function renderOverview(target, m) {
+  const s = m.summary;
+  if (!target || !s) return;
+  const cards = [
+    { id: 'money', title: 'Billed and never collected', v: s.hero.v, f: s.hero.f, note: s.hero.label, hero: true },
+    ...s.findings,
+  ].map((c) => {
+    const tab = SECTIONS.find(([id]) => id === c.id)?.[2] || '';
+    return `
+    <a class="kpi${c.hero ? ' is-hero' : ''}" href="#${esc(c.id)}">
+      <span class="kpi-l">${esc(c.title)}</span>
+      <span class="kpi-v">${esc(fmtAny(c.v, c.f))}</span>
+      <span class="kpi-note">${esc(c.note)}</span>
+      <span class="kpi-go">Open ${esc(tab.toLowerCase())}</span>
+    </a>`;
+  }).join('');
+  target.innerHTML = `
+    <div class="ov-kpis">${cards}</div>
+    <div class="ov-grid">
+      <div class="panel">
+        <h2>The week at a glance</h2>
+        <p class="figure-note">Slot fill by weekday and hour across all six clinics. The roster is
+          flat and the demand is not. Hover or tab a cell for the wait and the empty chairs.</p>
+        <div id="ov-heat"><div class="ox-skel ox-skel-chart"></div></div>
+        <a class="panel-go" href="#week">Open the week</a>
+      </div>
+      ${aiBrief(INS, { label: 'Priorities this month · AI', cls: 'bench-brief' })}
+    </div>`;
 }
 
 // ---------------------------------------------------------------- boot
@@ -1033,8 +1098,8 @@ async function render() {
 // Renders are queued, so a filter changed while the engine is still loading waits its turn
 // instead of running beside the first render.
 let queue = Promise.resolve();
-const rerender = (nav) => {
-  queue = queue.then(() => keepScroll(render)).then(() => spy(nav)).catch((e) => console.error(e));
+const rerender = () => {
+  queue = queue.then(() => keepScroll(render)).catch((e) => console.error(e));
   return queue;
 };
 
@@ -1043,7 +1108,8 @@ try {
   // The summary paints first and the engine starts straight after. Starting the engine first
   // was measured slower: parsing its modules held the main thread while the tiny meta.json
   // waited behind it, and the summary appeared three seconds late.
-  const m = await meta().catch(() => ({}));
+  const [m, ins] = await Promise.all([meta().catch(() => ({})), insights()]);
+  INS = ins;
   await renderFreshness().catch((e) => {
     el('fresh-label').textContent = 'Freshness unknown';
     console.warn('freshness', e);
@@ -1052,12 +1118,17 @@ try {
   const nav = el('ox-nav');
   const f = m.summary?.filter;
   if (f) setClinic(readParam(f.param), f.options);
-  renderSummary(el('ox-top'), m.summary);
+  renderOverview(el('ox-top'), m);
   renderNav(nav, { sections: SECTIONS, filter: f && { ...f, value: clinic.code } });
+
+  // One tab at a time, named in the hash. Switching tabs brings the tab bar back into view.
+  V = views({ ids: SECTIONS.map(([id]) => id), fallback: 'ox-top', anchor: document.querySelector('.bench-head') });
+  wireTheme(el('theme-toggle'), { key: 'ox-theme-lumen', onChange: () => rerender() });
+
   onFilterChange(nav, (code) => {
     setClinic(code, f.options);
     writeParam(f.param, clinic.code);
-    rerender(nav);
+    rerender();
   });
   // Marks, so how long a prospect waits can be measured rather than guessed.
   performance.mark('ox-summary');
@@ -1066,7 +1137,7 @@ try {
   await engine;
   // The first render is awaited directly, so a failure reaches the message below instead of
   // being swallowed by the queue.
-  queue = render().then(() => { performance.mark('ox-ready'); spy(nav); });
+  queue = render().then(() => { performance.mark('ox-ready'); });
   await queue;
 } catch (err) {
   el('main').innerHTML =

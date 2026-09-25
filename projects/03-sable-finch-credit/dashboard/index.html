@@ -1,10 +1,12 @@
 <!doctype html>
-<html lang="en-ZA">
+<html lang="en-ZA" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Portfolio Risk Review · Sable &amp; Finch Credit</title>
-<meta name="description" content="Credit risk on a South African unsecured lending book: cohort performance, affordability compliance, refinancing, and where collections effort actually works. Demonstration built on synthetic data.">
+<meta name="description" content="A credit committee pack for a South African unsecured lending book: cohort performance, affordability compliance, refinancing, and where collections effort actually works, with AI drafted resolutions. Demonstration built on synthetic data.">
+<!-- The theme is set before the stylesheet paints, so there is no flash of the wrong one. -->
+<script>(function(){var t;try{t=localStorage.getItem('ox-theme-sable')}catch(e){}document.documentElement.setAttribute('data-theme',t==='dark'||t==='light'?t:'light')})();</script>
 <link rel="stylesheet" href="assets/institutional.css">
 <link rel="stylesheet" href="assets/omnatix-frame.css">
 <!-- Open the connection to the query engine's CDN early. The engine itself is not preloaded:
@@ -13,7 +15,7 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%231A3A5C'/><path d='M6 23V9M11 23v-7M16 23V13M21 23v-4M26 23V6' stroke='%23F7F6F3' stroke-width='2.4' stroke-linecap='round'/></svg>">
 </head>
-<body>
+<body class="pack">
 
 <div class="ox-bar">
   <div class="ox-bar-in">
@@ -22,70 +24,76 @@
     <nav class="ox-actions" aria-label="Omnatix">
       <a class="ox-link" href="../">All demos</a>
       <button class="ox-link ox-print" type="button" onclick="window.print()">Save as PDF</button>
-      <a class="ox-cta" href="mailto:info@omnatix.co.za?subject=Walkthrough%3A%20Sable%20%26%20Finch%20Credit%20demo&amp;body=I%20would%20like%20to%20see%20what%20the%20Sable%20%26%20Finch%20Credit%20review%20would%20find%20in%20our%20own%20loan%20book.">Book a walkthrough</a>
+      <a class="ox-cta" href="mailto:info@omnatix.co.za?subject=Walkthrough%3A%20Sable%20%26%20Finch%20Credit%20demo&amp;body=I%20would%20like%20to%20see%20what%20the%20Sable%20%26%20Finch%20review%20would%20find%20in%20our%20own%20loan%20book.">Book a walkthrough</a>
     </nav>
   </div>
 </div>
 
-<div class="wrap">
-
-  <header class="masthead">
-    <div>
-      <h1>Portfolio Risk Review</h1>
-      <p class="sub">Sable &amp; Finch Credit · unsecured lending · nine branches</p>
+<!-- A committee pack is turned, not scrolled: one page at a time, a page counter, the arrow
+     keys, and a strip of page numbers like a document viewer. -->
+<div class="pack-bar ox-print-hide">
+  <div class="pack-bar-in">
+    <button class="pager" id="prev" type="button" aria-label="Previous page">&larr; <span>Previous</span></button>
+    <div class="pack-where" aria-live="polite">
+      <span class="pack-count" id="page-count">Page 1</span>
+      <span class="pack-page" id="page-name">Cover</span>
     </div>
-    <div class="meta">
-      <div id="freshness" class="freshness">
-        <span class="fresh-dot" aria-hidden="true"></span>
-        <span id="fresh-label">Checking data freshness</span>
-      </div>
-      <div id="data-through"></div>
-      <div id="last-run"></div>
-    </div>
-  </header>
+    <button class="pager" id="next" type="button" aria-label="Next page"><span>Next</span> &rarr;</button>
+    <nav class="ox-nav pack-nav" id="ox-nav" aria-label="Pages" hidden></nav>
+    <button class="ox-theme" id="theme-toggle" type="button" aria-pressed="false">Dark mode</button>
+  </div>
 </div>
 
-<nav class="ox-nav" id="ox-nav" aria-label="Sections" hidden></nav>
-
-<div class="wrap">
-
-  <div class="ox-top" id="ox-top"></div>
-
-  <main id="main">
-    <div class="loading" id="loading">
-      <p id="loading-msg">Starting the query engine</p>
-      <p class="muted" style="font-size:0.82rem">
-        The warehouse is running in your browser. Nothing is being sent to a server.
-      </p>
-      <div class="ox-skel ox-skel-h"></div>
-      <div class="ox-skel ox-skel-p"></div>
-      <div class="ox-skel ox-skel-p is-short"></div>
-      <div class="ox-skel ox-skel-chart"></div>
+<div class="desk">
+  <div class="sheet">
+    <div class="sheet-head">
+      <span>Sable &amp; Finch Credit</span>
+      <span>Credit Committee · Portfolio Risk Review</span>
+      <span>Confidential</span>
     </div>
-  </main>
+
+    <section class="cover" id="ox-top"></section>
+
+    <main id="main">
+      <div class="loading" id="loading">
+        <p id="loading-msg">Starting the query engine</p>
+        <p class="muted" style="font-size:0.82rem">
+          The warehouse is running in your browser. Nothing is being sent to a server.
+        </p>
+        <div class="ox-skel ox-skel-h"></div>
+        <div class="ox-skel ox-skel-p"></div>
+        <div class="ox-skel ox-skel-p is-short"></div>
+        <div class="ox-skel ox-skel-chart"></div>
+      </div>
+    </main>
+
+    <section class="signoff" id="signoff"></section>
+
+    <div class="sheet-foot">
+      <span><span id="freshness" class="freshness"><span id="fresh-label">Checking data freshness</span></span>
+        · <span id="data-through"></span> · <span id="last-run"></span></span>
+      <span id="page-foot"></span>
+    </div>
+  </div>
 
   <footer>
     <p>
       <span class="badge">Synthetic data</span>
-      Sable &amp; Finch Credit is a fictional lender. Every figure on this page is generated
-      and contains deliberately planted findings. No real borrower or client data appears
-      here, and no identity numbers exist anywhere in this dataset.
+      Sable &amp; Finch Credit is a fictional lender. Every figure in this pack is generated and
+      contains deliberately planted findings. No real company or borrower data appears here.
     </p>
     <p>
-      Built by Omnatix. Loan, affordability, repayment, arrears, collections and write off
-      exports land as CSV, are modelled through bronze, silver and gold layers in dbt on
-      DuckDB, tested on every build, and published as Parquet. This page loads those files
-      and runs SQL against them in your browser using DuckDB-WASM. There is no backend and
-      no database server.
+      Built by Omnatix. Loan, repayment, arrears and collections exports land as CSV, are
+      modelled through bronze, silver and gold layers in dbt on DuckDB, tested on every build,
+      and published as Parquet. This page runs SQL against those files in your browser using
+      DuckDB-WASM. There is no backend and no database server.
     </p>
     <p>
-      Pricing follows the National Credit Act caps for unsecured credit: interest at the repo
-      rate plus 21%, an initiation fee of R1 207.50 plus 10% above R1 000 capped at R5 175,
-      and a monthly service fee of R69. Affordability is assessed against the regulated
-      minimum expense norms. Nothing on this page is legal advice.
+      The recommendations and draft resolutions are written by a language model from the same
+      gold tables, after every rebuild, and each names the model that wrote it. They are drafts
+      for the committee to test against the figures, not decisions.
     </p>
   </footer>
-
 </div>
 
 <script type="module" src="assets/app.js"></script>

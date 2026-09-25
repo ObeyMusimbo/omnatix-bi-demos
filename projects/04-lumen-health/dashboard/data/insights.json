@@ -1,0 +1,102 @@
+{
+  "version": 1,
+  "generated_at": "2026-09-25T09:00:00Z",
+  "generator": {
+    "provider": "Claude Code",
+    "model": "claude-opus-5-5",
+    "model_label": "Claude Opus 5.5"
+  },
+  "data_through": "2026-08-31",
+  "overview": {
+    "headline": "The group billed R160.8m for care it delivered and collected R143.4m: R17.4m leaked, 10.8% of everything it invoiced.",
+    "summary": "The leak has three owners: R6.3m of rejected claims the practice could have fixed and never reworked, R4.7m of no-cover rejections never billed to the patient, and R6.4m of gaps never asked for at reception. Separately, 44.8% of paid clinician time had nobody in the chair because the roster is flat while demand piles into Thursday and Friday afternoons. That is a cost, not lost revenue, and it is never added to the leak.",
+    "priorities": [
+      { "section": "claims", "action": "Work every rejected claim inside the four month window, starting at Summerstrand and Westdene, which recover about one rejection in twenty.", "owner": "Billing Manager", "horizon": "This week", "value_zar": 6332260 },
+      { "section": "noshow", "action": "Send an SMS reminder for every booking. Half of all bookings never got one.", "owner": "Practice Managers", "horizon": "2 weeks", "value_zar": 9500266 },
+      { "section": "reception", "action": "Collect the scheme gap before the patient leaves, with a card machine at every desk.", "owner": "Front Desk Leads", "horizon": "This week", "value_zar": 6374296 },
+      { "section": "claims", "action": "Raise a patient account whenever a scheme rejects for no cover.", "owner": "Accounts Manager", "horizon": "30 days", "value_zar": 4708819 },
+      { "section": "week", "action": "Move Monday morning sessions to Thursday and Friday afternoons.", "owner": "Clinical Director", "horizon": "Next roster cycle", "value_zar": null }
+    ]
+  },
+  "sections": {
+    "money": {
+      "insight": "R17.4m billed for care already delivered never arrived, 10.8% of everything the group invoiced.",
+      "why": "Nothing was stolen and nobody was negligent. It leaked through a claims inbox nobody opens and a card machine nobody reaches for, and every rand of it lands in one bucket with one owner.",
+      "actions": [
+        { "do": "Give each of the three leaks a named owner and a weekly number.", "owner": "Group Finance Director", "when": "This month" },
+        { "do": "Report the collection bridge monthly, reconciled to the bank.", "owner": "Financial Controller", "when": "Next month end" }
+      ],
+      "value_zar": 17417435,
+      "value_note": "billed and never collected over the window",
+      "confidence": "High"
+    },
+    "week": {
+      "insight": "The roster is flat and demand is not: Monday at 08:00 is 16.9% full, while Friday at 16:00 is 91.9% full with a 32.8 minute wait.",
+      "why": "44.8% of paid clinician time had nobody in the chair. Capacity is not short, it is in the wrong place. This is cost incurred, not revenue lost, so it is never added to the R17.4m.",
+      "actions": [
+        { "do": "Move Monday morning sessions to Thursday and Friday afternoons.", "owner": "Clinical Director", "when": "Next roster cycle" },
+        { "do": "Offer the quiet Monday slots first when patients book.", "owner": "Reception", "when": "This week" }
+      ],
+      "value_zar": 16322601,
+      "value_note": "clinician cost above a diary running at 85%, a cost rather than lost revenue",
+      "confidence": "Medium"
+    },
+    "claims": {
+      "insight": "R11.0m of rejected or short paid claims was never recovered, and R6.3m of it was fixable at the practice.",
+      "why": "Two sites recover about one rejection in twenty and the other four about one in four, on the same schemes and the same software. The other R4.7m had no scheme cover and should have become a patient account.",
+      "actions": [
+        { "do": "Work every rejection inside the four month window, oldest first.", "owner": "Billing Clerks", "when": "This week" },
+        { "do": "Capture ICD-10 codes, referrals and authorisations before the claim is submitted.", "owner": "Practice Managers", "when": "30 days" },
+        { "do": "Raise a patient account for every no-cover rejection.", "owner": "Accounts Manager", "when": "30 days" }
+      ],
+      "value_zar": 6332260,
+      "value_note": "fixable at the practice and never reworked",
+      "confidence": "High"
+    },
+    "noshow": {
+      "insight": "15.9% of bookings never arrived, and half of all bookings never got a reminder.",
+      "why": "A booking made more than three weeks out without a reminder fails 34.7% of the time, and with one 19.8%. Applying the reminded rate to unreminded bookings in each lead band recovers 11,077 visits, claiming nothing about shorter lead times.",
+      "actions": [
+        { "do": "Automate an SMS reminder 48 hours before every appointment.", "owner": "Practice Managers", "when": "2 weeks" },
+        { "do": "Start at Summerstrand and Westdene, where barely a third of bookings get one.", "owner": "Group Operations", "when": "This week" }
+      ],
+      "value_zar": 9500266,
+      "value_note": "of visits recoverable with a reminder",
+      "confidence": "Medium"
+    },
+    "reception": {
+      "insight": "Self funded patients pay 89.4% of their bills at the desk. Scheme patients pay only 50.2% of the small gap.",
+      "why": "Same desk, same card machine, same staff. Separately, one scheme settles about six weeks later than the rest and ties up R1.1m. That money arrives late rather than being lost, so it is a balance sheet number.",
+      "actions": [
+        { "do": "Quote and collect the gap before the patient leaves.", "owner": "Front Desk Leads", "when": "This week" },
+        { "do": "Send a statement with a payment link for every gap left open.", "owner": "Accounts Manager", "when": "30 days" },
+        { "do": "Take late settlement up with Koppie Health.", "owner": "Finance Manager", "when": "60 days" }
+      ],
+      "value_zar": 6374296,
+      "value_note": "owed by patients and never asked for",
+      "confidence": "High"
+    },
+    "diaries": {
+      "insight": "The same session rate buys very different diaries: the dearest practitioner costs 2.04 times the median per visit in their discipline.",
+      "why": "A low fill rate is usually about when somebody was rostered, not about the clinician, which is why the week comes first. This table shows where the money goes, and the grid shows why.",
+      "actions": [
+        { "do": "Review sessions for practitioners above 1.5 times their peers, alongside the weekly grid.", "owner": "Clinical Director", "when": "Next roster cycle" },
+        { "do": "Roster by expected demand per hour rather than by habit.", "owner": "Practice Managers", "when": "Next quarter" }
+      ],
+      "value_zar": null,
+      "value_note": "",
+      "confidence": "Medium"
+    },
+    "trend": {
+      "insight": "Every defect in the source files is flagged rather than deleted, including 5,048 encounters with no diagnosis code touching R3.2m of billing.",
+      "why": "A dashboard that quietly drops the rows it cannot reconcile is how a practice comes to believe a number several per cent short. Missing diagnosis codes also feed the coding rejections in the claims tab.",
+      "actions": [
+        { "do": "Make the diagnosis code mandatory before an encounter can be closed.", "owner": "Practice Managers", "when": "30 days" },
+        { "do": "Stop duplicate claim submission at the switch.", "owner": "Billing Manager", "when": "30 days" }
+      ],
+      "value_zar": null,
+      "value_note": "",
+      "confidence": "High"
+    }
+  }
+}

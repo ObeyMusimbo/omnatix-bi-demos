@@ -1,10 +1,11 @@
 /*
   Sable & Finch Credit, Portfolio Risk Review.
 
-  Opens on the one thing a portfolio at risk number cannot tell you: whether the business is
-  writing better or worse loans than it was a year ago. Every chart carries a table twin,
-  which matters more here than anywhere else in this suite, because a credit committee is
-  going to want the row.
+  A credit committee pack, turned a page at a time: a cover, one matter per page, and a
+  sign-off page of resolutions. Opens on the one thing a portfolio at risk number cannot tell
+  you: whether the business is writing better or worse loans than it was a year ago. Every
+  chart carries a table twin, which matters more here than anywhere else in this suite,
+  because a credit committee is going to want the row.
 */
 
 import { connect, q, meta } from './db.js';
@@ -13,8 +14,13 @@ import {
   showTip, hideTip, esc, fmtR, fmtRc, fmtR2, fmtNum, fmtPct, fmtMonth,
 } from './charts.js';
 import {
-  renderSummary, renderNav, onFilterChange, readParam, writeParam, scope, spy, keepScroll,
+  renderNav, onFilterChange, readParam, writeParam, scope, keepScroll, fmtAny,
+  wireTheme, views, insights, attachInsights, aiCredit,
 } from './shell.js';
+
+// The AI recommendations and draft resolutions, loaded once beside meta.json, and the pager.
+let INS = null;
+let V = null;
 
 const el = (id) => document.getElementById(id);
 const v = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -73,16 +79,19 @@ async function renderFreshness() {
 // the exposure bridge are book-wide, and their figures say "All branches" rather than
 // appearing to follow a filter they cannot follow. The headline and the summary stay book-wide.
 
+// One page each, numbered as pages. The matters keep their own numbers inside the page.
 const SECTIONS = [
-  ['ox-top', '', 'Summary'],
-  ['book', '01', 'The book'],
-  ['branch', '02', 'The branch'],
-  ['afford', '03', 'Affordability'],
-  ['topups', '04', 'Top-ups'],
-  ['debit', '05', 'Debit orders'],
-  ['collections', '06', 'Collections'],
-  ['close', '07', 'What it adds up to'],
+  ['ox-top', '1', 'Cover'],
+  ['book', '2', 'The book'],
+  ['branch', '3', 'The branch'],
+  ['afford', '4', 'Affordability'],
+  ['topups', '5', 'Top-ups'],
+  ['debit', '6', 'Debit orders'],
+  ['collections', '7', 'Collections'],
+  ['close', '8', 'What it adds up to'],
+  ['signoff', '9', 'Resolutions'],
 ];
+const pageOf = (id) => SECTIONS.findIndex(([x]) => x === id) + 1;
 const ALL_BRANCHES = 'All branches';
 const branch = { code: '', label: '' };
 
@@ -181,6 +190,11 @@ async function render() {
     sectionCollections(coll) +
     sectionClose(h, bridge);
 
+  // Each matter closes on its recommendation to the committee, the way a board paper does.
+  attachInsights(el('main'), INS, {
+    where: 'end', label: 'Recommendation to the committee · AI', cls: 'pack-rec', scope: sc(false),
+  });
+
   // The headline painted from meta.json in the first second must be the number the
   // warehouse gives. If they ever drift, say so in the console rather than on a prospect's screen.
   const m = await meta().catch(() => ({}));
@@ -197,12 +211,91 @@ async function render() {
   drawCollections(coll);
   drawBridge(bridge);
   wireTableToggles();
+  V?.refresh();
+}
+
+// ---------------------------------------------------------------- the cover and the sign-off
+//
+// Both paint from meta.json and insights.json in the first second, before the query engine,
+// so the pack can be opened, read and turned to its resolutions while the book is loading.
+
+function renderCover(target, m) {
+  const s = m.summary;
+  if (!target || !s) return;
+  const rows = [
+    { id: 'book', title: 'The book', v: s.hero.v, f: s.hero.f, note: s.hero.label },
+    ...s.findings,
+  ];
+  const contents = rows.map((r) => `
+    <tr>
+      <td class="pg">${pageOf(r.id)}</td>
+      <td><a href="#${esc(r.id)}">${esc(r.title)}</a></td>
+      <td class="num">${esc(fmtAny(r.v, r.f))}</td>
+      <td class="muted">${esc(r.note)}</td>
+    </tr>`).join('');
+  const o = INS?.overview;
+  target.innerHTML = `
+    <p class="cover-kicker">Credit Committee Pack</p>
+    <h1 class="cover-title">Portfolio Risk Review</h1>
+    <p class="cover-sub">Sable &amp; Finch Credit · unsecured lending · nine branches</p>
+    <dl class="cover-meta">
+      <div><dt>Period</dt><dd>${esc(longDate(m.data_from))} to ${esc(longDate(m.data_through))}</dd></div>
+      <div><dt>Loans written</dt><dd>${esc(fmtNum(m.loans))}</dd></div>
+      <div><dt>Disbursed</dt><dd>${esc(fmtRc(m.disbursed_zar))}</dd></div>
+      <div><dt>Prepared by</dt><dd>Omnatix</dd></div>
+    </dl>
+    <div class="hero"><div class="hero-value">${esc(fmtAny(s.hero.v, s.hero.f))}</div>
+      <div class="hero-label">${esc(s.hero.label)}</div></div>
+    ${o ? `
+    <h2>Executive summary</h2>
+    <div class="cover-exec">
+      <p class="ai-headline">${esc(o.headline || '')}</p>
+      ${o.summary ? `<p>${esc(o.summary)}</p>` : ''}
+      <p class="ai-credit">${esc(aiCredit(INS))} The resolutions it proposes are on page ${pageOf('signoff')}.</p>
+    </div>` : ''}
+    <h2>Matters for the committee</h2>
+    <div class="table-scroll contents"><table>
+      <thead><tr><th>Page</th><th>Matter</th><th class="num">Figure</th><th>What it measures</th></tr></thead>
+      <tbody>${contents}</tbody>
+    </table></div>`;
+}
+
+function renderSignoff(target) {
+  if (!target) return;
+  const pris = INS?.overview?.priorities || [];
+  const rows = pris.map((p, i) => `
+    <tr>
+      <td>R${i + 1}</td>
+      <td>${esc(p.action || '')}${p.section ? ` <a class="muted" href="#${esc(p.section)}">(page ${pageOf(p.section)})</a>` : ''}</td>
+      <td>${esc(p.owner || '')}</td>
+      <td>${esc(p.horizon || '')}</td>
+      <td class="num">${p.value_zar != null ? esc(fmtRc(p.value_zar)) : '-'}</td>
+    </tr>`).join('');
+  target.innerHTML = `
+    <div class="section-head"><div class="section-num">Resolutions</div><h2>Resolutions proposed to the committee</h2></div>
+    <p class="lede">Drafted from the matters in this pack, in the order to take them. Each is a
+      proposal to test against the page it cites, not a decision: the committee amends,
+      adopts or rejects.</p>
+    ${rows ? `
+    <div class="table-scroll"><table class="resolutions">
+      <thead><tr><th>No.</th><th>Resolution</th><th>Owner</th><th>By</th><th class="num">Worth</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>
+    <p class="ai-credit">${esc(aiCredit(INS))} Worth is what the matter is sized at in this pack,
+      not a forecast of what will be recovered, and the figures are not to be added together.</p>`
+    : '<p class="muted">No draft resolutions were written for this build.</p>'}
+    <h2>Committee sign-off</h2>
+    <div class="sign-grid">
+      <div class="sign-line"><b>Chief Risk Officer</b>Signature and date</div>
+      <div class="sign-line"><b>Chief Executive Officer</b>Signature and date</div>
+      <div class="sign-line"><b>Chair, Credit Committee</b>Signature and date</div>
+    </div>`;
 }
 
 // ---------------------------------------------------------------- sections
 
 const head = (num, title, lede) => `
-  <div class="section-head"><div class="section-num">${num}</div><h2>${title}</h2></div>
+  <div class="section-head"><div class="section-num">Matter ${num}</div><h2>${title}</h2></div>
   <p class="lede">${lede}</p>`;
 
 const scaleLegend = (from, to, steps) => `
@@ -692,8 +785,8 @@ function bookHeadline(vintage) {
 // Renders are queued, so a filter changed while the engine is still loading waits its turn
 // instead of running beside the first render.
 let queue = Promise.resolve();
-const rerender = (nav) => {
-  queue = queue.then(() => keepScroll(render)).then(() => spy(nav)).catch((e) => console.error(e));
+const rerender = () => {
+  queue = queue.then(() => keepScroll(render)).catch((e) => console.error(e));
   return queue;
 };
 
@@ -702,7 +795,8 @@ try {
   // The summary paints first and the engine starts straight after. Starting the engine first
   // was measured slower: parsing its modules held the main thread while the tiny meta.json
   // waited behind it, and the summary appeared three seconds late.
-  const m = await meta().catch(() => ({}));
+  const [m, ins] = await Promise.all([meta().catch(() => ({})), insights()]);
+  INS = ins;
   await renderFreshness().catch((e) => {
     el('fresh-label').textContent = 'Freshness unknown';
     console.warn('freshness', e);
@@ -711,12 +805,43 @@ try {
   const nav = el('ox-nav');
   const f = m.summary?.filter;
   if (f) setBranch(readParam(f.param), f.options);
-  renderSummary(el('ox-top'), m.summary);
+  renderCover(el('ox-top'), m);
+  renderSignoff(el('signoff'));
   renderNav(nav, { sections: SECTIONS, filter: f && { ...f, value: branch.code } });
+  // The page strip shows numbers only, so each carries its name as a tooltip.
+  nav.querySelectorAll('.ox-sections a').forEach((a) => {
+    const [, , label] = SECTIONS.find(([id]) => id === a.dataset.id) || [];
+    if (label) { a.title = label; a.setAttribute('aria-label', `Page ${pageOf(a.dataset.id)}, ${label}`); }
+  });
+
+  // One page at a time, named in the hash, turned by the buttons or the arrow keys.
+  V = views({
+    ids: SECTIONS.map(([id]) => id),
+    fallback: 'ox-top',
+    // Turning a page lands on the top of the sheet, with the pack bar stuck above it.
+    anchor: document.querySelector('.ox-bar'),
+    onShow: (id, i, n) => {
+      const label = SECTIONS[i]?.[2] || '';
+      el('page-count').textContent = `Page ${i + 1} of ${n}`;
+      el('page-name').textContent = label;
+      el('page-foot').textContent = `${label} · page ${i + 1} of ${n}`;
+      el('prev').disabled = i === 0;
+      el('next').disabled = i === n - 1;
+    },
+  });
+  el('prev').addEventListener('click', () => V.step(-1));
+  el('next').addEventListener('click', () => V.step(1));
+  document.addEventListener('keydown', (e) => {
+    if (e.altKey || e.ctrlKey || e.metaKey || /^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)) return;
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); V.step(1); }
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); V.step(-1); }
+  });
+  wireTheme(el('theme-toggle'), { key: 'ox-theme-sable', onChange: () => rerender() });
+
   onFilterChange(nav, (code) => {
     setBranch(code, f.options);
     writeParam(f.param, branch.code);
-    rerender(nav);
+    rerender();
   });
   // Marks, so how long a prospect waits can be measured rather than guessed.
   performance.mark('ox-summary');
@@ -725,7 +850,7 @@ try {
   await engine;
   // The first render is awaited directly, so a failure reaches the message below instead of
   // being swallowed by the queue.
-  queue = render().then(() => { performance.mark('ox-ready'); spy(nav); });
+  queue = render().then(() => { performance.mark('ox-ready'); });
   await queue;
 } catch (err) {
   el('main').innerHTML =

@@ -1,0 +1,102 @@
+{
+  "version": 1,
+  "generated_at": "2026-09-25T09:00:00Z",
+  "generator": {
+    "provider": "Claude Code",
+    "model": "claude-opus-5-5",
+    "model_label": "Claude Opus 5.5"
+  },
+  "data_through": "2026-08-31",
+  "overview": {
+    "headline": "The book is being written worse: recent cohorts are 56% worse at month six than those written a year earlier, while the arrears ratio has barely moved.",
+    "summary": "R10.3m of the R37.5m net credit loss sits above what the clean book lost, and it traces to four conditions management controls: debit orders set on the wrong day, loans written outside affordability policy, arrears refinanced into new loans, and one branch where declared income is inflated on 63.7% of loans. Separately, R34.8m is outstanding on 3,201 agreements a court could set aside as reckless credit. That is a legal exposure, not a loss, and it is never added to one.",
+    "priorities": [
+      { "section": "branch", "action": "Suspend delegated approval at Mahikeng and open a conduct review into inflated declared income.", "owner": "Chief Risk Officer", "horizon": "Immediately", "value_zar": 1518417 },
+      { "section": "topups", "action": "Stop top-ups that settle a delinquent account without credit committee sign-off.", "owner": "Chief Risk Officer", "horizon": "Immediately", "value_zar": 2541425 },
+      { "section": "afford", "action": "Make the affordability floor a hard stop at origination and review the agreements already written below it.", "owner": "Head of Credit with Compliance", "horizon": "30 days", "value_zar": 2543444 },
+      { "section": "debit", "action": "Set every debit order to the client's payday at origination and re-date loans collecting more than three days after it.", "owner": "Head of Operations", "horizon": "30 days", "value_zar": 3666791 },
+      { "section": "collections", "action": "Move collections effort into the first thirty days, where a cure costs R6.", "owner": "Head of Collections", "horizon": "60 days", "value_zar": null }
+    ]
+  },
+  "sections": {
+    "book": {
+      "insight": "Recent cohorts go bad much faster: the bad rate at month six has moved from about 6.9% to about 10.9% on the same product.",
+      "why": "PAR 30 barely moves because a growing book hides deterioration in a ratio: every new loan lands in the denominator performing. Vintage curves are diluted by nothing, which is why they belong at the front of every committee pack.",
+      "actions": [
+        { "do": "Make month-six vintage curves a standing item in the credit committee pack.", "owner": "Chief Risk Officer", "when": "Next committee" },
+        { "do": "Set an early warning threshold on each cohort's month-three bad rate.", "owner": "Credit Risk Analyst", "when": "30 days" }
+      ],
+      "value_zar": null,
+      "value_note": "",
+      "confidence": "High"
+    },
+    "branch": {
+      "insight": "Mahikeng runs at 1.62 times the book's bad rate, and declared income exceeds the income on file on 63.7% of its loans, against none anywhere else.",
+      "why": "The second number makes this a conduct matter rather than a question of risk appetite. It was visible at origination, before a single instalment fell due.",
+      "actions": [
+        { "do": "Suspend delegated approval authority at Mahikeng pending review.", "owner": "Chief Risk Officer", "when": "Immediately" },
+        { "do": "Independent file review of Mahikeng loans written since May 2025.", "owner": "Internal Audit", "when": "30 days" },
+        { "do": "Check declared against verified income automatically at every branch.", "owner": "Head of Credit", "when": "60 days" }
+      ],
+      "value_zar": 1518417,
+      "value_note": "credit loss above the clean book rate, attributed to the branch",
+      "confidence": "High"
+    },
+    "afford": {
+      "insight": "3,511 loans were written that leave the client below the regulated expense norm once the instalment is paid.",
+      "why": "They go bad at 19.8% against 15.0% inside policy. The larger issue is legal: R34.8m is outstanding on 3,201 agreements a court could set aside as reckless credit under the National Credit Act. That is an exposure at legal risk, not an expected loss, and it is never added to the loss figures.",
+      "actions": [
+        { "do": "Make the affordability floor a hard stop in the origination system.", "owner": "Head of Credit", "when": "30 days" },
+        { "do": "Legal and compliance review of the outstanding agreements written below the floor.", "owner": "Compliance Officer", "when": "30 days" }
+      ],
+      "value_zar": 2543444,
+      "value_note": "credit loss above the clean book rate, from loans outside policy",
+      "confidence": "High"
+    },
+    "topups": {
+      "insight": "849 of 852 top-ups settled an account that was already in arrears.",
+      "why": "The old loan closes as Settled and the new one opens as Current, so every backward looking report improves while the client owes more on a bigger instalment. Top-ups go bad at 34.5% against 16.0% for the book.",
+      "actions": [
+        { "do": "Require credit committee sign-off for any top-up that settles a delinquent account.", "owner": "Chief Risk Officer", "when": "Immediately" },
+        { "do": "Report arrears refinanced as its own line in the monthly pack.", "owner": "Credit Risk Analyst", "when": "Next month end" },
+        { "do": "Separate branch sales incentives from collections targets.", "owner": "Chief Executive Officer", "when": "Next quarter" }
+      ],
+      "value_zar": 2541425,
+      "value_note": "credit loss above the clean book rate, from refinanced arrears",
+      "confidence": "High"
+    },
+    "debit": {
+      "insight": "First instalments fail 17.0% of the time when the debit order runs more than a week after payday, against 8.2% within a day of it.",
+      "why": "A debit order presented before the salary lands fails however willing the client is. It is the cheapest fix in this pack: a field on a form.",
+      "actions": [
+        { "do": "Capture payday at origination and set the collection date to it by default.", "owner": "Head of Operations", "when": "30 days" },
+        { "do": "Re-date existing debit orders that run more than three days after payday, with client consent.", "owner": "Collections Manager", "when": "60 days" }
+      ],
+      "value_zar": 3666791,
+      "value_note": "credit loss above the clean book rate, from collection timing",
+      "confidence": "High"
+    },
+    "collections": {
+      "insight": "A cure costs R6 at one to thirty days and R2,052 past ninety, yet 94.7% of collections spend goes to the expensive end.",
+      "why": "Past ninety days somebody still has to chase the account, but the cheapest cure in this business is a phone call in week one, and almost nobody is making it.",
+      "actions": [
+        { "do": "Guarantee a call or SMS on every account in its first week of arrears.", "owner": "Head of Collections", "when": "30 days" },
+        { "do": "Rebalance collections staff toward the one to sixty day buckets and report cost per cure monthly.", "owner": "Head of Collections", "when": "60 days" }
+      ],
+      "value_zar": null,
+      "value_note": "",
+      "confidence": "Medium"
+    },
+    "close": {
+      "insight": "R10.3m of the R37.5m net credit loss, 27.4% of it, sits above what the clean book lost, and every rand traces to one of four conditions.",
+      "why": "Each loan is attributed to exactly one driver, so nothing is counted twice, and the bridge reconciles to the cent. The reckless lending exposure sits beside it in its own box and is never added.",
+      "actions": [
+        { "do": "Adopt the resolutions on the sign-off page, each with a named owner.", "owner": "Credit Committee", "when": "This meeting" },
+        { "do": "Track this bridge monthly on the live loan book.", "owner": "Omnatix", "when": "Onboarding" }
+      ],
+      "value_zar": 10270077,
+      "value_note": "credit loss above the clean book rate",
+      "confidence": "High"
+    }
+  }
+}

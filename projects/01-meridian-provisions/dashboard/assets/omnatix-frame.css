@@ -286,7 +286,8 @@ td:has(> .cbar) { white-space: nowrap; }
 @page { margin: 14mm 12mm; }
 @media print {
   html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .ox-bar, .ox-nav, .tbl-toggle, .tip, #theme-toggle, .theme-toggle { display: none !important; }
+  .ox-bar, .ox-nav, .tbl-toggle, .tip, #theme-toggle, .theme-toggle, .ox-theme,
+  .ox-print-hide { display: none !important; }
   .table-scroll { overflow: visible !important; }
   .table-scroll .row-more { display: table-row !important; }
   .wrap { max-width: none !important; padding: 0 !important; }
@@ -299,3 +300,36 @@ td:has(> .cbar) { white-space: nowrap; }
 
 /* The loading state mirrors the page it is waiting for: a heading, a line or two, a chart. */
 #loading { text-align: left; padding: 1rem 0 3rem; }
+
+/* ---------------------------------------------------------------- one view at a time */
+
+/* A view that is not on screen. Printing shows every one, so Save as PDF is the whole pack. */
+.ox-off { display: none !important; }
+@media print {
+  .ox-off { display: block !important; }
+  .ai-brief, .ai { break-inside: avoid; }
+}
+
+/* ---------------------------------------------------------------- AI insights, structure only
+
+   Each demo dresses these in its own tokens and its own shape: a margin note, an alert, a
+   committee recommendation, a decision support card. Only the skeleton is shared. */
+
+.ai, .ai-brief { position: relative; }
+.ai-head { display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+.ai-badge { font-weight: 700; }
+.ai-conf { margin-left: auto; }
+.ai p { margin: 0; }
+.ai-actions, .ai-pris { margin: 0; padding: 0; list-style: none; }
+.ai-actions li { display: flex; flex-direction: column; gap: 0.1rem; }
+.ai-meta { display: block; }
+.ai-value { display: flex; align-items: baseline; gap: 0.5rem; flex-wrap: wrap; }
+.ai-value-n { font-family: var(--font-sans); font-weight: 700; font-variant-numeric: proportional-nums; }
+.ai-pri { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 0.75rem; align-items: baseline; text-decoration: none; color: inherit; }
+.ai-pri-body { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
+.ai-pri-n, .ai-pri-v { font-variant-numeric: tabular-nums; }
+.ai-pri-v { font-weight: 700; white-space: nowrap; }
+.ai-pri:focus-visible { outline: 2px solid var(--ox-accent, var(--s1)); outline-offset: 2px; }
+
+/* The light and dark switch, shaped by each demo. */
+.ox-theme { font: inherit; cursor: pointer; }

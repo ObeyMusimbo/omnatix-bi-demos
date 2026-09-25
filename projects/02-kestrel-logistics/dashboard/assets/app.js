@@ -1,20 +1,26 @@
 /*
   Kestrel Logistics, Control Tower.
 
-  Opens on the network, because in freight the map is the argument: four corridors light up
-  red and everything after that is explaining why. Every chart carries a table twin so no
-  value is only reachable through a tooltip.
+  An operations app: a sidebar of views, one on screen at a time, and an alerts rail that
+  stays beside every one. Opens on the network, because in freight the map is the argument:
+  corridors light up red and every other view is explaining why. Every chart carries a table
+  twin so no value is only reachable through a tooltip.
 */
 
 import { connect, q, meta } from './db.js';
 import {
-  waterfall, columns, barsH, lines, legend, table, figure, wireTableToggles, mount,
+  waterfall, columns, barsH, lines, legend, table, figure, wireTableToggles, mount, esc,
   fmtR, fmtRc, fmtR2, fmtNum, fmtPct, fmtMonth,
 } from './charts.js';
 import { networkMap } from './map.js';
 import {
-  renderSummary, renderNav, onFilterChange, readParam, writeParam, scope, spy, keepScroll,
+  renderNav, onFilterChange, readParam, writeParam, scope, keepScroll, fmtAny,
+  wireTheme, views, insights, attachInsights, aiBrief,
 } from './shell.js';
+
+// The AI recommendations, loaded once beside meta.json, and the view router.
+let INS = null;
+let V = null;
 
 const el = (id) => document.getElementById(id);
 const v = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -77,7 +83,6 @@ async function renderFreshness() {
 // follow a filter they cannot follow. The headline and the summary stay network-wide.
 
 const SECTIONS = [
-  ['ox-top', '', 'Summary'],
   ['network', '00', 'Network'],
   ['corridors', '01', 'Empty returns'],
   ['doors', '02', 'Redeliveries'],
@@ -213,6 +218,10 @@ async function render() {
     sectionAir(air) +
     sectionClose(h, bridge);
 
+  // The AI recommendation sits under each view's opening line, before the instruments.
+  attachInsights(el('main'), INS, { label: 'AI recommendation', cls: 'tower-rec', scope: sc(false) });
+
+  // Drawn while every view is visible, so each is already at its true width when opened.
   drawMap(lanesTtm, depots, cities);
   drawCorridors(traps);
   drawDoors(sites);
@@ -221,6 +230,59 @@ async function render() {
   drawEmptyTrend(monthly);
   drawBridge(bridge);
   wireTableToggles();
+  V?.refresh();
+}
+
+// ---------------------------------------------------------------- the ticker and the rail
+//
+// Both paint from meta.json in the first second, before the query engine has loaded, so the
+// exceptions are on screen while the map is still being fetched.
+
+function renderTicker(m) {
+  const s = m.summary || {};
+  const close = (s.findings || []).find((f) => f.close);
+  const ticks = [
+    ['Running empty', fmtAny(s.hero?.v, s.hero?.f), 'breach'],
+    ['On the table', close ? fmtAny(close.v, close.f) : '-', ''],
+    ['Trips', fmtNum(m.trips), ''],
+    ['Kilometres', fmtNum(m.kilometres), ''],
+  ];
+  el('ticker').innerHTML = ticks.map(([l, val, cls]) => `
+    <div class="tick"><span class="tick-l">${esc(l)}</span><span class="tick-v ${cls}">${esc(val)}</span></div>`).join('');
+}
+
+// Severity is read from the finding itself: a figure worth a year of a senior manager's salary
+// is critical, a smaller one a warning, a count is something to watch, and the close is the
+// total available. Always shipped as a word as well as a colour.
+const severity = (f) => (f.close ? ['total', 'Opportunity']
+  : f.f === 'num' ? ['watch', 'Watch']
+  : f.v >= 5e6 ? ['critical', 'Critical'] : ['warning', 'Warning']);
+
+function renderAlerts(target, s) {
+  if (!target || !s) return;
+  const findings = s.findings || [];
+  const alerts = findings.map((f) => {
+    const [cls, word] = severity(f);
+    return `
+    <a class="alert sev-${cls}" href="#${esc(f.id)}">
+      <span class="alert-sev">${word}</span>
+      <span class="alert-title">${esc(f.title)}</span>
+      <span class="alert-v">${esc(fmtAny(f.v, f.f))}</span>
+      <span class="alert-note">${esc(f.note)}</span>
+    </a>`;
+  }).join('');
+  target.innerHTML = `
+    <div class="status-card">
+      <div class="rail-title">Network status</div>
+      <div class="hero"><div class="hero-value">${esc(fmtAny(s.hero.v, s.hero.f))}</div></div>
+      <div class="hero-label">${esc(s.hero.label)}</div>
+    </div>
+    <div class="rail-head">
+      <span class="rail-title">Open alerts</span>
+      <span class="rail-count">${findings.filter((f) => !f.close).length} open</span>
+    </div>
+    <div class="alert-list">${alerts}</div>
+    ${aiBrief(INS, { label: 'AI dispatch brief', cls: 'tower-brief' })}`;
 }
 
 // ---------------------------------------------------------------- sections
@@ -621,8 +683,8 @@ function drawBridge(bridge) {
 // Renders are queued, so a filter changed while the engine is still loading waits its turn
 // instead of running beside the first render.
 let queue = Promise.resolve();
-const rerender = (nav) => {
-  queue = queue.then(() => keepScroll(render)).then(() => spy(nav)).catch((e) => console.error(e));
+const rerender = () => {
+  queue = queue.then(() => keepScroll(render)).catch((e) => console.error(e));
   return queue;
 };
 
@@ -631,7 +693,8 @@ try {
   // The summary paints first and the engine starts straight after. Starting the engine first
   // was measured slower: parsing its modules held the main thread while the tiny meta.json
   // waited behind it, and the summary appeared three seconds late.
-  const m = await meta().catch(() => ({}));
+  const [m, ins] = await Promise.all([meta().catch(() => ({})), insights()]);
+  INS = ins;
   await renderFreshness().catch((e) => {
     el('fresh-label').textContent = 'Freshness unknown';
     console.warn('freshness', e);
@@ -640,21 +703,36 @@ try {
   const nav = el('ox-nav');
   const f = m.summary?.filter;
   if (f) setHub(readParam(f.param), f.options);
-  renderSummary(el('ox-top'), m.summary);
+  renderTicker(m);
+  renderAlerts(el('ox-top'), m.summary);
   renderNav(nav, { sections: SECTIONS, filter: f && { ...f, value: hub.code } });
+
+  // One view at a time, named in the hash. The deck header says which, and against which hub.
+  V = views({
+    ids: SECTIONS.map(([id]) => id),
+    fallback: 'network',
+    onShow: (id, i, n) => {
+      const [, , label] = SECTIONS[i] || [];
+      el('view-title').textContent = label || '';
+      el('view-kicker').textContent = `View ${String(i + 1).padStart(2, '0')} of ${n}`
+        + ` · ${hub.label || 'All hubs'}`;
+    },
+  });
+  wireTheme(el('theme-toggle'), { key: 'ox-theme-kestrel', onChange: () => rerender() });
+
   // Marks, so how long a prospect waits can be measured rather than guessed.
   performance.mark('ox-summary');
   const engine = connect((msg) => { const n = el('loading-msg'); if (n) n.textContent = msg; });
   onFilterChange(nav, (code) => {
     setHub(code, f.options);
     writeParam(f.param, hub.code);
-    rerender(nav);
+    rerender();
   });
 
   await engine;
   // The first render is awaited directly, so a failure reaches the message below instead of
   // being swallowed by the queue.
-  queue = render().then(() => { performance.mark('ox-ready'); spy(nav); });
+  queue = render().then(() => { performance.mark('ox-ready'); });
   await queue;
 } catch (err) {
   el('main').innerHTML =

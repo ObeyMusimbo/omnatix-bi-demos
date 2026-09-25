@@ -86,21 +86,52 @@ cost incurred and revenue foregone are different quantities.
 
 ## The Omnatix frame
 
-Each demo keeps its own identity inside one shared frame, so a prospect always knows whose work
-they are looking at and what to do next.
+Only the black Omnatix bar is the same on every demo, so a prospect always knows whose work they
+are looking at. Everything below it is laid out differently per demo. What the four share is
+behaviour, in `shell.js`, not appearance: each stylesheet decides what the shared parts look like.
 
 | Part | What it does |
 |---|---|
 | Omnatix bar | The mark, "All demos", Save as PDF, and Book a walkthrough, identical on every demo |
-| Summary strip | The headline and one card per finding, each linking to its section, painted from `meta.json` in about a second, before the query engine has loaded |
-| Section nav | Stays at the top while scrolling and marks the section on screen |
+| Summary | The headline and one figure per finding, painted from `meta.json` in about a second, before the query engine has loaded. A newspaper index, an alerts rail, a cover page or KPI cards, depending on the demo |
+| Navigation | A contents rail, a sidebar of views, a page strip with previous and next, or folder tabs. The three single-view layouts name the view in the URL hash, so every view is a link and the back button works |
 | One filter | Warehouse, hub, branch or clinic. Figures whose data carries it follow it; the rest say they are company-wide. The filter lives in the URL, so a filtered view can be sent as a link |
+| Light and dark | Every demo has both, each with its own validated palette, remembered per demo. Kestrel opens dark, the other three open light |
+| AI insights | An insight, the reason, owned actions and what it is worth, beside every section, plus a prioritised briefing. See below |
 | Folded tables | Long tables show their first rows with Show all, and carry in-cell bars |
-| Print | Save as PDF drops the frame, unfolds every table and scales each chart to the page |
+| Print | Save as PDF drops the frame, shows every view, unfolds every table and scales each chart to the page |
+
+## AI insights
+
+Every section carries an AI panel: what the data shows, why nobody saw it, two or three actions
+each owned by a role with a time frame, and the rand figure it is worth. Each demo also opens on
+a prioritised briefing. They are written by `scripts/ai_insights.py` after every nightly refresh,
+from the same gold tables the page reads, and each panel names the model that wrote it and when.
+
+| Provider | Secret or variable | Cost |
+|---|---|---|
+| Claude (Anthropic) | `ANTHROPIC_API_KEY` secret | Paid, cents a night. Used first whenever the secret exists |
+| Google Gemini | `GEMINI_API_KEY` secret | Free tier |
+| Groq | `GROQ_API_KEY` secret | Free tier |
+| OpenRouter | `OPENROUTER_API_KEY` secret | Free models |
+| GitHub Models | nothing, the job's own token | Free, and the default when no key is set |
+
+`AI_PROVIDER` and `AI_MODEL` repository variables override the choice. The model never sees
+`ANSWER_KEY.md`. A rand value it attaches to a finding is kept only if that figure is in the data
+it was given, and a provider that fails leaves the last good insights in place. The panels say
+"AI" on them in every demo, because a buyer should always know which words a model wrote.
 
 ## Visual identity per project
 
-Deliberately distinct. The point is to show range, not a template.
+Deliberately distinct, in layout and flow as well as colour. The point is to show range, not a
+template, so no two demos are read the same way:
+
+| Demo | Layout | How you move through it | Where the AI sits |
+|---|---|---|---|
+| Meridian | Editorial feature with a newspaper nameplate | One long story, with a contents rail beside it | An analyst's note boxed into each chapter |
+| Kestrel | Operations app | A sidebar of views, one on screen at a time, with an alerts rail and a ticker | A recommendation strip under each view, and a dispatch brief in the rail |
+| Sable & Finch | Credit committee pack on a sheet of paper | Turned a page at a time: cover, one matter per page, sign-off page. Arrow keys work | A recommendation to the committee closing each page, and draft resolutions with signature lines |
+| Lumen | Clinical workbench | Folder tabs, with an overview of KPI cards and the week's heat grid | A decision support pane that stays beside each tab |
 
 All four set type in **Verdana**, which is a system font on Windows and macOS. That is a
 deliberate trade: the four themes used to be separated partly by typeface, and now they are
@@ -132,19 +163,21 @@ Signature visual: the margin waterfall. Gross profit, then freight, then rebate,
 
 ### 02, Kestrel Logistics · theme "Control Tower"
 
-A live operations screen. Dark, map-first, monospace numerics, status as colour.
+A live operations screen. Dark by default, map-first, status as colour, with a light mode for a
+bright office.
 
-| Token | Value |
-|---|---|
-| Page | `#0B0F14` |
-| Panel | `#121820` |
-| Land | `#151D26` |
-| Series 1 to 4 | `#1C9DB8` cyan · `#A88818` gold · `#D65F92` rose · `#8478DE` violet |
-| Status | `#34D399` ok · `#FBBF24` warn · `#F87171` breach |
-| Type | Verdana throughout · tabular figures in tables and axis ticks |
+| Token | Dark | Light |
+|---|---|---|
+| Page | `#0B0F14` | `#EEF2F6` |
+| Panel | `#121820` | `#FFFFFF` |
+| Land | `#151D26` | `#E4EAF0` |
+| Series 1 to 4 | `#1C9DB8` `#A88818` `#D65F92` `#8478DE` | `#0080A8` `#8A6D0B` `#B8457A` `#6556C4` |
+| Status | `#34D399` ok · `#FBBF24` warn · `#F87171` breach | `#1B7F4B` · `#9A6200` · `#C2342B` |
+| Type | Verdana throughout · tabular figures in tables and axis ticks | |
 
-Series colours validated against this exact surface, worst adjacent pair clearing delta E 11.9.
-Status colours are reserved and always ship with a label, never colour alone.
+Series colours validated against each mode's panel, worst adjacent pair clearing delta E 11.9 in
+dark and 11.1 in light. Status colours are reserved and always ship with a label, never colour
+alone.
 
 Signature visual: the network map. Twelve corridors that look profitable one way and lose money
 as a round trip, drawn from coordinates in the data rather than from map tiles, so the page
@@ -171,6 +204,11 @@ dimension, so cohorts take a single hue running light to dark rather than unrela
 it is validated as an ordinal ramp. Arrears buckets are semantic heat, which is the one case
 where a multi-hue sequential scale is right, and it always ships with a scale legend.
 
+Dark mode, on a `#161E28` sheet, has its own steps for all three jobs: series `#5292CA` `#D0773F`
+`#A77BC9` `#6FA65E` (delta E 16.3), a cohort ramp running dim to bright `#3F5E80` to `#A9CAEA`
+so the newest cohort still stands out, and risk heat `#2F6A2B` to `#FF9384`, monotone in
+lightness.
+
 Signature visual: vintage curves by disbursement cohort, one branch diverging from the book.
 
 ### 04, Lumen Health Network · theme "Clinical"
@@ -195,6 +233,10 @@ tritanopia. Both ramps are validated as ordinal: monotone lightness, every adjac
 fill and waiting time get separate hues on purpose, because they are different quantities and a
 shared ramp would invite reading them as one.
 
+Dark mode, on a `#15232A` panel: series `#1BA2AB` `#DB7440` `#9A7BE6` `#789F48` (delta E 14.6),
+and both ramps run dim to bright so the fullest and longest hours still stand out. The heat
+grid's text flips with them: the two dimmest steps carry white, the rest dark ink.
+
 Signature visual: the consulting week as a grid of weekday against hour, built as a real table
 so it keeps its headers and reads to a screen reader. Monday at eight is 17% full, Friday at
 four is 92% full with a 33 minute wait.
@@ -213,7 +255,9 @@ Applied to every project in this repo.
 4. **Show the pipeline for investors.** Two minutes on the dbt lineage graph and the data tests.
    That is what separates this from a freelancer with a spreadsheet.
 5. **Never demo with real client data.** Not even anonymised.
-6. **The AI chat always shows its SQL.** Buyers trust what they can audit.
+6. **The AI always shows its working.** Every insight names the model that wrote it and sits
+   beside the figures it came from, and the chat, when it comes, shows its SQL. Buyers trust
+   what they can audit.
 
 ## Status
 

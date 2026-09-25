@@ -1,11 +1,16 @@
 /*
   Ledger, the Meridian Provisions theme.
 
-  A printed financial report: warm paper, hairline rules doing the separating rather than
-  boxes or shadows, serif headings over a sans body, and colour used only where it carries
-  meaning. The series palette is not hand-picked, it was validated for lightness band,
-  chroma floor, CVD separation, normal-vision separation and surface contrast, in both
-  modes independently. Do not substitute a colour here without re-validating.
+  An editorial feature in the business pages, read once, top to bottom. A nameplate instead
+  of a dashboard header, a contents rail beside a single reading column, chapter numerals,
+  drop capitals, and an analyst's note set into each chapter like a boxed sidebar in print.
+  Of the four demos this is the only one that scrolls as one long story: the others are an
+  operations app, a paginated committee pack, and a tabbed workbench.
+
+  Warm paper, hairline rules doing the separating rather than boxes or shadows, and colour
+  used only where it carries meaning. The series palette is not hand-picked, it was validated
+  for lightness band, chroma floor, CVD separation, normal-vision separation and surface
+  contrast, in both modes independently. Do not substitute a colour here without re-validating.
 */
 
 :root {
@@ -32,30 +37,11 @@
   --font-serif: Verdana, Geneva, 'DejaVu Sans', sans-serif;
   --font-sans:  Verdana, Geneva, 'DejaVu Sans', sans-serif;
 
-  --measure: 1120px;
+  --measure: 1240px;
   --gap: 2rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --paper:       #16140F;
-    --paper-2:     #201D16;
-    --paper-3:     #2A261D;
-    --ink:         #F5F1E8;
-    --ink-2:       #B8B0A0;
-    --ink-3:       #857E70;
-    --rule:        #332E25;
-    --rule-strong: #463F33;
-    --s1: #CB7645;
-    --s2: #5A90D4;
-    --s3: #AE8A2A;
-    --s4: #1F9C79;
-    --neg: #CB7645;
-    --pos: #1F9C79;
-    --neutral: #B8B0A0;
-  }
-}
-
+/* Dark mode has its own steps, validated against its own surface. It is not a flip. */
 :root[data-theme="dark"] {
   --paper:       #16140F;
   --paper-2:     #201D16;
@@ -88,91 +74,247 @@ body {
 
 .wrap { max-width: var(--measure); margin: 0 auto; padding: 0 2rem; }
 
-/* ---------------------------------------------------------------- masthead */
+/* ---------------------------------------------------------------- nameplate */
 
-.masthead {
-  border-bottom: 1px solid var(--rule-strong);
-  padding: 2.5rem 0 1.5rem;
-  margin-bottom: 3rem;
+.nameplate { border-bottom: 3px double var(--ink); padding: 1rem 0 1.5rem; text-align: center; }
+.nameplate-line {
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 2rem;
-  flex-wrap: wrap;
-}
-.masthead h1 {
-  font-family: var(--font-serif);
-  font-size: 2rem;
-  font-weight: 600;
-  margin: 0 0 0.25rem;
-  letter-spacing: -0.015em;
-}
-.masthead .sub { color: var(--ink-2); font-size: 0.95rem; margin: 0; }
-.masthead .meta {
-  text-align: right;
-  font-size: 0.8rem;
-  color: var(--ink-3);
-  font-variant-numeric: tabular-nums;
-  line-height: 1.5;
-}
-
-/*
-  Data freshness. State is carried by the label text as well as the dot colour, never by
-  colour alone, so it survives colour-vision differences and a greyscale print.
-*/
-.freshness {
-  display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  font-weight: 500;
-  color: var(--ink-2);
-  margin-bottom: 0.15rem;
-}
-.fresh-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ink-3); flex: none; }
-.freshness.is-current { color: var(--pos); }
-.freshness.is-current .fresh-dot { background: var(--pos); }
-.freshness.is-lagging { color: var(--s3); }
-.freshness.is-lagging .fresh-dot { background: var(--s3); }
-.freshness.is-stale { color: var(--neg); }
-.freshness.is-stale .fresh-dot { background: var(--neg); }
-
-.theme-toggle {
-  background: none;
-  border: 1px solid var(--rule-strong);
-  border-radius: 4px;
-  color: var(--ink-2);
-  font: inherit;
-  font-size: 0.78rem;
-  padding: 0.3rem 0.7rem;
-  cursor: pointer;
-  margin-top: 0.5rem;
-}
-.theme-toggle:hover { border-color: var(--ink-3); color: var(--ink); }
-
-/* ---------------------------------------------------------------- sections */
-
-section { margin: 0 0 4.5rem; scroll-margin-top: 1rem; }
-
-.section-head {
-  border-top: 2px solid var(--ink);
-  padding-top: 0.85rem;
-  margin-bottom: 1.75rem;
-}
-.section-num {
-  font-size: 0.72rem;
-  letter-spacing: 0.14em;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid var(--rule-strong);
+  font-size: 0.74rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--ink-3);
   font-variant-numeric: tabular-nums;
 }
+.nameplate-title {
+  font-family: var(--font-serif);
+  font-size: clamp(2.4rem, 7vw, 4.8rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  margin: 1.1rem 0 0.55rem;
+}
+.nameplate-sub { color: var(--ink-2); font-size: 0.88rem; margin: 0; }
+.nameplate-sub span[aria-hidden] { color: var(--rule-strong); margin: 0 0.35rem; }
+
+/*
+  Data freshness is carried by the words, never by a coloured mark, so it survives colour-vision
+  differences and a greyscale print.
+*/
+.freshness { font-weight: 700; color: var(--ink-2); }
+.freshness.is-current { color: var(--pos); }
+.freshness.is-lagging { color: var(--s3); }
+.freshness.is-stale { color: var(--neg); }
+
+.ox-theme {
+  background: none;
+  border: 1px solid var(--rule-strong);
+  border-radius: 999px;
+  color: var(--ink-2);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.8rem;
+}
+.ox-theme:hover { border-color: var(--ink-3); color: var(--ink); }
+.ox-theme:focus-visible { outline: 2px solid var(--s1); outline-offset: 2px; }
+
+/* ---------------------------------------------------------------- the rail and the column */
+
+.layout { display: block; padding-top: 2.25rem; }
+.story { min-width: 0; max-width: 900px; }
+
+@media (min-width: 1100px) {
+  .layout { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 0 3.5rem; }
+
+  /* The frame's section bar becomes a contents rail that stays beside the reading column. */
+  .ledger .ox-nav.rail {
+    position: sticky;
+    top: 1.5rem;
+    align-self: start;
+    background: none;
+    border: 0;
+  }
+  .ledger .rail .ox-nav-in {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.4rem;
+    padding: 0;
+    max-width: none;
+  }
+  .ledger .rail .ox-nav-in::before {
+    content: 'In this report';
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: 0.45rem;
+  }
+  .ledger .rail .ox-sections { flex-direction: column; overflow: visible; gap: 0; border-left: 1px solid var(--rule-strong); }
+  .ledger .rail .ox-sections a {
+    white-space: normal;
+    padding: 0.42rem 0 0.42rem 0.85rem;
+    margin-left: -1px;
+    border-bottom: 0;
+    border-left: 2px solid transparent;
+    font-size: 13px;
+    line-height: 1.35;
+  }
+  .ledger .rail .ox-sections a.is-active { border-left-color: var(--s1); font-weight: 700; }
+  .ledger .rail .ox-sections a .n { color: var(--s1); }
+  .ledger .rail .ox-filter { flex-direction: column; align-items: stretch; gap: 0.35rem; }
+  .ledger .rail .ox-filter span { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); }
+}
+
+/* ---------------------------------------------------------------- the front page */
+
+.front .ox-kicker {
+  font-size: clamp(1.25rem, 2.6vw, 1.85rem);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0;
+  max-width: 30ch;
+}
+.front .ox-kicker b { color: var(--s1); }
+.front .hero {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: end;
+  gap: 0.5rem 1.5rem;
+  margin: 1.5rem 0 1.75rem;
+  padding: 1.4rem 0;
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--rule-strong);
+}
+.front .hero-value { font-size: clamp(3.4rem, 11vw, 7.25rem); letter-spacing: -0.055em; font-weight: 700; }
+.front .hero-label { font-size: 1.1rem; max-width: 24ch; line-height: 1.45; padding-bottom: 0.6rem; }
+
+/* The findings are an index of the report, numbered like chapters, ruled like a newspaper. */
+.front .ox-findings { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0 1.75rem; margin: 0; }
+.ledger .front .ox-card {
+  border: 0;
+  border-top: 1px solid var(--rule-strong);
+  border-radius: 0;
+  background: none;
+  padding: 0.9rem 0 1.1rem;
+}
+.ledger .front .ox-card:hover { border-top-color: var(--s1); }
+.ledger .front .ox-card:hover .ox-card-title { text-decoration: underline; text-underline-offset: 3px; }
+.front .ox-card-n { font-size: 1.5rem; font-weight: 700; color: var(--s1); letter-spacing: -0.03em; line-height: 1; }
+.front .ox-card-title { font-size: 0.95rem; font-weight: 700; color: var(--ink); }
+.front .ox-card-value { font-size: 1.35rem; }
+
+/* ---------------------------------------------------------------- the analyst's view */
+
+.ledger-brief {
+  margin: 2.75rem 0 3.5rem;
+  padding: 1.5rem 1.75rem 1.4rem;
+  background: var(--paper-2);
+  border-top: 3px double var(--ink);
+  border-bottom: 1px solid var(--rule-strong);
+}
+.ledger-brief .ai-badge, .ledger-note .ai-badge {
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--s1);
+}
+.ledger-brief .ai-brief-title { font-size: 1.5rem; line-height: 1.2; margin: 0.4rem 0 0.2rem; letter-spacing: -0.015em; }
+.ledger-brief .ai-headline { font-size: 1.15rem; font-weight: 700; line-height: 1.4; margin: 0.6rem 0 0.5rem; max-width: 60ch; }
+.ledger-brief .ai-why { color: var(--ink-2); font-size: 0.95rem; margin: 0 0 1rem; max-width: 70ch; }
+.ledger-brief .ai-pris li { border-top: 1px solid var(--rule-strong); }
+.ledger-brief .ai-pri { padding: 0.7rem 0; }
+.ledger-brief .ai-pri:hover .ai-do { text-decoration: underline; text-underline-offset: 3px; }
+.ledger-brief .ai-pri-n { color: var(--s1); font-weight: 700; }
+.ledger-brief .ai-do { font-size: 0.93rem; }
+.ledger-brief .ai-meta { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+.ledger-brief .ai-pri-v { color: var(--pos); }
+.ai-credit { font-size: 0.74rem; color: var(--ink-3); margin: 0.9rem 0 0; }
+
+/* ---------------------------------------------------------------- chapters */
+
+section { margin: 0 0 5rem; scroll-margin-top: 1rem; }
+
+.section-head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: end;
+  gap: 0 1.1rem;
+  border-top: 3px double var(--ink);
+  padding-top: 1rem;
+  margin-bottom: 1.4rem;
+}
+.section-num {
+  font-size: 3.4rem;
+  font-weight: 700;
+  line-height: 0.85;
+  letter-spacing: -0.05em;
+  color: var(--s1);
+  font-variant-numeric: tabular-nums;
+}
 .section-head h2 {
   font-family: var(--font-serif);
-  font-size: 1.55rem;
-  font-weight: 600;
-  margin: 0.15rem 0 0.5rem;
-  letter-spacing: -0.01em;
+  font-size: clamp(1.45rem, 3vw, 2.1rem);
+  font-weight: 700;
+  line-height: 1.15;
+  margin: 0;
+  letter-spacing: -0.02em;
 }
-.lede { color: var(--ink-2); max-width: 62ch; margin: 0; font-size: 1rem; }
+.lede { color: var(--ink); max-width: 64ch; margin: 0; font-size: 1.05rem; line-height: 1.7; }
+.lede::first-letter {
+  float: left;
+  font-size: 3.5em;
+  line-height: 0.82;
+  font-weight: 700;
+  color: var(--s1);
+  padding: 0.3rem 0.55rem 0 0;
+}
+
+/* The analyst's note: a boxed sidebar set into the chapter, reading on the left and the action
+   on the right, the way a feature sets its "what to do about it" apart from the story. */
+.ledger-note {
+  margin: 1.9rem 0 0.5rem;
+  padding: 1.2rem 1.4rem 1.1rem;
+  background: var(--paper-2);
+  border-left: 3px solid var(--s1);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.55rem;
+}
+.ledger-note .ai-conf { font-size: 0.74rem; color: var(--ink-3); }
+.ledger-note .ai-insight { font-weight: 700; font-size: 1rem; line-height: 1.5; }
+.ledger-note .ai-why { color: var(--ink-2); font-size: 0.9rem; }
+.ledger-note .ai-actions { counter-reset: act; }
+.ledger-note .ai-actions li { counter-increment: act; position: relative; padding: 0.5rem 0 0.5rem 1.6rem; border-top: 1px solid var(--rule-strong); }
+.ledger-note .ai-actions li::before { content: counter(act); position: absolute; left: 0; top: 0.5rem; color: var(--s1); font-weight: 700; font-size: 0.85rem; }
+.ledger-note .ai-do { font-size: 0.9rem; }
+.ledger-note .ai-meta { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+.ledger-note .ai-value { border-top: 1px solid var(--ink); padding-top: 0.5rem; }
+.ledger-note .ai-value-n { font-size: 1.45rem; color: var(--pos); letter-spacing: -0.02em; }
+.ledger-note .ai-value-note { font-size: 0.82rem; color: var(--ink-2); }
+.ledger-note .ai-credit { margin: 0.2rem 0 0; }
+
+@media (min-width: 820px) {
+  .ledger-note {
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    grid-template-areas: "head head" "ins act" "why act" "why val" "cred cred";
+    gap: 0.55rem 2rem;
+  }
+  .ledger-note .ai-head { grid-area: head; }
+  .ledger-note .ai-insight { grid-area: ins; }
+  .ledger-note .ai-why { grid-area: why; }
+  .ledger-note .ai-actions { grid-area: act; align-self: start; }
+  .ledger-note .ai-value { grid-area: val; align-self: end; }
+  .ledger-note .ai-credit { grid-area: cred; }
+}
 
 /* ---------------------------------------------------------------- figures */
 
@@ -200,10 +342,11 @@ section { margin: 0 0 4.5rem; scroll-margin-top: 1rem; }
   grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
   gap: 0;
   margin: 2rem 0;
-  border-top: 1px solid var(--rule);
+  border-top: 1px solid var(--ink);
   border-bottom: 1px solid var(--rule);
 }
 .tile { padding: 1.1rem 1.5rem 1.1rem 0; border-right: 1px solid var(--rule); }
+.tile + .tile { padding-left: 1.5rem; }
 .tile:last-child { border-right: none; }
 .tile-label {
   font-size: 0.76rem;
@@ -217,11 +360,9 @@ section { margin: 0 0 4.5rem; scroll-margin-top: 1rem; }
 .tile-delta .up   { color: var(--pos); }
 .tile-delta .down { color: var(--neg); }
 
-/* ---------------------------------------------------------------- charts */
-
-.figure { margin: 2rem 0; }
+.figure { margin: 2.25rem 0; }
 .figure-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin-bottom: 0.2rem; }
-.figure-title { font-family: var(--font-serif); font-size: 1.05rem; font-weight: 600; margin: 0; }
+.figure-title { font-family: var(--font-serif); font-size: 1.05rem; font-weight: 700; margin: 0; }
 .figure-note { color: var(--ink-3); font-size: 0.83rem; margin: 0 0 1rem; max-width: 70ch; }
 
 .chart { position: relative; width: 100%; }
@@ -255,7 +396,7 @@ th {
   text-transform: uppercase;
   color: var(--ink-3);
   font-weight: 500;
-  border-bottom: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--ink);
   white-space: nowrap;
 }
 td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
@@ -302,9 +443,9 @@ tr.total td { border-top: 1px solid var(--rule-strong); border-bottom: none; fon
 }
 
 footer {
-  border-top: 1px solid var(--rule-strong);
-  margin-top: 4rem;
-  padding: 1.75rem 0 4rem;
+  border-top: 3px double var(--ink);
+  margin-top: 3rem;
+  padding: 1.75rem 2rem 4rem;
   color: var(--ink-3);
   font-size: 0.82rem;
 }
@@ -322,10 +463,13 @@ footer p { margin: 0 0 0.5rem; max-width: 75ch; }
 
 @media (max-width: 720px) {
   .wrap { padding: 0 1rem; }
+  footer { padding: 1.5rem 1rem 3rem; }
   .hero-value { font-size: 2.75rem; }
-  .tile { border-right: none; border-bottom: 1px solid var(--rule); }
+  .front .hero { grid-template-columns: minmax(0, 1fr); }
+  .tile, .tile + .tile { border-right: none; border-bottom: 1px solid var(--rule); padding-left: 0; }
   .tiles { border-bottom: none; }
-  .masthead .meta { text-align: left; }
+  .section-num { font-size: 2.4rem; }
+  .nameplate-line { justify-content: center; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -340,8 +484,8 @@ footer p { margin: 0 0 0.5rem; max-width: 75ch; }
 
    A data table 593px wide dragged the whole page sideways, which is the worst thing a page
    can do on a phone: every section then sits off centre and the reader fights the page
-   instead of reading it. Tables now scroll inside their own box, the way the weekday grid
-   already did, so the table moves and the page does not.
+   instead of reading it. Tables now scroll inside their own box, so the table moves and the
+   page does not.
 
    Header and label text sat at 11.7px. Twelve is the floor worth holding to on a handset.
 
@@ -356,12 +500,24 @@ footer p { margin: 0 0 0.5rem; max-width: 75ch; }
   .tile-label,
   th,
   th.num,
-  .section-num,
-  .badge { font-size: 12px; }
+  .badge,
+  .nameplate-line,
+  .ai-meta,
+  .ai-credit { font-size: 12px; }
 
   /* A caption is the one label that can wrap instead of scrolling, so let it. */
   caption { font-size: 12px; white-space: normal; }
 
   /* Tap targets. A toggle at 22px high is a coin toss with a thumb. */
-  .tbl-toggle { padding: 0.4rem 0.7rem; min-height: 40px; }
+  .tbl-toggle, .ox-theme { padding: 0.4rem 0.7rem; min-height: 40px; }
+  .ledger-brief, .ledger-note { padding: 1rem; }
 }
+
+@media print {
+  .layout { display: block; }
+  .story { max-width: none; }
+  .lede::first-letter { float: none; font-size: inherit; padding: 0; color: inherit; }
+}
+
+/* ---------------------------------------------------------------- the Omnatix frame */
+:root { --ox-accent: var(--s1); }

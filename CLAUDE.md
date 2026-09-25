@@ -130,8 +130,29 @@ run: `node --check` every JS file, `py_compile` every Python file, `dbt parse`, 
 ### The Omnatix frame
 
 Every demo sits inside the same frame: `shell.js` and `omnatix-frame.css` (shared and kept
-identical, like `charts.js`), plus the static Omnatix bar in each `index.html`. It draws the
-bar, the sticky section nav, the one filter each demo offers, and the summary strip.
+identical, like `charts.js`), plus the static Omnatix bar in each `index.html`. The frame is
+behaviour, not appearance: the section nav, the one filter, the summary, the light and dark
+switch, the one-view-at-a-time router and the AI panels. Each demo's own stylesheet decides
+what those look like, which is how the four have four different layouts:
+
+- **Meridian**, editorial: one long scroll, the nav restyled as a contents rail, scroll spy.
+- **Kestrel**, operations app: sidebar of views, alerts rail, ticker. `views()` router.
+- **Sable & Finch**, committee pack: cover, one matter per page, sign-off. `views()` with a pager.
+- **Lumen**, workbench: folder tabs, overview cards and heat grid, decision support pane.
+
+Keep them different. A change that makes one demo read like another is the wrong change.
+
+- **Theme.** The first paint comes from a one line script in each `<head>` reading
+  `ox-theme-<demo>`; `wireTheme()` flips it and the page **re-renders**, because charts, the map,
+  heat grids and legends resolve colours when drawn. Every mode has its own validated palette.
+- **Views.** `views()` hides every other section with `.ox-off` and names the view in the hash.
+  Charts are drawn while every section is visible and hidden afterwards, so a view is already
+  drawn at its true width when opened and a printed pack has every chart. Call `V.refresh()` at
+  the end of `render()`, after the redraw has replaced the sections.
+- **AI panels.** `insights()` loads `data/insights.json`, `attachInsights()` puts a panel into
+  each section, `aiBrief()` renders the prioritised briefing. No file, no panels. The file is
+  written by `scripts/ai_insights.py`; the section ids in its `PROJECTS` map must match the page's.
+- **No status dots.** Freshness is carried by its words and their colour, not by a coloured mark.
 
 - The summary paints from `meta.summary`, written by each `export_parquet.py` from the same gold
   columns the page reads, so it appears before the engine loads. Each page compares its headline

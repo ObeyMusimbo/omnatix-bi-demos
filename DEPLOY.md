@@ -85,7 +85,8 @@ serving the last numbers that passed rather than publishing unchecked ones.
 The dashboards state their own freshness in the masthead, against the reader's clock. After a
 deploy, open any of the four and confirm:
 
-- the freshness dot and the "data to" date match what you expect
+- the freshness label and the "data to" date match what you expect
+- the AI panels are present and name the model and date that wrote them
 - the hero figure is populated rather than a dash
 - no chart is an empty box
 
@@ -96,6 +97,24 @@ locally:
 ```bash
 npx --yes http-server dist -p 4321 -c-1 --cors
 ```
+
+## AI insights: which model writes them
+
+The nightly workflow runs `scripts/ai_insights.py` after the refresh. With nothing configured it
+uses GitHub Models through the job's own token, which is free and needs no setup. To use a
+different provider, add one repository secret under **Settings** → **Secrets and variables** →
+**Actions**. The first one found wins, in this order:
+
+| Secret | Provider | Where to get a key |
+|---|---|---|
+| `ANTHROPIC_API_KEY` | Claude | console.anthropic.com, paid per use |
+| `GEMINI_API_KEY` | Google Gemini | aistudio.google.com, free tier |
+| `GROQ_API_KEY` | Groq | console.groq.com, free tier |
+| `OPENROUTER_API_KEY` | OpenRouter | openrouter.ai, free models |
+
+Set a repository variable `AI_PROVIDER` to force one of `anthropic`, `gemini`, `groq`,
+`openrouter` or `github`, and `AI_MODEL` to choose the model. Keys are only ever read from
+secrets; none is committed. To regenerate by hand, run the workflow from the **Actions** tab.
 
 ## Custom domain, when you want one
 

@@ -13,6 +13,7 @@ import {
 } from './charts.js';
 import {
   renderSummary, renderNav, onFilterChange, readParam, writeParam, scope, spy, keepScroll,
+  wireTheme, insights, attachInsights, aiBrief,
 } from './shell.js';
 
 const el = (id) => document.getElementById(id);
@@ -20,19 +21,8 @@ const v = (name) => getComputedStyle(document.documentElement).getPropertyValue(
 const signed = (n, dp = 1) =>
   n === null || n === undefined || Number.isNaN(n) ? '-' : (n >= 0 ? '+' : '') + n.toFixed(dp) + '%';
 
-// ---------------------------------------------------------------- theme
-
-const toggle = el('theme-toggle');
-const stored = (() => { try { return localStorage.getItem('ledger-theme'); } catch { return null; } })();
-const initial = stored || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-document.documentElement.setAttribute('data-theme', initial);
-toggle.textContent = initial === 'dark' ? 'Light' : 'Dark';
-toggle.addEventListener('click', () => {
-  const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-  document.documentElement.setAttribute('data-theme', next);
-  toggle.textContent = next === 'dark' ? 'Light' : 'Dark';
-  try { localStorage.setItem('ledger-theme', next); } catch { /* private mode */ }
-});
+// The AI analyst's notes, loaded once beside meta.json. Null when there are none to show.
+let INS = null;
 
 // ---------------------------------------------------------------- freshness
 
@@ -187,6 +177,10 @@ async function render() {
     sectionDiscount(discount, bridge) +
     sectionStock(stock) +
     sectionDead(dead);
+
+  // An analyst's note set into each chapter after its opening paragraph. The notes describe
+  // the whole business, so with a warehouse chosen they say so.
+  attachInsights(el('main'), INS, { label: 'Analyst’s note · AI', cls: 'ledger-note', scope: sc(false) });
 
   drawGap(bridge, monthly);
   drawWater(cascadeSteps);
@@ -555,7 +549,8 @@ try {
   // The summary paints first and the engine starts straight after. Starting the engine first
   // was measured slower: parsing its modules held the main thread while the tiny meta.json
   // waited behind it, and the summary appeared three seconds late.
-  const m = await meta().catch(() => ({}));
+  const [m, ins] = await Promise.all([meta().catch(() => ({})), insights()]);
+  INS = ins;
   await renderFreshness().catch((e) => {
     el('fresh-label').textContent = 'Freshness unknown';
     console.warn('freshness', e);
@@ -565,7 +560,13 @@ try {
   const f = m.summary?.filter;
   if (f) setDc(readParam(f.param), f.options);
   renderSummary(el('ox-top'), m.summary);
+  // The analyst's view sits under the front page, so the recommendations are on screen in the
+  // first second, before the query engine has loaded.
+  el('ai-brief').innerHTML = aiBrief(INS, {
+    label: 'AI analyst', title: 'The analyst’s view', cls: 'ledger-brief',
+  });
   renderNav(nav, { sections: SECTIONS, filter: f && { ...f, value: dc.code } });
+  wireTheme(el('theme-toggle'), { key: 'ox-theme-meridian', onChange: () => rerender(nav) });
   onFilterChange(nav, (code) => {
     setDc(code, f.options);
     writeParam(f.param, dc.code);
