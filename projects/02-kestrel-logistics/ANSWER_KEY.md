@@ -13,8 +13,8 @@ All money is South African rand, excluding VAT.
 | Measure | TTM |
 |---|---|
 | Revenue | R243,339,163 |
-| Cost | R215,782,437 |
-| Contribution | R27,556,726 (11.3%) |
+| Cost | R215,777,933 |
+| Contribution | R27,561,230 (11.3%) |
 | Kilometres | 12,435,053 |
 | Earned per kilometre | R19.57 |
 | Spent per kilometre | R17.35 |
@@ -29,14 +29,14 @@ turns is carrying nothing, and until today nobody was charged for it.
 
 | Driver | Worth | Share | Finding |
 |---|---|---|---|
-| _Contribution earned in the last twelve months_ | _R27,556,726_ | | |
+| _Contribution earned in the last twelve months_ | _R27,561,230_ | | |
 | Corridors that fund their own empty return | R5,530,954 | 28.1% | 1 |
-| Deliveries that had to be done twice | R6,509,247 | 33.0% | 2 |
+| Deliveries that had to be done twice | R6,509,248 | 33.0% | 2 |
 | Vehicles burning more than their class | R2,466,906 | 12.5% | 3 |
 | Service penalties on the anchor account | R5,213,459 | 26.4% | 4 |
-| **Contribution with the same fleet and the same customers** | **R47,277,292** | | |
+| **Contribution with the same fleet and the same customers** | **R47,281,797** | | |
 
-**R19,720,566 identified against R27,556,726 earned, or 71.6% of
+**R19,720,567 identified against R27,561,230 earned, or 71.6% of
 contribution.** Four findings, each worth 13% to 33% of the
 total, on the same fleet serving the same customers with nothing new bought. Every step covers
 the same twelve months.
@@ -76,11 +76,11 @@ rate card is.
 ## Finding 2: deliveries that had to be done twice
 
 3,334 drops failed on first attempt in the last twelve months, 4.0% of
-everything delivered, costing **R6,509,247** in journeys that earned nothing.
+everything delivered, costing **R6,509,248** in journeys that earned nothing.
 
 | Site | Failure rate | Failed drops | Cost | Usual reason |
 |---|---|---|---|---|
-| Atlantis Industries | 27.1% | 221 | R680,539 | Goods-in queue timeout |
+| Atlantis Industries | 27.1% | 221 | R680,539 | No booked slot |
 | Midrand Supplies 3 | 33.2% | 127 | R256,910 | No booked slot |
 | Midrand Holdings | 31.6% | 158 | R232,605 | No booked slot |
 | Karoo Supplies | 35.1% | 158 | R226,970 | No booked slot |
@@ -146,7 +146,7 @@ Penalty exposure on the anchor account, at 2% of monthly spend per point below 9
 | Class | Air trips | Weight used | Volume used | Cost |
 |---|---|---|---|---|
 | Superlink 34t | 1,843 | 69.1% | 82.6% | R28,575,280 |
-| Tri-axle 24t | 1,855 | 68.7% | 82.2% | R13,348,276 |
+| Tri-axle 24t | 1,855 | 68.7% | 82.2% | R13,346,010 |
 | Rigid 14t | 112 | 76.5% | 74.9% | R427,084 |
 | Rigid 8t | 63 | 76.3% | 75.3% | R206,668 |
 | LDV 1.5t | 48 | 65.5% | 70.4% | R110,567 |

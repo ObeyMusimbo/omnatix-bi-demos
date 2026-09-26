@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-09-25T07:16:52+00:00",
+  "built_at": "2026-09-26T07:12:04+00:00",
   "data_from": "2024-09-02",
   "data_through": "2026-08-31",
   "fixed_period": true,
@@ -18,7 +18,7 @@
     },
     "mart_capacity_cost": {
       "rows": 50,
-      "bytes": 7637
+      "bytes": 7639
     },
     "mart_no_show": {
       "rows": 10,
