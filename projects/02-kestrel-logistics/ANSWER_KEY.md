@@ -13,13 +13,13 @@ All money is South African rand, excluding VAT.
 | Measure | TTM |
 |---|---|
 | Revenue | R243,339,163 |
-| Cost | R215,777,242 |
-| Contribution | R27,561,921 (11.3%) |
+| Cost | R215,770,856 |
+| Contribution | R27,568,307 (11.3%) |
 | Kilometres | 12,435,053 |
 | Earned per kilometre | R19.57 |
 | Spent per kilometre | R17.35 |
 | **Kilometres run empty** | **23.9%** of 12,435,053 km |
-| Cost of those empty kilometres | R47,395,918 |
+| Cost of those empty kilometres | R47,395,784 |
 
 Open on the map, not on a number. Colour the corridors by what they contribute as a round trip
 and four of them are red. Then say the line: nearly a quarter of every kilometre this fleet
@@ -29,14 +29,14 @@ turns is carrying nothing, and until today nobody was charged for it.
 
 | Driver | Worth | Share | Finding |
 |---|---|---|---|
-| _Contribution earned in the last twelve months_ | _R27,561,921_ | | |
-| Corridors that fund their own empty return | R5,530,794 | 28.1% | 1 |
-| Deliveries that had to be done twice | R6,509,250 | 33.0% | 2 |
-| Vehicles burning more than their class | R2,466,906 | 12.5% | 3 |
+| _Contribution earned in the last twelve months_ | _R27,568,307_ | | |
+| Corridors that fund their own empty return | R5,525,148 | 28.0% | 1 |
+| Deliveries that had to be done twice | R6,509,248 | 33.0% | 2 |
+| Vehicles burning more than their class | R2,467,347 | 12.5% | 3 |
 | Service penalties on the anchor account | R5,213,459 | 26.4% | 4 |
-| **Contribution with the same fleet and the same customers** | **R47,282,330** | | |
+| **Contribution with the same fleet and the same customers** | **R47,283,510** | | |
 
-**R19,720,409 identified against R27,561,921 earned, or 71.5% of
+**R19,715,202 identified against R27,568,307 earned, or 71.5% of
 contribution.** Four findings, each worth 13% to 33% of the
 total, on the same fleet serving the same customers with nothing new bought. Every step covers
 the same twelve months.
@@ -55,14 +55,14 @@ by corridor. On these lanes the outbound leg looks healthy and the round trip lo
 | Johannesburg to Cape Town | 20.0% | 60% | R8,795,537 | **-R1,769,198** |
 | Johannesburg to Gqeberha | 14.7% | 60% | R4,449,472 | **-R1,402,551** |
 | Durban to Cape Town | 31.2% | 60% | R3,329,389 | **-R519,192** |
-| Cape Town to Upington | 22.7% | 60% | R960,848 | **-R319,937** |
+| Cape Town to Upington | 22.7% | 60% | R966,094 | **-R314,691** |
 | Johannesburg to East London | 27.8% | 60% | R2,169,866 | **-R268,921** |
 | Durban to Gqeberha | 39.3% | 60% | R2,262,709 | **-R256,723** |
 | Durban to Pietermaritzburg | 74.0% | 60% | R174,564 | **-R247,688** |
 | Cape Town to Bloemfontein | 30.2% | 60% | R1,670,736 | **-R237,661** |
-| Cape Town to Paarl | 65.6% | 60% | R77,623 | **-R225,835** |
+| Cape Town to Paarl | 65.6% | 60% | R77,623 | **-R225,569** |
 | Durban to Bloemfontein | 42.3% | 60% | R952,530 | **-R213,925** |
-| Cape Town to Worcester | 60.1% | 60% | R276,683 | **-R40,925** |
+| Cape Town to Worcester | 60.1% | 60% | R276,683 | **-R40,791** |
 | Johannesburg to Rustenburg | 64.4% | 60% | R397,365 | **-R28,240** |
 
 The whole reveal is one join: pair an outbound trip with the return it caused, and charge the
@@ -76,7 +76,7 @@ rate card is.
 ## Finding 2: deliveries that had to be done twice
 
 3,334 drops failed on first attempt in the last twelve months, 4.0% of
-everything delivered, costing **R6,509,250** in journeys that earned nothing.
+everything delivered, costing **R6,509,248** in journeys that earned nothing.
 
 | Site | Failure rate | Failed drops | Cost | Usual reason |
 |---|---|---|---|---|
@@ -103,9 +103,9 @@ fleet, because consumption only means anything against like work.
 | GP837939 | Superlink 34t | 58.41 | 45.8 | +27.5% | R471,170 |
 | GP153377 | Superlink 34t | 55.96 | 45.8 | +22.1% | R428,702 |
 | ND548557 | Superlink 34t | 57.48 | 45.8 | +25.4% | R291,074 |
-| GP993548 | Tri-axle 24t | 44.26 | 37.4 | +18.4% | R284,680 |
-| CA591856 | Tri-axle 24t | 48.69 | 37.4 | +30.2% | R258,592 |
-| ND132999 | Tri-axle 24t | 45.5 | 37.4 | +21.7% | R192,651 |
+| GP993548 | Tri-axle 24t | 44.26 | 37.4 | +18.4% | R284,887 |
+| CA591856 | Tri-axle 24t | 48.69 | 37.4 | +30.2% | R258,707 |
+| ND132999 | Tri-axle 24t | 45.5 | 37.4 | +21.7% | R192,769 |
 
 The dashboard cannot say whether this is injectors, dragging brakes, or diesel walking off the
 forecourt. It can say these seven are worth the price of a workshop booking to find out.
@@ -146,7 +146,7 @@ Penalty exposure on the anchor account, at 2% of monthly spend per point below 9
 | Class | Air trips | Weight used | Volume used | Cost |
 |---|---|---|---|---|
 | Superlink 34t | 1,843 | 69.1% | 82.6% | R28,575,280 |
-| Tri-axle 24t | 1,855 | 68.7% | 82.2% | R13,346,010 |
+| Tri-axle 24t | 1,855 | 68.7% | 82.2% | R13,343,030 |
 | Rigid 14t | 112 | 76.5% | 74.9% | R426,525 |
 | Rigid 8t | 63 | 76.3% | 75.3% | R206,668 |
 | LDV 1.5t | 48 | 65.5% | 70.4% | R110,567 |
