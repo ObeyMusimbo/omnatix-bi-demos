@@ -13,13 +13,13 @@ All money is South African rand, excluding VAT.
 | Measure | TTM |
 |---|---|
 | Revenue | R243,339,163 |
-| Cost | R215,770,856 |
-| Contribution | R27,568,307 (11.3%) |
+| Cost | R215,771,255 |
+| Contribution | R27,567,908 (11.3%) |
 | Kilometres | 12,435,053 |
 | Earned per kilometre | R19.57 |
 | Spent per kilometre | R17.35 |
 | **Kilometres run empty** | **23.9%** of 12,435,053 km |
-| Cost of those empty kilometres | R47,395,784 |
+| Cost of those empty kilometres | R47,395,918 |
 
 Open on the map, not on a number. Colour the corridors by what they contribute as a round trip
 and four of them are red. Then say the line: nearly a quarter of every kilometre this fleet
@@ -29,14 +29,14 @@ turns is carrying nothing, and until today nobody was charged for it.
 
 | Driver | Worth | Share | Finding |
 |---|---|---|---|
-| _Contribution earned in the last twelve months_ | _R27,568,307_ | | |
-| Corridors that fund their own empty return | R5,525,148 | 28.0% | 1 |
+| _Contribution earned in the last twelve months_ | _R27,567,908_ | | |
+| Corridors that fund their own empty return | R5,525,548 | 28.0% | 1 |
 | Deliveries that had to be done twice | R6,509,248 | 33.0% | 2 |
 | Vehicles burning more than their class | R2,467,347 | 12.5% | 3 |
 | Service penalties on the anchor account | R5,213,459 | 26.4% | 4 |
 | **Contribution with the same fleet and the same customers** | **R47,283,510** | | |
 
-**R19,715,202 identified against R27,568,307 earned, or 71.5% of
+**R19,715,602 identified against R27,567,908 earned, or 71.5% of
 contribution.** Four findings, each worth 13% to 33% of the
 total, on the same fleet serving the same customers with nothing new bought. Every step covers
 the same twelve months.
@@ -60,9 +60,9 @@ by corridor. On these lanes the outbound leg looks healthy and the round trip lo
 | Durban to Gqeberha | 39.3% | 60% | R2,262,709 | **-R256,723** |
 | Durban to Pietermaritzburg | 74.0% | 60% | R174,564 | **-R247,688** |
 | Cape Town to Bloemfontein | 30.2% | 60% | R1,670,736 | **-R237,661** |
-| Cape Town to Paarl | 65.6% | 60% | R77,623 | **-R225,569** |
+| Cape Town to Paarl | 65.6% | 60% | R77,623 | **-R225,835** |
 | Durban to Bloemfontein | 42.3% | 60% | R952,530 | **-R213,925** |
-| Cape Town to Worcester | 60.1% | 60% | R276,683 | **-R40,791** |
+| Cape Town to Worcester | 60.1% | 60% | R276,683 | **-R40,925** |
 | Johannesburg to Rustenburg | 64.4% | 60% | R397,365 | **-R28,240** |
 
 The whole reveal is one join: pair an outbound trip with the return it caused, and charge the
@@ -80,7 +80,7 @@ everything delivered, costing **R6,509,248** in journeys that earned nothing.
 
 | Site | Failure rate | Failed drops | Cost | Usual reason |
 |---|---|---|---|---|
-| Atlantis Industries | 27.1% | 221 | R680,539 | Goods-in queue timeout |
+| Atlantis Industries | 27.1% | 221 | R680,539 | No booked slot |
 | Midrand Supplies 3 | 33.2% | 127 | R256,910 | No booked slot |
 | Midrand Holdings | 31.6% | 158 | R232,605 | No booked slot |
 | Karoo Supplies | 35.1% | 158 | R226,970 | No booked slot |
