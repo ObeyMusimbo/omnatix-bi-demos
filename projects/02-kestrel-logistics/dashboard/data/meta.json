@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-09-29T08:01:03+00:00",
+  "built_at": "2026-09-30T08:09:14+00:00",
   "data_from": "2024-09-02",
   "data_through": "2026-09-01",
   "fixed_period": true,
@@ -12,27 +12,27 @@
     },
     "mart_lane_economics": {
       "rows": 50,
-      "bytes": 10617
+      "bytes": 10611
     },
     "mart_failed_deliveries": {
       "rows": 10431,
-      "bytes": 123542
+      "bytes": 122951
     },
     "mart_fuel_outliers": {
       "rows": 124,
-      "bytes": 7551
+      "bytes": 7540
     },
     "mart_sla_performance": {
       "rows": 288,
-      "bytes": 9014
+      "bytes": 9030
     },
     "mart_load_factor": {
       "rows": 68,
-      "bytes": 6788
+      "bytes": 6789
     },
     "agg_trip_monthly": {
       "rows": 505,
-      "bytes": 27714
+      "bytes": 27750
     },
     "dim_lane": {
       "rows": 29,
@@ -60,7 +60,7 @@
         "n": "01",
         "id": "corridors",
         "title": "Empty return legs",
-        "v": 5525547.68,
+        "v": 5530472.77,
         "f": "Rc",
         "note": "lost a year on 12 corridors"
       },
@@ -68,7 +68,7 @@
         "n": "02",
         "id": "doors",
         "title": "Deliveries done twice",
-        "v": 6509248.03,
+        "v": 6509219.73,
         "f": "Rc",
         "note": "a year, 6 sites cause most of it"
       },
@@ -76,7 +76,7 @@
         "n": "03",
         "id": "thirsty",
         "title": "Thirsty trucks",
-        "v": 2467347.12,
+        "v": 2466906.46,
         "f": "Rc",
         "note": "a year of excess diesel on 7 vehicles"
       },
@@ -101,9 +101,9 @@
         "id": "close",
         "title": "What it is worth",
         "close": true,
-        "v": 19715601.67,
+        "v": 19720057.8,
         "f": "Rc",
-        "note": "71.5% of the R27.6m the business earns"
+        "note": "71.6% of the R27.6m the business earns"
       }
     ],
     "filter": {
