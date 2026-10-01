@@ -11,6 +11,9 @@ build/
 .env
 .env.*
 !.env.example
+# Local secrets for `wrangler pages dev`, e.g. OPENROUTER_API_KEY. Never committed.
+.dev.vars
+.wrangler/
 
 # dbt build artefacts
 projects/*/dbt/target/

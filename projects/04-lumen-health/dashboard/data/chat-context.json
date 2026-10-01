@@ -1,0 +1,1406 @@
+{
+ "version": 1,
+ "demo": "lumen",
+ "client": "Lumen Health Network",
+ "business": "a South African private primary care group with six clinics and 32 practitioners, billing medical schemes and patients",
+ "reader": "the Group MD, the Finance Director and the practice managers",
+ "rules": "Three quantities must never be added together: revenue billed and never collected, clinician cost of empty capacity, and working capital tied up by late schemes. Late scheme money is not lost, it arrives late. The advice is operational, never clinical.",
+ "sections": {
+  "money": "The money: billed for care delivered against cash received",
+  "week": "The week is lopsided and the roster is not (slot fill and waiting time)",
+  "claims": "Rejected claims that nobody worked",
+  "noshow": "Patients who never arrived, and reminders",
+  "reception": "The gap at reception, and the scheme that pays late",
+  "diaries": "The same session rate buying very different diaries (practitioners)",
+  "trend": "Trend and data quality"
+ },
+ "data_from": "2024-09-02",
+ "data_through": "2026-08-31",
+ "summary": {
+  "hero": {
+   "v": 17417434.82,
+   "f": "R",
+   "label": "billed for care already delivered and never collected, which is 10.8% of everything the group invoiced"
+  },
+  "findings": [
+   {
+    "n": "02",
+    "id": "week",
+    "title": "Empty chairs",
+    "v": 44.8,
+    "f": "pct",
+    "note": "of paid clinician time had nobody in the chair, R32.5m of it"
+   },
+   {
+    "n": "03",
+    "id": "claims",
+    "title": "Claims nobody worked",
+    "v": 11041078.53,
+    "f": "Rc",
+    "note": "rejected or short paid and never recovered"
+   },
+   {
+    "n": "04",
+    "id": "noshow",
+    "title": "Patients who never arrived",
+    "v": 9500265.71,
+    "f": "Rc",
+    "note": "of visits recoverable with a reminder SMS"
+   },
+   {
+    "n": "05",
+    "id": "reception",
+    "title": "The gap at reception",
+    "v": 6374295.889999995,
+    "f": "Rc",
+    "note": "owed by patients and never asked for"
+   },
+   {
+    "n": "06",
+    "id": "diaries",
+    "title": "Different diaries",
+    "v": 2.04,
+    "f": "x",
+    "note": "the dearest cost per visit against discipline peers"
+   }
+  ]
+ },
+ "filter": {
+  "param": "clinic",
+  "label": "Clinic",
+  "all": "All clinics",
+  "options": [
+   {
+    "value": "LUM-PTA",
+    "label": "Brooklyn"
+   },
+   {
+    "value": "LUM-CLR",
+    "label": "Claremont"
+   },
+   {
+    "value": "LUM-SAN",
+    "label": "Sandton"
+   },
+   {
+    "value": "LUM-GQE",
+    "label": "Summerstrand"
+   },
+   {
+    "value": "LUM-UMH",
+    "label": "Umhlanga"
+   },
+   {
+    "value": "LUM-BFN",
+    "label": "Westdene"
+   }
+  ],
+  "column": "clinic_code"
+ },
+ "examples": [
+  "Which clinic recovers the fewest rejected claims?",
+  "What is the no-show rate with and without a reminder?",
+  "Which hours are fullest on a Friday?",
+  "Which practitioners cost the most per visit against their peers?"
+ ],
+ "tables": [
+  {
+   "name": "mart_collection_bridge",
+   "rows": 6,
+   "description": "Everything billed for care delivered, walked down to the cash received. Every rand of the shortfall lands in exactly one bucket, and the buckets are defined by who has to do something about it.",
+   "columns": [
+    {
+     "name": "step_order",
+     "type": "INTEGER"
+    },
+    {
+     "name": "step_label",
+     "type": "VARCHAR",
+     "values": [
+      "Billed for care delivered",
+      "Cash received for care delivered",
+      "Gap and self funded charges left uncollected at reception",
+      "Refunds and credit notes",
+      "Rejected because there was no cover, and never billed to the patient",
+      "Rejected for something the practice can fix, and never reworked"
+     ]
+    },
+    {
+     "name": "step_short",
+     "type": "VARCHAR",
+     "values": [
+      "Billed",
+      "Cash received",
+      "Fixable rejections",
+      "No cover",
+      "Refunds",
+      "Uncollected at reception"
+     ]
+    },
+    {
+     "name": "step_type",
+     "type": "VARCHAR",
+     "values": [
+      "anchor",
+      "decrease",
+      "total"
+     ]
+    },
+    {
+     "name": "effect_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "finding_ref",
+     "type": "VARCHAR",
+     "values": [
+      "2",
+      "5"
+     ]
+    },
+    {
+     "name": "running_total_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "billed_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "cash_received_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "total_leakage_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "leakage_pct_of_billed",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "scheme_shortfall_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "patient_shortfall_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "fixable_claims",
+     "type": "BIGINT"
+    },
+    {
+     "name": "no_cover_claims",
+     "type": "BIGINT"
+    },
+    {
+     "name": "refund_lines",
+     "type": "BIGINT"
+    },
+    {
+     "name": "reconciliation_gap_zar",
+     "type": "DOUBLE",
+     "description": "The assertion that makes the bridge a bridge. Anchor less every step must equal the cash received, computed independently. Anything but zero and the page is wrong."
+    }
+   ]
+  },
+  {
+   "name": "mart_slot_grid",
+   "rows": 50,
+   "description": "The signature view: the consulting week as weekday against hour, carrying capacity, demand and waiting time in the same cell. Saturday has no afternoon rows because the diary offers none, rather than showing them as empty.",
+   "columns": [
+    {
+     "name": "day_of_week",
+     "type": "INTEGER"
+    },
+    {
+     "name": "day_short",
+     "type": "VARCHAR",
+     "values": [
+      "Fri",
+      "Mon",
+      "Sat",
+      "Thu",
+      "Tue",
+      "Wed"
+     ]
+    },
+    {
+     "name": "day_name",
+     "type": "VARCHAR",
+     "values": [
+      "Friday",
+      "Monday",
+      "Saturday",
+      "Thursday",
+      "Tuesday",
+      "Wednesday"
+     ]
+    },
+    {
+     "name": "slot_hour",
+     "type": "BIGINT"
+    },
+    {
+     "name": "slot_label",
+     "type": "VARCHAR",
+     "values": [
+      "08:00",
+      "09:00",
+      "10:00",
+      "11:00",
+      "12:00",
+      "13:00",
+      "14:00",
+      "15:00",
+      "16:00"
+     ]
+    },
+    {
+     "name": "slots_offered",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "slots_booked",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "slots_attended",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "slots_no_show",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "slots_unfilled",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "capacity_cost_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "cost_per_slot_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "unfilled_cost_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "fill_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "attended_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "no_show_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "avg_wait_minutes",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "p90_wait_minutes",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "avg_booking_lead_days",
+     "type": "DOUBLE"
+    }
+   ]
+  },
+  {
+   "name": "mart_capacity_cost",
+   "rows": 50,
+   "description": "What the empty half of the diary costs, split by why the chair was empty. Never booked is a roster problem. Booked and not arrived is a reminder problem.",
+   "columns": [
+    {
+     "name": "day_of_week",
+     "type": "INTEGER"
+    },
+    {
+     "name": "day_short",
+     "type": "VARCHAR",
+     "values": [
+      "Fri",
+      "Mon",
+      "Sat",
+      "Thu",
+      "Tue",
+      "Wed"
+     ]
+    },
+    {
+     "name": "slot_hour",
+     "type": "BIGINT"
+    },
+    {
+     "name": "slot_label",
+     "type": "VARCHAR",
+     "values": [
+      "08:00",
+      "09:00",
+      "10:00",
+      "11:00",
+      "12:00",
+      "13:00",
+      "14:00",
+      "15:00",
+      "16:00"
+     ]
+    },
+    {
+     "name": "slots_offered",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "slots_booked",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "slots_unfilled",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "slots_no_show",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "slots_excess",
+     "type": "BIGINT",
+     "description": "Capacity above what a diary at the target fill rate would need for this cell's own demand. Deliberately assumes no patient moves, so the total is conservative."
+    },
+    {
+     "name": "fill_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "cost_per_slot_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "capacity_cost_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "unfilled_cost_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "no_show_cost_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "excess_cost_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "target_fill_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "all_slots",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "all_booked",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "all_unfilled",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "all_no_show",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "all_cost_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "all_unfilled_cost_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "all_no_show_cost_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "all_excess_cost_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "all_excess_slots",
+     "type": "BIGINT"
+    },
+    {
+     "name": "all_fill_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "all_empty_pct",
+     "type": "DOUBLE"
+    }
+   ]
+  },
+  {
+   "name": "mart_no_show",
+   "rows": 10,
+   "description": "Who does not arrive, by how far ahead the booking was made and whether a reminder went out. The recoverable column applies the rate already observed on reminded bookings in the same lead band, so it never claims an effect the data has not shown.",
+   "columns": [
+    {
+     "name": "booking_lead_band",
+     "type": "VARCHAR",
+     "values": [
+      "0 to 2 days",
+      "1 to 2 weeks",
+      "2 to 3 weeks",
+      "3 to 6 days",
+      "Over 3 weeks"
+     ]
+    },
+    {
+     "name": "booking_lead_order",
+     "type": "INTEGER"
+    },
+    {
+     "name": "reminder_sent",
+     "type": "BOOLEAN"
+    },
+    {
+     "name": "appointments",
+     "type": "BIGINT"
+    },
+    {
+     "name": "no_shows",
+     "type": "BIGINT"
+    },
+    {
+     "name": "attended",
+     "type": "BIGINT"
+    },
+    {
+     "name": "avg_lead_days",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "no_show_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "reminded_benchmark_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "recoverable_visits",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "recoverable_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "revenue_per_visit_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "all_appointments",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "all_no_shows",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "unreminded_appointments",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "all_no_show_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "unreminded_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "all_recoverable_visits",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "all_recoverable_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "all_no_show_revenue_zar",
+     "type": "DOUBLE"
+    }
+   ]
+  },
+  {
+   "name": "mart_claim_recovery",
+   "rows": 42,
+   "description": "What the schemes sent back and what happened next, by reason and by site. The denominator is every claim ever rejected, including the ones that were fixed, so a site that works its rejections is not flattered by having fewer left.",
+   "columns": [
+    {
+     "name": "clinic_code",
+     "type": "VARCHAR",
+     "values": [
+      "LUM-BFN",
+      "LUM-CLR",
+      "LUM-GQE",
+      "LUM-PTA",
+      "LUM-SAN",
+      "LUM-UMH"
+     ]
+    },
+    {
+     "name": "clinic_name",
+     "type": "VARCHAR",
+     "values": [
+      "Lumen Brooklyn",
+      "Lumen Claremont",
+      "Lumen Sandton",
+      "Lumen Summerstrand",
+      "Lumen Umhlanga",
+      "Lumen Westdene"
+     ]
+    },
+    {
+     "name": "rejection_reason",
+     "type": "VARCHAR",
+     "values": [
+      "Authorisation not obtained",
+      "Benefit exhausted",
+      "Incorrect ICD-10 code",
+      "Membership lapsed at date of service",
+      "Missing referral",
+      "Practice number incorrect",
+      "Service not covered on plan"
+     ]
+    },
+    {
+     "name": "rejection_class",
+     "type": "VARCHAR",
+     "values": [
+      "Fixable at the practice",
+      "No cover, becomes a patient account"
+     ]
+    },
+    {
+     "name": "ever_rejected",
+     "type": "BIGINT"
+    },
+    {
+     "name": "resubmitted_claims",
+     "type": "BIGINT"
+    },
+    {
+     "name": "recovered_claims",
+     "type": "BIGINT"
+    },
+    {
+     "name": "claimed_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "recovered_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "outstanding_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "resubmitted_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "recovery_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "all_rejected",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "all_recovered_claims",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "all_recovered_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "all_outstanding_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "all_fixable_outstanding_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "all_no_cover_outstanding_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "all_claims",
+     "type": "BIGINT"
+    },
+    {
+     "name": "all_claimed_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "all_rejection_pct",
+     "type": "DOUBLE"
+    }
+   ]
+  },
+  {
+   "name": "mart_patient_charges",
+   "rows": 12,
+   "description": "What reception charged the patient and what it took, by site and by charge type. Blending the two types gives a collection rate near seventy per cent everywhere, which describes neither of the behaviours inside it.",
+   "columns": [
+    {
+     "name": "clinic_code",
+     "type": "VARCHAR",
+     "values": [
+      "LUM-BFN",
+      "LUM-CLR",
+      "LUM-GQE",
+      "LUM-PTA",
+      "LUM-SAN",
+      "LUM-UMH"
+     ]
+    },
+    {
+     "name": "clinic_name",
+     "type": "VARCHAR",
+     "values": [
+      "Lumen Brooklyn",
+      "Lumen Claremont",
+      "Lumen Sandton",
+      "Lumen Summerstrand",
+      "Lumen Umhlanga",
+      "Lumen Westdene"
+     ]
+    },
+    {
+     "name": "payment_type",
+     "type": "VARCHAR",
+     "values": [
+      "Scheme gap",
+      "Self funded"
+     ]
+    },
+    {
+     "name": "charge_lines",
+     "type": "BIGINT"
+    },
+    {
+     "name": "due_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "paid_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "uncollected_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "collected_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "avg_charge_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "refund_lines",
+     "type": "BIGINT"
+    },
+    {
+     "name": "refund_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "type_lines",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "type_due_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "type_paid_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "type_collected_pct",
+     "type": "DOUBLE"
+    }
+   ]
+  },
+  {
+   "name": "mart_scheme",
+   "rows": 6,
+   "description": "One row per payer. working_capital_zar is what a slow payer keeps locked up. It is a balance sheet number, not a loss, and it is never added to the collection bridge.",
+   "columns": [
+    {
+     "name": "scheme_code",
+     "type": "VARCHAR",
+     "values": [
+      "SCH-AUR",
+      "SCH-GOV",
+      "SCH-KOP",
+      "SCH-NDL",
+      "SCH-STL",
+      "SCH-VER"
+     ]
+    },
+    {
+     "name": "scheme_name",
+     "type": "VARCHAR",
+     "values": [
+      "Aurum Health",
+      "Koppie Health",
+      "Ndlela Scheme",
+      "Public Service Med",
+      "Stellar Med",
+      "Veritas Medical"
+     ]
+    },
+    {
+     "name": "payment_terms_days",
+     "type": "INTEGER"
+    },
+    {
+     "name": "tariff_factor",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "gap_pct_of_tariff",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "is_self_funded",
+     "type": "BOOLEAN"
+    },
+    {
+     "name": "claims",
+     "type": "BIGINT"
+    },
+    {
+     "name": "claimed_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "paid_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "shortfall_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "outstanding_claims",
+     "type": "BIGINT"
+    },
+    {
+     "name": "denial_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "avg_days_to_settle",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "median_days_to_settle",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "p90_days_to_settle",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "days_beyond_group_median",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "group_median_days",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "working_capital_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "patient_due_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "patient_paid_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "visits_with_a_gap",
+     "type": "BIGINT"
+    },
+    {
+     "name": "gap_collected_pct",
+     "type": "DOUBLE"
+    }
+   ]
+  },
+  {
+   "name": "mart_practitioner",
+   "rows": 32,
+   "description": "One row per practitioner, every ratio also expressed against the median of that practitioner's own discipline. A radiologist and a dietician are bought at different prices, so ranking them on one list says nothing except which discipline is expensive.",
+   "columns": [
+    {
+     "name": "practitioner_id",
+     "type": "VARCHAR",
+     "values": [
+      "PR-3001",
+      "PR-3002",
+      "PR-3003",
+      "PR-3004",
+      "PR-3005",
+      "PR-3006",
+      "PR-3007",
+      "PR-3008",
+      "PR-3009",
+      "PR-3010",
+      "PR-3011",
+      "PR-3012",
+      "PR-3013",
+      "PR-3014",
+      "PR-3015",
+      "PR-3016",
+      "PR-3017",
+      "PR-3018",
+      "PR-3019",
+      "PR-3020",
+      "PR-3021",
+      "PR-3022",
+      "PR-3023",
+      "PR-3024",
+      "PR-3025",
+      "PR-3026",
+      "PR-3027",
+      "PR-3028",
+      "PR-3029",
+      "PR-3030",
+      "PR-3031",
+      "PR-3032"
+     ]
+    },
+    {
+     "name": "practitioner_name",
+     "type": "VARCHAR",
+     "values": [
+      "Dr Anita Khumalo",
+      "Dr Anita Ndlovu",
+      "Dr Deon Ndlovu",
+      "Dr Imraan Govender",
+      "Dr Johan Mahlangu",
+      "Dr Johan Sithole",
+      "Dr Johan Van Wyk",
+      "Dr Karabo Maseko",
+      "Dr Karabo Patel",
+      "Dr Lerato Khumalo",
+      "Dr Lerato Sithole",
+      "Dr Michelle Du Toit",
+      "Dr Naledi Jacobs",
+      "Dr Naledi Molefe",
+      "Dr Naledi Naidoo",
+      "Dr Nomsa Jacobs",
+      "Dr Nomsa Sithole",
+      "Dr Pieter Adams",
+      "Dr Priya Van Wyk",
+      "Dr Priya Zwane",
+      "Dr Riaan Maseko",
+      "Dr Sipho Botha",
+      "Dr Sizwe Maseko",
+      "Dr Sizwe Van Wyk",
+      "Dr Tebogo Zwane",
+      "Dr Thandi Dlamini",
+      "Dr Thandi Malan",
+      "Dr Yusuf Fourie",
+      "Dr Yusuf Mahlangu",
+      "Dr Yusuf Patel",
+      "Dr Zanele Fourie"
+     ]
+    },
+    {
+     "name": "discipline",
+     "type": "VARCHAR",
+     "values": [
+      "Dentistry",
+      "Dietetics",
+      "General practice",
+      "Minor procedures",
+      "Occupational health",
+      "Physiotherapy",
+      "Radiology"
+     ]
+    },
+    {
+     "name": "clinic_code",
+     "type": "VARCHAR",
+     "values": [
+      "LUM-BFN",
+      "LUM-CLR",
+      "LUM-GQE",
+      "LUM-PTA",
+      "LUM-SAN",
+      "LUM-UMH"
+     ]
+    },
+    {
+     "name": "clinic_name",
+     "type": "VARCHAR",
+     "values": [
+      "Lumen Brooklyn",
+      "Lumen Claremont",
+      "Lumen Sandton",
+      "Lumen Summerstrand",
+      "Lumen Umhlanga",
+      "Lumen Westdene"
+     ]
+    },
+    {
+     "name": "session_rate_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "sessions",
+     "type": "BIGINT"
+    },
+    {
+     "name": "slots_offered",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "slots_booked",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "slots_attended",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "slots_no_show",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "sessional_cost_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "billed_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "fill_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "attended_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "cost_per_attended_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "billed_per_cost_rand",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "avg_wait_minutes",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "peers",
+     "type": "BIGINT"
+    },
+    {
+     "name": "peer_median_fill_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "peer_median_cost_per_attended_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "fill_pct_vs_peers",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "cost_ratio_vs_peers",
+     "type": "DOUBLE"
+    }
+   ]
+  },
+  {
+   "name": "mart_clinic",
+   "rows": 6,
+   "description": "The site scorecard, one column for each of the five findings.",
+   "columns": [
+    {
+     "name": "clinic_code",
+     "type": "VARCHAR",
+     "values": [
+      "LUM-BFN",
+      "LUM-CLR",
+      "LUM-GQE",
+      "LUM-PTA",
+      "LUM-SAN",
+      "LUM-UMH"
+     ]
+    },
+    {
+     "name": "clinic_name",
+     "type": "VARCHAR",
+     "values": [
+      "Lumen Brooklyn",
+      "Lumen Claremont",
+      "Lumen Sandton",
+      "Lumen Summerstrand",
+      "Lumen Umhlanga",
+      "Lumen Westdene"
+     ]
+    },
+    {
+     "name": "city",
+     "type": "VARCHAR",
+     "values": [
+      "Bloemfontein",
+      "Cape Town",
+      "Durban",
+      "Gqeberha",
+      "Johannesburg",
+      "Pretoria"
+     ]
+    },
+    {
+     "name": "province",
+     "type": "VARCHAR",
+     "values": [
+      "Eastern Cape",
+      "Free State",
+      "Gauteng",
+      "KwaZulu-Natal",
+      "Western Cape"
+     ]
+    },
+    {
+     "name": "consulting_rooms",
+     "type": "INTEGER"
+    },
+    {
+     "name": "practitioners",
+     "type": "BIGINT"
+    },
+    {
+     "name": "sessions",
+     "type": "BIGINT"
+    },
+    {
+     "name": "slots_offered",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "slots_unfilled",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "appointments",
+     "type": "BIGINT"
+    },
+    {
+     "name": "attended",
+     "type": "BIGINT"
+    },
+    {
+     "name": "no_shows",
+     "type": "BIGINT"
+    },
+    {
+     "name": "fill_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "no_show_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "reminded_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "avg_lead_days",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "avg_wait_minutes",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "billed_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "claimed_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "scheme_paid_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "scheme_shortfall_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "patient_due_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "patient_paid_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "patient_shortfall_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "gap_collected_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "ever_rejected",
+     "type": "BIGINT"
+    },
+    {
+     "name": "recovered_claims",
+     "type": "BIGINT"
+    },
+    {
+     "name": "recovery_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "sessional_cost_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "unfilled_cost_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "no_show_cost_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "clinician_cost_pct_of_billed",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "total_leakage_zar",
+     "type": "DOUBLE"
+    }
+   ]
+  },
+  {
+   "name": "mart_data_quality",
+   "rows": 7,
+   "description": "The defects that exist in the source drops and survive into the warehouse as flags rather than deletions. Publishing it is the point: a dashboard that quietly drops the rows it cannot reconcile is how a practice ends up believing a number that is short.",
+   "columns": [
+    {
+     "name": "issue_order",
+     "type": "INTEGER"
+    },
+    {
+     "name": "issue",
+     "type": "VARCHAR",
+     "values": [
+      "Appointment status captured in mixed case",
+      "Appointment status that did not map to a known state",
+      "Claim submitted more than once by the switch",
+      "Dates exported as DD/MM/YYYY instead of ISO",
+      "Diagnosis code missing on the encounter",
+      "Payment quotes an appointment that does not exist",
+      "Site name captured in more than one spelling"
+     ]
+    },
+    {
+     "name": "source_table",
+     "type": "VARCHAR",
+     "values": [
+      "Appointments",
+      "Claims",
+      "Claims and sessions",
+      "Clinics",
+      "Encounters",
+      "Patient payments"
+     ]
+    },
+    {
+     "name": "treatment",
+     "type": "VARCHAR",
+     "description": "What was done about it, in words a practice manager can check.",
+     "values": [
+      "Deduplicated on claim id in silver. Counting both would double the denied value and overstate the headline.",
+      "Folded to one spelling for display. Nothing joins on the name, so this affects labels rather than numbers.",
+      "Mapped explicitly through a lookup rather than title cased, so a value nobody expected becomes null and fails a test instead of quietly becoming a fourth status.",
+      "Parsed by a macro that handles both. Left to a default cast, roughly one date in four would land null or in the wrong month.",
+      "Row kept and flagged, excluded from anything attributed to a site. The money is real, the visit it belongs to is not in the file.",
+      "Row kept and flagged. A missing ICD-10 is one of the reasons a claim comes back, so these are counted rather than filled in.",
+      "The test above, expressed as a count. It is zero, and it is published anyway: a quality panel that only lists the failures cannot tell you what was checked."
+     ]
+    },
+    {
+     "name": "rows_affected",
+     "type": "BIGINT"
+    },
+    {
+     "name": "impact_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "is_present",
+     "type": "BOOLEAN"
+    }
+   ]
+  },
+  {
+   "name": "agg_monthly",
+   "rows": 24,
+   "description": "The monthly trend. Partial months at either end of the window are dropped, because a partial month plotted beside a whole one reads as a collapse.",
+   "columns": [
+    {
+     "name": "month_start",
+     "type": "DATE",
+     "range": [
+      "2024-09-01",
+      "2026-08-01"
+     ]
+    },
+    {
+     "name": "month_label",
+     "type": "VARCHAR",
+     "values": [
+      "Apr 25",
+      "Apr 26",
+      "Aug 25",
+      "Aug 26",
+      "Dec 24",
+      "Dec 25",
+      "Feb 25",
+      "Feb 26",
+      "Jan 25",
+      "Jan 26",
+      "Jul 25",
+      "Jul 26",
+      "Jun 25",
+      "Jun 26",
+      "Mar 25",
+      "Mar 26",
+      "May 25",
+      "May 26",
+      "Nov 24",
+      "Nov 25",
+      "Oct 24",
+      "Oct 25",
+      "Sep 24",
+      "Sep 25"
+     ]
+    },
+    {
+     "name": "slots_offered",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "slots_unfilled",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "appointments",
+     "type": "BIGINT"
+    },
+    {
+     "name": "attended",
+     "type": "BIGINT"
+    },
+    {
+     "name": "no_shows",
+     "type": "BIGINT"
+    },
+    {
+     "name": "fill_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "no_show_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "billed_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "claimed_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "scheme_paid_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "scheme_shortfall_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "scheme_shortfall_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "patient_due_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "patient_paid_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "gap_collected_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "sessional_cost_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "clinician_cost_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "avg_wait_minutes",
+     "type": "DOUBLE"
+    }
+   ]
+  }
+ ]
+}

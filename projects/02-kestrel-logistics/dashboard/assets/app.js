@@ -17,6 +17,7 @@ import {
   renderNav, onFilterChange, readParam, writeParam, scope, keepScroll, fmtAny,
   wireTheme, views, insights, attachInsights, aiBrief,
 } from './shell.js';
+import { mountAsk } from './ask.js';
 
 // The AI recommendations, loaded once beside meta.json, and the view router.
 let INS = null;
@@ -90,6 +91,7 @@ const SECTIONS = [
   ['friday', '04', 'Friday'],
   ['air', '05', 'Air'],
   ['close', '06', 'What it is worth'],
+  ['ask', '07', 'Ask the data'],
 ];
 const ALL_HUBS = 'All hubs';
 const hub = { code: '', label: '' };
@@ -719,6 +721,14 @@ try {
     },
   });
   wireTheme(el('theme-toggle'), { key: 'ox-theme-kestrel', onChange: () => rerender() });
+  // A query console as its own view: ask the network a question, see the SQL it ran.
+  mountAsk(el('ask'), {
+    demo: 'kestrel',
+    title: 'Ask the data',
+    intro: 'Ask about a corridor, a site, a vehicle, a hub or a month. Answers are drawn from this control tower\'s own tables, with the query shown.',
+    placeholder: 'e.g. Which corridors out of the Cape Hub lose money?',
+    filter: () => hub.code,
+  });
 
   // Marks, so how long a prospect waits can be measured rather than guessed.
   performance.mark('ox-summary');

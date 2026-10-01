@@ -98,8 +98,25 @@ behaviour, in `shell.js`, not appearance: each stylesheet decides what the share
 | One filter | Warehouse, hub, branch or clinic. Figures whose data carries it follow it; the rest say they are company-wide. The filter lives in the URL, so a filtered view can be sent as a link |
 | Light and dark | Every demo has both, each with its own validated palette, remembered per demo. Kestrel opens dark, the other three open light |
 | AI insights | An insight, the reason, owned actions and what it is worth, beside every section, plus a prioritised briefing. See below |
+| Ask the data | A question box on every demo, answered by Qwen from SQL that runs in the browser on that demo's own tables, with the SQL and rows shown. See below |
 | Folded tables | Long tables show their first rows with Show all, and carry in-cell bars |
 | Print | Save as PDF drops the frame, shows every view, unfolds every table and scales each chart to the page |
+
+## Ask the data
+
+Every demo has a question box: a chapter in Meridian, a sidebar view in Kestrel, a Questions page
+in Sable & Finch, a tab in Lumen. A question takes two calls to **Qwen**, through OpenRouter:
+
+1. `functions/api/chat.js`, a Cloudflare Pages Function holding the key, sends the question and
+   that demo's `data/chat-context.json` to Qwen, which replies with one read-only SQL query, a
+   question back, or a refusal.
+2. `assets/ask.js` checks the query is a single read and runs it in the page's own DuckDB-WASM
+   engine. The result goes back to Qwen, which writes the answer from those rows alone.
+
+The SQL and the rows it returned are shown under every answer. Questions outside the demo's data,
+including general knowledge, advice and anything about the model itself, are declined.
+`scripts/chat_context.py` writes each context pack from the tables the page loads and the gold
+column definitions, and the nightly refresh rewrites it. Setup is in [DEPLOY.md](DEPLOY.md).
 
 ## AI insights
 

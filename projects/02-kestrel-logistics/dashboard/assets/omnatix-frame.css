@@ -333,3 +333,41 @@ td:has(> .cbar) { white-space: nowrap; }
 
 /* The light and dark switch, shaped by each demo. */
 .ox-theme { font: inherit; cursor: pointer; }
+
+/* ---------------------------------------------------------------- Ask the data, structure only
+
+   ask.js draws the same parts on every demo. Each demo dresses them: a letters column, a
+   console, committee minutes, a chat. */
+
+.ask { display: flex; flex-direction: column; gap: 1rem; }
+.ask-title { margin: 0; }
+.ask-intro { margin: 0.35rem 0 0; }
+.ask-examples { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.ask-examples:empty { display: none; }
+.ask-chip { font: inherit; cursor: pointer; text-align: left; line-height: 1.35; }
+.ask-log { display: flex; flex-direction: column; gap: 1rem; }
+.ask-log:empty { display: none; }
+.ask-q { font-weight: 700; overflow-wrap: anywhere; }
+.ask-answer p, .ask-msg { margin: 0 0 0.5rem; }
+.ask-answer ul { margin: 0 0 0.5rem; padding-left: 1.2rem; }
+.ask-status { margin: 0; opacity: 0.75; }
+.ask-status::after { content: '...'; }
+.ask-proof summary { cursor: pointer; }
+.ask-purpose { margin: 0.6rem 0 0.4rem; }
+.ask-sql {
+  margin: 0.5rem 0;
+  padding: 0.7rem 0.8rem;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-family: Consolas, 'Courier New', monospace;
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+.ask-meta { margin: 0.4rem 0 0; }
+.ask-form { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.5rem; align-items: end; }
+.ask-label { grid-column: 1 / -1; }
+.ask-input { font: inherit; width: 100%; min-height: 46px; resize: vertical; }
+.ask-send { font: inherit; cursor: pointer; min-height: 46px; padding: 0 1.2rem; }
+.ask-send:disabled { opacity: 0.5; cursor: progress; }
+.ask-note { margin: 0; }
+@media print { .ask-form, .ask-examples, .ask-note { display: none !important; } }

@@ -15,6 +15,7 @@ import {
   renderSummary, renderNav, onFilterChange, readParam, writeParam, scope, spy, keepScroll,
   wireTheme, insights, attachInsights, aiBrief,
 } from './shell.js';
+import { mountAsk } from './ask.js';
 
 const el = (id) => document.getElementById(id);
 const v = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -101,6 +102,7 @@ const SECTIONS = [
   ['discount', '03', 'Discount'],
   ['stock', '04', 'Stock-outs'],
   ['dead', '05', 'Dead stock'],
+  ['ask', '06', 'Ask the report'],
 ];
 const ALL_DCS = 'All warehouses';
 const dc = { code: '', label: '' };
@@ -567,6 +569,13 @@ try {
   });
   renderNav(nav, { sections: SECTIONS, filter: f && { ...f, value: dc.code } });
   wireTheme(el('theme-toggle'), { key: 'ox-theme-meridian', onChange: () => rerender(nav) });
+  // The last chapter: readers' questions, answered from the warehouse with the query shown.
+  mountAsk(el('ask'), {
+    demo: 'meridian',
+    title: 'Ask the report',
+    intro: 'Ask anything this report\'s data can answer: a brand, a customer group, a month, a warehouse. The answer comes with the SQL that produced it.',
+    filter: () => dc.code,
+  });
   onFilterChange(nav, (code) => {
     setDc(code, f.options);
     writeParam(f.param, dc.code);

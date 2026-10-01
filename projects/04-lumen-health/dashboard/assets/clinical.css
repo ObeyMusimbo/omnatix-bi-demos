@@ -303,6 +303,55 @@ section { margin: 0; }
   .bench-status { text-align: left; }
 }
 
+/* ---------------------------------------------------------------- the Ask tab
+
+   A conversation: the question on the right in the clinic teal, the answer on a white card on
+   the left, the working folded beneath it. Calm and wide, like the rest of the workbench. */
+
+html[data-view="ask"] #loading { display: none; }
+.bench .ask-section { padding-top: 1.75rem; }
+.bench .ask { max-width: 860px; }
+.bench .ask-title { font-size: 1.45rem; letter-spacing: -0.015em; }
+.bench .ask-intro { color: var(--ink-2); }
+.bench .ask-chip {
+  background: var(--panel);
+  border: 1px solid var(--rule-strong);
+  border-radius: 999px;
+  color: var(--accent-ink);
+  padding: 0.5rem 0.9rem;
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+.bench .ask-chip:hover { border-color: var(--accent); }
+.bench .ask-turn { display: flex; flex-direction: column; gap: 0.5rem; }
+.bench .ask-q {
+  align-self: flex-end;
+  max-width: 80%;
+  background: var(--accent);
+  color: #FFFFFF;
+  border-radius: 12px 12px 2px 12px;
+  padding: 0.6rem 0.9rem;
+  font-weight: 600;
+}
+.bench .ask-a {
+  align-self: flex-start;
+  max-width: 92%;
+  background: var(--panel);
+  border-radius: 12px 12px 12px 2px;
+  padding: 0.8rem 1rem;
+}
+.bench .ask-msg.is-refusal, .bench .ask-msg.is-clarify { color: var(--ink-2); }
+.bench .ask-msg.is-error { color: var(--neg); }
+.bench .ask-status { color: var(--ink-3); }
+.bench .ask-proof summary { color: var(--accent-ink); font-size: 0.82rem; font-weight: 600; }
+.bench .ask-sql { background: var(--paper); border-radius: 6px; color: var(--ink); }
+.bench .ask-purpose, .bench .ask-meta { color: var(--ink-3); font-size: 0.8rem; }
+.bench .ask-label { font-size: 0.78rem; color: var(--ink-3); font-weight: 600; }
+.bench .ask-input { background: var(--panel); color: var(--ink); border: 1px solid var(--rule-strong); border-radius: 10px; padding: 0.65rem 0.8rem; }
+.bench .ask-input:focus { outline: 2px solid var(--accent); outline-offset: 0; }
+.bench .ask-send { background: var(--accent); color: #FFFFFF; border: 0; border-radius: 10px; font-weight: 700; }
+.bench .ask-note { color: var(--ink-3); font-size: 0.8rem; }
+
 .section-head { margin-bottom: 1.1rem; display: flex; align-items: baseline; gap: 0.9rem; }
 .section-num {
   font-family: var(--font-mono);

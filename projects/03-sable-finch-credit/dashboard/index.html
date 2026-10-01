@@ -67,6 +67,9 @@
       </div>
     </main>
 
+    <!-- Ask the data: questions to the pack, answered from the book itself. -->
+    <section class="ask-section" id="ask" aria-label="Questions to the pack"></section>
+
     <section class="signoff" id="signoff"></section>
 
     <div class="sheet-foot">
@@ -86,7 +89,9 @@
       Built by Omnatix. Loan, repayment, arrears and collections exports land as CSV, are
       modelled through bronze, silver and gold layers in dbt on DuckDB, tested on every build,
       and published as Parquet. This page runs SQL against those files in your browser using
-      DuckDB-WASM. There is no backend and no database server.
+      DuckDB-WASM. The pack has no backend and no database server; the Questions page sends
+      your question, and the result of the query it runs in your browser, to Qwen through a
+      small Cloudflare function.
     </p>
     <p>
       The recommendations and draft resolutions are written by a language model from the same

@@ -1,0 +1,1038 @@
+{
+ "version": 1,
+ "demo": "sable-finch",
+ "client": "Sable & Finch Credit",
+ "business": "a South African unsecured microlender with nine branches, regulated under the National Credit Act",
+ "reader": "the Chief Risk Officer and the credit committee",
+ "rules": "The outstanding balance on agreements written below the affordability floor is an exposure at legal risk (reckless credit), not an expected loss. It is reported beside the loss bridge and never added to it. Conduct findings are stated as matters for review, never as accusations against a named person.",
+ "sections": {
+  "book": "The book: vintage curves against portfolio at risk",
+  "branch": "One branch stopped writing the same business",
+  "afford": "Loans written with nothing left over (affordability)",
+  "topups": "Arrears refinanced rather than collected (top-ups)",
+  "debit": "Debit orders presented on the wrong day",
+  "collections": "Collections effort against where it works",
+  "close": "What it adds up to: the exposure bridge"
+ },
+ "data_from": "2024-09-01",
+ "data_through": "2026-08-31",
+ "summary": {
+  "hero": {
+   "v": 55.82668844269381,
+   "f": "signedPct0",
+   "label": "worse at month six than the cohorts written a year ago, on the same product"
+  },
+  "findings": [
+   {
+    "n": "02",
+    "id": "branch",
+    "title": "One branch turned",
+    "v": 1.62,
+    "f": "x",
+    "note": "Mahikeng's loss rate against the book, since May 2025"
+   },
+   {
+    "n": "03",
+    "id": "afford",
+    "title": "Nothing left over",
+    "v": 34848046.66,
+    "f": "Rc",
+    "note": "outstanding on 3 201 agreements a court could set aside"
+   },
+   {
+    "n": "04",
+    "id": "topups",
+    "title": "Arrears refinanced",
+    "v": 849,
+    "f": "num",
+    "note": "of 852 top-ups settled an account already in arrears"
+   },
+   {
+    "n": "05",
+    "id": "debit",
+    "title": "Debit order timing",
+    "v": 16.96,
+    "f": "pct",
+    "note": "of first instalments fail a week after payday, against 8.4%"
+   },
+   {
+    "n": "06",
+    "id": "collections",
+    "title": "Collections effort",
+    "v": 2052.18,
+    "f": "R",
+    "note": "to cure one account past 90 days, against R6 in month one"
+   },
+   {
+    "n": "07",
+    "id": "close",
+    "title": "What it adds up to",
+    "close": true,
+    "v": 10270077.18,
+    "f": "Rc",
+    "note": "of the R37.5m credit loss sits with these four conditions"
+   }
+  ]
+ },
+ "filter": {
+  "param": "branch",
+  "label": "Branch",
+  "all": "All branches",
+  "options": [
+   {
+    "value": "SF-BFN",
+    "label": "Bloemfontein"
+   },
+   {
+    "value": "SF-CPT",
+    "label": "Cape Town Parade"
+   },
+   {
+    "value": "SF-DBN",
+    "label": "Durban Point"
+   },
+   {
+    "value": "SF-GQE",
+    "label": "Gqeberha Govan Mbeki"
+   },
+   {
+    "value": "SF-JHB",
+    "label": "Johannesburg CBD"
+   },
+   {
+    "value": "SF-MAH",
+    "label": "Mahikeng"
+   },
+   {
+    "value": "SF-PMB",
+    "label": "Pietermaritzburg"
+   },
+   {
+    "value": "SF-PLK",
+    "label": "Polokwane"
+   },
+   {
+    "value": "SF-PTA",
+    "label": "Pretoria Central"
+   }
+  ],
+  "column": "branch_code"
+ },
+ "examples": [
+  "How does Mahikeng's bad rate compare with the other branches?",
+  "How many top-ups settled an account that was already in arrears?",
+  "What is the first payment default rate by debit order timing?",
+  "How has PAR 30 moved over the last six months?"
+ ],
+ "tables": [
+  {
+   "name": "mart_exposure_bridge",
+   "rows": 6,
+   "description": "The closing view, and deliberately two numbers rather than one. Credit loss and regulatory exposure are different things: the bridge carries the loss, and the reckless lending exposure is reported alongside it rather than added into it.",
+   "columns": [
+    {
+     "name": "step_order",
+     "type": "INTEGER"
+    },
+    {
+     "name": "driver",
+     "type": "VARCHAR",
+     "values": [
+      "Arrears refinanced into a new loan",
+      "Collection date missing payday",
+      "Loss the clean book would have produced",
+      "Net credit loss recognised",
+      "The branch that turned",
+      "Written outside affordability policy"
+     ]
+    },
+    {
+     "name": "driver_short",
+     "type": "VARCHAR",
+     "values": [
+      "Actual loss",
+      "Baseline book",
+      "Branch that turned",
+      "Outside policy",
+      "Refinanced arrears",
+      "Wrong debit date"
+     ]
+    },
+    {
+     "name": "step_type",
+     "type": "VARCHAR",
+     "values": [
+      "anchor",
+      "increase",
+      "total"
+     ]
+    },
+    {
+     "name": "effect_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "finding_ref",
+     "type": "VARCHAR",
+     "values": [
+      "1",
+      "2",
+      "3",
+      "4"
+     ]
+    },
+    {
+     "name": "running_total_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "pct_of_excess",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "total_loss_zar",
+     "type": "DOUBLE",
+     "description": "Net credit loss recognised. The bridge must land on exactly this, and the anchor is the whole book at the clean slice's loss rate. Anchoring on the clean slice's own loss instead leaves the bridge short by everything the other slices would have lost anyway, which it did until it was corrected."
+    },
+    {
+     "name": "total_excess_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "excess_pct_of_loss",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "total_principal_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "loss_rate_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "reckless_loans",
+     "type": "BIGINT"
+    },
+    {
+     "name": "reckless_exposure_zar",
+     "type": "DOUBLE",
+     "description": "Outstanding balance on agreements a court could set aside. Reported separately and never summed with the loss: treating it as credit loss understates it, adding it to credit loss overstates that."
+    }
+   ]
+  },
+  {
+   "name": "mart_vintage",
+   "rows": 2691,
+   "description": "Cumulative bad rate by disbursement cohort and months on book. A cohort is drawn only for the months it has actually been observed. Extending a young cohort with zeroes to fill the x axis is the single most common way a vintage chart lies, so the model simply has no row there.",
+   "columns": [
+    {
+     "name": "cohort_month",
+     "type": "DATE",
+     "range": [
+      "2024-09-01",
+      "2026-07-01"
+     ]
+    },
+    {
+     "name": "cohort_label",
+     "type": "VARCHAR",
+     "values": [
+      "2024-09",
+      "2024-10",
+      "2024-11",
+      "2024-12",
+      "2025-01",
+      "2025-02",
+      "2025-03",
+      "2025-04",
+      "2025-05",
+      "2025-06",
+      "2025-07",
+      "2025-08",
+      "2025-09",
+      "2025-10",
+      "2025-11",
+      "2025-12",
+      "2026-01",
+      "2026-02",
+      "2026-03",
+      "2026-04",
+      "2026-05",
+      "2026-06",
+      "2026-07"
+     ]
+    },
+    {
+     "name": "branch_code",
+     "type": "VARCHAR",
+     "values": [
+      "SF-BFN",
+      "SF-CPT",
+      "SF-DBN",
+      "SF-GQE",
+      "SF-JHB",
+      "SF-MAH",
+      "SF-PLK",
+      "SF-PMB",
+      "SF-PTA"
+     ]
+    },
+    {
+     "name": "branch_name",
+     "type": "VARCHAR",
+     "values": [
+      "Bloemfontein",
+      "Cape Town Parade",
+      "Durban Point",
+      "Gqeberha Govan Mbeki",
+      "Johannesburg CBD",
+      "Mahikeng",
+      "Pietermaritzburg",
+      "Polokwane",
+      "Pretoria Central"
+     ]
+    },
+    {
+     "name": "months_on_book",
+     "type": "BIGINT"
+    },
+    {
+     "name": "cohort_loans",
+     "type": "BIGINT"
+    },
+    {
+     "name": "cohort_principal_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "bad_loans",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "bad_principal_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "cumulative_bad_rate_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "cumulative_bad_loans_pct",
+     "type": "DOUBLE"
+    }
+   ]
+  },
+  {
+   "name": "mart_branch_risk",
+   "rows": 216,
+   "description": "Branch by cohort, against the book. bad_rate_vs_book_x is the multiple that carries finding 1, and income_inflated_pct is the reason for it.",
+   "columns": [
+    {
+     "name": "branch_code",
+     "type": "VARCHAR",
+     "values": [
+      "SF-BFN",
+      "SF-CPT",
+      "SF-DBN",
+      "SF-GQE",
+      "SF-JHB",
+      "SF-MAH",
+      "SF-PLK",
+      "SF-PMB",
+      "SF-PTA"
+     ]
+    },
+    {
+     "name": "branch_name",
+     "type": "VARCHAR",
+     "values": [
+      "Bloemfontein",
+      "Cape Town Parade",
+      "Durban Point",
+      "Gqeberha Govan Mbeki",
+      "Johannesburg CBD",
+      "Mahikeng",
+      "Pietermaritzburg",
+      "Polokwane",
+      "Pretoria Central"
+     ]
+    },
+    {
+     "name": "province",
+     "type": "VARCHAR",
+     "values": [
+      "Eastern Cape",
+      "Free State",
+      "Gauteng",
+      "KwaZulu-Natal",
+      "Limpopo",
+      "North West",
+      "Western Cape"
+     ]
+    },
+    {
+     "name": "cohort_month",
+     "type": "DATE",
+     "range": [
+      "2024-09-01",
+      "2026-08-01"
+     ]
+    },
+    {
+     "name": "cohort_label",
+     "type": "VARCHAR",
+     "values": [
+      "2024-09",
+      "2024-10",
+      "2024-11",
+      "2024-12",
+      "2025-01",
+      "2025-02",
+      "2025-03",
+      "2025-04",
+      "2025-05",
+      "2025-06",
+      "2025-07",
+      "2025-08",
+      "2025-09",
+      "2025-10",
+      "2025-11",
+      "2025-12",
+      "2026-01",
+      "2026-02",
+      "2026-03",
+      "2026-04",
+      "2026-05",
+      "2026-06",
+      "2026-07",
+      "2026-08"
+     ]
+    },
+    {
+     "name": "cohort_quarter",
+     "type": "DATE",
+     "range": [
+      "2024-07-01",
+      "2026-07-01"
+     ]
+    },
+    {
+     "name": "loans",
+     "type": "BIGINT"
+    },
+    {
+     "name": "principal_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "loans_ever_90",
+     "type": "BIGINT"
+    },
+    {
+     "name": "principal_ever_90",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "bad_rate_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "book_bad_rate_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "bad_rate_vs_book_x",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "avg_declared_to_file_ratio",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "loans_income_inflated",
+     "type": "BIGINT"
+    },
+    {
+     "name": "income_inflated_pct",
+     "type": "DOUBLE",
+     "description": "Share of the cohort where income declared at origination exceeds the income on file by more than the tolerance. One branch runs this at nearly two thirds and every other branch at zero, which is not a credit problem, it is a conduct one."
+    },
+    {
+     "name": "loans_breaching_floor",
+     "type": "BIGINT"
+    },
+    {
+     "name": "net_loss_zar",
+     "type": "DOUBLE"
+    }
+   ]
+  },
+  {
+   "name": "mart_affordability",
+   "rows": 648,
+   "description": "Cohort by branch by affordability band, with the bad rate of each. The band that breaches the floor is reported as regulatory exposure, never as expected loss.",
+   "columns": [
+    {
+     "name": "cohort_month",
+     "type": "DATE",
+     "range": [
+      "2024-09-01",
+      "2026-08-01"
+     ]
+    },
+    {
+     "name": "cohort_label",
+     "type": "VARCHAR",
+     "values": [
+      "2024-09",
+      "2024-10",
+      "2024-11",
+      "2024-12",
+      "2025-01",
+      "2025-02",
+      "2025-03",
+      "2025-04",
+      "2025-05",
+      "2025-06",
+      "2025-07",
+      "2025-08",
+      "2025-09",
+      "2025-10",
+      "2025-11",
+      "2025-12",
+      "2026-01",
+      "2026-02",
+      "2026-03",
+      "2026-04",
+      "2026-05",
+      "2026-06",
+      "2026-07",
+      "2026-08"
+     ]
+    },
+    {
+     "name": "branch_code",
+     "type": "VARCHAR",
+     "values": [
+      "SF-BFN",
+      "SF-CPT",
+      "SF-DBN",
+      "SF-GQE",
+      "SF-JHB",
+      "SF-MAH",
+      "SF-PLK",
+      "SF-PMB",
+      "SF-PTA"
+     ]
+    },
+    {
+     "name": "branch_name",
+     "type": "VARCHAR",
+     "values": [
+      "Bloemfontein",
+      "Cape Town Parade",
+      "Durban Point",
+      "Gqeberha Govan Mbeki",
+      "Johannesburg CBD",
+      "Mahikeng",
+      "Pietermaritzburg",
+      "Polokwane",
+      "Pretoria Central"
+     ]
+    },
+    {
+     "name": "affordability_band",
+     "type": "VARCHAR",
+     "values": [
+      "Breaches floor",
+      "Under R500 headroom",
+      "Within policy"
+     ]
+    },
+    {
+     "name": "loans",
+     "type": "BIGINT"
+    },
+    {
+     "name": "principal_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "outstanding_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "loans_ever_90",
+     "type": "BIGINT"
+    },
+    {
+     "name": "principal_ever_90",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "net_loss_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "avg_headroom_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "avg_instalment_to_income_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "bad_rate_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "is_reckless_exposure",
+     "type": "BOOLEAN"
+    }
+   ]
+  },
+  {
+   "name": "mart_topup_masking",
+   "rows": 852,
+   "description": "One row per top-up, paired with the loan it settled. The finding is that almost every one of them settled an account that was already delinquent, which resets the arrears clock: the old loan closes as Settled and the new one starts Current.",
+   "columns": [
+    {
+     "name": "topup_loan_id",
+     "type": "VARCHAR"
+    },
+    {
+     "name": "cohort_month",
+     "type": "DATE",
+     "range": [
+      "2024-11-01",
+      "2026-08-01"
+     ]
+    },
+    {
+     "name": "cohort_label",
+     "type": "VARCHAR",
+     "values": [
+      "2024-11",
+      "2024-12",
+      "2025-01",
+      "2025-02",
+      "2025-03",
+      "2025-04",
+      "2025-05",
+      "2025-06",
+      "2025-07",
+      "2025-08",
+      "2025-09",
+      "2025-10",
+      "2025-11",
+      "2025-12",
+      "2026-01",
+      "2026-02",
+      "2026-03",
+      "2026-04",
+      "2026-05",
+      "2026-06",
+      "2026-07",
+      "2026-08"
+     ]
+    },
+    {
+     "name": "branch_code",
+     "type": "VARCHAR",
+     "values": [
+      "SF-BFN",
+      "SF-CPT",
+      "SF-DBN",
+      "SF-GQE",
+      "SF-JHB",
+      "SF-MAH",
+      "SF-PLK",
+      "SF-PMB",
+      "SF-PTA"
+     ]
+    },
+    {
+     "name": "branch_name",
+     "type": "VARCHAR",
+     "values": [
+      "Bloemfontein",
+      "Cape Town Parade",
+      "Durban Point",
+      "Gqeberha Govan Mbeki",
+      "Johannesburg CBD",
+      "Mahikeng",
+      "Pietermaritzburg",
+      "Polokwane",
+      "Pretoria Central"
+     ]
+    },
+    {
+     "name": "agent_name",
+     "type": "VARCHAR"
+    },
+    {
+     "name": "client_ref",
+     "type": "VARCHAR"
+    },
+    {
+     "name": "topup_principal_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "topup_instalment_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "topup_ever_90",
+     "type": "BOOLEAN"
+    },
+    {
+     "name": "topup_current_dpd",
+     "type": "INTEGER"
+    },
+    {
+     "name": "topup_balance_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "topup_net_loss_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "topup_status",
+     "type": "VARCHAR",
+     "values": [
+      "Active",
+      "Settled",
+      "Written off"
+     ]
+    },
+    {
+     "name": "settled_loan_id",
+     "type": "VARCHAR",
+     "description": "One settled loan per top-up. Two would mean the pairing has fanned out."
+    },
+    {
+     "name": "settled_principal_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "settled_instalment_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "settled_peak_dpd",
+     "type": "INTEGER"
+    },
+    {
+     "name": "settled_status",
+     "type": "VARCHAR",
+     "values": [
+      "Settled"
+     ]
+    },
+    {
+     "name": "instalment_increase_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "principal_multiple",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "settled_account_was_delinquent",
+     "type": "BOOLEAN"
+    }
+   ]
+  },
+  {
+   "name": "mart_debit_order",
+   "rows": 12,
+   "description": "Loans grouped by how many days after payday the debit order is presented. Presenting before the salary lands fails for insufficient funds regardless of intent.",
+   "columns": [
+    {
+     "name": "days_after_payday",
+     "type": "INTEGER"
+    },
+    {
+     "name": "timing_band",
+     "type": "VARCHAR",
+     "values": [
+      "4 to 7 days",
+      "On or next day",
+      "Over a week after payday",
+      "Within 3 days"
+     ]
+    },
+    {
+     "name": "loans",
+     "type": "BIGINT"
+    },
+    {
+     "name": "principal_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "first_payment_defaults",
+     "type": "BIGINT"
+    },
+    {
+     "name": "loans_ever_90",
+     "type": "BIGINT"
+    },
+    {
+     "name": "principal_ever_90",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "net_loss_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "first_payment_default_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "bad_rate_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "is_mismatched",
+     "type": "BOOLEAN"
+    }
+   ]
+  },
+  {
+   "name": "mart_collections",
+   "rows": 4,
+   "description": "Collections effort and what it bought, by the arrears bucket it was spent in. The finding is the cost per cure: cheap while the account is barely late, and three orders of magnitude more once it is past ninety, with almost all the spend at the expensive end.",
+   "columns": [
+    {
+     "name": "arrears_bucket",
+     "type": "VARCHAR",
+     "values": [
+      "1-30",
+      "31-60",
+      "61-90",
+      "90+"
+     ]
+    },
+    {
+     "name": "activities",
+     "type": "BIGINT"
+    },
+    {
+     "name": "cost_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "share_of_spend_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "productive_contacts",
+     "type": "BIGINT"
+    },
+    {
+     "name": "contact_rate_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "accounts_worked",
+     "type": "BIGINT"
+    },
+    {
+     "name": "observations",
+     "type": "BIGINT"
+    },
+    {
+     "name": "cured_next_month",
+     "type": "BIGINT"
+    },
+    {
+     "name": "cure_rate_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "balance_in_bucket_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "cost_per_cure_zar",
+     "type": "DOUBLE"
+    }
+   ]
+  },
+  {
+   "name": "agg_book_monthly",
+   "rows": 23,
+   "description": "The book by month: size, portfolio at risk at three cut-offs, and what was written.",
+   "columns": [
+    {
+     "name": "month_start_date",
+     "type": "DATE",
+     "range": [
+      "2024-10-01",
+      "2026-08-01"
+     ]
+    },
+    {
+     "name": "year_month",
+     "type": "VARCHAR",
+     "values": [
+      "2024-10",
+      "2024-11",
+      "2024-12",
+      "2025-01",
+      "2025-02",
+      "2025-03",
+      "2025-04",
+      "2025-05",
+      "2025-06",
+      "2025-07",
+      "2025-08",
+      "2025-09",
+      "2025-10",
+      "2025-11",
+      "2025-12",
+      "2026-01",
+      "2026-02",
+      "2026-03",
+      "2026-04",
+      "2026-05",
+      "2026-06",
+      "2026-07",
+      "2026-08"
+     ]
+    },
+    {
+     "name": "accounts",
+     "type": "BIGINT"
+    },
+    {
+     "name": "gross_book_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "par30_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "par90_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "par30_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "par60_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "par90_pct",
+     "type": "DOUBLE",
+     "description": "Share of the book ninety or more days past due. A snapshot measure, and the reason the page opens on vintage curves instead: this number cannot tell you whether the business is writing better or worse loans than it was a year ago."
+    },
+    {
+     "name": "loans_disbursed",
+     "type": "BIGINT"
+    },
+    {
+     "name": "disbursed_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "topups_disbursed",
+     "type": "BIGINT"
+    },
+    {
+     "name": "topup_disbursed_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "topup_share_pct",
+     "type": "DOUBLE"
+    }
+   ]
+  },
+  {
+   "name": "dim_branch",
+   "rows": 9,
+   "description": "One row per branch, with the agent headcount behind it.",
+   "columns": [
+    {
+     "name": "branch_code",
+     "type": "VARCHAR",
+     "values": [
+      "SF-BFN",
+      "SF-CPT",
+      "SF-DBN",
+      "SF-GQE",
+      "SF-JHB",
+      "SF-MAH",
+      "SF-PLK",
+      "SF-PMB",
+      "SF-PTA"
+     ]
+    },
+    {
+     "name": "branch_name",
+     "type": "VARCHAR",
+     "values": [
+      "Bloemfontein",
+      "Cape Town Parade",
+      "Durban Point",
+      "Gqeberha Govan Mbeki",
+      "Johannesburg CBD",
+      "Mahikeng",
+      "Pietermaritzburg",
+      "Polokwane",
+      "Pretoria Central"
+     ]
+    },
+    {
+     "name": "province",
+     "type": "VARCHAR",
+     "values": [
+      "Eastern Cape",
+      "Free State",
+      "Gauteng",
+      "KwaZulu-Natal",
+      "Limpopo",
+      "North West",
+      "Western Cape"
+     ]
+    },
+    {
+     "name": "city",
+     "type": "VARCHAR",
+     "values": [
+      "Bloemfontein",
+      "Cape Town",
+      "Durban",
+      "Gqeberha",
+      "Johannesburg",
+      "Mahikeng",
+      "Pietermaritzburg",
+      "Polokwane",
+      "Pretoria"
+     ]
+    },
+    {
+     "name": "opened_date",
+     "type": "DATE",
+     "range": [
+      "2015-02-11",
+      "2022-11-16"
+     ]
+    },
+    {
+     "name": "agent_count",
+     "type": "BIGINT"
+    }
+   ]
+  }
+ ]
+}

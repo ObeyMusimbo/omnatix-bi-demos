@@ -1,0 +1,1320 @@
+{
+ "version": 1,
+ "demo": "kestrel",
+ "client": "Kestrel Logistics",
+ "business": "a South African road freight operator running line-haul and distribution from hubs in Gauteng, KwaZulu-Natal and the Western Cape",
+ "reader": "the COO",
+ "rules": "Paying to move air is not money on the table today; it is the case for consolidation. Never promise full recovery of the bridge.",
+ "sections": {
+  "network": "The network: empty running and round trip contribution",
+  "corridors": "Corridors that fund their own empty return",
+  "doors": "Deliveries that had to be done twice",
+  "thirsty": "Vehicles burning more diesel than their class",
+  "friday": "Friday and month end dispatch, and the service penalties",
+  "air": "Paying to move air: trips full by volume and light by weight",
+  "close": "What it is worth: the opportunity bridge"
+ },
+ "data_from": "2024-09-02",
+ "data_through": "2026-09-01",
+ "summary": {
+  "hero": {
+   "v": 23.934534094868756,
+   "f": "pct",
+   "label": "of every kilometre this fleet turned in the last twelve months carried nothing at all"
+  },
+  "findings": [
+   {
+    "n": "01",
+    "id": "corridors",
+    "title": "Empty return legs",
+    "v": 5530953.89,
+    "f": "Rc",
+    "note": "lost a year on 12 corridors"
+   },
+   {
+    "n": "02",
+    "id": "doors",
+    "title": "Deliveries done twice",
+    "v": 6509246.83,
+    "f": "Rc",
+    "note": "a year, 6 sites cause most of it"
+   },
+   {
+    "n": "03",
+    "id": "thirsty",
+    "title": "Thirsty trucks",
+    "v": 2466906.46,
+    "f": "Rc",
+    "note": "a year of excess diesel on 7 vehicles"
+   },
+   {
+    "n": "04",
+    "id": "friday",
+    "title": "Friday dispatch",
+    "v": 5213458.84,
+    "f": "Rc",
+    "note": "a year in service penalties"
+   },
+   {
+    "n": "05",
+    "id": "air",
+    "title": "Paying to move air",
+    "v": 3921,
+    "f": "num",
+    "note": "trips full by volume, light by weight"
+   },
+   {
+    "n": "06",
+    "id": "close",
+    "title": "What it is worth",
+    "close": true,
+    "v": 19720566.02,
+    "f": "Rc",
+    "note": "71.6% of the R27.6m the business earns"
+   }
+  ]
+ },
+ "filter": {
+  "param": "hub",
+  "label": "Hub",
+  "all": "All hubs",
+  "options": [
+   {
+    "value": "KES-CPT",
+    "label": "Cape Hub"
+   },
+   {
+    "value": "KES-JHB",
+    "label": "Gauteng Hub"
+   },
+   {
+    "value": "KES-DBN",
+    "label": "KZN Hub"
+   }
+  ],
+  "column": "origin_depot_code"
+ },
+ "examples": [
+  "Which corridors lose money as a round trip?",
+  "Which sites refuse the most deliveries, and why?",
+  "What is on time delivery on Fridays for Dedicated contracts?",
+  "Which vehicles cost the most in excess fuel?"
+ ],
+ "tables": [
+  {
+   "name": "mart_opportunity_bridge",
+   "rows": 6,
+   "description": "The closing visual, and deliberately not a year on year variance bridge. Kestrel's findings are standing costs rather than deterioration: empty returns, doors that will not receive, thirsty trucks and a service clause were all just as true last year. Framing them as variance would be dishonest and produces a meaningless residual. So this runs the other way. It starts at what Kestrel actually earned and adds what each finding identified, ending at what the same fleet and the same customers could contribute with nothing new bought. The figures are what the findings are worth in full; recovery…",
+   "columns": [
+    {
+     "name": "step_order",
+     "type": "INTEGER"
+    },
+    {
+     "name": "driver",
+     "type": "VARCHAR",
+     "values": [
+      "Contribution earned in the last twelve months",
+      "Contribution with the same fleet and the same customers",
+      "Corridors that fund their own empty return",
+      "Deliveries that had to be done twice",
+      "Service penalties on the anchor account",
+      "Vehicles burning more than their class"
+     ]
+    },
+    {
+     "name": "driver_short",
+     "type": "VARCHAR",
+     "description": "Label short enough to sit under a waterfall bar without truncating.",
+     "values": [
+      "Available",
+      "Earned today",
+      "Empty returns",
+      "Redeliveries",
+      "Service penalties",
+      "Thirsty vehicles"
+     ]
+    },
+    {
+     "name": "step_type",
+     "type": "VARCHAR",
+     "values": [
+      "anchor",
+      "increase",
+      "total"
+     ]
+    },
+    {
+     "name": "effect_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "finding_ref",
+     "type": "VARCHAR",
+     "values": [
+      "1",
+      "2",
+      "3",
+      "4"
+     ]
+    },
+    {
+     "name": "running_total_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "pct_of_identified",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "identified_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "ttm_revenue_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "ttm_cost_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "ttm_contribution_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "ttm_contribution_margin_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "ttm_km",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "ttm_cost_per_km_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "ttm_revenue_per_km_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "identified_pct_of_contribution",
+     "type": "DOUBLE",
+     "description": "What the findings are worth against what the business actually earns. The number the demo closes on."
+    }
+   ]
+  },
+  {
+   "name": "mart_lane_economics",
+   "rows": 50,
+   "description": "Finding 1. Lane by period, carrying both ends of the line so the dashboard can colour each corridor on a map by what it actually contributes.",
+   "columns": [
+    {
+     "name": "lane_id",
+     "type": "VARCHAR",
+     "values": [
+      "LN-101",
+      "LN-102",
+      "LN-103",
+      "LN-104",
+      "LN-105",
+      "LN-106",
+      "LN-107",
+      "LN-108",
+      "LN-109",
+      "LN-110",
+      "LN-111",
+      "LN-112",
+      "LN-113",
+      "LN-114",
+      "LN-115",
+      "LN-116",
+      "LN-117",
+      "LN-118",
+      "LN-119",
+      "LN-120",
+      "LN-121",
+      "LN-122",
+      "LN-123",
+      "LN-124",
+      "LN-125"
+     ]
+    },
+    {
+     "name": "lane_name",
+     "type": "VARCHAR",
+     "values": [
+      "Cape Town to Bloemfontein",
+      "Cape Town to George",
+      "Cape Town to Gqeberha",
+      "Cape Town to Johannesburg",
+      "Cape Town to Paarl",
+      "Cape Town to Upington",
+      "Cape Town to Worcester",
+      "Durban to Bloemfontein",
+      "Durban to Cape Town",
+      "Durban to Gqeberha",
+      "Durban to Johannesburg",
+      "Durban to Pietermaritzburg",
+      "Durban to Richards Bay",
+      "Johannesburg to Bloemfontein",
+      "Johannesburg to Cape Town",
+      "Johannesburg to Durban",
+      "Johannesburg to East London",
+      "Johannesburg to Gqeberha",
+      "Johannesburg to Kimberley",
+      "Johannesburg to Klerksdorp",
+      "Johannesburg to Mbombela",
+      "Johannesburg to Newcastle",
+      "Johannesburg to Polokwane",
+      "Johannesburg to Rustenburg",
+      "Johannesburg to Welkom"
+     ]
+    },
+    {
+     "name": "period_label",
+     "type": "VARCHAR",
+     "values": [
+      "Prior twelve months",
+      "Trailing twelve months"
+     ]
+    },
+    {
+     "name": "period_order",
+     "type": "INTEGER"
+    },
+    {
+     "name": "lane_type",
+     "type": "VARCHAR",
+     "values": [
+      "Line-haul"
+     ]
+    },
+    {
+     "name": "origin_depot_code",
+     "type": "VARCHAR",
+     "values": [
+      "KES-CPT",
+      "KES-DBN",
+      "KES-JHB"
+     ]
+    },
+    {
+     "name": "origin_depot_name",
+     "type": "VARCHAR",
+     "values": [
+      "Kestrel Cape Hub",
+      "Kestrel Gauteng Hub",
+      "Kestrel KZN Hub"
+     ]
+    },
+    {
+     "name": "origin_city",
+     "type": "VARCHAR",
+     "values": [
+      "Cape Town",
+      "Durban",
+      "Johannesburg"
+     ]
+    },
+    {
+     "name": "origin_lat",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "origin_lon",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "destination_city",
+     "type": "VARCHAR",
+     "values": [
+      "Bloemfontein",
+      "Cape Town",
+      "Durban",
+      "East London",
+      "George",
+      "Gqeberha",
+      "Johannesburg",
+      "Kimberley",
+      "Klerksdorp",
+      "Mbombela",
+      "Newcastle",
+      "Paarl",
+      "Pietermaritzburg",
+      "Polokwane",
+      "Richards Bay",
+      "Rustenburg",
+      "Upington",
+      "Welkom",
+      "Worcester"
+     ]
+    },
+    {
+     "name": "destination_lat",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "destination_lon",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "lane_distance_km",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "round_trips",
+     "type": "BIGINT"
+    },
+    {
+     "name": "empty_returns",
+     "type": "BIGINT"
+    },
+    {
+     "name": "distance_km",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "revenue_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "cost_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "contribution_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "outbound_only_contribution_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "empty_return_cost_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "assumed_backhaul_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "actual_backhaul_pct",
+     "type": "DOUBLE",
+     "description": "Share of return legs that found paying freight."
+    },
+    {
+     "name": "backhaul_shortfall_pts",
+     "type": "DOUBLE",
+     "description": "How far short of the rate card assumption this lane runs. The larger this is, the more of the return leg the outbound is quietly paying for."
+    },
+    {
+     "name": "contribution_margin_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "contribution_per_km_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "avg_weight_utilisation_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "is_backhaul_trap",
+     "type": "BOOLEAN",
+     "description": "Positive contribution one way, negative as a round trip. The flag the map colours on and the demo opens with."
+    },
+    {
+     "name": "is_loss_making",
+     "type": "BOOLEAN"
+    }
+   ]
+  },
+  {
+   "name": "mart_failed_deliveries",
+   "rows": 10431,
+   "description": "Finding 2. Customer by month. A failed drop earns nothing and still consumed a slot on a truck that had already been paid for, so it never appears in a revenue report.",
+   "columns": [
+    {
+     "name": "customer_id",
+     "type": "VARCHAR"
+    },
+    {
+     "name": "customer_name",
+     "type": "VARCHAR"
+    },
+    {
+     "name": "contract_type",
+     "type": "VARCHAR",
+     "values": [
+      "Contract",
+      "Dedicated",
+      "Spot"
+     ]
+    },
+    {
+     "name": "sector",
+     "type": "VARCHAR",
+     "values": [
+      "Agriculture",
+      "Automotive",
+      "Building materials",
+      "FMCG",
+      "Industrial",
+      "Pharmaceutical",
+      "Retail"
+     ]
+    },
+    {
+     "name": "origin_depot_code",
+     "type": "VARCHAR",
+     "values": [
+      "KES-CPT",
+      "KES-DBN",
+      "KES-JHB"
+     ]
+    },
+    {
+     "name": "month_start_date",
+     "type": "DATE",
+     "range": [
+      "2024-09-01",
+      "2026-08-01"
+     ]
+    },
+    {
+     "name": "year_month",
+     "type": "VARCHAR",
+     "values": [
+      "2024-09",
+      "2024-10",
+      "2024-11",
+      "2024-12",
+      "2025-01",
+      "2025-02",
+      "2025-03",
+      "2025-04",
+      "2025-05",
+      "2025-06",
+      "2025-07",
+      "2025-08",
+      "2025-09",
+      "2025-10",
+      "2025-11",
+      "2025-12",
+      "2026-01",
+      "2026-02",
+      "2026-03",
+      "2026-04",
+      "2026-05",
+      "2026-06",
+      "2026-07",
+      "2026-08"
+     ]
+    },
+    {
+     "name": "drops",
+     "type": "BIGINT"
+    },
+    {
+     "name": "failed_drops",
+     "type": "BIGINT"
+    },
+    {
+     "name": "revenue_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "failed_cost_zar",
+     "type": "DOUBLE",
+     "description": "Allocated trip cost of the drops that failed. What the wasted journeys cost."
+    },
+    {
+     "name": "failure_rate_pct",
+     "type": "DOUBLE",
+     "description": "Share of drops at this customer that failed on first attempt."
+    },
+    {
+     "name": "top_failure_reason",
+     "type": "VARCHAR",
+     "values": [
+      "Access restricted",
+      "Goods-in queue timeout",
+      "Incorrect address",
+      "No booked slot",
+      "No one to offload",
+      "Receiving closed",
+      "Site closed"
+     ]
+    },
+    {
+     "name": "is_problem_site",
+     "type": "BOOLEAN",
+     "description": "More than 15% of drops refused. A site at this level is not having bad luck, it has no booked receiving slot, and that is a conversation rather than an analysis."
+    },
+    {
+     "name": "is_trailing_twelve_months",
+     "type": "BOOLEAN",
+     "description": "The month falls in the twelve months the closing bridge counts. The page and the bridge both filter on this column, so a figure in the section and the same figure in the close always cover the same months."
+    }
+   ]
+  },
+  {
+   "name": "mart_fuel_outliers",
+   "rows": 124,
+   "description": "Finding 3. One row per vehicle over the trailing twelve months, compared against the median of its own class rather than the fleet, because consumption only means something against like work. Twelve months because the closing bridge adds this to a year of contribution, and the page calls it a year.",
+   "columns": [
+    {
+     "name": "vehicle_id",
+     "type": "VARCHAR"
+    },
+    {
+     "name": "registration",
+     "type": "VARCHAR"
+    },
+    {
+     "name": "vehicle_class",
+     "type": "VARCHAR",
+     "values": [
+      "LDV 1.5t",
+      "Rigid 14t",
+      "Rigid 8t",
+      "Superlink 34t",
+      "Tri-axle 24t"
+     ]
+    },
+    {
+     "name": "depot_name",
+     "type": "VARCHAR",
+     "values": [
+      "Kestrel Cape Hub",
+      "Kestrel Gauteng Hub",
+      "Kestrel KZN Hub"
+     ]
+    },
+    {
+     "name": "trips",
+     "type": "BIGINT"
+    },
+    {
+     "name": "distance_km",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "litres",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "fuel_cost_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "litres_per_100km",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "class_median_l100",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "excess_l100",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "excess_pct",
+     "type": "DOUBLE",
+     "description": "How far above the class median this vehicle burns."
+    },
+    {
+     "name": "excess_cost_zar",
+     "type": "DOUBLE",
+     "description": "Extra litres per kilometre, over the distance this vehicle actually covered, at the price it actually paid. Diesel moved across the window, so an average price would understate it."
+    },
+    {
+     "name": "is_outlier",
+     "type": "BOOLEAN",
+     "description": "More than 15% above the class median."
+    }
+   ]
+  },
+  {
+   "name": "mart_sla_performance",
+   "rows": 288,
+   "description": "Finding 4. Dispatch day bucket by month. Service sits near 96% on a normal day and collapses on Fridays and at month end, when dispatch batches everything into one run. The tightest contracts break hardest, which means the customers paying most for service are the ones failed first.",
+   "columns": [
+    {
+     "name": "month_start_date",
+     "type": "DATE",
+     "range": [
+      "2024-09-01",
+      "2026-08-01"
+     ]
+    },
+    {
+     "name": "year_month",
+     "type": "VARCHAR",
+     "values": [
+      "2024-09",
+      "2024-10",
+      "2024-11",
+      "2024-12",
+      "2025-01",
+      "2025-02",
+      "2025-03",
+      "2025-04",
+      "2025-05",
+      "2025-06",
+      "2025-07",
+      "2025-08",
+      "2025-09",
+      "2025-10",
+      "2025-11",
+      "2025-12",
+      "2026-01",
+      "2026-02",
+      "2026-03",
+      "2026-04",
+      "2026-05",
+      "2026-06",
+      "2026-07",
+      "2026-08"
+     ]
+    },
+    {
+     "name": "dispatch_day_bucket",
+     "type": "VARCHAR",
+     "values": [
+      "Friday",
+      "Month end run",
+      "Normal day"
+     ]
+    },
+    {
+     "name": "contract_type",
+     "type": "VARCHAR",
+     "values": [
+      "Contract",
+      "Dedicated",
+      "Spot"
+     ]
+    },
+    {
+     "name": "is_anchor_account",
+     "type": "BOOLEAN"
+    },
+    {
+     "name": "drops",
+     "type": "BIGINT"
+    },
+    {
+     "name": "on_time_drops",
+     "type": "BIGINT"
+    },
+    {
+     "name": "failed_drops",
+     "type": "BIGINT"
+    },
+    {
+     "name": "revenue_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "on_time_pct",
+     "type": "DOUBLE",
+     "description": "Share of drops delivered inside the promised window."
+    },
+    {
+     "name": "penalty_threshold_pct",
+     "type": "INTEGER"
+    },
+    {
+     "name": "points_below_threshold",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "penalty_exposure_zar",
+     "type": "DOUBLE",
+     "description": "2% of monthly spend for every percentage point below 90% on-time, on the one account whose contract carries the clause. Everyone else's late delivery costs goodwill, which does not appear here."
+    },
+    {
+     "name": "is_trailing_twelve_months",
+     "type": "BOOLEAN",
+     "description": "The month falls in the twelve months the closing bridge counts. Section 4 and the bridge both filter on it, so the penalty quoted in the section is the penalty in the close."
+    }
+   ]
+  },
+  {
+   "name": "mart_load_factor",
+   "rows": 68,
+   "description": "Finding 5. Vehicle class by lane, over the trailing twelve months. Freight is billed by weight, but a trailer runs out of deck space long before it runs out of axle allowance on light, bulky cargo.",
+   "columns": [
+    {
+     "name": "vehicle_class",
+     "type": "VARCHAR",
+     "values": [
+      "LDV 1.5t",
+      "Rigid 14t",
+      "Rigid 8t",
+      "Superlink 34t",
+      "Tri-axle 24t"
+     ]
+    },
+    {
+     "name": "lane_type",
+     "type": "VARCHAR",
+     "values": [
+      "Distribution",
+      "Line-haul"
+     ]
+    },
+    {
+     "name": "lane_name",
+     "type": "VARCHAR",
+     "values": [
+      "Cape Town metro",
+      "Cape Town to Bloemfontein",
+      "Cape Town to George",
+      "Cape Town to Gqeberha",
+      "Cape Town to Johannesburg",
+      "Cape Town to Paarl",
+      "Cape Town to Upington",
+      "Cape Town to Worcester",
+      "Durban metro",
+      "Durban to Bloemfontein",
+      "Durban to Cape Town",
+      "Durban to Gqeberha",
+      "Durban to Johannesburg",
+      "Durban to Pietermaritzburg",
+      "Durban to Richards Bay",
+      "Johannesburg metro",
+      "Johannesburg to Bloemfontein",
+      "Johannesburg to Cape Town",
+      "Johannesburg to Durban",
+      "Johannesburg to East London",
+      "Johannesburg to Gqeberha",
+      "Johannesburg to Kimberley",
+      "Johannesburg to Klerksdorp",
+      "Johannesburg to Mbombela",
+      "Johannesburg to Newcastle",
+      "Johannesburg to Polokwane",
+      "Johannesburg to Rustenburg",
+      "Johannesburg to Welkom",
+      "Pretoria metro"
+     ]
+    },
+    {
+     "name": "trips",
+     "type": "BIGINT"
+    },
+    {
+     "name": "distance_km",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "avg_weight_utilisation_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "avg_volume_utilisation_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "utilisation_gap_pts",
+     "type": "DOUBLE",
+     "description": "Volume utilisation less weight utilisation. A large positive gap is a truck full of air."
+    },
+    {
+     "name": "revenue_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "total_cost_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "contribution_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "revenue_per_km_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "air_trips",
+     "type": "BIGINT",
+     "description": "Trips over 85% full by volume and under 55% by weight."
+    },
+    {
+     "name": "air_trip_cost_zar",
+     "type": "DOUBLE"
+    }
+   ]
+  },
+  {
+   "name": "agg_trip_monthly",
+   "rows": 505,
+   "description": "Monthly trading summary by lane type, vehicle class and hub. Small enough to ship to a browser whole, which is what the dashboard overview reads.",
+   "columns": [
+    {
+     "name": "month_start_date",
+     "type": "DATE",
+     "range": [
+      "2024-09-01",
+      "2026-09-01"
+     ]
+    },
+    {
+     "name": "year_month",
+     "type": "VARCHAR",
+     "values": [
+      "2024-09",
+      "2024-10",
+      "2024-11",
+      "2024-12",
+      "2025-01",
+      "2025-02",
+      "2025-03",
+      "2025-04",
+      "2025-05",
+      "2025-06",
+      "2025-07",
+      "2025-08",
+      "2025-09",
+      "2025-10",
+      "2025-11",
+      "2025-12",
+      "2026-01",
+      "2026-02",
+      "2026-03",
+      "2026-04",
+      "2026-05",
+      "2026-06",
+      "2026-07",
+      "2026-08",
+      "2026-09"
+     ]
+    },
+    {
+     "name": "lane_type",
+     "type": "VARCHAR",
+     "values": [
+      "Distribution",
+      "Line-haul"
+     ]
+    },
+    {
+     "name": "vehicle_class",
+     "type": "VARCHAR",
+     "values": [
+      "LDV 1.5t",
+      "Rigid 14t",
+      "Rigid 8t",
+      "Superlink 34t",
+      "Tri-axle 24t"
+     ]
+    },
+    {
+     "name": "origin_depot_name",
+     "type": "VARCHAR",
+     "values": [
+      "Kestrel Cape Hub",
+      "Kestrel Gauteng Hub",
+      "Kestrel KZN Hub"
+     ]
+    },
+    {
+     "name": "trips",
+     "type": "BIGINT"
+    },
+    {
+     "name": "empty_trips",
+     "type": "BIGINT"
+    },
+    {
+     "name": "distance_km",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "empty_distance_km",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "empty_km_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "revenue_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "fuel_cost_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "total_cost_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "contribution_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "cost_per_km_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "revenue_per_km_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "avg_weight_utilisation_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "avg_volume_utilisation_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "is_trailing_twelve_months",
+     "type": "BOOLEAN",
+     "description": "The month falls in the twelve months the headline counts. The empty kilometre share on the map reads only these months, so it describes the same kilometres printed beside it."
+    }
+   ]
+  },
+  {
+   "name": "dim_lane",
+   "rows": 29,
+   "description": "One row per lane, carrying the coordinates of both ends so the dashboard can draw the network as a map rather than a table.",
+   "columns": [
+    {
+     "name": "lane_id",
+     "type": "VARCHAR",
+     "values": [
+      "LN-101",
+      "LN-102",
+      "LN-103",
+      "LN-104",
+      "LN-105",
+      "LN-106",
+      "LN-107",
+      "LN-108",
+      "LN-109",
+      "LN-110",
+      "LN-111",
+      "LN-112",
+      "LN-113",
+      "LN-114",
+      "LN-115",
+      "LN-116",
+      "LN-117",
+      "LN-118",
+      "LN-119",
+      "LN-120",
+      "LN-121",
+      "LN-122",
+      "LN-123",
+      "LN-124",
+      "LN-125",
+      "LN-126",
+      "LN-127",
+      "LN-128",
+      "LN-129"
+     ]
+    },
+    {
+     "name": "lane_name",
+     "type": "VARCHAR",
+     "values": [
+      "Cape Town metro",
+      "Cape Town to Bloemfontein",
+      "Cape Town to George",
+      "Cape Town to Gqeberha",
+      "Cape Town to Johannesburg",
+      "Cape Town to Paarl",
+      "Cape Town to Upington",
+      "Cape Town to Worcester",
+      "Durban metro",
+      "Durban to Bloemfontein",
+      "Durban to Cape Town",
+      "Durban to Gqeberha",
+      "Durban to Johannesburg",
+      "Durban to Pietermaritzburg",
+      "Durban to Richards Bay",
+      "Johannesburg metro",
+      "Johannesburg to Bloemfontein",
+      "Johannesburg to Cape Town",
+      "Johannesburg to Durban",
+      "Johannesburg to East London",
+      "Johannesburg to Gqeberha",
+      "Johannesburg to Kimberley",
+      "Johannesburg to Klerksdorp",
+      "Johannesburg to Mbombela",
+      "Johannesburg to Newcastle",
+      "Johannesburg to Polokwane",
+      "Johannesburg to Rustenburg",
+      "Johannesburg to Welkom",
+      "Pretoria metro"
+     ]
+    },
+    {
+     "name": "lane_type",
+     "type": "VARCHAR",
+     "values": [
+      "Distribution",
+      "Line-haul"
+     ]
+    },
+    {
+     "name": "origin_depot_code",
+     "type": "VARCHAR",
+     "values": [
+      "KES-CPT",
+      "KES-DBN",
+      "KES-JHB"
+     ]
+    },
+    {
+     "name": "origin_depot_name",
+     "type": "VARCHAR",
+     "values": [
+      "Kestrel Cape Hub",
+      "Kestrel Gauteng Hub",
+      "Kestrel KZN Hub"
+     ]
+    },
+    {
+     "name": "origin_city",
+     "type": "VARCHAR",
+     "values": [
+      "Cape Town",
+      "Durban",
+      "Johannesburg"
+     ]
+    },
+    {
+     "name": "origin_lat",
+     "type": "DOUBLE",
+     "description": "Latitude of the dispatching hub."
+    },
+    {
+     "name": "origin_lon",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "destination_city",
+     "type": "VARCHAR",
+     "values": [
+      "Bloemfontein",
+      "Cape Town",
+      "Durban",
+      "East London",
+      "George",
+      "Gqeberha",
+      "Johannesburg",
+      "Kimberley",
+      "Klerksdorp",
+      "Mbombela",
+      "Newcastle",
+      "Paarl",
+      "Pietermaritzburg",
+      "Polokwane",
+      "Richards Bay",
+      "Rustenburg",
+      "Upington",
+      "Welkom",
+      "Worcester"
+     ]
+    },
+    {
+     "name": "destination_lat",
+     "type": "DOUBLE",
+     "description": "Latitude of the destination city."
+    },
+    {
+     "name": "destination_lon",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "distance_km",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "toll_cost_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "planned_hours",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "assumed_backhaul_pct",
+     "type": "DOUBLE",
+     "description": "What the rate card assumed the return leg would sell. Identical on every lane."
+    },
+    {
+     "name": "is_linehaul",
+     "type": "BOOLEAN"
+    }
+   ]
+  },
+  {
+   "name": "dim_vehicle",
+   "rows": 124,
+   "description": "One row per vehicle, with its hub and whether it is a line-haul unit.",
+   "columns": [
+    {
+     "name": "vehicle_id",
+     "type": "VARCHAR"
+    },
+    {
+     "name": "registration",
+     "type": "VARCHAR"
+    },
+    {
+     "name": "registration_raw",
+     "type": "VARCHAR"
+    },
+    {
+     "name": "vehicle_class",
+     "type": "VARCHAR",
+     "values": [
+      "LDV 1.5t",
+      "Rigid 14t",
+      "Rigid 8t",
+      "Superlink 34t",
+      "Tri-axle 24t"
+     ]
+    },
+    {
+     "name": "capacity_kg",
+     "type": "INTEGER"
+    },
+    {
+     "name": "capacity_m3",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "depot_code",
+     "type": "VARCHAR",
+     "values": [
+      "KES-CPT",
+      "KES-DBN",
+      "KES-JHB"
+     ]
+    },
+    {
+     "name": "depot_name",
+     "type": "VARCHAR",
+     "values": [
+      "Kestrel Cape Hub",
+      "Kestrel Gauteng Hub",
+      "Kestrel KZN Hub"
+     ]
+    },
+    {
+     "name": "depot_city",
+     "type": "VARCHAR",
+     "values": [
+      "Cape Town",
+      "Durban",
+      "Johannesburg"
+     ]
+    },
+    {
+     "name": "acquired_date",
+     "type": "DATE",
+     "range": [
+      "2018-02-24",
+      "2024-04-17"
+     ]
+    },
+    {
+     "name": "status",
+     "type": "VARCHAR",
+     "values": [
+      "Active"
+     ]
+    },
+    {
+     "name": "is_heavy",
+     "type": "BOOLEAN",
+     "description": "Superlink or Tri-axle. These carry the kilometres, the fuel bill, and most of the findings."
+    }
+   ]
+  },
+  {
+   "name": "dim_customer",
+   "rows": 242,
+   "description": "One row per consignee.",
+   "columns": [
+    {
+     "name": "customer_id",
+     "type": "VARCHAR"
+    },
+    {
+     "name": "customer_name",
+     "type": "VARCHAR"
+    },
+    {
+     "name": "customer_group",
+     "type": "VARCHAR"
+    },
+    {
+     "name": "sector",
+     "type": "VARCHAR",
+     "values": [
+      "Agriculture",
+      "Automotive",
+      "Building materials",
+      "FMCG",
+      "Industrial",
+      "Pharmaceutical",
+      "Retail"
+     ]
+    },
+    {
+     "name": "contract_type",
+     "type": "VARCHAR",
+     "values": [
+      "Contract",
+      "Dedicated",
+      "Spot"
+     ]
+    },
+    {
+     "name": "home_depot_code",
+     "type": "VARCHAR",
+     "values": [
+      "KES-CPT",
+      "KES-DBN",
+      "KES-JHB"
+     ]
+    },
+    {
+     "name": "home_depot_name",
+     "type": "VARCHAR",
+     "values": [
+      "Kestrel Cape Hub",
+      "Kestrel Gauteng Hub",
+      "Kestrel KZN Hub"
+     ]
+    },
+    {
+     "name": "sla_hours",
+     "type": "INTEGER"
+    },
+    {
+     "name": "billing_terms_days",
+     "type": "INTEGER"
+    },
+    {
+     "name": "is_anchor_account",
+     "type": "BOOLEAN",
+     "description": "The one account whose contract carries a service penalty clause, worth 2% of monthly spend for every percentage point of on-time performance below 90%."
+    }
+   ]
+  }
+ ]
+}

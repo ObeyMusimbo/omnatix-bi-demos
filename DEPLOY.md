@@ -98,6 +98,27 @@ locally:
 npx --yes http-server dist -p 4321 -c-1 --cors
 ```
 
+## Ask the data: switching on Qwen
+
+The question box on every demo calls `functions/api/chat.js`, which Cloudflare Pages deploys from
+the `functions/` folder with every push. It needs one secret:
+
+1. Create an OpenRouter account at https://openrouter.ai and a key at
+   https://openrouter.ai/settings/keys.
+2. In Cloudflare: **Workers & Pages** → `omnatix-bi-demos` → **Settings** → **Variables and
+   Secrets** → **Add**, type **Secret**, name `OPENROUTER_API_KEY`, value the key. Production.
+3. Redeploy, or push any commit. A secret reaches the next deployment, not the current one.
+
+Optional variable `QWEN_MODELS`: the models to try, comma separated, in order. The default is
+`qwen/qwen3.8-27b:free,qwen/qwen3.7-flash`: the free model first, then a very cheap paid one when
+the free one is busy or over its daily limit. Loading a few dollars of credit on OpenRouter raises
+the free model's daily limit and lets the fallback answer. Without the secret, the box says it is
+not switched on yet and nothing else changes.
+
+Questions, and the rows of the queries they run, are sent to OpenRouter. The demo data is
+synthetic. For a client's real data, choose a provider and model whose data terms fit the client,
+or run Qwen inside the client's own environment.
+
 ## AI insights: which model writes them
 
 The nightly workflow runs `scripts/ai_insights.py` after the refresh. With nothing configured it

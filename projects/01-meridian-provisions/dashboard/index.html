@@ -68,6 +68,9 @@
         <div class="ox-skel ox-skel-chart"></div>
       </div>
     </main>
+
+    <!-- Ask the data: questions answered by Qwen from SQL that runs on this page's tables. -->
+    <section class="ask-section" id="ask" aria-label="Ask the data"></section>
   </article>
 
 </div>
@@ -81,8 +84,10 @@
   <p>
     Built by Omnatix. Source files land as CSV, are modelled through bronze, silver and gold
     layers in dbt on DuckDB, tested on every build, and exported to Parquet. This page loads
-    those files directly and runs SQL against them in your browser using DuckDB-WASM. There
-    is no backend, no database server, and no data leaves your machine.
+    those files directly and runs SQL against them in your browser using DuckDB-WASM. The
+    report itself has no backend and no database server. Ask the data sends your question, and
+    the result of the query it runs in your browser, to Qwen through a small Cloudflare
+    function; nothing else leaves your machine.
   </p>
   <p>
     The analyst's notes are written by an AI model from the same gold tables this page reads,

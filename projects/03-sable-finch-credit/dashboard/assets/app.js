@@ -17,6 +17,7 @@ import {
   renderNav, onFilterChange, readParam, writeParam, scope, keepScroll, fmtAny,
   wireTheme, views, insights, attachInsights, aiCredit,
 } from './shell.js';
+import { mountAsk } from './ask.js';
 
 // The AI recommendations and draft resolutions, loaded once beside meta.json, and the pager.
 let INS = null;
@@ -89,7 +90,8 @@ const SECTIONS = [
   ['debit', '6', 'Debit orders'],
   ['collections', '7', 'Collections'],
   ['close', '8', 'What it adds up to'],
-  ['signoff', '9', 'Resolutions'],
+  ['ask', '9', 'Questions'],
+  ['signoff', '10', 'Resolutions'],
 ];
 const pageOf = (id) => SECTIONS.findIndex(([x]) => x === id) + 1;
 const ALL_BRANCHES = 'All branches';
@@ -837,6 +839,14 @@ try {
     if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); V.step(-1); }
   });
   wireTheme(el('theme-toggle'), { key: 'ox-theme-sable', onChange: () => rerender() });
+  // Questions from the committee, answered from the book before the resolutions are put.
+  mountAsk(el('ask'), {
+    demo: 'sable-finch',
+    title: 'Questions to the pack',
+    intro: 'Put a question to the book: a branch, a cohort, a band, a month. Each answer is minuted with the query that produced it, so the committee can check the row.',
+    placeholder: 'e.g. What is the bad rate at month six for loans written in 2025?',
+    filter: () => branch.code,
+  });
 
   onFilterChange(nav, (code) => {
     setBranch(code, f.options);

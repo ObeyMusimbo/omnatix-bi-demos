@@ -86,6 +86,13 @@ jobs:
           done
           echo "FAILED=$failed" >> "$GITHUB_ENV"
 
+      # What the Ask box is grounded in: every table the page loads, its columns, their
+      # definitions and their exact category values. Rebuilt from the fresh Parquet so the
+      # model is never told about a column that has changed.
+      - name: Write the Ask the data context
+        if: always()
+        run: .venv/bin/python scripts/chat_context.py --project "${{ inputs.project || 'all' }}"
+
       # The analyst's notes, recommendations and draft resolutions beside every section, written
       # from the freshly exported gold tables. The first key found wins: Claude when an
       # ANTHROPIC_API_KEY secret exists, then Gemini, Groq or OpenRouter if one of their free

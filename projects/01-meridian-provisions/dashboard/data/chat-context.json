@@ -1,0 +1,1841 @@
+{
+ "version": 1,
+ "demo": "meridian",
+ "client": "Meridian Provisions Co.",
+ "business": "a Gauteng based FMCG distributor selling to Modern Trade, General Trade, Wholesale and HoReCa customers from three distribution centres",
+ "reader": "the CFO and the Commercial Director",
+ "rules": "Twelve month figures and two year figures must never be mixed; say which window a figure covers. Dead stock is working capital, not profit.",
+ "sections": {
+  "gap": "The gap: revenue grew, gross profit did not keep up",
+  "water": "The range sold at a loss (Cascade Springs bottled water, after freight and rebates)",
+  "promo": "The promotion that loses money (Brightwash Powder 2kg, Buy 2 Get 1 Free)",
+  "discount": "The discount nobody reset (Summit Cash & Carry)",
+  "stock": "Sales that never happened (weekend stock-outs at the Gauteng DC)",
+  "dead": "Stock nobody is buying (discontinued Halo Shine aerosols)"
+ },
+ "data_from": "2024-09-02",
+ "data_through": "2026-08-31",
+ "summary": {
+  "hero": {
+   "kicker": [
+    "Revenue grew ",
+    {
+     "v": 11.87366203600666,
+     "f": "signedPct"
+    },
+    ". Gross profit grew ",
+    {
+     "v": 4.061995905838223,
+     "f": "signedPct"
+    },
+    "."
+   ],
+   "v": 12615619.396512449,
+   "f": "Rc",
+   "label": "of gross profit did not arrive, despite the revenue that should have carried it"
+  },
+  "findings": [
+   {
+    "n": "01",
+    "id": "water",
+    "title": "The range sold at a loss",
+    "v": -3849402.89007759,
+    "f": "Rc",
+    "note": "contribution on bottled water, after freight and rebates"
+   },
+   {
+    "n": "02",
+    "id": "promo",
+    "title": "The promotion that loses money",
+    "v": -18.16787278315485,
+    "f": "R",
+    "note": "gross profit per case on deal, against R44 off it"
+   },
+   {
+    "n": "03",
+    "id": "discount",
+    "title": "The discount nobody reset",
+    "v": 3894718.031369743,
+    "f": "Rc",
+    "note": "revenue forgone in twelve months on one account"
+   },
+   {
+    "n": "04",
+    "id": "stock",
+    "title": "Sales that never happened",
+    "v": 1074945.3928326657,
+    "f": "Rc",
+    "note": "revenue lost to weekend stock-outs"
+   },
+   {
+    "n": "05",
+    "id": "dead",
+    "title": "Stock nobody is buying",
+    "v": 401257.94,
+    "f": "Rc",
+    "note": "of discontinued stock sitting at cost"
+   }
+  ]
+ },
+ "filter": {
+  "param": "dc",
+  "label": "Warehouse",
+  "all": "All warehouses",
+  "options": [
+   {
+    "value": "WH-01",
+    "label": "Gauteng DC"
+   },
+   {
+    "value": "WH-02",
+    "label": "Coastal DC"
+   },
+   {
+    "value": "WH-03",
+    "label": "Cape DC"
+   }
+  ],
+  "column": "warehouse_code"
+ },
+ "examples": [
+  "Which brands lose money after freight and rebates?",
+  "How did Summit Cash & Carry's realised discount change by month?",
+  "Which products lost the most revenue to weekend stock-outs?",
+  "What was gross margin in each of the last six months?"
+ ],
+ "tables": [
+  {
+   "name": "mart_gp_bridge",
+   "rows": 6,
+   "description": "The closing visual. Why gross profit grew 4.1% while revenue grew 11.9%, as a bridge from what gross profit would have been had margin held at last year's rate down to what was actually earned. The difference is the gap, and each step is a driver's share of it. Every step covers the same trailing twelve months as the gap, taken from period_end. The promotion and discount steps once summed the whole two year window inside a one year gap, which overstated both and left the residual too small. The residual row, other discount drift and mix, absorbs overlap between the named drivers and…",
+   "columns": [
+    {
+     "name": "step_order",
+     "type": "INTEGER",
+     "description": "Position of the step in the bridge, anchor first and actual gross profit last."
+    },
+    {
+     "name": "driver",
+     "type": "VARCHAR",
+     "values": [
+      "Actual gross profit",
+      "Bulk water taking share at a low margin",
+      "Discount creep on the largest account",
+      "Gross profit at last year's margin",
+      "Other discount drift and mix",
+      "Promotion sold below cost"
+     ]
+    },
+    {
+     "name": "driver_short",
+     "type": "VARCHAR",
+     "values": [
+      "Actual gross profit",
+      "At last year's margin",
+      "Discount creep",
+      "Low-margin mix shift",
+      "Other drift and mix",
+      "Promotions below cost"
+     ]
+    },
+    {
+     "name": "step_type",
+     "type": "VARCHAR",
+     "description": "anchor is gross profit at last year's margin, decrease is a driver, total is actual gross profit.",
+     "values": [
+      "anchor",
+      "decrease",
+      "total"
+     ]
+    },
+    {
+     "name": "effect_zar",
+     "type": "DOUBLE",
+     "description": "In rand. For the anchor and the total, a level of gross profit. For a driver, the gross profit it cost over the trailing twelve months, negative because it pulls the bridge down."
+    },
+    {
+     "name": "finding_ref",
+     "type": "VARCHAR",
+     "description": "The dashboard section that examines this driver. Empty on the residual, which has no section of its own.",
+     "values": [
+      "1",
+      "2",
+      "3"
+     ]
+    },
+    {
+     "name": "running_total_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "pct_of_gap",
+     "type": "DOUBLE",
+     "description": "The driver's share of the gap, in percent. Empty on the anchor and the total, which are levels rather than movements. The shares of the four drivers sum to 100."
+    },
+    {
+     "name": "ttm_revenue_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "ttm_gross_profit_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "prior_revenue_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "prior_gross_profit_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "ttm_margin_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "prior_margin_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "total_gap_zar",
+     "type": "DOUBLE",
+     "description": "Gross profit at last year's margin less actual gross profit, the headline the page opens on."
+    }
+   ]
+  },
+  {
+   "name": "mart_margin_waterfall",
+   "rows": 238,
+   "description": "FINDING 1. Feeds the margin waterfall: a chart that walks a brand from revenue down to what it was really worth, one bar at a time - revenue, less cost of goods, to gross profit, then the three costs Meridian records at order level, ending at contribution. One row per period, brand and step of the waterfall, so each row is one bar. Two rolling twelve month periods are provided so the current year can be shown against the one before it. Every row also carries the brand's own totals and margins, so a tooltip or a summary tile needs no second query. The Cascade Springs bulk water range is what…",
+   "columns": [
+    {
+     "name": "period_label",
+     "type": "VARCHAR",
+     "description": "Which twelve month window the row covers - \"Trailing twelve months\" or \"Prior twelve months\". Both end on the last day of data.",
+     "values": [
+      "Prior twelve months",
+      "Trailing twelve months"
+     ]
+    },
+    {
+     "name": "period_order",
+     "type": "INTEGER",
+     "description": "Sort key for the period, 1 for the trailing year and 2 for the year before it."
+    },
+    {
+     "name": "period_start",
+     "type": "DATE",
+     "description": "First day included in the period.",
+     "range": [
+      "2024-09-01",
+      "2025-09-01"
+     ]
+    },
+    {
+     "name": "period_end",
+     "type": "DATE",
+     "description": "Last day included in the period.",
+     "range": [
+      "2025-08-31",
+      "2026-08-31"
+     ]
+    },
+    {
+     "name": "brand",
+     "type": "VARCHAR",
+     "description": "The brand the waterfall is drawn for. Brand is the level at which a range decision is actually taken.",
+     "values": [
+      "Brightwash",
+      "Cascade Springs",
+      "Citrona",
+      "Crunchpop",
+      "Dawnbrew",
+      "Halo Shine",
+      "Kopje Cola",
+      "Little Fern",
+      "Meadowvale",
+      "Minta",
+      "Pantri",
+      "Softleaf",
+      "Sunveld",
+      "Sweetwell",
+      "Unknown brand",
+      "Verdelle",
+      "Zesta"
+     ]
+    },
+    {
+     "name": "category",
+     "type": "VARCHAR",
+     "description": "The merchandising category the brand sits in.",
+     "values": [
+      "Baby & Infant",
+      "Beverages",
+      "Dairy & Chilled",
+      "Dry Goods",
+      "Household Care",
+      "Paper & Hygiene",
+      "Personal Care",
+      "Snacks & Confectionery",
+      "Unknown category"
+     ]
+    },
+    {
+     "name": "is_bulk_water",
+     "type": "BOOLEAN",
+     "description": "True for the Cascade Springs range. Filter on this to go straight to finding 1."
+    },
+    {
+     "name": "step_order",
+     "type": "INTEGER",
+     "description": "Position of the bar in the waterfall, 1 through 7. Sort on this to draw the chart in the right order."
+    },
+    {
+     "name": "step_label",
+     "type": "VARCHAR",
+     "description": "The name of the bar - Revenue, Cost of goods sold, Gross profit, Allocated freight, Allocated handling, Allocated customer rebate, Net contribution.",
+     "values": [
+      "Allocated customer rebate",
+      "Allocated freight",
+      "Allocated handling",
+      "Cost of goods sold",
+      "Gross profit",
+      "Net contribution",
+      "Revenue"
+     ]
+    },
+    {
+     "name": "step_type",
+     "type": "VARCHAR",
+     "description": "Whether the bar is a running subtotal that sits on the axis (\"total\") or a movement from the bar before it (\"delta\"). Waterfall charts draw the two differently.",
+     "values": [
+      "delta",
+      "total"
+     ]
+    },
+    {
+     "name": "step_value_zar",
+     "type": "DOUBLE",
+     "description": "The value of this bar in rand, already signed the way it should be drawn - costs are negative so they step the chart downward."
+    },
+    {
+     "name": "running_total_zar",
+     "type": "DOUBLE",
+     "description": "Where the waterfall stands after this step, in rand. This is the height the bar reaches. On the last step it equals net contribution."
+    },
+    {
+     "name": "step_pct_of_revenue",
+     "type": "DOUBLE",
+     "description": "This step as a percentage of the brand's revenue for the period. Makes the size of the freight and rebate steps comparable across brands of very different sizes."
+    },
+    {
+     "name": "units",
+     "type": "DOUBLE",
+     "description": "Packs sold of the brand in the period, net of returns."
+    },
+    {
+     "name": "sales_line_count",
+     "type": "BIGINT",
+     "description": "Number of order lines the brand appeared on in the period. A sense of how widely the range is bought, rather than how much of it."
+    },
+    {
+     "name": "revenue_zar",
+     "type": "DOUBLE",
+     "description": "The brand's invoiced revenue for the period after discount, in rand."
+    },
+    {
+     "name": "cogs_zar",
+     "type": "DOUBLE",
+     "description": "What the goods sold cost Meridian to buy, in rand."
+    },
+    {
+     "name": "gross_profit_zar",
+     "type": "DOUBLE",
+     "description": "Revenue less cost of goods, in rand. The number the business currently manages by."
+    },
+    {
+     "name": "allocated_freight_zar",
+     "type": "DOUBLE",
+     "description": "The brand's share of delivery costs, shared out by the weight it put on trucks. In rand."
+    },
+    {
+     "name": "allocated_handling_zar",
+     "type": "DOUBLE",
+     "description": "The brand's share of warehouse picking and packing costs, shared out by the number of order lines. In rand."
+    },
+    {
+     "name": "allocated_rebate_zar",
+     "type": "DOUBLE",
+     "description": "The brand's share of volume rebates paid back to customers, shared out by revenue. In rand."
+    },
+    {
+     "name": "contribution_zar",
+     "type": "DOUBLE",
+     "description": "Gross profit less freight, handling and rebate - what the brand was actually worth for the period, in rand. Negative means the range destroyed value."
+    },
+    {
+     "name": "weight_kg",
+     "type": "DOUBLE",
+     "description": "Total kilograms of the brand shipped in the period. The reason the freight step is the size it is."
+    },
+    {
+     "name": "brand_gross_margin_pct",
+     "type": "DOUBLE",
+     "description": "Gross profit as a percentage of revenue. The margin the business quotes today."
+    },
+    {
+     "name": "brand_contribution_margin_pct",
+     "type": "DOUBLE",
+     "description": "Contribution as a percentage of revenue. The margin the business should be quoting. The gap between this and gross margin is the whole finding."
+    },
+    {
+     "name": "revenue_per_kg_zar",
+     "type": "DOUBLE",
+     "description": "Rand of revenue earned per kilogram shipped. A measure of value density - the lower it is, the more of the delivery cost the range swallows relative to what it brings in, and the more likely it is to be unprofitable once freight is honestly charged."
+    },
+    {
+     "name": "is_margin_trap",
+     "type": "BOOLEAN",
+     "description": "True where the brand shows a positive gross profit and a negative contribution for the period. In other words, the range looks profitable in today's reporting and is losing money in reality."
+    }
+   ]
+  },
+  {
+   "name": "mart_promo_performance",
+   "rows": 2558,
+   "description": "FINDING 2. Feeds the promotion chart: units, revenue and profit week by week for every SKU that has ever been promoted, with each week labelled by what was happening to it. One row per SKU, trading week and promotion phase. A week produces one row normally, and two only where a promotion starts or ends part way through it - in which case the two parts are reported separately rather than averaged into a number that describes neither. The mart answers two questions from the same rows. First, the straight comparison: group by promotion phase and look at profit per unit on promotion against…",
+   "columns": [
+    {
+     "name": "sku",
+     "type": "VARCHAR",
+     "description": "The promoted product.",
+     "values": [
+      "MP-1006",
+      "MP-1009",
+      "MP-1012",
+      "MP-1014",
+      "MP-1016",
+      "MP-1017",
+      "MP-1030",
+      "MP-1043",
+      "MP-1058",
+      "MP-1059",
+      "MP-1073",
+      "MP-1076",
+      "MP-1080",
+      "MP-1082",
+      "MP-1088",
+      "MP-1090",
+      "MP-1091",
+      "MP-1092",
+      "MP-1094",
+      "MP-1096",
+      "MP-1101",
+      "MP-1108",
+      "MP-1110",
+      "MP-1118"
+     ]
+    },
+    {
+     "name": "product_name",
+     "type": "VARCHAR",
+     "description": "Full trade description of the product.",
+     "values": [
+      "Brightwash Powder 2kg x6",
+      "Brightwash Powder 5kg x4",
+      "Brightwash Spring Fresh Powder 2kg x6",
+      "Citrona Lemon Liquid 2L x6",
+      "Citrona Lemon Liquid 750ml x12",
+      "Crunchpop Salt & Vinegar Chips 125g x24",
+      "Dawnbrew Instant Coffee 200g x12",
+      "Dawnbrew Strong Tea 100s x12",
+      "Kopje Cola Lemon 24x330ml",
+      "Kopje Cola Original 24x330ml",
+      "Meadowvale Low Fat Milk 6x1L",
+      "Meadowvale Strawberry Low Fat Milk 6x1L",
+      "Minta Whitening Toothbrush 12pk x12",
+      "Minta Whitening Toothpaste 100ml x24",
+      "Softleaf Facial Tissue 150s x24",
+      "Softleaf Serviettes 100s x20",
+      "Sunveld Value Maize Meal 5kg x2",
+      "Sweetwell Caramel Biscuits 200g x24",
+      "Verdelle Aloe Bath Soap 6x175g x8",
+      "Verdelle Aloe Body Wash 400ml x12",
+      "Verdelle Coconut Body Wash 400ml x12",
+      "Verdelle Handwash 500ml x12",
+      "Verdelle Lavender Bath Soap 6x175g x8",
+      "Zesta Mango 12x1L"
+     ]
+    },
+    {
+     "name": "brand",
+     "type": "VARCHAR",
+     "description": "Brand of the product.",
+     "values": [
+      "Brightwash",
+      "Citrona",
+      "Crunchpop",
+      "Dawnbrew",
+      "Kopje Cola",
+      "Meadowvale",
+      "Minta",
+      "Softleaf",
+      "Sunveld",
+      "Sweetwell",
+      "Verdelle",
+      "Zesta"
+     ]
+    },
+    {
+     "name": "category",
+     "type": "VARCHAR",
+     "description": "Merchandising category of the product.",
+     "values": [
+      "Beverages",
+      "Dairy & Chilled",
+      "Dry Goods",
+      "Household Care",
+      "Paper & Hygiene",
+      "Personal Care",
+      "Snacks & Confectionery"
+     ]
+    },
+    {
+     "name": "subcategory",
+     "type": "VARCHAR",
+     "description": "Merchandising segment of the product.",
+     "values": [
+      "Bath & Body",
+      "Carbonates",
+      "Confectionery",
+      "Dishwashing",
+      "Hot Beverages",
+      "Juice",
+      "Laundry",
+      "Milk & Yoghurt",
+      "Oral Care",
+      "Paper Products",
+      "Savoury Snacks",
+      "Staples"
+     ]
+    },
+    {
+     "name": "week_start_date",
+     "type": "DATE",
+     "description": "The Monday the trading week begins on. Meridian does not trade on Sundays, so a Monday-start week contains exactly the trading days of a promotion window and the shaded promotion blocks line up cleanly with the weeks on the chart.",
+     "range": [
+      "2024-09-02",
+      "2026-08-31"
+     ]
+    },
+    {
+     "name": "year_month",
+     "type": "VARCHAR",
+     "description": "The month the week starts in, as \"2026-08\". For rolling a weekly chart up to a monthly one.",
+     "values": [
+      "2024-09",
+      "2024-10",
+      "2024-11",
+      "2024-12",
+      "2025-01",
+      "2025-02",
+      "2025-03",
+      "2025-04",
+      "2025-05",
+      "2025-06",
+      "2025-07",
+      "2025-08",
+      "2025-09",
+      "2025-10",
+      "2025-11",
+      "2025-12",
+      "2026-01",
+      "2026-02",
+      "2026-03",
+      "2026-04",
+      "2026-05",
+      "2026-06",
+      "2026-07",
+      "2026-08"
+     ]
+    },
+    {
+     "name": "promo_phase",
+     "type": "VARCHAR",
+     "description": "What was happening to the SKU that week. \"On promotion\" means a promotion was live. \"Post-promotion (4 weeks)\" covers the four weeks straight after a window closed, which is where pantry loading shows up. \"Baseline\" is ordinary trading, neither on promotion nor in the shadow of one. Where a live promotion overlaps…",
+     "values": [
+      "Baseline",
+      "On promotion",
+      "Post-promotion (4 weeks)"
+     ]
+    },
+    {
+     "name": "is_on_promo_week",
+     "type": "BOOLEAN",
+     "description": "True where the phase is \"On promotion\". A convenience flag for shading the chart."
+    },
+    {
+     "name": "promo_id",
+     "type": "VARCHAR",
+     "description": "Identifier of the promotion that put the week into its phase, whether the promotion was running or had just ended.",
+     "values": [
+      "PROMO-301",
+      "PROMO-302",
+      "PROMO-303",
+      "PROMO-304",
+      "PROMO-305",
+      "PROMO-306",
+      "PROMO-307",
+      "PROMO-308",
+      "PROMO-309",
+      "PROMO-310",
+      "PROMO-311",
+      "PROMO-312",
+      "PROMO-313",
+      "PROMO-314",
+      "PROMO-315",
+      "PROMO-316",
+      "PROMO-317",
+      "PROMO-318",
+      "PROMO-319",
+      "PROMO-320",
+      "PROMO-321",
+      "PROMO-322",
+      "PROMO-323",
+      "PROMO-324",
+      "PROMO-325",
+      "PROMO-326",
+      "PROMO-327",
+      "PROMO-328",
+      "PROMO-329",
+      "PROMO-330",
+      "PROMO-331",
+      "PROMO-332",
+      "PROMO-333",
+      "PROMO-334"
+     ]
+    },
+    {
+     "name": "promo_name",
+     "type": "VARCHAR",
+     "description": "Name of that promotion, for example \"Brightwash Buy 2 Get 1 Free - Q3\".",
+     "values": [
+      "Brightwash Buy 2 Get 1 Free - Q1",
+      "Brightwash Buy 2 Get 1 Free - Q2",
+      "Brightwash Buy 2 Get 1 Free - Q3",
+      "Brightwash Buy 2 Get 1 Free - Q4",
+      "Brightwash price promotion",
+      "Citrona price promotion",
+      "Crunchpop price promotion",
+      "Dawnbrew price promotion",
+      "Kopje Cola price promotion",
+      "Meadowvale price promotion",
+      "Minta price promotion",
+      "Softleaf price promotion",
+      "Sunveld price promotion",
+      "Sweetwell price promotion",
+      "Verdelle price promotion",
+      "Zesta price promotion"
+     ]
+    },
+    {
+     "name": "mechanic",
+     "type": "VARCHAR",
+     "description": "How the promotion works - a percentage off, a multibuy, or a buy-two-get-one-free. The mechanic determines the effective discount, and a buy-two-get-one-free is a third off however it is described internally.",
+     "values": [
+      "10% off",
+      "15% off",
+      "Buy 2 Get 1 Free",
+      "Multibuy 3 for 2"
+     ]
+    },
+    {
+     "name": "funding_source",
+     "type": "VARCHAR",
+     "description": "Who pays for the promotion, either \"Supplier co-funded\" or \"Meridian funded\". Note that co-funded does not mean free.",
+     "values": [
+      "Meridian funded",
+      "Supplier co-funded"
+     ]
+    },
+    {
+     "name": "planned_discount_pct",
+     "type": "DOUBLE",
+     "description": "The discount the promotion was designed to give, on a 0 to 100 scale. Worth holding next to realised discount, which is what customers actually received."
+    },
+    {
+     "name": "sales_line_count",
+     "type": "BIGINT",
+     "description": "Number of order lines for the SKU in the week. A read on how many customers bought, as opposed to how much they bought."
+    },
+    {
+     "name": "units",
+     "type": "DOUBLE",
+     "description": "Packs of the SKU sold in the week, net of returns. The series that makes the promotion spike and the hangover trough visible."
+    },
+    {
+     "name": "gross_value_zar",
+     "type": "DOUBLE",
+     "description": "What the week's volume would have billed at full price before discount, in rand."
+    },
+    {
+     "name": "discount_value_zar",
+     "type": "DOUBLE",
+     "description": "The rand value of discount given in the week - gross value less revenue."
+    },
+    {
+     "name": "revenue_zar",
+     "type": "DOUBLE",
+     "description": "Invoiced revenue for the SKU in the week after discount, in rand."
+    },
+    {
+     "name": "cogs_zar",
+     "type": "DOUBLE",
+     "description": "Cost of the goods sold in the week, in rand."
+    },
+    {
+     "name": "gross_profit_zar",
+     "type": "DOUBLE",
+     "description": "Revenue less cost of goods for the week, in rand. On Brightwash promotion weeks this is negative, which is the finding in one number."
+    },
+    {
+     "name": "contribution_zar",
+     "type": "DOUBLE",
+     "description": "Gross profit for the week less the week's share of freight, handling and rebate, in rand. The full picture of what the week was worth."
+    },
+    {
+     "name": "gross_margin_pct",
+     "type": "DOUBLE",
+     "description": "Gross profit as a percentage of revenue for the week."
+    },
+    {
+     "name": "realised_discount_pct",
+     "type": "DOUBLE",
+     "description": "The discount customers actually received in the week, as a percentage - discount value over gross value. This is what was really given away, which is not always what the promotion planned."
+    },
+    {
+     "name": "gp_per_unit_zar",
+     "type": "DOUBLE",
+     "description": "Gross profit divided by packs sold, in rand per pack. The cleanest way to compare a promotion week with a normal week, because it strips out the fact that a promotion week sells far more volume."
+    },
+    {
+     "name": "revenue_per_unit_zar",
+     "type": "DOUBLE",
+     "description": "Revenue divided by packs sold, in rand per pack. The effective price achieved."
+    },
+    {
+     "name": "baseline_units_per_week",
+     "type": "DOUBLE",
+     "description": "What this SKU sells in an average normal week, calculated from its own baseline weeks only. Using the SKU's own history keeps seasonality, channel mix and price out of the comparison."
+    },
+    {
+     "name": "baseline_gp_per_unit_zar",
+     "type": "DOUBLE",
+     "description": "Gross profit per pack in normal trading for this SKU, in rand. The rate promoted volume would have earned had it been sold at ordinary prices."
+    },
+    {
+     "name": "baseline_revenue_per_unit_zar",
+     "type": "DOUBLE",
+     "description": "Revenue per pack in normal trading for this SKU, in rand. The effective everyday price."
+    },
+    {
+     "name": "baseline_gross_margin_pct",
+     "type": "DOUBLE",
+     "description": "Gross margin percentage in normal trading for this SKU. Put this next to the promotion's discount - when the discount exceeds the margin, every promoted pack loses money."
+    },
+    {
+     "name": "volume_index_vs_baseline_pct",
+     "type": "DOUBLE",
+     "description": "The week's volume as a percentage of a normal week. 100 is normal. Promotion weeks run well above it, and the four weeks after a window closes sit well below it - around 45 for Brightwash, meaning less than half of normal trading. This single column is the pantry-loading hangover."
+    },
+    {
+     "name": "gp_forgone_vs_baseline_zar",
+     "type": "DOUBLE",
+     "description": "Profit given up on the week's volume, in rand - the week's packs valued at the difference between normal profit per pack and what they actually earned. Positive means the week earned less than the same volume would have in normal trading. Summed across a promotion's weeks it is the true cost of running it."
+    },
+    {
+     "name": "units_below_baseline",
+     "type": "DOUBLE",
+     "description": "How many packs short of a normal week the week fell, floored at zero. Most meaningful on post-promotion weeks, where it measures the volume that was pulled forward into the promotion rather than created by it."
+    }
+   ]
+  },
+  {
+   "name": "mart_discount_trend",
+   "rows": 9114,
+   "description": "FINDING 3. Feeds a two-line chart: the discount a customer group is actually getting month by month, against what the rest of its channel is getting. One line climbs steadily and the other is flat. One row per customer group, channel and calendar month. \"Realised\" is the operative word. Nobody ever approved a fifteen and a half percent discount for Summit Cash & Carry, Meridian's largest account. It arrived one concession at a time over two years, was never reviewed and never reset, and it is invisible on any single branch or in any single month. It only appears when the branches are added…",
+   "columns": [
+    {
+     "name": "customer_group",
+     "type": "VARCHAR",
+     "description": "The parent business, with branches rolled together. This is the level at which the pricing relationship actually exists, even though every branch invoices separately."
+    },
+    {
+     "name": "channel",
+     "type": "VARCHAR",
+     "description": "The group's route to market. Discounts are only comparable within a channel, so the comparison lines are built per channel.",
+     "values": [
+      "General Trade",
+      "HoReCa",
+      "Modern Trade",
+      "Wholesale"
+     ]
+    },
+    {
+     "name": "year_month",
+     "type": "VARCHAR",
+     "description": "The month, as \"2026-08\". The x axis of the chart.",
+     "values": [
+      "2024-09",
+      "2024-10",
+      "2024-11",
+      "2024-12",
+      "2025-01",
+      "2025-02",
+      "2025-03",
+      "2025-04",
+      "2025-05",
+      "2025-06",
+      "2025-07",
+      "2025-08",
+      "2025-09",
+      "2025-10",
+      "2025-11",
+      "2025-12",
+      "2026-01",
+      "2026-02",
+      "2026-03",
+      "2026-04",
+      "2026-05",
+      "2026-06",
+      "2026-07",
+      "2026-08"
+     ]
+    },
+    {
+     "name": "month_start_date",
+     "type": "DATE",
+     "description": "First day of the month, for sorting and for date filters.",
+     "range": [
+      "2024-09-01",
+      "2026-08-01"
+     ]
+    },
+    {
+     "name": "trading_branch_count",
+     "type": "BIGINT",
+     "description": "How many of the group's branches actually placed an order that month. Worth watching, because a change in realised discount can come from mix between branches rather than from any price decision."
+    },
+    {
+     "name": "gross_value_zar",
+     "type": "DOUBLE",
+     "description": "What the group's purchases that month would have billed at full price, in rand. The denominator of realised discount."
+    },
+    {
+     "name": "revenue_zar",
+     "type": "DOUBLE",
+     "description": "What the group was actually invoiced that month after discount, in rand."
+    },
+    {
+     "name": "discount_value_zar",
+     "type": "DOUBLE",
+     "description": "The rand value of discount given to the group that month - gross value less revenue. The real cost of the pricing, in money."
+    },
+    {
+     "name": "realised_discount_pct",
+     "type": "DOUBLE",
+     "description": "The discount the group actually received that month, as a percentage of list value. This is the line that climbs from around 8 percent to around 15.5 percent over two years."
+    },
+    {
+     "name": "channel_realised_discount_pct",
+     "type": "DOUBLE",
+     "description": "The same measure for the whole channel that month, including this group. The broad comparison."
+    },
+    {
+     "name": "channel_excl_group_realised_discount_pct",
+     "type": "DOUBLE",
+     "description": "The same measure for the channel with this group taken out. The fairer comparison for a large account, because a big group otherwise drags the average it is being judged against toward its own number. This is the flat line on the chart."
+    },
+    {
+     "name": "discount_gap_vs_channel_pct_pts",
+     "type": "DOUBLE",
+     "description": "How many percentage points more discount the group received than the rest of its channel that month. A positive and widening gap is the signature of discount creep."
+    },
+    {
+     "name": "baseline_month_start_date",
+     "type": "DATE",
+     "description": "The first month the group appears in the data - the month its benchmark discount is taken from.",
+     "range": [
+      "2024-09-01",
+      "2025-01-01"
+     ]
+    },
+    {
+     "name": "baseline_discount_pct",
+     "type": "DOUBLE",
+     "description": "The discount the group was realising when it first appears in the data. Used as the benchmark for what should have held if nobody had let it drift."
+    },
+    {
+     "name": "discount_creep_pct_pts",
+     "type": "DOUBLE",
+     "description": "Percentage points of discount the group has gained since its own starting point. This is the drift itself, isolated from how much the group buys."
+    },
+    {
+     "name": "revenue_forgone_vs_baseline_zar",
+     "type": "DOUBLE",
+     "description": "Money left on the table that month purely because the discount drifted - the extra percentage points applied to the month's list value, in rand. Summed over the period it is what the finding is worth."
+    },
+    {
+     "name": "share_of_channel_revenue_pct",
+     "type": "DOUBLE",
+     "description": "The group's revenue that month as a percentage of the whole channel's. Shows how much leverage the account has, which is usually the reason the discount was conceded in the first place."
+    },
+    {
+     "name": "group_total_revenue_zar",
+     "type": "DOUBLE",
+     "description": "The group's total revenue across the whole period, in rand. Repeated on every row so the largest accounts can be found or filtered without a second query."
+    },
+    {
+     "name": "group_share_of_company_revenue_pct",
+     "type": "DOUBLE",
+     "description": "The group's share of Meridian's total revenue across the whole period, as a percentage. The context that makes a few points of discount drift material."
+    }
+   ]
+  },
+  {
+   "name": "mart_stockout_impact",
+   "rows": 108,
+   "description": "FINDING 4. Puts a number on sales that never happened. One row per SKU per week, for every week in which the Thursday stock count at WH-01 read zero on a line that runs out chronically. Replenishment into WH-01 runs Monday to Wednesday, so the Thursday count is the first honest read on whether the week can be finished. When it reads zero, Friday and Saturday orders for that line cannot be filled. Three Modern Trade hero lines - Meadowvale Full Cream Milk, Sunveld Maize Meal and Softleaf Toilet Tissue - do this in roughly a third of all weeks. None of this appears in a sales report, by…",
+   "columns": [
+    {
+     "name": "sku",
+     "type": "VARCHAR",
+     "description": "The product that ran out.",
+     "values": [
+      "MP-1034",
+      "MP-1042",
+      "MP-1056"
+     ]
+    },
+    {
+     "name": "product_name",
+     "type": "VARCHAR",
+     "description": "Full trade description of the product.",
+     "values": [
+      "Meadowvale Full Cream Milk 6x1L",
+      "Softleaf Toilet Tissue 9pk x6",
+      "Sunveld Maize Meal 10kg"
+     ]
+    },
+    {
+     "name": "brand",
+     "type": "VARCHAR",
+     "description": "Brand of the product.",
+     "values": [
+      "Meadowvale",
+      "Softleaf",
+      "Sunveld"
+     ]
+    },
+    {
+     "name": "category",
+     "type": "VARCHAR",
+     "description": "Merchandising category of the product.",
+     "values": [
+      "Dairy & Chilled",
+      "Dry Goods",
+      "Paper & Hygiene"
+     ]
+    },
+    {
+     "name": "subcategory",
+     "type": "VARCHAR",
+     "description": "Merchandising segment of the product.",
+     "values": [
+      "Milk & Yoghurt",
+      "Paper Products",
+      "Staples"
+     ]
+    },
+    {
+     "name": "warehouse_code",
+     "type": "VARCHAR",
+     "description": "The distribution centre the stock-out was observed at. Always WH-01, the centre whose Monday to Wednesday replenishment cycle causes the pattern.",
+     "values": [
+      "WH-01"
+     ]
+    },
+    {
+     "name": "week_start_date",
+     "type": "DATE",
+     "description": "The Monday of the week that was lost. Each row is one such week.",
+     "range": [
+      "2024-09-09",
+      "2026-08-03"
+     ]
+    },
+    {
+     "name": "year_month",
+     "type": "VARCHAR",
+     "description": "The month the week falls in, as \"2026-08\". For rolling the losses up to a monthly total.",
+     "values": [
+      "2024-09",
+      "2024-10",
+      "2024-11",
+      "2024-12",
+      "2025-02",
+      "2025-03",
+      "2025-04",
+      "2025-05",
+      "2025-06",
+      "2025-07",
+      "2025-08",
+      "2025-10",
+      "2025-11",
+      "2025-12",
+      "2026-02",
+      "2026-03",
+      "2026-04",
+      "2026-05",
+      "2026-06",
+      "2026-07",
+      "2026-08"
+     ]
+    },
+    {
+     "name": "thursday_snapshot_date",
+     "type": "DATE",
+     "description": "The Thursday the stock count read zero.",
+     "range": [
+      "2024-09-12",
+      "2026-08-06"
+     ]
+    },
+    {
+     "name": "thursday_units_on_hand",
+     "type": "INTEGER",
+     "description": "Packs on hand at that count. Zero by definition on every row in this mart - it is carried so the reader can see the evidence rather than take the flag on trust."
+    },
+    {
+     "name": "baseline_fri_sat_units",
+     "type": "DOUBLE",
+     "description": "What this SKU normally ships on a Friday and Saturday together, averaged across the weeks when Thursday stock was not zero. The SKU's own normal weekend, which is the only fair benchmark for what it would have sold."
+    },
+    {
+     "name": "actual_fri_sat_units",
+     "type": "DOUBLE",
+     "description": "What actually shipped on the Friday and Saturday of this week. Usually close to nothing, because there was nothing to ship."
+    },
+    {
+     "name": "lost_units_est",
+     "type": "DOUBLE",
+     "description": "The estimate of packs not supplied - normal weekend demand less what actually shipped, floored at zero so a week that happened to beat its baseline cannot quietly offset a real loss elsewhere. This is an estimate, and it is deliberately conservative."
+    },
+    {
+     "name": "avg_realised_price_zar",
+     "type": "DOUBLE",
+     "description": "What a pack of this SKU actually sells for in Modern Trade, in rand - revenue divided by packs across the whole period. Used rather than list price, because valuing lost sales at list would overstate the loss by the discount that would have been given."
+    },
+    {
+     "name": "avg_gross_profit_per_unit_zar",
+     "type": "DOUBLE",
+     "description": "Gross profit a pack of this SKU actually earns in Modern Trade, in rand."
+    },
+    {
+     "name": "lost_revenue_zar",
+     "type": "DOUBLE",
+     "description": "Revenue forgone in the week - estimated lost packs at the realised price, in rand. Sum this across all rows for the headline number."
+    },
+    {
+     "name": "lost_gross_profit_zar",
+     "type": "DOUBLE",
+     "description": "Gross profit forgone in the week, in rand. The revenue number is what the conversation opens with; this is what the loss was actually worth."
+    },
+    {
+     "name": "thursday_weeks_observed",
+     "type": "BIGINT",
+     "description": "How many Thursday counts exist for this SKU across the whole period. The denominator behind the stock-out rate."
+    },
+    {
+     "name": "stockout_week_count",
+     "type": "DOUBLE",
+     "description": "How many of those Thursdays read zero for this SKU."
+    },
+    {
+     "name": "stockout_week_pct",
+     "type": "DOUBLE",
+     "description": "The share of Thursdays that read zero, as a percentage. Around 35 for the three hero lines, which is roughly one week in three where the weekend cannot be served."
+    }
+   ]
+  },
+  {
+   "name": "mart_dead_stock",
+   "rows": 393,
+   "description": "FINDING 5. What is sitting in the warehouses that nobody is buying any more. One row per SKU per distribution centre, as at the most recent stock count. Live stock is included alongside dead stock on purpose, so a chart can show the dead pile against the total it is part of rather than as a number with no scale - filter on is_dead_stock for the finding itself. The Halo Shine aerosol range was discontinued and has not sold in over six months, yet eight of its SKUs still hold stock in WH-02. This is a working capital problem rather than a profit one: the cash is already spent, it is simply not…",
+   "columns": [
+    {
+     "name": "sku",
+     "type": "VARCHAR",
+     "description": "The product held in stock."
+    },
+    {
+     "name": "product_name",
+     "type": "VARCHAR",
+     "description": "Full trade description of the product."
+    },
+    {
+     "name": "brand",
+     "type": "VARCHAR",
+     "description": "Brand of the product. Dead stock usually arrives a whole brand at a time, because ranges are delisted as ranges.",
+     "values": [
+      "Brightwash",
+      "Cascade Springs",
+      "Citrona",
+      "Crunchpop",
+      "Dawnbrew",
+      "Halo Shine",
+      "Kopje Cola",
+      "Little Fern",
+      "Meadowvale",
+      "Minta",
+      "Pantri",
+      "Softleaf",
+      "Sunveld",
+      "Sweetwell",
+      "Verdelle",
+      "Zesta"
+     ]
+    },
+    {
+     "name": "category",
+     "type": "VARCHAR",
+     "description": "Merchandising category of the product.",
+     "values": [
+      "Baby & Infant",
+      "Beverages",
+      "Dairy & Chilled",
+      "Dry Goods",
+      "Household Care",
+      "Paper & Hygiene",
+      "Personal Care",
+      "Snacks & Confectionery"
+     ]
+    },
+    {
+     "name": "subcategory",
+     "type": "VARCHAR",
+     "description": "Merchandising segment of the product.",
+     "values": [
+      "Baby Care",
+      "Bath & Body",
+      "Bottled Water",
+      "Carbonates",
+      "Confectionery",
+      "Dishwashing",
+      "Glass & Surface Aerosol",
+      "Hot Beverages",
+      "Juice",
+      "Laundry",
+      "Milk & Yoghurt",
+      "Oral Care",
+      "Paper Products",
+      "Pasta & Sauce",
+      "Savoury Snacks",
+      "Staples"
+     ]
+    },
+    {
+     "name": "status",
+     "type": "VARCHAR",
+     "description": "Whether the line is still part of the active range, \"Active\" or \"Discontinued\".",
+     "values": [
+      "Active",
+      "Discontinued"
+     ]
+    },
+    {
+     "name": "is_discontinued",
+     "type": "BOOLEAN",
+     "description": "True where the line has been withdrawn from the range. A discontinued line holding stock is the clearest case of dead stock, because there is no plan that brings it back."
+    },
+    {
+     "name": "warehouse_code",
+     "type": "VARCHAR",
+     "description": "The distribution centre holding the stock.",
+     "values": [
+      "WH-01",
+      "WH-02",
+      "WH-03"
+     ]
+    },
+    {
+     "name": "warehouse_name",
+     "type": "VARCHAR",
+     "description": "Name of that distribution centre, for example \"Meridian Coastal DC\".",
+     "values": [
+      "Meridian Cape DC",
+      "Meridian Coastal DC",
+      "Meridian Gauteng DC"
+     ]
+    },
+    {
+     "name": "warehouse_region",
+     "type": "VARCHAR",
+     "description": "The province the distribution centre is in.",
+     "values": [
+      "Gauteng",
+      "KwaZulu-Natal",
+      "Western Cape"
+     ]
+    },
+    {
+     "name": "snapshot_date",
+     "type": "DATE",
+     "description": "The date of the stock count this row reports, which is the most recent count in the data.",
+     "range": [
+      "2026-08-31",
+      "2026-08-31"
+     ]
+    },
+    {
+     "name": "as_of_date",
+     "type": "DATE",
+     "description": "The last day the business traded in the data. Days since last sale is measured against this rather than against today, so the figures do not drift as time passes.",
+     "range": [
+      "2026-08-31",
+      "2026-08-31"
+     ]
+    },
+    {
+     "name": "units_on_hand",
+     "type": "INTEGER",
+     "description": "Packs physically held at that distribution centre at the latest count."
+    },
+    {
+     "name": "units_in_transit",
+     "type": "INTEGER",
+     "description": "Packs still on their way to the distribution centre. On a dead line this is worth checking - it means more of the same is still arriving."
+    },
+    {
+     "name": "unit_cost_zar",
+     "type": "DOUBLE",
+     "description": "What Meridian paid its supplier for one pack, in rand."
+    },
+    {
+     "name": "list_price_zar",
+     "type": "DOUBLE",
+     "description": "The published trade price of one pack before discount, in rand. Useful for judging how much room there is to clear the stock at a markdown."
+    },
+    {
+     "name": "stock_value_zar",
+     "type": "DOUBLE",
+     "description": "What the stock on hand is worth at cost - packs multiplied by unit cost, in rand. This is cash currently tied up, whether the line is alive or dead."
+    },
+    {
+     "name": "avg_weekly_demand_units",
+     "type": "DOUBLE",
+     "description": "Average packs of this SKU shipped from this distribution centre per week over the whole period. Near zero on a dead line, which is the point."
+    },
+    {
+     "name": "weeks_cover",
+     "type": "DOUBLE",
+     "description": "How many weeks the stock would last at normal demand. Empty where there is no demand at all at that centre, which is the strongest signal of all."
+    },
+    {
+     "name": "last_sale_date",
+     "type": "DATE",
+     "description": "The last date the SKU was sold anywhere in the business, counting sales only - a credit note is a customer sending stock back, not evidence the line still moves. Empty where it has never sold.",
+     "range": [
+      "2026-02-16",
+      "2026-08-31"
+     ]
+    },
+    {
+     "name": "days_since_last_sale",
+     "type": "BIGINT",
+     "description": "Days between the last sale and the last day of trading in the data. Over 180 is the trade's working definition of dead. Empty where the line has never sold."
+    },
+    {
+     "name": "has_ever_sold",
+     "type": "BOOLEAN",
+     "description": "False where the SKU has no sales history at all. These are the worst cases, since there is no evidence anyone ever wanted the line."
+    },
+    {
+     "name": "lifetime_units_sold",
+     "type": "DOUBLE",
+     "description": "Total packs of the SKU ever sold across the whole period. Context for whether a line is genuinely dead or simply slow."
+    },
+    {
+     "name": "is_dead_stock",
+     "type": "BOOLEAN",
+     "description": "True where there is physical stock on hand and the line has not sold in over 180 days, or has never sold. Six months is the FMCG convention - anything that has not moved in two quarters is not going to move on its own."
+    },
+    {
+     "name": "dead_stock_reason",
+     "type": "VARCHAR",
+     "description": "Plain wording of why the row is flagged - \"Discontinued and no sale in 180+ days\", \"No sale in 180+ days\" or \"Never sold\". Empty where the stock is not dead. Written out so it can be dropped straight into a report without being decoded.",
+     "values": [
+      "Discontinued and no sale in 180+ days"
+     ]
+    },
+    {
+     "name": "dead_stock_value_zar",
+     "type": "DOUBLE",
+     "description": "The stock value in rand where the row is dead, and zero where it is not. Sum this column to get the working capital that could be released, without needing a filter on the chart."
+    }
+   ]
+  },
+  {
+   "name": "agg_sales_monthly",
+   "rows": 834,
+   "description": "",
+   "columns": [
+    {
+     "name": "month_start_date",
+     "type": "DATE",
+     "range": [
+      "2024-09-01",
+      "2026-08-01"
+     ]
+    },
+    {
+     "name": "year_month",
+     "type": "VARCHAR",
+     "values": [
+      "2024-09",
+      "2024-10",
+      "2024-11",
+      "2024-12",
+      "2025-01",
+      "2025-02",
+      "2025-03",
+      "2025-04",
+      "2025-05",
+      "2025-06",
+      "2025-07",
+      "2025-08",
+      "2025-09",
+      "2025-10",
+      "2025-11",
+      "2025-12",
+      "2026-01",
+      "2026-02",
+      "2026-03",
+      "2026-04",
+      "2026-05",
+      "2026-06",
+      "2026-07",
+      "2026-08"
+     ]
+    },
+    {
+     "name": "channel",
+     "type": "VARCHAR",
+     "values": [
+      "General Trade",
+      "HoReCa",
+      "Modern Trade",
+      "Wholesale"
+     ]
+    },
+    {
+     "name": "category",
+     "type": "VARCHAR",
+     "values": [
+      "Baby & Infant",
+      "Beverages",
+      "Dairy & Chilled",
+      "Dry Goods",
+      "Household Care",
+      "Paper & Hygiene",
+      "Personal Care",
+      "Snacks & Confectionery",
+      "Unknown category"
+     ]
+    },
+    {
+     "name": "sales_line_count",
+     "type": "BIGINT"
+    },
+    {
+     "name": "units",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "revenue_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "cogs_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "gross_profit_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "allocated_freight_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "allocated_handling_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "allocated_rebate_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "contribution_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "gross_margin_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "contribution_margin_pct",
+     "type": "DOUBLE"
+    }
+   ]
+  },
+  {
+   "name": "agg_product_month",
+   "rows": 3096,
+   "description": "",
+   "columns": [
+    {
+     "name": "month_start_date",
+     "type": "DATE",
+     "range": [
+      "2024-09-01",
+      "2026-08-01"
+     ]
+    },
+    {
+     "name": "year_month",
+     "type": "VARCHAR",
+     "values": [
+      "2024-09",
+      "2024-10",
+      "2024-11",
+      "2024-12",
+      "2025-01",
+      "2025-02",
+      "2025-03",
+      "2025-04",
+      "2025-05",
+      "2025-06",
+      "2025-07",
+      "2025-08",
+      "2025-09",
+      "2025-10",
+      "2025-11",
+      "2025-12",
+      "2026-01",
+      "2026-02",
+      "2026-03",
+      "2026-04",
+      "2026-05",
+      "2026-06",
+      "2026-07",
+      "2026-08"
+     ]
+    },
+    {
+     "name": "sku",
+     "type": "VARCHAR"
+    },
+    {
+     "name": "product_name",
+     "type": "VARCHAR"
+    },
+    {
+     "name": "brand",
+     "type": "VARCHAR",
+     "values": [
+      "Brightwash",
+      "Cascade Springs",
+      "Citrona",
+      "Crunchpop",
+      "Dawnbrew",
+      "Halo Shine",
+      "Kopje Cola",
+      "Little Fern",
+      "Meadowvale",
+      "Minta",
+      "Pantri",
+      "Softleaf",
+      "Sunveld",
+      "Sweetwell",
+      "Verdelle",
+      "Zesta"
+     ]
+    },
+    {
+     "name": "category",
+     "type": "VARCHAR",
+     "values": [
+      "Baby & Infant",
+      "Beverages",
+      "Dairy & Chilled",
+      "Dry Goods",
+      "Household Care",
+      "Paper & Hygiene",
+      "Personal Care",
+      "Snacks & Confectionery"
+     ]
+    },
+    {
+     "name": "subcategory",
+     "type": "VARCHAR",
+     "values": [
+      "Baby Care",
+      "Bath & Body",
+      "Bottled Water",
+      "Carbonates",
+      "Confectionery",
+      "Dishwashing",
+      "Glass & Surface Aerosol",
+      "Hot Beverages",
+      "Juice",
+      "Laundry",
+      "Milk & Yoghurt",
+      "Oral Care",
+      "Paper Products",
+      "Pasta & Sauce",
+      "Savoury Snacks",
+      "Staples"
+     ]
+    },
+    {
+     "name": "units",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "revenue_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "gross_profit_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "allocated_freight_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "allocated_rebate_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "contribution_zar",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "weight_kg",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "promoted_units",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "gross_margin_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "contribution_margin_pct",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "revenue_per_kg_zar",
+     "type": "DOUBLE"
+    }
+   ]
+  },
+  {
+   "name": "dim_product",
+   "rows": 131,
+   "description": "The product master, one row per SKU. Everything the business knows about a line it sells: what it is called, who makes it, what it weighs, what it costs Meridian to buy and what it is listed at. This is the cleaned version - blank costs have already been filled in upstream and are flagged where that happened, so nobody has to guess whether a margin is real or imputed.",
+   "columns": [
+    {
+     "name": "sku",
+     "type": "VARCHAR",
+     "description": "The stock keeping unit code, for example MP-1016. Unique identifier for a sellable product and the key every sales and stock record points at."
+    },
+    {
+     "name": "product_name",
+     "type": "VARCHAR",
+     "description": "The full trade description of the line, brand and pack together, for example \"Brightwash Powder 2kg x6\". This is what appears on an invoice and what a buyer would recognise."
+    },
+    {
+     "name": "brand",
+     "type": "VARCHAR",
+     "description": "The brand the line is sold under, for example \"Cascade Springs\". Brand is the level at which range decisions are actually taken, so most profitability reporting is grouped here.",
+     "values": [
+      "Brightwash",
+      "Cascade Springs",
+      "Citrona",
+      "Crunchpop",
+      "Dawnbrew",
+      "Halo Shine",
+      "Kopje Cola",
+      "Little Fern",
+      "Meadowvale",
+      "Minta",
+      "Pantri",
+      "Softleaf",
+      "Sunveld",
+      "Sweetwell",
+      "Verdelle",
+      "Zesta"
+     ]
+    },
+    {
+     "name": "category",
+     "type": "VARCHAR",
+     "description": "Top level merchandising category, for example \"Beverages\" or \"Household Care\". Eight categories cover the whole range.",
+     "values": [
+      "Baby & Infant",
+      "Beverages",
+      "Dairy & Chilled",
+      "Dry Goods",
+      "Household Care",
+      "Paper & Hygiene",
+      "Personal Care",
+      "Snacks & Confectionery"
+     ]
+    },
+    {
+     "name": "subcategory",
+     "type": "VARCHAR",
+     "description": "The merchandising segment within the category, for example \"Bottled Water\" within Beverages. This is the level at which a buyer plans a shelf.",
+     "values": [
+      "Baby Care",
+      "Bath & Body",
+      "Bottled Water",
+      "Carbonates",
+      "Confectionery",
+      "Dishwashing",
+      "Glass & Surface Aerosol",
+      "Hot Beverages",
+      "Juice",
+      "Laundry",
+      "Milk & Yoghurt",
+      "Oral Care",
+      "Paper Products",
+      "Pasta & Sauce",
+      "Savoury Snacks",
+      "Staples"
+     ]
+    },
+    {
+     "name": "pack_size",
+     "type": "VARCHAR",
+     "description": "The selling configuration, for example \"12x1.5L\" - how many units in what size, as the trade quotes it. Meridian sells cases, so a single unit of quantity is one of these packs."
+    },
+    {
+     "name": "weight_kg",
+     "type": "DOUBLE",
+     "description": "Gross weight of one selling pack in kilograms. This is the number that drives freight - a delivery is paid for by what it weighs, so weight is how the cost of getting an order to a customer is fairly shared out between the lines on that order."
+    },
+    {
+     "name": "unit_cost_zar",
+     "type": "DOUBLE",
+     "description": "What Meridian pays its supplier for one pack, in rand. This is the cost used for gross profit everywhere in the warehouse."
+    },
+    {
+     "name": "unit_cost_is_imputed",
+     "type": "BOOLEAN",
+     "description": "True where the supplier cost was missing in the source system and has been estimated upstream from the category's normal cost to price relationship. Margins on these lines are indicative rather than exact, and this flag is how you tell which ones."
+    },
+    {
+     "name": "list_price_zar",
+     "type": "DOUBLE",
+     "description": "The published trade price of one pack before any customer discount, in rand. The starting point of every price negotiation and the benchmark realised discount is measured against."
+    },
+    {
+     "name": "status",
+     "type": "VARCHAR",
+     "description": "Whether the line is still part of the active range, either \"Active\" or \"Discontinued\".",
+     "values": [
+      "Active",
+      "Discontinued"
+     ]
+    },
+    {
+     "name": "is_discontinued",
+     "type": "BOOLEAN",
+     "description": "True where the line has been withdrawn from the range. Discontinued lines can still hold stock in a warehouse long after the last sale, which is the whole of finding 5."
+    },
+    {
+     "name": "launch_date",
+     "type": "DATE",
+     "description": "The date the line was first listed for sale.",
+     "range": [
+      "2018-08-29",
+      "2024-06-30"
+     ]
+    },
+    {
+     "name": "is_bulk_water",
+     "type": "BOOLEAN",
+     "description": "True for the Cascade Springs range, which is Meridian's entire bulk bottled water offer. Flagged because this range behaves unlike anything else in the portfolio: it is very heavy relative to its value, so it consumes far more of a delivery's cost than its share of revenue suggests. It is the subject of finding 1."
+    }
+   ]
+  },
+  {
+   "name": "dim_customer",
+   "rows": 485,
+   "description": "The trading account master, one row per customer, with the sales representative who owns the relationship attached and the account rolled up to its parent group. The grouping is the important part: large customers trade through several branches under separate account numbers, and pricing decisions that look small on one branch are substantial once the branches are added together. Finding 3 is invisible without it.",
+   "columns": [
+    {
+     "name": "customer_id",
+     "type": "VARCHAR",
+     "description": "The account number, for example CUS-5041. Unique identifier for a trading account and the key sales records point at."
+    },
+    {
+     "name": "customer_name",
+     "type": "VARCHAR",
+     "description": "The account name exactly as the business uses it, including the branch marker - for example \"Summit Cash & Carry Depot\"."
+    },
+    {
+     "name": "customer_group",
+     "type": "VARCHAR",
+     "description": "The parent business the account belongs to, derived by stripping one trailing branch marker from the account name. Meridian uses two branch conventions: numbered banners such as \"Baywater Market #03\", and named depots such as \"Summit Cash & Carry Depot\", \"... Branch\" and \"... Hub\" - all three of which roll up to…"
+    },
+    {
+     "name": "channel",
+     "type": "VARCHAR",
+     "description": "The route to market the account trades through - Modern Trade, General Trade, Wholesale or HoReCa. Channel drives almost everything about how an account behaves - order size, discount level, what it buys and how much rebate it earns.",
+     "values": [
+      "General Trade",
+      "HoReCa",
+      "Modern Trade",
+      "Wholesale"
+     ]
+    },
+    {
+     "name": "region",
+     "type": "VARCHAR",
+     "description": "The province the account trades in. Region determines which distribution centre serves it and therefore what the delivery costs.",
+     "values": [
+      "Eastern Cape",
+      "Free State",
+      "Gauteng",
+      "KwaZulu-Natal",
+      "Mpumalanga",
+      "Western Cape"
+     ]
+    },
+    {
+     "name": "city",
+     "type": "VARCHAR",
+     "description": "The town or city the account is located in.",
+     "values": [
+      "Bloemfontein",
+      "Cape Town",
+      "Durban",
+      "East London",
+      "Gqeberha",
+      "Johannesburg",
+      "Khayelitsha",
+      "Mbombela",
+      "Polokwane",
+      "Pretoria",
+      "Rustenburg",
+      "Soweto",
+      "Tembisa",
+      "Umlazi",
+      "Vereeniging"
+     ]
+    },
+    {
+     "name": "credit_terms_days",
+     "type": "INTEGER",
+     "description": "How many days after invoice the account has agreed to pay, for example 30. A commercial term, not a payment record."
+    },
+    {
+     "name": "rebate_pct",
+     "type": "DOUBLE",
+     "description": "The volume rebate rate agreed with the account, as a decimal fraction of what they spend (0.06 means six percent). This is money handed back after the sale, so it never appears in the invoiced price and is easy to forget when judging whether an account is profitable."
+    },
+    {
+     "name": "onboarded_date",
+     "type": "DATE",
+     "description": "The date the account first started trading with Meridian.",
+     "range": [
+      "2017-07-21",
+      "2024-07-30"
+     ]
+    },
+    {
+     "name": "rep_id",
+     "type": "VARCHAR",
+     "description": "Identifier of the sales representative who owns the account.",
+     "values": [
+      "REP-101",
+      "REP-102",
+      "REP-103",
+      "REP-104",
+      "REP-105",
+      "REP-106",
+      "REP-107",
+      "REP-108",
+      "REP-109",
+      "REP-110",
+      "REP-111",
+      "REP-112"
+     ]
+    },
+    {
+     "name": "rep_name",
+     "type": "VARCHAR",
+     "description": "Name of the sales representative who owns the account.",
+     "values": [
+      "Bongani Botha",
+      "Dineo Ndlovu",
+      "Kagiso Jacobs",
+      "Lerato Nkosi",
+      "Mpho Mahlangu",
+      "Naledi Pillay",
+      "Nomsa Khumalo",
+      "Refilwe Sithole",
+      "Sipho Mokoena",
+      "Tebogo Molefe",
+      "Thabo Dlamini",
+      "Zanele Naidoo"
+     ]
+    },
+    {
+     "name": "rep_team",
+     "type": "VARCHAR",
+     "description": "The team the representative belongs to, either \"Trade Sales\" or \"Key Accounts\".",
+     "values": [
+      "Key Accounts",
+      "Trade Sales"
+     ]
+    },
+    {
+     "name": "rep_region",
+     "type": "VARCHAR",
+     "description": "The territory the representative covers. Usually the same as the customer's region, and worth checking where it is not.",
+     "values": [
+      "Eastern Cape",
+      "Free State",
+      "Gauteng",
+      "KwaZulu-Natal",
+      "Mpumalanga",
+      "Western Cape"
+     ]
+    },
+    {
+     "name": "is_group_branch",
+     "type": "BOOLEAN",
+     "description": "True where the account is one branch of a multi-branch group, false where it is a standalone business. Use it to separate chain trade from independent trade."
+    }
+   ]
+  }
+ ]
+}

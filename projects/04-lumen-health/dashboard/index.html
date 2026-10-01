@@ -67,6 +67,9 @@
     </div>
   </main>
 
+  <!-- Ask the data: its own tab. -->
+  <section class="ask-section" id="ask" aria-label="Ask the data"></section>
+
   <footer>
     <p>
       <span class="badge">Synthetic data</span>
@@ -79,7 +82,9 @@
       Built by Omnatix. Diary, billing, claims and reception exports land as CSV, are modelled
       through bronze, silver and gold layers in dbt on DuckDB, tested on every build, and
       published as Parquet. This page loads those files and runs SQL against them in your
-      browser using DuckDB-WASM. There is no backend and no database server.
+      browser using DuckDB-WASM. The workbench has no backend and no database server; the Ask
+      tab sends your question, and the result of the query it runs in your browser, to Qwen
+      through a small Cloudflare function.
     </p>
     <p>
       Money figures are in rand and exclude VAT. Claim settlement is measured from submission

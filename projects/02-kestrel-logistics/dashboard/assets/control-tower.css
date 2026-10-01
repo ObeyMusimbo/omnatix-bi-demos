@@ -645,6 +645,45 @@ footer p { margin: 0 0 0.5rem; max-width: 90ch; }
   section { margin-bottom: 2rem; }
 }
 
+/* ---------------------------------------------------------------- Ask the data
+
+   A query console: the question echoed after a prompt, the answer under it, the SQL in a
+   terminal block. It reads like an operator querying the tower, because that is what it is. */
+
+html[data-view="ask"] #loading { display: none; }
+.tower .ask {
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 1.1rem 1.2rem 1rem;
+}
+.tower .ask-title { font-size: 1.35rem; letter-spacing: 0.03em; text-transform: uppercase; }
+.tower .ask-intro { color: var(--text-2); font-size: 0.9rem; }
+.tower .ask-chip {
+  background: var(--panel-2);
+  border: 1px solid var(--rule-2);
+  border-radius: 999px;
+  color: var(--text-2);
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
+}
+.tower .ask-chip:hover { color: var(--text); border-color: var(--s1); }
+.tower .ask-turn { border-top: 1px solid var(--rule); padding-top: 0.9rem; }
+.tower .ask-q { font-size: 0.92rem; color: var(--s1); }
+.tower .ask-q::before { content: '> '; color: var(--text-3); }
+.tower .ask-answer { font-size: 0.92rem; }
+.tower .ask-status { color: var(--text-3); font-size: 0.85rem; }
+.tower .ask-msg.is-refusal, .tower .ask-msg.is-clarify { color: var(--warn); }
+.tower .ask-msg.is-error { color: var(--breach); }
+.tower .ask-proof summary { color: var(--text-3); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; }
+.tower .ask-sql { background: var(--bg); border: 1px solid var(--rule-2); border-radius: 6px; color: var(--ok); }
+.tower .ask-purpose, .tower .ask-meta { color: var(--text-3); font-size: 0.78rem; }
+.tower .ask-label { font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3); }
+.tower .ask-input { background: var(--bg); color: var(--text); border: 1px solid var(--rule-2); border-radius: 6px; padding: 0.6rem 0.7rem; }
+.tower .ask-input:focus { outline: 2px solid var(--s1); outline-offset: 0; }
+.tower .ask-send { background: var(--s1); color: #FFFFFF; border: 0; border-radius: 6px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.78rem; }
+.tower .ask-note { color: var(--text-3); font-size: 0.76rem; }
+
 /* ---------------------------------------------------------------- the Omnatix frame
 
    omnatix-frame.css draws the summary, the section bar and the filter in whatever tokens a

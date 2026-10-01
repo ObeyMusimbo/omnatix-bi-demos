@@ -20,6 +20,7 @@ import {
   renderNav, onFilterChange, readParam, writeParam, scope, keepScroll, fmtAny,
   wireTheme, views, insights, attachInsights, aiBrief,
 } from './shell.js';
+import { mountAsk } from './ask.js';
 
 // The AI decision support, loaded once beside meta.json, and the tab router.
 let INS = null;
@@ -166,6 +167,7 @@ const SECTIONS = [
   ['reception', '05', 'Reception'],
   ['diaries', '06', 'Diaries'],
   ['trend', '07', 'Trend and data'],
+  ['ask', '08', 'Ask the data'],
 ];
 const ALL_CLINICS = 'All clinics';
 const clinic = { code: '', label: '' };
@@ -1124,6 +1126,14 @@ try {
   // One tab at a time, named in the hash. Switching tabs brings the tab bar back into view.
   V = views({ ids: SECTIONS.map(([id]) => id), fallback: 'ox-top', anchor: document.querySelector('.bench-head') });
   wireTheme(el('theme-toggle'), { key: 'ox-theme-lumen', onChange: () => rerender() });
+  // A conversation tab: ask the practice's own data, operational questions only.
+  mountAsk(el('ask'), {
+    demo: 'lumen',
+    title: 'Ask the data',
+    intro: 'Ask about a clinic, a scheme, a practitioner, an hour of the week or a month. Operational questions only; this is not clinical advice.',
+    placeholder: 'e.g. Which scheme takes longest to pay?',
+    filter: () => clinic.code,
+  });
 
   onFilterChange(nav, (code) => {
     setClinic(code, f.options);
