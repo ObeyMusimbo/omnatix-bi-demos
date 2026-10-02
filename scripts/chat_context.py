@@ -19,6 +19,7 @@ cannot query. Rerun after every refresh; the nightly workflow does.
 from __future__ import annotations
 
 import argparse
+import itertools
 import json
 import pathlib
 import re
@@ -79,6 +80,38 @@ DEMOS = {
 MAX_VALUES = 40          # list the values of a text column with this many distinct values or fewer
 MAX_DESC = 320           # characters of a column definition
 
+# Integer columns that can be part of what identifies a row, as opposed to measures.
+KEYISH = re.compile(r"(order|num|month|year|week|day|hour|period|step|cohort|_id$|code|key|rank|band|bucket|seq)")
+
+
+def grain(con, t: str, cols: list[tuple[str, str]], rows: int) -> list[str] | None:
+    """
+    The smallest set of columns that makes each row unique: what one row of the table is.
+
+    Without it a model reads a table with one row per clinic and rejection reason as one row
+    per clinic, sorts by a percentage and reports a single reason's figure as the clinic's.
+    Found from the data rather than declared, so it cannot drift from what was exported.
+    """
+    if rows <= 1:
+        return None
+    cand = [n for n, ty in cols if ty in ("VARCHAR", "DATE", "TIMESTAMP", "BOOLEAN")
+            or (ty in ("INTEGER", "BIGINT", "SMALLINT", "TINYINT", "HUGEINT") and KEYISH.search(n))]
+    distinct = {c: con.execute(f'select count(distinct "{c}") from {t}').fetchone()[0] for c in cand}
+    # Fewest distinct values first, names before codes, so the answer reads in business terms.
+    cand = sorted((c for c in cand if 1 < distinct[c] <= rows),
+                  key=lambda c: (distinct[c], c.endswith(("_code", "_id"))))[:14]
+    for size in (1, 2, 3, 4):
+        for combo in itertools.combinations(cand, size):
+            product = 1
+            for c in combo:
+                product *= distinct[c]
+            if product < rows:
+                continue
+            picked = ", ".join(f'"{c}"' for c in combo)
+            if con.execute(f"select count(*) from (select distinct {picked} from {t})").fetchone()[0] == rows:
+                return list(combo)
+    return None
+
 
 def page_tables(project: str) -> list[str]:
     """The tables the browser registers, read from the page's own db.js."""
@@ -100,7 +133,7 @@ def gold_docs(project: str) -> dict:
 
 
 def clip(s: str, n: int) -> str:
-    return s if len(s) <= n else s[: n - 1].rsplit(" ", 1)[0] + "…"
+    return s if len(s) <= n else s[: n - 1].rsplit(" ", 1)[0] + "â€¦"
 
 
 def build(project: str) -> dict:
@@ -117,8 +150,9 @@ def build(project: str) -> dict:
         con.execute(f"create view {t} as select * from read_parquet('{path}')")
         rows = con.execute(f"select count(*) from {t}").fetchone()[0]
         doc = docs.get(t, {"description": "", "columns": {}})
+        described = [(name, ctype) for name, ctype, *_ in con.execute(f"describe {t}").fetchall()]
         cols = []
-        for name, ctype, *_ in con.execute(f"describe {t}").fetchall():
+        for name, ctype in described:
             col = {"name": name, "type": ctype}
             desc = doc["columns"].get(name, "")
             if desc:
@@ -135,6 +169,7 @@ def build(project: str) -> dict:
         tables.append({
             "name": t,
             "rows": rows,
+            "grain": grain(con, t, described, rows),
             "description": clip(doc["description"], 600),
             "columns": cols,
         })

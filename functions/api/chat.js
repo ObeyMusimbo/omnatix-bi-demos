@@ -130,7 +130,8 @@ function schema(ctx) {
       if (c.range) line += ` Range ${c.range[0]} to ${c.range[1]}.`;
       return line;
     }).join('\n');
-    return `TABLE ${t.name} (${t.rows} rows). ${t.description}\n${cols}`;
+    const grain = t.grain?.length ? `, one row per ${t.grain.join(' and ')}` : '';
+    return `TABLE ${t.name} (${t.rows} rows${grain}). ${t.description}\n${cols}`;
   }).join('\n\n');
 }
 
@@ -175,6 +176,12 @@ SQL rules:
 - Use only the tables and columns listed below, spelled exactly.
 - Where a column lists its values, use those exact values. For names that are not listed,
   match loosely, for example customer_group ilike '%summit%'.
+- Each table says what one row is ("one row per clinic_name and rejection_reason"). When the
+  question is about a coarser level than that, for example per clinic, GROUP BY that level,
+  SUM the counts and rand amounts, and recompute any percentage as
+  SUM(numerator) / SUM(denominator) * 100. Never report one row's percentage as the group's,
+  and never average percentages. Columns starting all_ are group-wide totals repeated on
+  every row: use them once, not summed.
 - Return at most 50 rows. Aggregate rather than listing raw rows. Give columns readable aliases.
 - Round money to whole rand and percentages to one decimal place.
 - Money columns end in _zar: South African rand, excluding VAT.

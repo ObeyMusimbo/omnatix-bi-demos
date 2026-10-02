@@ -107,6 +107,9 @@
   {
    "name": "mart_collection_bridge",
    "rows": 6,
+   "grain": [
+    "step_order"
+   ],
    "description": "Everything billed for care delivered, walked down to the cash received. Every rand of the shortfall lands in exactly one bucket, and the buckets are defined by who has to do something about it.",
    "columns": [
     {
@@ -208,6 +211,10 @@
   {
    "name": "mart_slot_grid",
    "rows": 50,
+   "grain": [
+    "day_of_week",
+    "slot_hour"
+   ],
    "description": "The signature view: the consulting week as weekday against hour, carrying capacity, demand and waiting time in the same cell. Saturday has no afternoon rows because the diary offers none, rather than showing them as empty.",
    "columns": [
     {
@@ -318,6 +325,10 @@
   {
    "name": "mart_capacity_cost",
    "rows": 50,
+   "grain": [
+    "day_of_week",
+    "slot_hour"
+   ],
    "description": "What the empty half of the diary costs, split by why the chair was empty. Never booked is a roster problem. Booked and not arrived is a reminder problem.",
    "columns": [
     {
@@ -453,6 +464,10 @@
   {
    "name": "mart_no_show",
    "rows": 10,
+   "grain": [
+    "reminder_sent",
+    "booking_lead_band"
+   ],
    "description": "Who does not arrive, by how far ahead the booking was made and whether a reminder went out. The recoverable column applies the rate already observed on reminded bookings in the same lead band, so it never claims an effect the data has not shown.",
    "columns": [
     {
@@ -547,6 +562,10 @@
   {
    "name": "mart_claim_recovery",
    "rows": 42,
+   "grain": [
+    "clinic_name",
+    "rejection_reason"
+   ],
    "description": "What the schemes sent back and what happened next, by reason and by site. The denominator is every claim ever rejected, including the ones that were fixed, so a site that works its rejections is not flattered by having fewer left.",
    "columns": [
     {
@@ -667,6 +686,10 @@
   {
    "name": "mart_patient_charges",
    "rows": 12,
+   "grain": [
+    "payment_type",
+    "clinic_name"
+   ],
    "description": "What reception charged the patient and what it took, by site and by charge type. Blending the two types gives a collection rate near seventy per cent everywhere, which describes neither of the behaviours inside it.",
    "columns": [
     {
@@ -754,6 +777,9 @@
   {
    "name": "mart_scheme",
    "rows": 6,
+   "grain": [
+    "scheme_name"
+   ],
    "description": "One row per payer. working_capital_zar is what a slow payer keeps locked up. It is a balance sheet number, not a loss, and it is never added to the collection bridge.",
    "columns": [
     {
@@ -865,6 +891,9 @@
   {
    "name": "mart_practitioner",
    "rows": 32,
+   "grain": [
+    "practitioner_id"
+   ],
    "description": "One row per practitioner, every ratio also expressed against the median of that practitioner's own discipline. A radiologist and a dietician are bought at different prices, so ranking them on one list says nothing except which discipline is expensive.",
    "columns": [
     {
@@ -1056,6 +1085,9 @@
   {
    "name": "mart_clinic",
    "rows": 6,
+   "grain": [
+    "clinic_name"
+   ],
    "description": "The site scorecard, one column for each of the five findings.",
    "columns": [
     {
@@ -1226,6 +1258,9 @@
   {
    "name": "mart_data_quality",
    "rows": 7,
+   "grain": [
+    "issue_order"
+   ],
    "description": "The defects that exist in the source drops and survive into the warehouse as flags rather than deletions. Publishing it is the point: a dashboard that quietly drops the rows it cannot reconcile is how a practice ends up believing a number that is short.",
    "columns": [
     {
@@ -1288,6 +1323,9 @@
   {
    "name": "agg_monthly",
    "rows": 24,
+   "grain": [
+    "month_start"
+   ],
    "description": "The monthly trend. Partial months at either end of the window are dropped, because a partial month plotted beside a whole one reads as a collapse.",
    "columns": [
     {

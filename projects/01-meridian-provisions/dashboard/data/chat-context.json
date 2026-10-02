@@ -20,17 +20,17 @@
    "kicker": [
     "Revenue grew ",
     {
-     "v": 11.873662036006483,
+     "v": 11.873662036007481,
      "f": "signedPct"
     },
     ". Gross profit grew ",
     {
-     "v": 4.061995905838467,
+     "v": 4.061995905837934,
      "f": "signedPct"
     },
     "."
    ],
-   "v": 12615619.396511823,
+   "v": 12615619.396514326,
    "f": "Rc",
    "label": "of gross profit did not arrive, despite the revenue that should have carried it"
   },
@@ -47,7 +47,7 @@
     "n": "02",
     "id": "promo",
     "title": "The promotion that loses money",
-    "v": -18.16787278315485,
+    "v": -18.167872783154845,
     "f": "R",
     "note": "gross profit per case on deal, against R44 off it"
    },
@@ -55,7 +55,7 @@
     "n": "03",
     "id": "discount",
     "title": "The discount nobody reset",
-    "v": 3894718.031369744,
+    "v": 3894718.031369742,
     "f": "Rc",
     "note": "revenue forgone in twelve months on one account"
    },
@@ -63,7 +63,7 @@
     "n": "04",
     "id": "stock",
     "title": "Sales that never happened",
-    "v": 1074945.3928326655,
+    "v": 1074945.392832666,
     "f": "Rc",
     "note": "revenue lost to weekend stock-outs"
    },
@@ -71,7 +71,7 @@
     "n": "05",
     "id": "dead",
     "title": "Stock nobody is buying",
-    "v": 401257.94,
+    "v": 401257.93999999994,
     "f": "Rc",
     "note": "of discontinued stock sitting at cost"
    }
@@ -107,6 +107,9 @@
   {
    "name": "mart_gp_bridge",
    "rows": 6,
+   "grain": [
+    "step_order"
+   ],
    "description": "The closing visual. Why gross profit grew 4.1% while revenue grew 11.9%, as a bridge from what gross profit would have been had margin held at last year's rate down to what was actually earned. The difference is the gap, and each step is a driver's share of it. Every step covers the same trailing twelve months as the gap, taken from period_end. The promotion and discount steps once summed the whole two year window inside a one year gap, which overstated both and left the residual too small. The residual row, other discount drift and mix, absorbs overlap between the named drivers and…",
    "columns": [
     {
@@ -206,6 +209,11 @@
   {
    "name": "mart_margin_waterfall",
    "rows": 238,
+   "grain": [
+    "period_label",
+    "step_order",
+    "brand"
+   ],
    "description": "FINDING 1. Feeds the margin waterfall: a chart that walks a brand from revenue down to what it was really worth, one bar at a time - revenue, less cost of goods, to gross profit, then the three costs Meridian records at order level, ending at contribution. One row per period, brand and step of the waterfall, so each row is one bar. Two rolling twelve month periods are provided so the current year can be shown against the one before it. Every row also carries the brand's own totals and margins, so a tooltip or a summary tile needs no second query. The Cascade Springs bulk water range is what…",
    "columns": [
     {
@@ -403,6 +411,11 @@
   {
    "name": "mart_promo_performance",
    "rows": 2558,
+   "grain": [
+    "promo_phase",
+    "sku",
+    "week_start_date"
+   ],
    "description": "FINDING 2. Feeds the promotion chart: units, revenue and profit week by week for every SKU that has ever been promoted, with each week labelled by what was happening to it. One row per SKU, trading week and promotion phase. A week produces one row normally, and two only where a promotion starts or ends part way through it - in which case the two parts are reported separately rather than averaged into a number that describes neither. The mart answers two questions from the same rows. First, the straight comparison: group by promotion phase and look at profit per unit on promotion against…",
    "columns": [
     {
@@ -763,6 +776,10 @@
   {
    "name": "mart_discount_trend",
    "rows": 9114,
+   "grain": [
+    "year_month",
+    "customer_group"
+   ],
    "description": "FINDING 3. Feeds a two-line chart: the discount a customer group is actually getting month by month, against what the rest of its channel is getting. One line climbs steadily and the other is flat. One row per customer group, channel and calendar month. \"Realised\" is the operative word. Nobody ever approved a fifteen and a half percent discount for Summit Cash & Carry, Meridian's largest account. It arrived one concession at a time over two years, was never reviewed and never reset, and it is invisible on any single branch or in any single month. It only appears when the branches are added…",
    "columns": [
     {
@@ -905,6 +922,10 @@
   {
    "name": "mart_stockout_impact",
    "rows": 108,
+   "grain": [
+    "sku",
+    "week_start_date"
+   ],
    "description": "FINDING 4. Puts a number on sales that never happened. One row per SKU per week, for every week in which the Thursday stock count at WH-01 read zero on a line that runs out chronically. Replenishment into WH-01 runs Monday to Wednesday, so the Thursday count is the first honest read on whether the week can be finished. When it reads zero, Friday and Saturday orders for that line cannot be filled. Three Modern Trade hero lines - Meadowvale Full Cream Milk, Sunveld Maize Meal and Softleaf Toilet Tissue - do this in roughly a third of all weeks. None of this appears in a sales report, by…",
    "columns": [
     {
@@ -1071,6 +1092,10 @@
   {
    "name": "mart_dead_stock",
    "rows": 393,
+   "grain": [
+    "warehouse_name",
+    "sku"
+   ],
    "description": "FINDING 5. What is sitting in the warehouses that nobody is buying any more. One row per SKU per distribution centre, as at the most recent stock count. Live stock is included alongside dead stock on purpose, so a chart can show the dead pile against the total it is part of rather than as a number with no scale - filter on is_dead_stock for the finding itself. The Halo Shine aerosol range was discontinued and has not sold in over six months, yet eight of its SKUs still hold stock in WH-02. This is a working capital problem rather than a profit one: the cash is already spent, it is simply not…",
    "columns": [
     {
@@ -1288,6 +1313,11 @@
   {
    "name": "agg_sales_monthly",
    "rows": 834,
+   "grain": [
+    "channel",
+    "category",
+    "month_start_date"
+   ],
    "description": "",
    "columns": [
     {
@@ -1402,6 +1432,10 @@
   {
    "name": "agg_product_month",
    "rows": 3096,
+   "grain": [
+    "month_start_date",
+    "sku"
+   ],
    "description": "",
    "columns": [
     {
@@ -1557,6 +1591,9 @@
   {
    "name": "dim_product",
    "rows": 131,
+   "grain": [
+    "sku"
+   ],
    "description": "The product master, one row per SKU. Everything the business knows about a line it sells: what it is called, who makes it, what it weighs, what it costs Meridian to buy and what it is listed at. This is the cleaned version - blank costs have already been filled in upstream and are flagged where that happened, so nobody has to guess whether a margin is real or imputed.",
    "columns": [
     {
@@ -1688,6 +1725,9 @@
   {
    "name": "dim_customer",
    "rows": 485,
+   "grain": [
+    "customer_id"
+   ],
    "description": "The trading account master, one row per customer, with the sales representative who owns the relationship attached and the account rolled up to its parent group. The grouping is the important part: large customers trade through several branches under separate account numbers, and pricing decisions that look small on one branch are substantial once the branches are added together. Finding 3 is invisible without it.",
    "columns": [
     {

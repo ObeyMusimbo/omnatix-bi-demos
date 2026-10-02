@@ -27,7 +27,7 @@
     "n": "01",
     "id": "corridors",
     "title": "Empty return legs",
-    "v": 5530394.44,
+    "v": 5530073.35,
     "f": "Rc",
     "note": "lost a year on 12 corridors"
    },
@@ -35,7 +35,7 @@
     "n": "02",
     "id": "doors",
     "title": "Deliveries done twice",
-    "v": 6509250.9,
+    "v": 6509216.86,
     "f": "Rc",
     "note": "a year, 6 sites cause most of it"
    },
@@ -68,9 +68,9 @@
     "id": "close",
     "title": "What it is worth",
     "close": true,
-    "v": 19720010.64,
+    "v": 19719655.51,
     "f": "Rc",
-    "note": "71.5% of the R27.6m the business earns"
+    "note": "71.6% of the R27.6m the business earns"
    }
   ]
  },
@@ -104,7 +104,10 @@
   {
    "name": "mart_opportunity_bridge",
    "rows": 6,
-   "description": "The closing visual, and deliberately not a year on year variance bridge. Kestrel's findings are standing costs rather than deterioration: empty returns, doors that will not receive, thirsty trucks and a service clause were all just as true last year. Framing them as variance would be dishonest and produces a meaningless residual. So this runs the other way. It starts at what Kestrel actually earned and adds what each finding identified, ending at what the same fleet and the same customers could contribute with nothing new bought. The figures are what the findings are worth in full; recovery…",
+   "grain": [
+    "step_order"
+   ],
+   "description": "The closing visual, and deliberately not a year on year variance bridge. Kestrel's findings are standing costs rather than deterioration: empty returns, doors that will not receive, thirsty trucks and a service clause were all just as true last year. Framing them as variance would be dishonest and produces a meaningless residual. So this runs the other way. It starts at what Kestrel actually earned and adds what each finding identified, ending at what the same fleet and the same customers could contribute with nothing new bought. The figures are what the findings are worth in full; recoveryâ€¦",
    "columns": [
     {
      "name": "step_order",
@@ -208,6 +211,10 @@
   {
    "name": "mart_lane_economics",
    "rows": 50,
+   "grain": [
+    "period_label",
+    "lane_name"
+   ],
    "description": "Finding 1. Lane by period, carrying both ends of the line so the dashboard can colour each corridor on a map by what it actually contributes.",
    "columns": [
     {
@@ -435,6 +442,11 @@
   {
    "name": "mart_failed_deliveries",
    "rows": 10431,
+   "grain": [
+    "origin_depot_code",
+    "month_start_date",
+    "customer_id"
+   ],
    "description": "Finding 2. Customer by month. A failed drop earns nothing and still consumed a slot on a truck that had already been paid for, so it never appears in a revenue report.",
    "columns": [
     {
@@ -564,6 +576,9 @@
   {
    "name": "mart_fuel_outliers",
    "rows": 124,
+   "grain": [
+    "registration"
+   ],
    "description": "Finding 3. One row per vehicle over the trailing twelve months, compared against the median of its own class rather than the fleet, because consumption only means something against like work. Twelve months because the closing bridge adds this to a year of contribution, and the page calls it a year.",
    "columns": [
     {
@@ -642,6 +657,12 @@
   {
    "name": "mart_sla_performance",
    "rows": 288,
+   "grain": [
+    "is_anchor_account",
+    "dispatch_day_bucket",
+    "contract_type",
+    "month_start_date"
+   ],
    "description": "Finding 4. Dispatch day bucket by month. Service sits near 96% on a normal day and collapses on Fridays and at month end, when dispatch batches everything into one run. The tightest contracts break hardest, which means the customers paying most for service are the ones failed first.",
    "columns": [
     {
@@ -748,6 +769,10 @@
   {
    "name": "mart_load_factor",
    "rows": 68,
+   "grain": [
+    "vehicle_class",
+    "lane_name"
+   ],
    "description": "Finding 5. Vehicle class by lane, over the trailing twelve months. Freight is billed by weight, but a trailer runs out of deck space long before it runs out of axle allowance on light, bulky cargo.",
    "columns": [
     {
@@ -855,6 +880,12 @@
   {
    "name": "agg_trip_monthly",
    "rows": 505,
+   "grain": [
+    "lane_type",
+    "origin_depot_name",
+    "vehicle_class",
+    "month_start_date"
+   ],
    "description": "Monthly trading summary by lane type, vehicle class and hub. Small enough to ship to a browser whole, which is what the dashboard overview reads.",
    "columns": [
     {
@@ -986,6 +1017,9 @@
   {
    "name": "dim_lane",
    "rows": 29,
+   "grain": [
+    "lane_name"
+   ],
    "description": "One row per lane, carrying the coordinates of both ends so the dashboard can draw the network as a map rather than a table.",
    "columns": [
     {
@@ -1162,6 +1196,9 @@
   {
    "name": "dim_vehicle",
    "rows": 124,
+   "grain": [
+    "registration"
+   ],
    "description": "One row per vehicle, with its hub and whether it is a line-haul unit.",
    "columns": [
     {
@@ -1247,6 +1284,9 @@
   {
    "name": "dim_customer",
    "rows": 242,
+   "grain": [
+    "customer_id"
+   ],
    "description": "One row per consignee.",
    "columns": [
     {

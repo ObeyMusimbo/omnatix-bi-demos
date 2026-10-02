@@ -128,6 +128,9 @@
   {
    "name": "mart_exposure_bridge",
    "rows": 6,
+   "grain": [
+    "step_order"
+   ],
    "description": "The closing view, and deliberately two numbers rather than one. Credit loss and regulatory exposure are different things: the bridge carries the loss, and the reckless lending exposure is reported alongside it rather than added into it.",
    "columns": [
     {
@@ -224,6 +227,11 @@
   {
    "name": "mart_vintage",
    "rows": 2691,
+   "grain": [
+    "branch_name",
+    "cohort_month",
+    "months_on_book"
+   ],
    "description": "Cumulative bad rate by disbursement cohort and months on book. A cohort is drawn only for the months it has actually been observed. Extending a young cohort with zeroes to fill the x axis is the single most common way a vintage chart lies, so the model simply has no row there.",
    "columns": [
     {
@@ -326,6 +334,10 @@
   {
    "name": "mart_branch_risk",
    "rows": 216,
+   "grain": [
+    "branch_name",
+    "cohort_month"
+   ],
    "description": "Branch by cohort, against the book. bad_rate_vs_book_x is the multiple that carries finding 1, and income_inflated_pct is the reason for it.",
    "columns": [
     {
@@ -471,6 +483,11 @@
   {
    "name": "mart_affordability",
    "rows": 648,
+   "grain": [
+    "affordability_band",
+    "branch_name",
+    "cohort_month"
+   ],
    "description": "Cohort by branch by affordability band, with the bad rate of each. The band that breaches the floor is reported as regulatory exposure, never as expected loss.",
    "columns": [
     {
@@ -595,6 +612,9 @@
   {
    "name": "mart_topup_masking",
    "rows": 852,
+   "grain": [
+    "topup_loan_id"
+   ],
    "description": "One row per top-up, paired with the loan it settled. The finding is that almost every one of them settled an account that was already delinquent, which resets the arrears clock: the old loan closes as Settled and the new one starts Current.",
    "columns": [
     {
@@ -749,6 +769,9 @@
   {
    "name": "mart_debit_order",
    "rows": 12,
+   "grain": [
+    "days_after_payday"
+   ],
    "description": "Loans grouped by how many days after payday the debit order is presented. Presenting before the salary lands fails for insufficient funds regardless of intent.",
    "columns": [
     {
@@ -806,6 +829,9 @@
   {
    "name": "mart_collections",
    "rows": 4,
+   "grain": [
+    "arrears_bucket"
+   ],
    "description": "Collections effort and what it bought, by the arrears bucket it was spent in. The finding is the cost per cure: cheap while the account is barely late, and three orders of magnitude more once it is past ninety, with almost all the spend at the expensive end.",
    "columns": [
     {
@@ -867,6 +893,9 @@
   {
    "name": "agg_book_monthly",
    "rows": 23,
+   "grain": [
+    "month_start_date"
+   ],
    "description": "The book by month: size, portfolio at risk at three cut-offs, and what was written.",
    "columns": [
     {
@@ -960,6 +989,9 @@
   {
    "name": "dim_branch",
    "rows": 9,
+   "grain": [
+    "branch_name"
+   ],
    "description": "One row per branch, with the agent headcount behind it.",
    "columns": [
     {
