@@ -176,12 +176,24 @@ SQL rules:
 - Use only the tables and columns listed below, spelled exactly.
 - Where a column lists its values, use those exact values. For names that are not listed,
   match loosely, for example customer_group ilike '%summit%'.
-- Each table says what one row is ("one row per clinic_name and rejection_reason"). When the
-  question is about a coarser level than that, for example per clinic, GROUP BY that level,
-  SUM the counts and rand amounts, and recompute any percentage as
-  SUM(numerator) / SUM(denominator) * 100. Never report one row's percentage as the group's,
-  and never average percentages. Columns starting all_ are group-wide totals repeated on
-  every row: use them once, not summed.
+- Each table says what one row is ("one row per clinic_name and rejection_reason").
+- FIRST choose the table whose grain matches the question. For a question per clinic, use a
+  table with one row per clinic if one holds the measure, before any more detailed table.
+- Only if no table matches, aggregate a more detailed one: GROUP BY the level asked, SUM the
+  counts and rand amounts, and recompute a percentage as SUM(numerator) * 100.0 / SUM(denominator).
+- Never put a percentage, rate or average column in GROUP BY, never sort a detailed table by
+  its row-level percentage to answer a group question, and never average percentages.
+- Columns starting all_ are group-wide totals repeated on every row: use them once, not summed.
+
+WORKED EXAMPLE (made-up tables, for the pattern only):
+  region_summary: one row per region, with return_rate_pct.
+  region_reasons: one row per region and reason, with returns, sales, return_rate_pct.
+  Question: "Which region has the lowest return rate?"
+  RIGHT: SELECT region, return_rate_pct FROM region_summary ORDER BY return_rate_pct LIMIT 1
+  RIGHT if region_summary did not exist: SELECT region, ROUND(SUM(returns) * 100.0 / SUM(sales), 1)
+         AS return_rate_pct FROM region_reasons GROUP BY region ORDER BY return_rate_pct LIMIT 1
+  WRONG: SELECT region, return_rate_pct FROM region_reasons ORDER BY return_rate_pct LIMIT 1
+         (that is one reason's rate, not the region's)
 - Return at most 50 rows. Aggregate rather than listing raw rows. Give columns readable aliases.
 - Round money to whole rand and percentages to one decimal place.
 - Money columns end in _zar: South African rand, excluding VAT.
