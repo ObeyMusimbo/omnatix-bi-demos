@@ -110,10 +110,11 @@ the `functions/` folder with every push. It needs one secret:
 3. Redeploy, or push any commit. A secret reaches the next deployment, not the current one.
 
 Optional variable `QWEN_MODELS`: the models to try, comma separated, in order. The default is
-`qwen/qwen3.8-27b:free,qwen/qwen3.7-flash`: the free model first, then a very cheap paid one when
-the free one is busy or over its daily limit. Loading a few dollars of credit on OpenRouter raises
-the free model's daily limit and lets the fallback answer. Without the secret, the box says it is
-not switched on yet and nothing else changes.
+the free model alone, `qwen/qwen3.8-27b:free`, which has a daily request limit; each question
+uses two requests. To add a very cheap paid fallback for when the free one is busy, load credit
+on OpenRouter and set `QWEN_MODELS` to `qwen/qwen3.8-27b:free,qwen/qwen3.7-flash`. Credit also
+raises the free model's daily limit. Without the secret, the box says it is not switched on yet
+and nothing else changes.
 
 Questions, and the rows of the queries they run, are sent to OpenRouter. The demo data is
 synthetic. For a client's real data, choose a provider and model whose data terms fit the client,

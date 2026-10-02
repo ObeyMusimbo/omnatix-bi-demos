@@ -20,13 +20,16 @@
 
   Configuration, in Cloudflare Pages, Settings, Variables and Secrets:
     OPENROUTER_API_KEY   secret, required. Without it the box says it is not switched on yet.
-    QWEN_MODELS          optional, comma separated, tried in order. A free model first, then a
-                         cheap paid one in case the free one is busy or over its daily limit.
+    QWEN_MODELS          optional, comma separated, tried in order. The default is the free Qwen
+                         model alone. Add a paid one after it, for example
+                         qwen/qwen3.8-27b:free,qwen/qwen3.7-flash, once there is credit on the
+                         account, so a busy free model hands over instead of failing.
     OPENROUTER_URL       optional, for local testing only: point at a stand-in model server.
 */
 
 const DEMOS = new Set(['meridian', 'kestrel', 'sable-finch', 'lumen']);
-const DEFAULT_MODELS = ['qwen/qwen3.8-27b:free', 'qwen/qwen3.7-flash'];
+// Free only, by choice. See QWEN_MODELS above to add a paid fallback later.
+const DEFAULT_MODELS = ['qwen/qwen3.8-27b:free'];
 const OPENROUTER = 'https://openrouter.ai/api/v1/chat/completions';
 
 const MAX_QUESTION = 500;     // characters
@@ -209,6 +212,7 @@ async function qwen(env, messages, maxTokens) {
   const models = (env.QWEN_MODELS || DEFAULT_MODELS.join(',')).split(',').map((m) => m.trim()).filter(Boolean);
   let last = '';
   let needsCredit = false;
+  let limited = false;
   // Tried in order. A free model can be busy or over its daily limit; the next one takes over.
   for (const model of models) {
     const res = await fetch(env.OPENROUTER_URL || OPENROUTER, {
@@ -238,6 +242,7 @@ async function qwen(env, messages, maxTokens) {
       }
       // 402: a paid model with no credit on the account. 429: busy or over a free daily limit.
       if (res.status === 402) needsCredit = true;
+      if (res.status === 429) limited = true;
       continue;
     }
     const data = await res.json();
@@ -246,8 +251,8 @@ async function qwen(env, messages, maxTokens) {
     return { text, json: parseJson(text), model: data.model || model };
   }
   const e = new Error(`no model answered (${last})`);
-  e.publicMessage = needsCredit
-    ? 'The free AI allowance for today is used up. Please try again tomorrow.'
+  e.publicMessage = needsCredit || limited
+    ? 'The free AI is busy or has used up today\'s allowance. Please try again in a few minutes, or tomorrow.'
     : 'The AI is busy just now. Please try again in a minute.';
   throw e;
 }
