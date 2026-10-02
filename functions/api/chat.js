@@ -218,8 +218,14 @@ async function qwen(env, messages, maxTokens) {
   let last = '';
   let needsCredit = false;
   let limited = false;
-  // Tried in order. A free model can be busy or over its daily limit; the next one takes over.
-  for (const model of models) {
+  // Tried in order, each up to three times. A free model's provider is often momentarily
+  // overloaded (429) or returns nothing; a second or two later it usually answers. An error
+  // that waiting will not fix, such as a bad request or no credit, moves on to the next model.
+  const attempts = models.flatMap((m) => [[m, 0], [m, 1], [m, 2]]);
+  const skip = new Set();
+  for (const [model, n] of attempts) {
+    if (skip.has(model)) continue;
+    if (n) await new Promise((r) => setTimeout(r, n === 1 ? 900 : 2200));
     const res = await fetch(env.OPENROUTER_URL || OPENROUTER, {
       method: 'POST',
       headers: {
@@ -254,6 +260,7 @@ async function qwen(env, messages, maxTokens) {
       // 402: a paid model with no credit on the account. 429: busy or over a free daily limit.
       if (res.status === 402) needsCredit = true;
       if (res.status === 429) limited = true;
+      if (res.status !== 429 && res.status < 500) skip.add(model);
       continue;
     }
     const data = await res.json();
