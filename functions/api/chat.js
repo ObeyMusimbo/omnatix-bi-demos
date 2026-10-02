@@ -74,12 +74,12 @@ export async function onRequestPost({ request, env }) {
       const sql = clip(body.sql, 4000);
       const result = clip(JSON.stringify({ columns: body.columns || [], rows: body.rows || [],
         rowCount: body.rowCount ?? null }), MAX_RESULT);
-      const out = await qwen(env, answerMessages(ctx, filter, question, sql, result), 700);
+      const out = await qwen(env, answerMessages(ctx, filter, question, sql, result), 1200);
       const answer = tidy(out.json?.answer || out.text);
       return reply({ type: 'answer', answer, model: out.model });
     }
 
-    const out = await qwen(env, planMessages(ctx, filter, history, question, body.error, body.failedSql), 900);
+    const out = await qwen(env, planMessages(ctx, filter, history, question, body.error, body.failedSql), 2000);
     const j = out.json || {};
     if (j.type === 'sql' && typeof j.sql === 'string' && readOnly(j.sql)) {
       return reply({ type: 'sql', sql: j.sql.trim(), purpose: tidy(j.purpose || ''), model: out.model });
@@ -234,8 +234,11 @@ async function qwen(env, messages, maxTokens) {
         temperature: 0.1,
         max_tokens: maxTokens,
         response_format: { type: 'json_object' },
-        // The reasoning trace, where a model produces one, is not wanted in the reply.
-        reasoning: { exclude: true },
+        // Thinking off. The free Qwen model thinks at its highest effort by default, and thinking
+        // tokens count against max_tokens: it spent the whole allowance thinking and returned
+        // nothing, or a query cut off half way. Writing one query from a described schema does
+        // not need it.
+        reasoning: { enabled: false, exclude: true },
       }),
     });
     if (!res.ok) {
@@ -254,8 +257,13 @@ async function qwen(env, messages, maxTokens) {
       continue;
     }
     const data = await res.json();
-    const text = stripThinking(data?.choices?.[0]?.message?.content || '');
-    if (!text) { last = `${model} empty`; continue; }
+    const choice = data?.choices?.[0] || {};
+    const text = stripThinking(choice.message?.content || '');
+    // A reply cut off at max_tokens is half a query or half a sentence: never used.
+    if (!text || choice.finish_reason === 'length') {
+      last = `${model} ${text ? 'cut off at max_tokens' : 'empty'} (${choice.finish_reason || 'no finish reason'})`;
+      continue;
+    }
     return { text, json: parseJson(text), model: data.model || model };
   }
   const e = new Error(`no model answered (${last})`);
