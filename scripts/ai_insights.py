@@ -246,8 +246,10 @@ OPENAI_COMPATIBLE = {
                "gemini-2.5-flash", "Google Gemini", False),
     "groq": ("GROQ_API_KEY", "https://api.groq.com/openai/v1/chat/completions",
              "llama-3.3-70b-versatile", "Groq", True),
+    # The same free chain the Ask box uses, tried in order: three makers, three capacities.
     "openrouter": ("OPENROUTER_API_KEY", "https://openrouter.ai/api/v1/chat/completions",
-                   "meta-llama/llama-3.3-70b-instruct:free", "OpenRouter", True),
+                   "qwen/qwen3.8-27b:free,google/gemma-4-31b-it:free,nvidia/nemotron-3-super-120b-a12b:free",
+                   "OpenRouter", False),
     # GitHub Models caps a free request at about 8,000 input tokens, hence the compact context.
     "github": ("GITHUB_TOKEN", "https://models.github.ai/inference/chat/completions",
                "openai/gpt-4.1-mini", "GitHub Models", True),
@@ -306,6 +308,11 @@ def call_openai_compatible(name: str, system: str, user: str, schema: dict, mode
         "response_format": {"type": "json_object"},
         "temperature": 0.2,
     }
+    if name == "openrouter":
+        # Thinking off: on the free Qwen it runs at full effort by default and its tokens count
+        # against the reply, which came back empty or cut off. A larger reply allowance as well.
+        body["reasoning"] = {"enabled": False, "exclude": True}
+        body["max_tokens"] = 6000
     req = urllib.request.Request(
         url,
         data=json.dumps(body).encode("utf-8"),
@@ -606,14 +613,30 @@ def write_project(project: str, provider: str | None, dry_run: bool) -> bool:
             raw, served = call_anthropic(system, user, schema, model)
             label = "Anthropic"
         elif provider in OPENAI_COMPATIBLE:
-            model = os.environ.get("AI_MODEL") or OPENAI_COMPATIBLE[provider][2]
-            raw, served = call_openai_compatible(provider, system, user, schema, model)
+            # AI_MODEL, or the default, may name several models: each is tried until one gives
+            # usable insights, so one busy free model does not leave the dashboard stale.
+            models = [m.strip() for m in (os.environ.get("AI_MODEL") or OPENAI_COMPATIBLE[provider][2]).split(",") if m.strip()]
+            errors = []
+            for model in models:
+                try:
+                    raw, served = call_openai_compatible(provider, system, user, schema, model)
+                    result = clean(project, raw, numbers)
+                    break
+                except Exception as e:  # try the next model
+                    errors.append(f"{model}: {e}")
+            else:
+                raise RuntimeError("; ".join(errors))
             label = OPENAI_COMPATIBLE[provider][3]
         else:
             raise RuntimeError(f"unknown provider {provider!r}")
-        result = clean(project, raw, numbers)
+        if provider == "anthropic":
+            result = clean(project, raw, numbers)
     except Exception as e:
         print(f"  {provider} failed, keeping the existing insights: {e}", file=sys.stderr)
+        # On GitHub Actions, a warning on the run, so a silent failure is no longer silent.
+        if os.environ.get("GITHUB_ACTIONS") == "true":
+            reason = re.sub(r"\s+", " ", str(e))[:900]
+            print(f"::warning title=AI insights not refreshed for {project}::{provider}: {reason}")
         return False
 
     out = {

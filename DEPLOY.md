@@ -136,7 +136,7 @@ different provider, add one repository secret under **Settings** → **Secrets a
 | `ANTHROPIC_API_KEY` | Claude | console.anthropic.com, paid per use |
 | `GEMINI_API_KEY` | Google Gemini | aistudio.google.com, free tier |
 | `GROQ_API_KEY` | Groq | console.groq.com, free tier |
-| `OPENROUTER_API_KEY` | OpenRouter | openrouter.ai, free models |
+| `OPENROUTER_API_KEY` | OpenRouter | openrouter.ai: the free Qwen, then Gemma, then Nemotron chain, the same as Ask the data |
 
 Set a repository variable `AI_PROVIDER` to force one of `anthropic`, `gemini`, `groq`,
 `openrouter` or `github`, and `AI_MODEL` to choose the model. Keys are only ever read from
