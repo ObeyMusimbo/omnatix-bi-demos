@@ -70,23 +70,6 @@
   <!-- Ask the data: its own tab. -->
   <section class="ask-section" id="ask" aria-label="Ask the data"></section>
 
-  <footer>
-    <p>
-      Built by Omnatix. Diary, billing, claims and reception exports land as CSV, are modelled
-      through bronze, silver and gold layers in dbt on DuckDB, tested on every build, and
-      published as Parquet. This page loads those files and runs SQL against them in your
-      browser using DuckDB-WASM. The workbench has no backend and no database server; the Ask
-      tab sends your question, and the result of the query it runs in your browser, to an open AI model (Qwen first)
-      through a small Cloudflare function.
-    </p>
-    <p>
-      Money figures are in rand and exclude VAT. Claim settlement is measured from submission
-      to payment rather than from date of service, so a slow scheme and a slow practice stay
-      separate numbers. The decision support is written by a language model from the same gold
-      tables after every rebuild, names the model that wrote it, and is operational, not
-      clinical: nothing on this page is clinical or financial advice.
-    </p>
-  </footer>
 
 </div>
 

@@ -78,22 +78,6 @@
       <aside class="alerts" id="ox-top" aria-label="Alerts"></aside>
     </div>
 
-    <footer>
-      <p>
-        Built by Omnatix. Trip, fuel, workshop and delivery exports land as CSV, are modelled
-        through bronze, silver and gold layers in dbt on DuckDB, tested on every build, and
-        published as Parquet. This page loads those files and runs SQL against them in your
-        browser using DuckDB-WASM. The dashboard has no backend and no database server; Ask the
-        data sends your question, and the result of the query it runs in your browser, to an open AI model (Qwen first)
-        through a small Cloudflare function. The map is drawn from coordinates in the data, not
-        from map tiles.
-      </p>
-      <p>
-        The AI recommendations are written by a language model from the same gold tables, after
-        every rebuild, and each names the model that wrote it. Check them against the figures
-        on screen before acting on them.
-      </p>
-    </footer>
   </div>
 
 </div>

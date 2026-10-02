@@ -79,21 +79,6 @@
     </div>
   </div>
 
-  <footer>
-    <p>
-      Built by Omnatix. Loan, repayment, arrears and collections exports land as CSV, are
-      modelled through bronze, silver and gold layers in dbt on DuckDB, tested on every build,
-      and published as Parquet. This page runs SQL against those files in your browser using
-      DuckDB-WASM. The pack has no backend and no database server; the Questions page sends
-      your question, and the result of the query it runs in your browser, to an open AI model (Qwen first) through a
-      small Cloudflare function.
-    </p>
-    <p>
-      The recommendations and draft resolutions are written by a language model from the same
-      gold tables, after every rebuild, and each names the model that wrote it. They are drafts
-      for the committee to test against the figures, not decisions.
-    </p>
-  </footer>
 </div>
 
 <script type="module" src="assets/app.js"></script>
