@@ -109,11 +109,15 @@ the `functions/` folder with every push. It needs one secret:
    Secrets** → **Add**, type **Secret**, name `OPENROUTER_API_KEY`, value the key. Production.
 3. Redeploy, or push any commit. A secret reaches the next deployment, not the current one.
 
-Optional variable `QWEN_MODELS`: the models to try, comma separated, in order. The default is
-the free model alone, `qwen/qwen3.8-27b:free`, which has a daily request limit; each question
-uses two requests. To add a very cheap paid fallback for when the free one is busy, load credit
-on OpenRouter and set `QWEN_MODELS` to `qwen/qwen3.8-27b:free,qwen/qwen3.7-flash`. Credit also
-raises the free model's daily limit. Without the secret, the box says it is not switched on yet
+The default is three free models from three makers, tried in order, each twice:
+`qwen/qwen3.8-27b:free`, then `google/gemma-4-31b-it:free`, then
+`nvidia/nemotron-3-super-120b-a12b:free`. Each runs on separate capacity, so when the free Qwen
+is overloaded the next one answers, at no cost. Free models share a daily request limit per
+account, and each question uses at least two requests.
+
+Optional variable `QWEN_MODELS` replaces that list, comma separated, in order. To add a very
+cheap paid backup at the end, load credit on OpenRouter and append `qwen/qwen3.7-flash`. Credit
+also raises the free daily limit. Without the secret, the box says it is not switched on yet
 and nothing else changes.
 
 Questions, and the rows of the queries they run, are sent to OpenRouter. The demo data is

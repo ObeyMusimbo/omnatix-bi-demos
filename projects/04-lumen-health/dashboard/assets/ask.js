@@ -1,9 +1,10 @@
 /*
   Ask the data, the browser half. Shared by all four demos and kept identical, like shell.js.
 
-  The visitor asks a question. /api/chat (functions/api/chat.js) has Qwen write one SQL query
-  for this dashboard's tables; this file checks the query is a single read, runs it right here
-  in the page's own DuckDB-WASM engine, and sends the result back so Qwen can phrase the answer.
+  The visitor asks a question. /api/chat (functions/api/chat.js) has an open model, Qwen first,
+  write one SQL query for this dashboard's tables; this file checks the query is a single read,
+  runs it right here in the page's own DuckDB-WASM engine, and sends the result back so the
+  model can phrase the answer.
   The SQL and the rows it returned are shown under every answer, so every number in it can be
   checked. The data never leaves the page except as the result of a query the visitor can see.
 
@@ -100,9 +101,10 @@ export function mountAsk(root, { demo, title = 'Ask the data', intro = '', examp
         <textarea class="ask-input" id="${id}" rows="2" maxlength="500" placeholder="${esc(placeholder)}"></textarea>
         <button class="ask-send" type="submit">Ask</button>
       </form>
-      <p class="ask-note">Answers are written by Qwen from SQL that runs in your browser on this
-        dashboard's own tables. Every answer shows its query and the rows it returned. Questions
-        outside this data are declined.</p>
+      <p class="ask-note">Answers are written by an open AI model (Qwen first, then Gemma or
+        Nemotron when it is busy) from SQL that runs in your browser on this dashboard's own
+        tables. Every answer shows its query, the rows it returned and the model that wrote it.
+        Questions outside this data are declined.</p>
     </div>`;
 
   const log = root.querySelector('.ask-log');
@@ -172,7 +174,7 @@ export function mountAsk(root, { demo, title = 'Ask the data', intro = '', examp
           ${plan.purpose ? `<p class="ask-purpose">${esc(plan.purpose)}</p>` : ''}
           <pre class="ask-sql"><code>${esc(sql)}</code></pre>
           ${resultTable(rows)}
-          <p class="ask-meta">${rows.length} ${rows.length === 1 ? 'row' : 'rows'}${rows.length > SHOW_ROWS ? `, first ${SHOW_ROWS} shown` : ''} · ran in your browser in ${ms} ms · ${esc(ans.model || plan.model || 'Qwen')}</p>
+          <p class="ask-meta">${rows.length} ${rows.length === 1 ? 'row' : 'rows'}${rows.length > SHOW_ROWS ? `, first ${SHOW_ROWS} shown` : ''} · ran in your browser in ${ms} ms · written by ${esc(ans.model || plan.model || 'an open model')}</p>
         </details>`;
       history.push({ q: question, a: ans.answer });
     } catch (err) {

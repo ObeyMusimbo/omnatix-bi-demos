@@ -105,7 +105,9 @@ behaviour, in `shell.js`, not appearance: each stylesheet decides what the share
 ## Ask the data
 
 Every demo has a question box: a chapter in Meridian, a sidebar view in Kestrel, a Questions page
-in Sable & Finch, a tab in Lumen. A question takes two calls to **Qwen**, through OpenRouter:
+in Sable & Finch, a tab in Lumen. A question takes two calls to a free open model through
+OpenRouter: **Qwen** first, then Google's **Gemma** or NVIDIA's **Nemotron** when Qwen is busy.
+Each answer names the model that wrote it.
 
 1. `functions/api/chat.js`, a Cloudflare Pages Function holding the key, sends the question and
    that demo's `data/chat-context.json` to Qwen, which replies with one read-only SQL query, a

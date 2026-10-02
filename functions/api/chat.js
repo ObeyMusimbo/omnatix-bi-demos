@@ -28,8 +28,14 @@
 */
 
 const DEMOS = new Set(['meridian', 'kestrel', 'sable-finch', 'lumen']);
-// Free only, by choice. See QWEN_MODELS above to add a paid fallback later.
-const DEFAULT_MODELS = ['qwen/qwen3.8-27b:free'];
+// Free only, by choice, and three free models from three makers, so each runs on separate
+// capacity: when the free Qwen is overloaded, Gemma answers, and Nemotron after that.
+// QWEN_MODELS above overrides the list, for example to add a paid model at the end.
+const DEFAULT_MODELS = [
+  'qwen/qwen3.8-27b:free',
+  'google/gemma-4-31b-it:free',
+  'nvidia/nemotron-3-super-120b-a12b:free',
+];
 const OPENROUTER = 'https://openrouter.ai/api/v1/chat/completions';
 
 const MAX_QUESTION = 500;     // characters
@@ -218,14 +224,15 @@ async function qwen(env, messages, maxTokens) {
   let last = '';
   let needsCredit = false;
   let limited = false;
-  // Tried in order, each up to three times. A free model's provider is often momentarily
-  // overloaded (429) or returns nothing; a second or two later it usually answers. An error
-  // that waiting will not fix, such as a bad request or no credit, moves on to the next model.
-  const attempts = models.flatMap((m) => [[m, 0], [m, 1], [m, 2]]);
+  // Tried in order, each twice. A free model's provider is often momentarily overloaded (429)
+  // or returns nothing, and a second later it may answer; if not, the next model takes over.
+  // Every attempt counts against the account's free daily allowance, hence two, not more. An
+  // error that waiting will not fix, such as a bad request or no credit, moves straight on.
+  const attempts = models.flatMap((m) => [[m, 0], [m, 1]]);
   const skip = new Set();
   for (const [model, n] of attempts) {
     if (skip.has(model)) continue;
-    if (n) await new Promise((r) => setTimeout(r, n === 1 ? 900 : 2200));
+    if (n) await new Promise((r) => setTimeout(r, 1000));
     const res = await fetch(env.OPENROUTER_URL || OPENROUTER, {
       method: 'POST',
       headers: {
