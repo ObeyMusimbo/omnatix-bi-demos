@@ -87,7 +87,9 @@ export async function onRequestPost({ request, env }) {
     if (j.type === 'clarify' && j.message) return reply({ type: 'clarify', message: tidy(j.message), model: out.model });
     return reply({ type: 'refuse', message: tidy(j.message) || refusal(ctx), model: out.model });
   } catch (e) {
-    return reply({ type: 'error', message: e.publicMessage || 'The AI could not be reached just now. Please try again in a moment.' }, 502);
+    // detail is for whoever runs the site, read from the network tab; the page shows message.
+    return reply({ type: 'error', message: e.publicMessage || 'The AI could not be reached just now. Please try again in a moment.',
+      detail: clip(e.message, 400) }, 502);
   }
 }
 
@@ -234,7 +236,10 @@ async function qwen(env, messages, maxTokens) {
       }),
     });
     if (!res.ok) {
-      last = `${model} ${res.status}`;
+      // OpenRouter's own reason, kept for the detail field. It never contains the key.
+      let why = '';
+      try { why = (await res.json())?.error?.message || ''; } catch { /* not JSON */ }
+      last = `${model} ${res.status}${why ? `: ${clip(why, 300)}` : ''}`;
       if (res.status === 401) {
         const e = new Error(last);
         e.publicMessage = 'The AI key on this site is not valid. Please let Omnatix know.';
