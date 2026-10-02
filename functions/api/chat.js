@@ -85,7 +85,10 @@ export async function onRequestPost({ request, env }) {
       return reply({ type: 'sql', sql: j.sql.trim(), purpose: tidy(j.purpose || ''), model: out.model });
     }
     if (j.type === 'clarify' && j.message) return reply({ type: 'clarify', message: tidy(j.message), model: out.model });
-    return reply({ type: 'refuse', message: tidy(j.message) || refusal(ctx), model: out.model });
+    if (j.type === 'refuse' && j.message) return reply({ type: 'refuse', message: tidy(j.message), model: out.model });
+    // Neither a usable query nor a deliberate refusal: unreadable JSON, or SQL that failed the
+    // read-only check. Declined, with the model's own reply kept in detail for whoever runs it.
+    return reply({ type: 'refuse', message: refusal(ctx), model: out.model, detail: clip(out.text, 800) });
   } catch (e) {
     // detail is for whoever runs the site, read from the network tab; the page shows message.
     return reply({ type: 'error', message: e.publicMessage || 'The AI could not be reached just now. Please try again in a moment.',
