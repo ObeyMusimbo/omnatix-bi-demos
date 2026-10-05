@@ -214,8 +214,8 @@ nothing except which discipline is expensive.
 |---|---|---|---|---|---|---|
 | General practice | 16 | 41.3% | 68.9% | 91.7% | R180 | R451 |
 | Dentistry | 6 | 38.1% | 70.6% | 89.2% | R381 | R1,058 |
-| Dietetics | 3 | 31.0% | 55.1% | 80.4% | R243 | R709 |
 | Physiotherapy | 3 | 52.1% | 64.4% | 86.7% | R265 | R403 |
+| Dietetics | 3 | 31.0% | 55.1% | 80.4% | R243 | R709 |
 
 | Practitioner | Discipline | Site | Session rate | Fill | Cost per visit | Against peers |
 |---|---|---|---|---|---|---|

@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-10-04T07:53:59+00:00",
+  "built_at": "2026-10-05T08:33:45+00:00",
   "data_from": "2024-09-02",
   "data_through": "2026-08-31",
   "fixed_period": true,
@@ -12,31 +12,31 @@
     },
     "mart_margin_waterfall": {
       "rows": 238,
-      "bytes": 16057
+      "bytes": 16051
     },
     "mart_promo_performance": {
       "rows": 2558,
-      "bytes": 234971
+      "bytes": 235135
     },
     "mart_discount_trend": {
       "rows": 9114,
-      "bytes": 609505
+      "bytes": 610078
     },
     "mart_stockout_impact": {
       "rows": 108,
-      "bytes": 5469
+      "bytes": 5464
     },
     "mart_dead_stock": {
       "rows": 393,
-      "bytes": 22863
+      "bytes": 22875
     },
     "agg_sales_monthly": {
       "rows": 834,
-      "bytes": 57395
+      "bytes": 57262
     },
     "agg_product_month": {
       "rows": 3096,
-      "bytes": 210330
+      "bytes": 210400
     },
     "dim_product": {
       "rows": 131,
@@ -54,17 +54,17 @@
       "kicker": [
         "Revenue grew ",
         {
-          "v": 11.873662036007481,
+          "v": 11.873662036007083,
           "f": "signedPct"
         },
         ". Gross profit grew ",
         {
-          "v": 4.061995905837712,
+          "v": 4.061995905838289,
           "f": "signedPct"
         },
         "."
       ],
-      "v": 12615619.396514654,
+      "v": 12615619.396513015,
       "f": "Rc",
       "label": "of gross profit did not arrive, despite the revenue that should have carried it"
     },
@@ -73,7 +73,7 @@
         "n": "01",
         "id": "water",
         "title": "The range sold at a loss",
-        "v": -3849402.890077585,
+        "v": -3849402.8900775854,
         "f": "Rc",
         "note": "contribution on bottled water, after freight and rebates"
       },
@@ -89,7 +89,7 @@
         "n": "03",
         "id": "discount",
         "title": "The discount nobody reset",
-        "v": 3894718.0313697373,
+        "v": 3894718.031369742,
         "f": "Rc",
         "note": "revenue forgone in twelve months on one account"
       },
