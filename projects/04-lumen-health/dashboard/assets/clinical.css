@@ -233,7 +233,7 @@ body {
 .kpi.is-hero .kpi-v { color: var(--neg); font-size: 2.6rem; }
 @media (min-width: 900px) { .kpi.is-hero { grid-column: span 2; } }
 
-.ov-grid { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 1.25rem; align-items: start; }
+.ov-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.25rem; align-items: start; }
 .panel { background: var(--panel); border-radius: 6px; padding: 1.3rem 1.5rem 1.2rem; }
 .panel h2 { font-size: 1.05rem; margin: 0 0 0.2rem; }
 .panel .figure-note { margin-bottom: 0.6rem; }
@@ -303,54 +303,98 @@ section { margin: 0; }
   .bench-status { text-align: left; }
 }
 
-/* ---------------------------------------------------------------- the Ask tab
+/* ---------------------------------------------------------------- the assistant
 
-   A conversation: the question on the right in the clinic teal, the answer on a white card on
-   the left, the working folded beneath it. Calm and wide, like the rest of the workbench. */
+   The AI pop-up as a chat window: a round teal button in the corner, and a soft card with a
+   teal header. The question on the right in the clinic teal, the answer on a white card on the
+   left, the working folded beneath it. Calm, like the rest of the workbench. */
 
-html[data-view="ask"] #loading { display: none; }
-.bench .ask-section { padding-top: 1.75rem; }
-.bench .ask { max-width: 860px; }
-.bench .ask-title { font-size: 1.45rem; letter-spacing: -0.015em; }
-.bench .ask-intro { color: var(--ink-2); }
+.bench .aipop-launch {
+  background: var(--accent-ink);
+  color: var(--panel);
+  border-radius: 999px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  box-shadow: 0 10px 28px rgb(0 110 118 / 0.32);
+}
+:root[data-theme="dark"] .bench .aipop-launch { box-shadow: 0 10px 28px rgb(0 0 0 / 0.5); }
+.bench .aipop-launch:hover { filter: brightness(1.06); }
+.bench .aipop {
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 16px;
+  box-shadow: 0 24px 64px rgb(16 34 43 / 0.24), 0 0 0 1px var(--rule);
+}
+:root[data-theme="dark"] .bench .aipop { box-shadow: 0 24px 64px rgb(0 0 0 / 0.6), 0 0 0 1px var(--rule-strong); }
+.bench .aipop-head { background: var(--accent-ink); color: var(--panel); }
+.bench .aipop-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--panel) 18%, transparent);
+}
+.bench .aipop-title { font-size: 1rem; font-weight: 700; }
+.bench .aipop-sub { opacity: 0.85; font-size: 0.74rem; }
+.bench .aipop-icon { border-radius: 50%; }
+.bench .aipop-icon:hover { background: color-mix(in srgb, var(--panel) 16%, transparent); }
+.bench .aipop-tabs { background: var(--panel); border-bottom: 1px solid var(--rule); }
+.bench .aipop-tab { color: var(--ink-3); font-weight: 600; font-size: 0.84rem; }
+.bench .aipop-tab[aria-selected="true"] { color: var(--accent-ink); border-bottom-color: var(--accent); }
+.bench .aipop-tab:hover { color: var(--accent-ink); }
+.bench .aipop .bench-brief { border: 1px solid var(--rule); }
+
+.bench .ask-hello {
+  align-self: flex-start;
+  max-width: 92%;
+  background: var(--panel);
+  border-radius: 12px 12px 12px 2px;
+  padding: 0.75rem 0.95rem;
+  color: var(--ink-2);
+  font-size: 0.88rem;
+}
 .bench .ask-chip {
   background: var(--panel);
   border: 1px solid var(--rule-strong);
   border-radius: 999px;
   color: var(--accent-ink);
-  padding: 0.5rem 0.9rem;
-  font-size: 0.86rem;
+  padding: 0.45rem 0.8rem;
+  font-size: 0.8rem;
   font-weight: 600;
 }
 .bench .ask-chip:hover { border-color: var(--accent); }
 .bench .ask-turn { display: flex; flex-direction: column; gap: 0.5rem; }
 .bench .ask-q {
   align-self: flex-end;
-  max-width: 80%;
-  background: var(--accent);
-  color: #FFFFFF;
+  max-width: 85%;
+  background: var(--accent-ink);
+  color: var(--panel);
   border-radius: 12px 12px 2px 12px;
-  padding: 0.6rem 0.9rem;
+  padding: 0.55rem 0.85rem;
   font-weight: 600;
+  font-size: 0.88rem;
 }
 .bench .ask-a {
   align-self: flex-start;
-  max-width: 92%;
+  max-width: 94%;
   background: var(--panel);
   border-radius: 12px 12px 12px 2px;
-  padding: 0.8rem 1rem;
+  padding: 0.75rem 0.95rem;
+  font-size: 0.88rem;
+  line-height: 1.5;
 }
 .bench .ask-msg.is-refusal, .bench .ask-msg.is-clarify { color: var(--ink-2); }
 .bench .ask-msg.is-error { color: var(--neg); }
 .bench .ask-status { color: var(--ink-3); }
-.bench .ask-proof summary { color: var(--accent-ink); font-size: 0.82rem; font-weight: 600; }
+.bench .ask-proof summary { color: var(--accent-ink); font-size: 0.8rem; font-weight: 600; }
 .bench .ask-sql { background: var(--paper); border-radius: 6px; color: var(--ink); }
-.bench .ask-purpose, .bench .ask-meta { color: var(--ink-3); font-size: 0.8rem; }
-.bench .ask-label { font-size: 0.78rem; color: var(--ink-3); font-weight: 600; }
-.bench .ask-input { background: var(--panel); color: var(--ink); border: 1px solid var(--rule-strong); border-radius: 10px; padding: 0.65rem 0.8rem; }
+.bench .ask-purpose, .bench .ask-meta { color: var(--ink-3); font-size: 0.76rem; }
+.bench .ask-form { background: var(--panel); border-top: 1px solid var(--rule); }
+.bench .ask-input { background: var(--paper); color: var(--ink); border: 1px solid var(--rule-strong); border-radius: 22px; padding: 0.62rem 0.95rem; }
 .bench .ask-input:focus { outline: 2px solid var(--accent); outline-offset: 0; }
-.bench .ask-send { background: var(--accent); color: #FFFFFF; border: 0; border-radius: 10px; font-weight: 700; }
-.bench .ask-note { color: var(--ink-3); font-size: 0.8rem; }
+.bench .ask-send { background: var(--accent-ink); color: var(--panel); border: 0; border-radius: 50%; }
+.bench .ask-note { color: var(--ink-3); background: var(--panel); }
 
 .section-head { margin-bottom: 1.1rem; display: flex; align-items: baseline; gap: 0.9rem; }
 .section-num {

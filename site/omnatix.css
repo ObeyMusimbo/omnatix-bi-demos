@@ -171,6 +171,23 @@ a.card:hover .open { color: var(--accent); }
   color: var(--text-3);
 }
 
+/* ---------------------------------------------------------------- built for a client
+
+   A real client's hub sits in its own row under the four fictional demos, so the header's
+   promise that every business above is fictional stays true. One card, one column wide. */
+
+.client { border-top: 1px solid var(--rule); padding-top: 2.5rem; margin: 0 0 4rem; }
+.client-head {
+  font-size: 0.74rem;
+  font-weight: 500;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin: 0 0 0.6rem;
+}
+.client .note { color: var(--text-2); }
+.grid-client { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); margin: 1.75rem 0 0; }
+
 /* ---------------------------------------------------------------- build */
 
 .how {

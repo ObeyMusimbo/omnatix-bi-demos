@@ -153,13 +153,18 @@ Keep them different. A change that makes one demo read like another is the wrong
   each section, `aiBrief()` renders the prioritised briefing. No file, no panels. The file is
   written by `scripts/ai_insights.py`; the section ids in its `PROJECTS` map must match the page's.
 - **No status dots.** Freshness is carried by its words and their colour, not by a coloured mark.
-- **Ask the data.** `ask.js` (shared, identical in all four) plus `functions/api/chat.js`. The
-  model writes SQL; the browser runs it; the model phrases the answer from the rows. Two rules
-  hold it together: the context pack is loaded by the function from the site, never taken from
-  the request, and both sides refuse any SQL that is not a single read. After a change to a
-  gold model or to a page's `TABLES` in `db.js`, rerun `scripts/chat_context.py`. On this
-  Windows machine Controlled Folder Access stops Python writing into Documents, so use
-  `--out-dir` and copy the files in.
+- **The AI pop-up (Ask the data).** `ask.js` (shared, byte identical in all five: the four
+  `assets/ask.js` and Leshaw's `js/ai/ask.js`) plus `functions/api/chat.js`. `mountAiPopup()`
+  draws the corner launcher and a window with two tabs, the conversation and the briefing
+  (`aiBrief()` HTML, or Leshaw's live function). The model writes SQL; the browser runs it; the
+  model phrases the answer from the rows. Two rules hold it together: the context pack is loaded
+  by the function from the site, never taken from the request, and both sides refuse any SQL
+  that is not a single read. The pop-up's structure CSS is in `omnatix-frame.css` and, kept
+  identical, in Leshaw's `css/ai.css`; each theme dresses it. Its elements are plain divs,
+  because the themes style section, header and h2. After a change to a gold model or to a
+  page's `TABLES` in `db.js`, rerun `scripts/chat_context.py`. On this Windows machine
+  Controlled Folder Access stops Python writing into Documents, so use `--out-dir` and copy the
+  files in. Leshaw's `data/chat-context.json` is written by hand.
 
 - The summary paints from `meta.summary`, written by each `export_parquet.py` from the same gold
   columns the page reads, so it appears before the engine loads. Each page compares its headline

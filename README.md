@@ -26,15 +26,22 @@ scripts/build_site.py       assembles everything into dist/
 scripts/refresh.py          rebuild after new data lands
 ```
 
-All four publish from one Cloudflare Pages project, each under its own path, with the landing
+A fifth folder, `projects/05-leshaw-boardcenter/`, has a different shape: the Leshaw Business
+Hub, an operations dashboard built for a real client, Leshaw (boards and hardware, Spruitview),
+and listed with their approval. It has no pipeline: its sample data is generated in the page
+from a seed and changes as a visitor works in it. It sits in its own "Built for a client" row on
+the landing page, under the four fictional demos. See its [README](projects/05-leshaw-boardcenter/README.md).
+
+All five publish from one Cloudflare Pages project, each under its own path, with the landing
 page at the root:
 
 ```
-demos.omnatix.co.za              all four, with the headline finding on each card
+demos.omnatix.co.za              all five, with the headline finding on each demo's card
 demos.omnatix.co.za/meridian     FMCG distribution
 demos.omnatix.co.za/kestrel      freight and fleet
 demos.omnatix.co.za/sable-finch  microfinance
 demos.omnatix.co.za/lumen        clinic group
+demos.omnatix.co.za/leshaw       Leshaw Business Hub, a client build
 ```
 
 Adding a demo is one entry in the `PROJECTS` list in `scripts/build_site.py`.
@@ -97,34 +104,49 @@ behaviour, in `shell.js`, not appearance: each stylesheet decides what the share
 | Navigation | A contents rail, a sidebar of views, a page strip with previous and next, or folder tabs. The three single-view layouts name the view in the URL hash, so every view is a link and the back button works |
 | One filter | Warehouse, hub, branch or clinic. Figures whose data carries it follow it; the rest say they are company-wide. The filter lives in the URL, so a filtered view can be sent as a link |
 | Light and dark | Every demo has both, each with its own validated palette, remembered per demo. Kestrel opens dark, the other three open light |
-| AI insights | An insight, the reason, owned actions and what it is worth, beside every section, plus a prioritised briefing. See below |
-| Ask the data | A question box on every demo, answered by Qwen from SQL that runs in the browser on that demo's own tables, with the SQL and rows shown. See below |
+| AI insights | An insight, the reason, owned actions and what it is worth, beside every section. See below |
+| AI pop-up | A launcher in the corner of every demo opens the AI: a conversation answered by Qwen from SQL that runs in the browser on that demo's own tables, with the SQL and rows shown, and the prioritised AI briefing. See below |
 | Folded tables | Long tables show their first rows with Show all, and carry in-cell bars |
 | Print | Save as PDF drops the frame, shows every view, unfolds every table and scales each chart to the page |
 
-## Ask the data
+## The AI pop-up (Ask the data)
 
-Every demo has a question box: a chapter in Meridian, a sidebar view in Kestrel, a Questions page
-in Sable & Finch, a tab in Lumen. A question takes two calls to a free open model through
-OpenRouter: **Qwen** first, then Google's **Gemma** or NVIDIA's **Nemotron** when Qwen is busy.
-Each answer names the model that wrote it.
+Every demo has a small AI launcher in the bottom corner, dressed in that demo's style: an ink tab
+on Meridian's newspaper, a lit console tab on Kestrel's control tower, a navy memo tab on Sable &
+Finch's board pack, a round teal button on Lumen's workbench, and a navy pill on Leshaw's hub. It
+opens a window with two tabs: the conversation, and the AI briefing (the overview priorities,
+which used to sit on the page). The per-section AI notes stay on the page. On a phone the window
+fills the screen.
 
-1. `functions/api/chat.js`, a Cloudflare Pages Function holding the key, sends the question and
-   that demo's `data/chat-context.json` to Qwen, which replies with one read-only SQL query, a
-   question back, or a refusal.
-2. `assets/ask.js` checks the query is a single read and runs it in the page's own DuckDB-WASM
-   engine. The result goes back to Qwen, which writes the answer from those rows alone.
+A question takes two calls to a free open model through OpenRouter: **Qwen** first, then
+Google's **Gemma** or NVIDIA's **Nemotron** when Qwen is busy. Each answer names the model that
+wrote it.
 
-The SQL and the rows it returned are shown under every answer. Questions outside the demo's data,
-including general knowledge, advice and anything about the model itself, are declined.
-`scripts/chat_context.py` writes each context pack from the tables the page loads and the gold
-column definitions, and the nightly refresh rewrites it. Setup is in [DEPLOY.md](DEPLOY.md).
+1. `functions/api/chat.js`, a Cloudflare Pages Function holding the key, sends the question, the
+   conversation so far and that demo's `data/chat-context.json` to Qwen, which replies with one
+   read-only SQL query, a reply in words (a greeting, or a question about the dashboard rather
+   than its data), a question back, or a refusal.
+2. `ask.js` checks the query is a single read and runs it in the page's own DuckDB-WASM engine.
+   The result goes back to Qwen, which writes the answer from those rows alone.
+
+The SQL and the rows it returned are shown under every answer with figures in it. On the four
+warehouse demos, questions outside the demo's data, including general knowledge, advice and
+anything about the model itself, are declined. `scripts/chat_context.py` writes their context
+packs from the tables the page loads and the gold column definitions, and the nightly refresh
+rewrites them.
+
+Leshaw's assistant is conversational: it greets, follows up, explains the products and how the
+hub works, and still answers every figure from a query. Its context pack is written by hand
+(`mode: conversational`), and `js/ai/db.js` turns the hub's live data into tables, rebuilt
+whenever a visitor changes something, so it answers from exactly what the hub shows. Its
+briefing is written live: fixed queries on the live data, phrased by the model, with the
+figures it was given shown underneath. Setup is in [DEPLOY.md](DEPLOY.md).
 
 ## AI insights
 
 Every section carries an AI panel: what the data shows, why nobody saw it, two or three actions
-each owned by a role with a time frame, and the rand figure it is worth. Each demo also opens on
-a prioritised briefing. They are written by `scripts/ai_insights.py` after every nightly refresh,
+each owned by a role with a time frame, and the rand figure it is worth. Each demo also has a
+prioritised briefing, in the AI pop-up's second tab. They are written by `scripts/ai_insights.py` after every nightly refresh,
 from the same gold tables the page reads, and each panel names the model that wrote it and when.
 
 | Provider | Secret or variable | Cost |

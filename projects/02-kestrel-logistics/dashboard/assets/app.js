@@ -17,7 +17,7 @@ import {
   renderNav, onFilterChange, readParam, writeParam, scope, keepScroll, fmtAny,
   wireTheme, views, insights, attachInsights, aiBrief,
 } from './shell.js';
-import { mountAsk } from './ask.js';
+import { mountAiPopup } from './ask.js';
 
 // The AI recommendations, loaded once beside meta.json, and the view router.
 let INS = null;
@@ -91,7 +91,6 @@ const SECTIONS = [
   ['friday', '04', 'Friday'],
   ['air', '05', 'Air'],
   ['close', '06', 'What it is worth'],
-  ['ask', '07', 'Ask the data'],
 ];
 const ALL_HUBS = 'All hubs';
 const hub = { code: '', label: '' };
@@ -283,8 +282,7 @@ function renderAlerts(target, s) {
       <span class="rail-title">Open alerts</span>
       <span class="rail-count">${findings.filter((f) => !f.close).length} open</span>
     </div>
-    <div class="alert-list">${alerts}</div>
-    ${aiBrief(INS, { label: 'AI dispatch brief', cls: 'tower-brief' })}`;
+    <div class="alert-list">${alerts}</div>`;
 }
 
 // ---------------------------------------------------------------- sections
@@ -721,13 +719,18 @@ try {
     },
   });
   wireTheme(el('theme-toggle'), { key: 'ox-theme-kestrel', onChange: () => rerender() });
-  // A query console as its own view: ask the network a question, see the SQL it ran.
-  mountAsk(el('ask'), {
+  // The AI console, a tab in the corner of every view: ask the network a question and see the
+  // SQL it ran, or read the dispatch brief, the priorities as a work queue.
+  mountAiPopup({
     demo: 'kestrel',
-    title: 'Ask the data',
-    intro: 'Ask about a corridor, a site, a vehicle, a hub or a month. Answers are drawn from this control tower\'s own tables, with the query shown.',
-    placeholder: 'e.g. Which corridors out of the Cape Hub lose money?',
+    name: 'AI dispatch console',
+    sub: 'Kestrel control tower · live queries',
+    launch: 'AI console',
+    tabs: ['Query', 'Dispatch brief'],
+    greeting: 'Ask about a corridor, a site, a vehicle, a hub or a month. Answers are drawn from this control tower\'s own tables, with the query shown.',
+    placeholder: 'Ask about a corridor or a hub',
     filter: () => hub.code,
+    brief: aiBrief(INS, { label: 'AI dispatch brief', cls: 'tower-brief' }),
   });
 
   // Marks, so how long a prospect waits can be measured rather than guessed.

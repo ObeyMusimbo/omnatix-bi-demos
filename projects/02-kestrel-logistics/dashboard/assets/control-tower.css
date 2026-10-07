@@ -645,20 +645,48 @@ footer p { margin: 0 0 0.5rem; max-width: 90ch; }
   section { margin-bottom: 2rem; }
 }
 
-/* ---------------------------------------------------------------- Ask the data
+/* ---------------------------------------------------------------- the AI console
 
-   A query console: the question echoed after a prompt, the answer under it, the SQL in a
-   terminal block. It reads like an operator querying the tower, because that is what it is. */
+   The AI pop-up as a dispatch console: a lit tab in the corner, and a panel of the tower's own
+   glass. The question echoed after a prompt, the answer under it, the SQL in a terminal block.
+   It reads like an operator querying the tower, because that is what it is. */
 
-html[data-view="ask"] #loading { display: none; }
-.tower .ask {
+.tower .aipop-launch {
   background: var(--panel);
-  border: 1px solid var(--rule);
-  border-radius: 8px;
-  padding: 1.1rem 1.2rem 1rem;
+  color: var(--text);
+  border: 1px solid var(--s1);
+  border-radius: 6px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  box-shadow: 0 0 0 4px var(--glow), 0 10px 28px rgb(0 0 0 / 0.45);
 }
-.tower .ask-title { font-size: 1.35rem; letter-spacing: 0.03em; text-transform: uppercase; }
-.tower .ask-intro { color: var(--text-2); font-size: 0.9rem; }
+:root[data-theme="light"] .tower .aipop-launch { box-shadow: 0 0 0 4px var(--glow), 0 10px 26px rgb(17 26 36 / 0.16); }
+.tower .aipop-launch-ico { color: var(--s1); }
+.tower .aipop-launch:hover { background: var(--panel-2); }
+.tower .aipop {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--rule-2);
+  border-top: 2px solid var(--s1);
+  border-radius: 8px;
+  box-shadow: 0 0 0 4px var(--glow), 0 24px 60px rgb(0 0 0 / 0.55);
+}
+:root[data-theme="light"] .tower .aipop { box-shadow: 0 0 0 4px var(--glow), 0 24px 60px rgb(17 26 36 / 0.2); }
+.tower .aipop-head { border-bottom: 1px solid var(--rule); }
+.tower .aipop-mark { color: var(--s1); }
+.tower .aipop-title { font-size: 0.86rem; letter-spacing: 0.12em; text-transform: uppercase; }
+.tower .aipop-sub { color: var(--text-3); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; }
+.tower .aipop-icon { color: var(--text-2); border-radius: 6px; }
+.tower .aipop-icon:hover { color: var(--text); background: var(--panel-2); }
+.tower .aipop-tabs { background: var(--panel-2); border-bottom: 1px solid var(--rule); }
+.tower .aipop-tab { color: var(--text-3); font-size: 10.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
+.tower .aipop-tab[aria-selected="true"] { color: var(--s1); border-bottom-color: var(--s1); }
+.tower .aipop-tab:hover { color: var(--text); }
+.tower .aipop .tower-brief { box-shadow: none; }
+
+.tower .ask-hello { color: var(--text-2); font-size: 0.86rem; border-left: 2px solid var(--s1); padding-left: 0.75rem; }
 .tower .ask-chip {
   background: var(--panel-2);
   border: 1px solid var(--rule-2);
@@ -668,21 +696,24 @@ html[data-view="ask"] #loading { display: none; }
   font-size: 0.8rem;
 }
 .tower .ask-chip:hover { color: var(--text); border-color: var(--s1); }
-.tower .ask-turn { border-top: 1px solid var(--rule); padding-top: 0.9rem; }
-.tower .ask-q { font-size: 0.92rem; color: var(--s1); }
+.tower .ask-turn { border-top: 1px solid var(--rule); padding-top: 0.8rem; }
+.tower .ask-q { font-size: 0.86rem; color: var(--s1); }
 .tower .ask-q::before { content: '> '; color: var(--text-3); }
-.tower .ask-answer { font-size: 0.92rem; }
-.tower .ask-status { color: var(--text-3); font-size: 0.85rem; }
+.tower .ask-a { margin-top: 0.4rem; }
+.tower .ask-answer { font-size: 0.86rem; line-height: 1.5; }
+.tower .ask-status { color: var(--text-3); font-size: 0.8rem; }
+.tower .ask-msg { font-size: 0.86rem; }
 .tower .ask-msg.is-refusal, .tower .ask-msg.is-clarify { color: var(--warn); }
 .tower .ask-msg.is-error { color: var(--breach); }
-.tower .ask-proof summary { color: var(--text-3); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; }
+.tower .ask-proof summary { color: var(--text-3); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; }
 .tower .ask-sql { background: var(--bg); border: 1px solid var(--rule-2); border-radius: 6px; color: var(--ok); }
-.tower .ask-purpose, .tower .ask-meta { color: var(--text-3); font-size: 0.78rem; }
-.tower .ask-label { font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3); }
+.tower .ask-purpose, .tower .ask-meta { color: var(--text-3); font-size: 0.74rem; }
+.tower .ask-form { border-top: 1px solid var(--rule); background: var(--panel-2); }
 .tower .ask-input { background: var(--bg); color: var(--text); border: 1px solid var(--rule-2); border-radius: 6px; padding: 0.6rem 0.7rem; }
 .tower .ask-input:focus { outline: 2px solid var(--s1); outline-offset: 0; }
-.tower .ask-send { background: var(--s1); color: #FFFFFF; border: 0; border-radius: 6px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.78rem; }
-.tower .ask-note { color: var(--text-3); font-size: 0.76rem; }
+.tower .ask-send { background: var(--s1); color: #FFFFFF; border: 0; border-radius: 6px; }
+.tower .ask-send:hover { filter: brightness(1.1); }
+.tower .ask-note { color: var(--text-3); background: var(--panel-2); }
 
 /* ---------------------------------------------------------------- the Omnatix frame
 

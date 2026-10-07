@@ -13,6 +13,7 @@ under its own path. Adding a project is one entry in PROJECTS below.
       kestrel/
       sable-finch/
       lumen/
+      leshaw/             a client's business hub, in its own row on the landing page
 
 This is a pure file copy plus a rendered index, with no third-party imports, so Cloudflare can
 run it as the build command on a clean image. dist/ is therefore not committed: the committed
@@ -75,6 +76,19 @@ PROJECTS = [
         "headline_label": "billed for care delivered and never collected",
         "accent": "#00919A",
     },
+    {
+        # A real client's hub, listed with Leshaw's approval, in its own row under the four
+        # fictional demos: the page's claim that every business is fictional stays true of them.
+        "slug": "leshaw",
+        "dir": "05-leshaw-boardcenter",
+        "group": "client",
+        "client": "Leshaw Business Hub",
+        "industry": "Boards and hardware",
+        "problem": "One live view of the day: counter sales, trade quotes, the cutting floor and stock.",
+        "headline_label": "Operations hub with an AI assistant on the live figures",
+        "foot": "Live sample data",
+        "accent": "#FF4646",
+    },
 ]
 
 
@@ -103,7 +117,7 @@ def card(project: dict, built: bool, meta: dict | None) -> str:
         through = meta.get("data_through", "") if meta else ""
         # Same words as the demo's own badge: a fixed synthetic period is named as one.
         lead = "Demo period to" if meta and meta.get("fixed_period") else "Data to"
-        foot_right = f"{lead} {e(through)}" if through else ""
+        foot_right = f"{lead} {e(through)}" if through else e(project.get("foot", ""))
         head = (
             f'<a class="card" href="{project["slug"]}/" style="--accent:{accent}">'
         )
@@ -136,7 +150,7 @@ def main() -> int:
         shutil.rmtree(DIST)
     DIST.mkdir(parents=True)
 
-    cards, built_count = [], 0
+    cards, client_cards, built_count = [], [], 0
     for project in PROJECTS:
         src = dashboard_dir(project)
         built = (src / "index.html").exists()
@@ -151,10 +165,11 @@ def main() -> int:
         else:
             print(f"  {project['slug']:<14} not built yet, card will render without a link")
 
-        cards.append(card(project, built, meta))
+        (client_cards if project.get("group") == "client" else cards).append(card(project, built, meta))
 
     template = (SITE / "index.html").read_text(encoding="utf-8")
-    (DIST / "index.html").write_text(template.replace("{{CARDS}}", "\n".join(cards)), encoding="utf-8")
+    page = template.replace("{{CARDS}}", "\n".join(cards)).replace("{{CLIENT_CARDS}}", "\n".join(client_cards))
+    (DIST / "index.html").write_text(page, encoding="utf-8")
     shutil.copy2(SITE / "omnatix.css", DIST / "omnatix.css")
     # The Omnatix mark, favicon and home screen icon, cut from the business card artwork.
     shutil.copytree(SITE / "brand", DIST / "brand", dirs_exist_ok=True)

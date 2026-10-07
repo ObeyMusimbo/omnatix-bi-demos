@@ -15,7 +15,7 @@ import {
   renderSummary, renderNav, onFilterChange, readParam, writeParam, scope, spy, keepScroll,
   wireTheme, insights, attachInsights, aiBrief,
 } from './shell.js';
-import { mountAsk } from './ask.js';
+import { mountAiPopup } from './ask.js';
 
 const el = (id) => document.getElementById(id);
 const v = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -102,7 +102,6 @@ const SECTIONS = [
   ['discount', '03', 'Discount'],
   ['stock', '04', 'Stock-outs'],
   ['dead', '05', 'Dead stock'],
-  ['ask', '06', 'Ask the report'],
 ];
 const ALL_DCS = 'All warehouses';
 const dc = { code: '', label: '' };
@@ -562,19 +561,21 @@ try {
   const f = m.summary?.filter;
   if (f) setDc(readParam(f.param), f.options);
   renderSummary(el('ox-top'), m.summary);
-  // The analyst's view sits under the front page, so the recommendations are on screen in the
-  // first second, before the query engine has loaded.
-  el('ai-brief').innerHTML = aiBrief(INS, {
-    label: 'AI analyst', title: 'The analyst’s view', cls: 'ledger-brief',
-  });
   renderNav(nav, { sections: SECTIONS, filter: f && { ...f, value: dc.code } });
   wireTheme(el('theme-toggle'), { key: 'ox-theme-meridian', onChange: () => rerender(nav) });
-  // The last chapter: readers' questions, answered from the warehouse with the query shown.
-  mountAsk(el('ask'), {
+  // The AI sits at the analyst's desk, a tab in the corner of every page: readers' questions
+  // answered from the warehouse with the query shown, and the analyst's view of the report.
+  // Mounted before the engine loads, so the view can be read in the first second.
+  mountAiPopup({
     demo: 'meridian',
-    title: 'Ask the report',
-    intro: 'Ask anything this report\'s data can answer: a brand, a customer group, a month, a warehouse. The answer comes with the SQL that produced it.',
+    name: 'The analyst’s desk',
+    sub: 'The Margin Review · AI',
+    launch: 'Ask the analyst',
+    tabs: ['Ask the report', 'The analyst’s view'],
+    greeting: 'Ask anything this report\'s data can answer: a brand, a customer group, a month, a warehouse. Every answer with figures comes with the SQL that produced it.',
+    placeholder: 'Ask about a brand or a month',
     filter: () => dc.code,
+    brief: aiBrief(INS, { label: 'AI analyst', cls: 'ledger-brief' }),
   });
   onFilterChange(nav, (code) => {
     setDc(code, f.options);

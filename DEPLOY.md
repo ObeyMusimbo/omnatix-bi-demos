@@ -1,6 +1,6 @@
 # Deploying the demo suite
 
-One Cloudflare Pages project serves all four demos: a landing page at the root and each demo
+One Cloudflare Pages project serves all five demos: a landing page at the root and each demo
 under its own path. Cloudflare builds the site itself on every push, so `dist/` is never
 committed.
 
@@ -10,6 +10,7 @@ omnatix-demos.pages.dev/meridian      Meridian Provisions Co.
 omnatix-demos.pages.dev/kestrel       Kestrel Logistics
 omnatix-demos.pages.dev/sable-finch   Sable & Finch Credit
 omnatix-demos.pages.dev/lumen         Lumen Health Network
+omnatix-demos.pages.dev/leshaw        Leshaw Business Hub (a client build)
 ```
 
 ## The repository must be private
@@ -98,10 +99,10 @@ locally:
 npx --yes http-server dist -p 4321 -c-1 --cors
 ```
 
-## Ask the data: switching on Qwen
+## The AI pop-up: switching on Qwen
 
-The question box on every demo calls `functions/api/chat.js`, which Cloudflare Pages deploys from
-the `functions/` folder with every push. It needs one secret:
+The AI pop-up on every demo, and Leshaw's live briefing, call `functions/api/chat.js`, which
+Cloudflare Pages deploys from the `functions/` folder with every push. It needs one secret:
 
 1. Create an OpenRouter account at https://openrouter.ai and a key at
    https://openrouter.ai/settings/keys.
@@ -117,7 +118,7 @@ account, and each question uses at least two requests.
 
 Optional variable `QWEN_MODELS` replaces that list, comma separated, in order. To add a very
 cheap paid backup at the end, load credit on OpenRouter and append `qwen/qwen3.7-flash`. Credit
-also raises the free daily limit. Without the secret, the box says it is not switched on yet
+also raises the free daily limit. Without the secret, the pop-up says it is not switched on yet
 and nothing else changes.
 
 Questions, and the rows of the queries they run, are sent to OpenRouter. The demo data is

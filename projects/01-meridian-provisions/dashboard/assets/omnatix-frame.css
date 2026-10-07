@@ -334,40 +334,146 @@ td:has(> .cbar) { white-space: nowrap; }
 /* The light and dark switch, shaped by each demo. */
 .ox-theme { font: inherit; cursor: pointer; }
 
-/* ---------------------------------------------------------------- Ask the data, structure only
+/* ---------------------------------------------------------------- the AI pop-up, structure only
 
-   ask.js draws the same parts on every demo. Each demo dresses them: a letters column, a
-   console, committee minutes, a chat. */
+   ask.js draws the same parts on every demo: a launcher in the corner, and a window with the
+   conversation and the briefing. Each demo dresses them in its own tokens: a letters desk, a
+   console, a memo, a chat. Kept identical in Leshaw's css/ai.css. */
 
-.ask { display: flex; flex-direction: column; gap: 1rem; }
-.ask-title { margin: 0; }
-.ask-intro { margin: 0.35rem 0 0; }
-.ask-examples { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.aipop-launch {
+  position: fixed;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: max(16px, env(safe-area-inset-bottom));
+  z-index: 70;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0 1.1rem 0 0.95rem;
+  border: 0;
+  font: inherit;
+  line-height: 1;
+  cursor: pointer;
+}
+.aipop-launch-ico, .aipop-mark { display: inline-flex; flex: none; }
+.aipop-launch svg, .aipop-mark svg { width: 18px; height: 18px; fill: currentColor; }
+.aipop-launch:focus-visible, .aipop-icon:focus-visible,
+.aipop-tab:focus-visible { outline: 2px solid var(--ox-accent, var(--s1)); outline-offset: 2px; }
+
+.aipop {
+  position: fixed;
+  z-index: 71;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: calc(max(16px, env(safe-area-inset-bottom)) + 56px);
+  width: min(420px, calc(100vw - 32px));
+  height: min(640px, calc(100vh - 104px));
+  height: min(640px, calc(100dvh - 104px));
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  margin: 0;
+  overflow: hidden;
+  animation: aipop-in 0.18s ease-out both;
+}
+.aipop[hidden] { display: none; }
+@keyframes aipop-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .aipop { animation: none; } }
+
+.aipop-head { display: flex; align-items: center; gap: 0.6rem; flex: none; padding: 0.8rem 0.6rem 0.8rem 1rem; }
+.aipop-id { flex: 1; min-width: 0; }
+.aipop-title { margin: 0; font-size: 1rem; font-weight: 700; line-height: 1.2; }
+.aipop-sub { margin: 0.2rem 0 0; font-size: 0.74rem; line-height: 1.3; }
+.aipop-icon {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+.aipop-icon[hidden] { display: none; }
+.aipop-icon svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.aipop-tabs { display: flex; align-items: stretch; gap: 0.35rem; flex: none; padding: 0 0.8rem; overflow-x: auto; scrollbar-width: none; }
+.aipop-tab {
+  flex: none;
+  padding: 0.65rem 0.4rem 0.55rem;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 0.82rem;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.aipop-pane { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.aipop-pane[hidden] { display: none; }
+.aipop-brief { display: block; overflow-y: auto; overscroll-behavior: contain; padding: 1rem 1.1rem 1.2rem; }
+.aipop-brief:focus-visible { outline: none; }
+.aipop-refresh, .aipop-link { font: inherit; cursor: pointer; }
+
+/* The conversation. */
+.ask { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+.ask-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 1rem 1.1rem;
+}
+.ask-hello p { margin: 0 0 0.4rem; }
+.ask-hello p:last-child { margin-bottom: 0; }
+.ask-examples { display: flex; flex-wrap: wrap; gap: 0.45rem; }
 .ask-examples:empty { display: none; }
 .ask-chip { font: inherit; cursor: pointer; text-align: left; line-height: 1.35; }
 .ask-log { display: flex; flex-direction: column; gap: 1rem; }
 .ask-log:empty { display: none; }
 .ask-q { font-weight: 700; overflow-wrap: anywhere; }
+.ask-a, .ask-hello { min-width: 0; overflow-wrap: anywhere; }
 .ask-answer p, .ask-msg { margin: 0 0 0.5rem; }
+.ask-answer p:last-child { margin-bottom: 0; }
 .ask-answer ul { margin: 0 0 0.5rem; padding-left: 1.2rem; }
 .ask-status { margin: 0; opacity: 0.75; }
 .ask-status::after { content: '...'; }
+.ask-proof { margin-top: 0.5rem; }
 .ask-proof summary { cursor: pointer; }
 .ask-purpose { margin: 0.6rem 0 0.4rem; }
 .ask-sql {
+  max-height: 220px;
+  overflow: auto;
   margin: 0.5rem 0;
   padding: 0.7rem 0.8rem;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   font-family: Consolas, 'Courier New', monospace;
-  font-size: 12.5px;
+  font-size: 12px;
   line-height: 1.45;
 }
+.aipop .table-scroll { max-height: 260px; overflow: auto; }
+.aipop table { font-size: 0.76rem; }
 .ask-meta { margin: 0.4rem 0 0; }
-.ask-form { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.5rem; align-items: end; }
-.ask-label { grid-column: 1 / -1; }
-.ask-input { font: inherit; width: 100%; min-height: 46px; resize: vertical; }
-.ask-send { font: inherit; cursor: pointer; min-height: 46px; padding: 0 1.2rem; }
+.ask-form { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.5rem; align-items: end; flex: none; padding: 0.7rem 0.8rem 0.45rem; }
+.ask-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.ask-input { box-sizing: border-box; width: 100%; min-height: 44px; max-height: 140px; resize: none; font: inherit; line-height: 1.4; }
+.ask-input::placeholder { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ask-send { display: inline-grid; place-items: center; width: 44px; min-height: 44px; padding: 0; font: inherit; cursor: pointer; }
+.ask-send svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 .ask-send:disabled { opacity: 0.5; cursor: progress; }
-.ask-note { margin: 0; }
-@media print { .ask-form, .ask-examples, .ask-note { display: none !important; } }
+.ask-note { flex: none; margin: 0; padding: 0 1rem 0.75rem; font-size: 0.68rem; line-height: 1.4; }
+
+/* A phone: the window is the screen, and the page behind it stays put. */
+@media (max-width: 640px) {
+  .aipop { inset: 0; width: auto; height: auto; border-radius: 0 !important; }
+  html.aipop-open, html.aipop-open body { overflow: hidden; }
+  html.aipop-open .aipop-launch { display: none; }
+  .ask-input { font-size: 16px; }
+}
+@media print { .aipop, .aipop-launch { display: none !important; } }

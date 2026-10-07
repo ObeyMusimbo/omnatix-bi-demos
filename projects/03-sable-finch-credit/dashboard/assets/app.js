@@ -15,9 +15,9 @@ import {
 } from './charts.js';
 import {
   renderNav, onFilterChange, readParam, writeParam, scope, keepScroll, fmtAny,
-  wireTheme, views, insights, attachInsights, aiCredit,
+  wireTheme, views, insights, attachInsights, aiCredit, aiBrief,
 } from './shell.js';
-import { mountAsk } from './ask.js';
+import { mountAiPopup } from './ask.js';
 
 // The AI recommendations and draft resolutions, loaded once beside meta.json, and the pager.
 let INS = null;
@@ -90,8 +90,7 @@ const SECTIONS = [
   ['debit', '6', 'Debit orders'],
   ['collections', '7', 'Collections'],
   ['close', '8', 'What it adds up to'],
-  ['ask', '9', 'Questions'],
-  ['signoff', '10', 'Resolutions'],
+  ['signoff', '9', 'Resolutions'],
 ];
 const pageOf = (id) => SECTIONS.findIndex(([x]) => x === id) + 1;
 const ALL_BRANCHES = 'All branches';
@@ -839,13 +838,18 @@ try {
     if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); V.step(-1); }
   });
   wireTheme(el('theme-toggle'), { key: 'ox-theme-sable', onChange: () => rerender() });
-  // Questions from the committee, answered from the book before the resolutions are put.
-  mountAsk(el('ask'), {
+  // The committee secretary, a tab at the foot of every page: questions put to the book and
+  // minuted with the query that answered them, and the AI's summary of the pack.
+  mountAiPopup({
     demo: 'sable-finch',
-    title: 'Questions to the pack',
-    intro: 'Put a question to the book: a branch, a cohort, a band, a month. Each answer is minuted with the query that produced it, so the committee can check the row.',
-    placeholder: 'e.g. What is the bad rate at month six for loans written in 2025?',
+    name: 'Questions to the pack',
+    sub: 'Credit Committee · AI secretary',
+    launch: 'Ask the pack',
+    tabs: ['Questions', 'AI summary'],
+    greeting: 'Put a question to the book: a branch, a cohort, a band, a month. Each answer is minuted with the query that produced it, so the committee can check the row.',
+    placeholder: 'Ask about a branch or a cohort',
     filter: () => branch.code,
+    brief: aiBrief(INS, { label: 'AI summary of the pack', cls: 'pack-brief' }),
   });
 
   onFilterChange(nav, (code) => {

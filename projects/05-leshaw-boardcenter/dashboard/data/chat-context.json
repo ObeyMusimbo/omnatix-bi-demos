@@ -1,0 +1,173 @@
+{
+  "version": 1,
+  "demo": "leshaw",
+  "mode": "conversational",
+  "live": true,
+  "live_brief": true,
+  "timezone": "Africa/Johannesburg",
+  "client": "Leshaw",
+  "product": "Business Hub",
+  "assistant": { "name": "Leshaw Assistant" },
+  "business": "a boards and hardware supplier in Spruitview, Gauteng, with its own cutting and edging factory",
+  "reader": "Barnabas, the CEO, or a member of the Leshaw team",
+  "about": "Leshaw (LSW, leshaw-lsw.co.za) supplies boards, edging and cabinet hardware from Spruitview, Gauteng, to kitchen installers, shopfitters, interior designers, furniture makers, contractors and developers on trade accounts, and to walk-in cash customers at the counter. Trade customers come mainly from Spruitview, Vosloorus, Alberton, Katlehong, Thokoza, Germiston and Boksburg.\nRanges: Melawood melamine sheets (16mm, 2750 x 1830mm), Supagloss high gloss sheets (18mm, 2700 x 1800mm), Formica counter tops (32mm, 3600 x 600mm), Supamatt and Supatexture textured and matt sheets (18mm, 2750 x 1830mm), edging rolls (50m) including aluminium, and hardware: soft-close hinges, handles, screws, adjustable legs, glue, silicone, brackets, wall cladding, wine racks and pull-out baskets.\nServices: precision cutting at R48 a sheet and edge banding at R14 a metre, done in Leshaw's own factory on two panel saws and an edge bander. A cut and edge job moves through Received, Optimising, Cutting, Edge banding and Ready.\nAn order moves through Awaiting payment, Paid, In production (when it has cutting), Ready for collection and Completed, or is Cancelled. Orders are collected or delivered, and arrive by walk-in, phone, WhatsApp or email. A quote is valid for 14 days and is Draft, Sent, Accepted (it becomes an order), Declined or Expired. Prices include 15% VAT. The shop is closed on Sundays.",
+  "pages": [
+    "Overview: today's sales and orders, revenue, orders, average order value, sheets cut and low stock for 7, 30 or 90 days or 12 months against the period before, sales by category, the cut and edge pipeline, best sellers, stock alerts and the busiest days.",
+    "Orders: every order, filtered by status, searchable and exportable to CSV. Opening an order shows its lines, VAT and a button to move it to its next status.",
+    "Quotes: the quote pipeline, win rate and expiring quotes. The New quote button (top right) builds a quote with cutting and edging worked out; Accept turns a quote into an order.",
+    "Cut & Edge: the factory board. Jobs are dragged between Received, Optimising, Cutting, Edge banding and Ready, with rush and overdue flags.",
+    "Inventory: every board, top, edging roll and hardware item with stock, reorder level, six months of sales and a Receive stock button.",
+    "Customers: trade accounts and walk-in sales, with twelve months of spend, open quotes and a new quote button for each customer.",
+    "Elsewhere: Ctrl K (or Cmd K) searches orders, customers and products; the bell shows notifications; the moon button switches dark mode; the refresh button beside Barnabas's name resets the demo data."
+  ],
+  "data_from": "about two years ago",
+  "data_through": "now",
+  "money": "Money columns ending _incl_vat_zar include 15% VAT, which is how the hub shows every price and total: use them unless the question asks for amounts excluding VAT, then use the _excl_vat_zar columns. cost_zar, line_cost_zar and stock_value_at_cost_zar are what Leshaw pays its suppliers. Gross profit on goods is line_total_excl_vat_zar minus line_cost_zar.",
+  "money_answer": "Amounts are rand including 15% VAT, as the hub shows them, unless the column name says excl_vat or cost.",
+  "rules": "Sales and revenue exclude cancelled orders (counts_as_revenue = true) and are order totals, goods plus cutting and edging, including VAT. Average order value is the average total_incl_vat_zar of those orders. The hub's 'last 7 days' and 'last 30 days' include today: order_date > DATE 'today' - 7, written with today's date. Open orders are Awaiting payment, Paid, In production and Ready for collection. Money still to be paid is orders Awaiting payment. Low stock means stock_status 'Reorder' or 'Critical'. Trade customers are every customer_type except 'Retail / DIY'; 'Walk-in · Cash sale' is the counter's cash sales, not one customer. Sheets sold are order_lines with is_board_sheet = true (counter tops are tops, not sheets). Sheets cut are orders.sheets_cut. The quote pipeline is quotes in Draft or Sent. Win rate is Accepted divided by Accepted plus Declined plus Expired. A job is late when is_overdue is true.",
+  "examples": [
+    "How are sales this month compared with last month?",
+    "Which boards are running low and how fast do they sell?",
+    "Who owes us money right now?",
+    "Which jobs are on the factory floor and are any late?",
+    "Which quotes expire this week?",
+    "Who were our top trade customers in the last 90 days?"
+  ],
+  "tables": [
+    {
+      "name": "orders",
+      "rows": "about 2,500",
+      "grain": ["order_id"],
+      "description": "Every order from the last two years up to now, including today's.",
+      "columns": [
+        { "name": "order_id", "type": "VARCHAR", "description": "Order number, for example LSW-26521." },
+        { "name": "customer_id", "type": "VARCHAR" },
+        { "name": "customer_name", "type": "VARCHAR", "description": "Who placed it. Match loosely with ilike." },
+        { "name": "customer_type", "type": "VARCHAR", "values": ["Kitchen installer", "Shopfitter", "Interior designer", "Furniture maker", "Contractor", "Developer", "Retail / DIY"] },
+        { "name": "order_date", "type": "DATE" },
+        { "name": "placed_at", "type": "TIMESTAMP", "description": "Date and time it was placed." },
+        { "name": "order_month", "type": "VARCHAR", "description": "YYYY-MM." },
+        { "name": "weekday", "type": "VARCHAR", "values": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] },
+        { "name": "status", "type": "VARCHAR", "values": ["Awaiting payment", "Paid", "In production", "Ready for collection", "Completed", "Cancelled"] },
+        { "name": "channel", "type": "VARCHAR", "values": ["Walk-in", "Phone", "WhatsApp", "Email"] },
+        { "name": "fulfilment", "type": "VARCHAR", "values": ["Collection", "Delivery"] },
+        { "name": "goods_incl_vat_zar", "type": "DOUBLE", "description": "Boards, edging and hardware." },
+        { "name": "cutting_edging_incl_vat_zar", "type": "DOUBLE", "description": "Cutting and edge banding charged." },
+        { "name": "total_incl_vat_zar", "type": "DOUBLE", "description": "The order total the hub shows." },
+        { "name": "total_excl_vat_zar", "type": "DOUBLE" },
+        { "name": "vat_zar", "type": "DOUBLE" },
+        { "name": "sheets_cut", "type": "INTEGER", "description": "Sheets cut for this order, 0 if none." },
+        { "name": "edging_metres", "type": "INTEGER" },
+        { "name": "counts_as_revenue", "type": "BOOLEAN", "description": "False for cancelled orders." }
+      ]
+    },
+    {
+      "name": "order_lines",
+      "rows": "about 10,500",
+      "grain": ["order_id", "product_id"],
+      "description": "The products on each order. Cutting and edging are on orders, not here.",
+      "columns": [
+        { "name": "order_id", "type": "VARCHAR" },
+        { "name": "order_date", "type": "DATE" },
+        { "name": "order_month", "type": "VARCHAR" },
+        { "name": "status", "type": "VARCHAR", "description": "The order's status; exclude 'Cancelled' for sales." },
+        { "name": "product_id", "type": "VARCHAR" },
+        { "name": "product_name", "type": "VARCHAR" },
+        { "name": "category", "type": "VARCHAR", "values": ["Melamine", "High Gloss", "Counter Tops", "Textured & Matt", "Hardware", "Edging"] },
+        { "name": "quantity", "type": "INTEGER", "description": "In the product's unit: sheets, tops, pairs, boxes, rolls and so on." },
+        { "name": "unit_price_incl_vat_zar", "type": "DOUBLE" },
+        { "name": "line_total_incl_vat_zar", "type": "DOUBLE" },
+        { "name": "line_total_excl_vat_zar", "type": "DOUBLE" },
+        { "name": "line_cost_zar", "type": "DOUBLE", "description": "What the goods cost Leshaw." },
+        { "name": "is_board_sheet", "type": "BOOLEAN", "description": "True for melamine, high gloss and textured sheets." }
+      ]
+    },
+    {
+      "name": "products",
+      "rows": 37,
+      "grain": ["product_id"],
+      "description": "The catalogue with live stock.",
+      "columns": [
+        { "name": "product_id", "type": "VARCHAR" },
+        { "name": "product_name", "type": "VARCHAR", "description": "For example Arden, Natural Oak, Super Black, Antares, Soft-close Hinge." },
+        { "name": "range_name", "type": "VARCHAR", "values": ["Melawood", "Supagloss", "Formica", "Supamatt", "Supatexture", "Hardware", "Edging"] },
+        { "name": "category", "type": "VARCHAR", "values": ["Melamine", "High Gloss", "Counter Tops", "Textured & Matt", "Hardware", "Edging"] },
+        { "name": "spec", "type": "VARCHAR", "description": "Thickness and size, or pack." },
+        { "name": "unit", "type": "VARCHAR", "values": ["sheet", "top", "pair", "box", "each", "set", "tin", "bottle", "tube", "panel", "pack", "roll"] },
+        { "name": "price_incl_vat_zar", "type": "DOUBLE", "description": "Selling price per unit." },
+        { "name": "cost_zar", "type": "DOUBLE", "description": "Cost per unit." },
+        { "name": "stock_on_hand", "type": "INTEGER" },
+        { "name": "reorder_level", "type": "INTEGER" },
+        { "name": "stock_status", "type": "VARCHAR", "values": ["OK", "Reorder", "Critical"], "description": "Reorder at or below the reorder level, Critical at or below half of it." },
+        { "name": "stock_value_at_cost_zar", "type": "DOUBLE" }
+      ]
+    },
+    {
+      "name": "customers",
+      "rows": 15,
+      "grain": ["customer_id"],
+      "description": "Trade accounts and the counter's cash sales.",
+      "columns": [
+        { "name": "customer_id", "type": "VARCHAR" },
+        { "name": "customer_name", "type": "VARCHAR" },
+        { "name": "contact_person", "type": "VARCHAR" },
+        { "name": "customer_type", "type": "VARCHAR", "values": ["Kitchen installer", "Shopfitter", "Interior designer", "Furniture maker", "Contractor", "Developer", "Retail / DIY"] },
+        { "name": "area", "type": "VARCHAR", "values": ["Spruitview", "Vosloorus", "Alberton", "Katlehong", "Thokoza", "Germiston", "Boksburg"] },
+        { "name": "has_trade_account", "type": "BOOLEAN" }
+      ]
+    },
+    {
+      "name": "quotes",
+      "rows": "about 18",
+      "grain": ["quote_id"],
+      "description": "Quotes from the last few weeks, including any made today.",
+      "columns": [
+        { "name": "quote_id", "type": "VARCHAR" },
+        { "name": "customer_id", "type": "VARCHAR" },
+        { "name": "customer_name", "type": "VARCHAR" },
+        { "name": "quote_date", "type": "DATE" },
+        { "name": "valid_until", "type": "DATE" },
+        { "name": "status", "type": "VARCHAR", "values": ["Draft", "Sent", "Accepted", "Declined", "Expired"] },
+        { "name": "project", "type": "VARCHAR", "description": "For example Kitchen renovation, Built-in cupboards, Office fit-out." },
+        { "name": "total_incl_vat_zar", "type": "DOUBLE", "description": "Goods plus cutting and edging." },
+        { "name": "total_excl_vat_zar", "type": "DOUBLE" },
+        { "name": "days_until_expiry", "type": "INTEGER", "description": "Negative once past valid_until." }
+      ]
+    },
+    {
+      "name": "quote_lines",
+      "rows": "about 85",
+      "grain": ["quote_id", "product_id"],
+      "description": "The products on each quote.",
+      "columns": [
+        { "name": "quote_id", "type": "VARCHAR" },
+        { "name": "product_id", "type": "VARCHAR" },
+        { "name": "product_name", "type": "VARCHAR" },
+        { "name": "category", "type": "VARCHAR" },
+        { "name": "quantity", "type": "INTEGER" },
+        { "name": "unit_price_incl_vat_zar", "type": "DOUBLE" },
+        { "name": "line_total_incl_vat_zar", "type": "DOUBLE" }
+      ]
+    },
+    {
+      "name": "production_jobs",
+      "rows": "about 15",
+      "grain": ["job_id"],
+      "description": "Cut and edge jobs on the factory board now. Jobs leave the board when their order is completed or cancelled.",
+      "columns": [
+        { "name": "job_id", "type": "VARCHAR", "description": "For example JC-5104." },
+        { "name": "order_id", "type": "VARCHAR" },
+        { "name": "customer_name", "type": "VARCHAR" },
+        { "name": "board", "type": "VARCHAR", "description": "The main board being cut." },
+        { "name": "sheets", "type": "INTEGER" },
+        { "name": "panels", "type": "INTEGER", "description": "Panels cut from those sheets." },
+        { "name": "edging_metres", "type": "INTEGER" },
+        { "name": "stage", "type": "VARCHAR", "values": ["Received", "Optimising", "Cutting", "Edge banding", "Ready"] },
+        { "name": "due_date", "type": "DATE" },
+        { "name": "machine", "type": "VARCHAR", "values": ["Panel saw 1", "Panel saw 2", "Edge bander"] },
+        { "name": "is_rush", "type": "BOOLEAN" },
+        { "name": "is_overdue", "type": "BOOLEAN", "description": "Not Ready and past its due date." }
+      ]
+    }
+  ]
+}

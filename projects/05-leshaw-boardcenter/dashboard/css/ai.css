@@ -1,0 +1,335 @@
+/*
+  Leshaw Business Hub: the AI assistant pop-up.
+
+  js/ai/ask.js is shared with the four warehouse demos and draws the same parts everywhere.
+  The first half of this file is the shared structure, kept identical to the pop-up section of
+  their omnatix-frame.css; the second half dresses it in the hub's own brand: navy, the LSW
+  red, Raleway headings and the four brand stripes.
+*/
+
+/* ---------------------------------------------------------------- the AI pop-up, structure only */
+
+.aipop-launch {
+  position: fixed;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: max(16px, env(safe-area-inset-bottom));
+  z-index: 70;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0 1.1rem 0 0.95rem;
+  border: 0;
+  font: inherit;
+  line-height: 1;
+  cursor: pointer;
+}
+.aipop-launch-ico, .aipop-mark { display: inline-flex; flex: none; }
+.aipop-launch svg, .aipop-mark svg { width: 18px; height: 18px; fill: currentColor; }
+.aipop-launch:focus-visible, .aipop-icon:focus-visible,
+.aipop-tab:focus-visible { outline: 2px solid var(--ox-accent, var(--s1)); outline-offset: 2px; }
+
+.aipop {
+  position: fixed;
+  z-index: 71;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: calc(max(16px, env(safe-area-inset-bottom)) + 56px);
+  width: min(420px, calc(100vw - 32px));
+  height: min(640px, calc(100vh - 104px));
+  height: min(640px, calc(100dvh - 104px));
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  margin: 0;
+  overflow: hidden;
+  animation: aipop-in 0.18s ease-out both;
+}
+.aipop[hidden] { display: none; }
+@keyframes aipop-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .aipop { animation: none; } }
+
+.aipop-head { display: flex; align-items: center; gap: 0.6rem; flex: none; padding: 0.8rem 0.6rem 0.8rem 1rem; }
+.aipop-id { flex: 1; min-width: 0; }
+.aipop-title { margin: 0; font-size: 1rem; font-weight: 700; line-height: 1.2; }
+.aipop-sub { margin: 0.2rem 0 0; font-size: 0.74rem; line-height: 1.3; }
+.aipop-icon {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+.aipop-icon[hidden] { display: none; }
+.aipop-icon svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.aipop-tabs { display: flex; align-items: stretch; gap: 0.35rem; flex: none; padding: 0 0.8rem; overflow-x: auto; scrollbar-width: none; }
+.aipop-tab {
+  flex: none;
+  padding: 0.65rem 0.4rem 0.55rem;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 0.82rem;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.aipop-pane { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.aipop-pane[hidden] { display: none; }
+.aipop-brief { display: block; overflow-y: auto; overscroll-behavior: contain; padding: 1rem 1.1rem 1.2rem; }
+.aipop-brief:focus-visible { outline: none; }
+.aipop-refresh, .aipop-link { font: inherit; cursor: pointer; }
+
+/* The conversation. */
+.ask { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+.ask-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 1rem 1.1rem;
+}
+.ask-hello p { margin: 0 0 0.4rem; }
+.ask-hello p:last-child { margin-bottom: 0; }
+.ask-examples { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+.ask-examples:empty { display: none; }
+.ask-chip { font: inherit; cursor: pointer; text-align: left; line-height: 1.35; }
+.ask-log { display: flex; flex-direction: column; gap: 1rem; }
+.ask-log:empty { display: none; }
+.ask-q { font-weight: 700; overflow-wrap: anywhere; }
+.ask-a, .ask-hello { min-width: 0; overflow-wrap: anywhere; }
+.ask-answer p, .ask-msg { margin: 0 0 0.5rem; }
+.ask-answer p:last-child { margin-bottom: 0; }
+.ask-answer ul { margin: 0 0 0.5rem; padding-left: 1.2rem; }
+.ask-status { margin: 0; opacity: 0.75; }
+.ask-status::after { content: '...'; }
+.ask-proof { margin-top: 0.5rem; }
+.ask-proof summary { cursor: pointer; }
+.ask-purpose { margin: 0.6rem 0 0.4rem; }
+.ask-sql {
+  max-height: 220px;
+  overflow: auto;
+  margin: 0.5rem 0;
+  padding: 0.7rem 0.8rem;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-family: Consolas, 'Courier New', monospace;
+  font-size: 12px;
+  line-height: 1.45;
+}
+.aipop .table-scroll { max-height: 260px; overflow: auto; }
+.aipop table { font-size: 0.76rem; }
+.ask-meta { margin: 0.4rem 0 0; }
+.ask-form { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.5rem; align-items: end; flex: none; padding: 0.7rem 0.8rem 0.45rem; }
+.ask-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.ask-input { box-sizing: border-box; width: 100%; min-height: 44px; max-height: 140px; resize: none; font: inherit; line-height: 1.4; }
+.ask-input::placeholder { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ask-send { display: inline-grid; place-items: center; width: 44px; min-height: 44px; padding: 0; font: inherit; cursor: pointer; }
+.ask-send svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.ask-send:disabled { opacity: 0.5; cursor: progress; }
+.ask-note { flex: none; margin: 0; padding: 0 1rem 0.75rem; font-size: 0.68rem; line-height: 1.4; }
+
+/* A phone: the window is the screen, and the page behind it stays put. */
+@media (max-width: 640px) {
+  .aipop { inset: 0; width: auto; height: auto; border-radius: 0 !important; }
+  html.aipop-open, html.aipop-open body { overflow: hidden; }
+  html.aipop-open .aipop-launch { display: none; }
+  .ask-input { font-size: 16px; }
+}
+@media print { .aipop, .aipop-launch { display: none !important; } }
+
+/* The briefing's skeleton, as the warehouse demos draw it. */
+.ai-head { display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+.ai-pris { margin: 0; padding: 0; list-style: none; }
+.ai-pri { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 0.75rem; align-items: baseline; text-decoration: none; color: inherit; }
+.ai-pri-body { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
+.ai-pri-n, .ai-pri-v { font-variant-numeric: tabular-nums; }
+.ai-pri-v { font-weight: 700; white-space: nowrap; }
+.ai-meta { display: block; }
+
+/* ---------------------------------------------------------------- Leshaw's dress */
+
+:root { --ox-accent: var(--blue-2); }
+
+/* Under the hub's own drawers, modals and search (z-index 60), so an order drawer's buttons are
+   never behind the launcher, and room at the foot of every page so the launcher never sits on
+   the last row. */
+.aipop-launch, .aipop { z-index: 58; }
+.view { padding-bottom: 92px; }
+
+.aipop-launch {
+  background: var(--navy);
+  color: #fff;
+  border-radius: 999px;
+  font: 700 13.5px var(--font-head);
+  letter-spacing: 0.01em;
+  box-shadow: 0 10px 28px -6px rgba(11, 35, 65, 0.5);
+  transition: transform 0.15s var(--ease), box-shadow 0.15s var(--ease);
+}
+.aipop-launch-ico { color: #ff5a5a; }
+.aipop-launch:hover { transform: translateY(-1px); box-shadow: 0 14px 32px -6px rgba(11, 35, 65, 0.55); }
+:root[data-theme="dark"] .aipop-launch { background: var(--blue); color: var(--bg); box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5); }
+:root[data-theme="dark"] .aipop-launch-ico { color: var(--bg); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .aipop-launch { background: var(--blue); color: var(--bg); box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5); }
+  :root:not([data-theme="light"]) .aipop-launch-ico { color: var(--bg); }
+}
+
+.aipop {
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  font-family: var(--font-body);
+}
+.aipop-head { position: relative; background: var(--navy); color: #fff; padding-bottom: 1rem; }
+.aipop-head::after {
+  /* The four LSW stripes, as on the sidebar. */
+  content: "";
+  position: absolute;
+  left: 1rem;
+  bottom: 0.45rem;
+  width: 84px;
+  height: 4px;
+  background: linear-gradient(90deg, #e41e26 0 22%, transparent 22% 26%, #f5d300 26% 48%, transparent 48% 52%, #1592d6 52% 74%, transparent 74% 78%, #8d7ff0 78% 100%);
+  transform: skewX(-24deg);
+}
+:root[data-theme="dark"] .aipop-head { background: var(--surface-3); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .aipop-head { background: var(--surface-3); } }
+.aipop-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: #fff;
+  color: var(--red);
+}
+.aipop-title { font: 800 16px var(--font-head); letter-spacing: -0.01em; }
+.aipop-sub { color: rgba(255, 255, 255, 0.72); font-size: 12px; }
+.aipop-icon { border-radius: 10px; color: rgba(255, 255, 255, 0.85); }
+.aipop-icon:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
+.aipop-tabs { border-bottom: 1px solid var(--border); background: var(--surface); }
+.aipop-tab { color: var(--muted); font: 700 13px var(--font-head); }
+.aipop-tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--red); }
+.aipop-tab:hover { color: var(--ink); }
+
+.ask-scroll { background: var(--surface-2); }
+.ask-hello {
+  align-self: flex-start;
+  max-width: 92%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px 14px 14px 4px;
+  padding: 0.75rem 0.95rem;
+  color: var(--ink-2);
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+.ask-chip {
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 99px;
+  color: var(--blue);
+  padding: 6px 12px;
+  font: 600 12.5px var(--font-head);
+}
+.ask-chip:hover { border-color: var(--blue); background: var(--blue-soft); }
+.ask-turn { display: flex; flex-direction: column; gap: 0.5rem; }
+.ask-q {
+  align-self: flex-end;
+  max-width: 85%;
+  background: var(--blue);
+  color: #fff;
+  border-radius: 14px 14px 4px 14px;
+  padding: 0.55rem 0.85rem;
+  font-weight: 600;
+  font-size: 13.5px;
+}
+:root[data-theme="dark"] .ask-q { color: var(--bg); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .ask-q { color: var(--bg); } }
+.ask-a {
+  align-self: flex-start;
+  max-width: 94%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px 14px 14px 4px;
+  padding: 0.75rem 0.95rem;
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+.ask-status { color: var(--muted); }
+.ask-msg.is-refusal, .ask-msg.is-clarify { color: var(--ink-2); }
+.ask-msg.is-error { color: var(--crit-ink); }
+.ask-proof summary { color: var(--blue); font: 700 12px var(--font-head); }
+.ask-sql { background: var(--surface-3); border-radius: 8px; color: var(--ink); }
+.ask-purpose, .ask-meta { color: var(--muted); font-size: 12px; }
+.aipop th { padding: 6px 10px; font-size: 10.5px; position: sticky; top: 0; }
+.aipop td { padding: 6px 10px; font-size: 12px; }
+.aipop td.num { text-align: right; font-variant-numeric: tabular-nums; }
+.ask-form { background: var(--surface); border-top: 1px solid var(--border); }
+.ask-input {
+  background: var(--surface-2);
+  color: var(--ink);
+  border: 1px solid var(--border-strong);
+  border-radius: 22px;
+  padding: 0.62rem 0.95rem;
+  font-size: 14px;
+}
+.ask-input:focus { outline: 2px solid var(--blue-2); outline-offset: 0; border-color: transparent; }
+.ask-send { background: var(--red); color: #fff; border: 0; border-radius: 50%; box-shadow: 0 4px 14px -6px rgba(250, 0, 0, 0.55); }
+.ask-send:hover { background: var(--red-hover); }
+.ask-note { color: var(--muted); background: var(--surface); }
+
+/* Today's briefing. */
+.lsw-brief .ai-head { justify-content: space-between; margin-bottom: 0.6rem; }
+.lsw-brief .ai-badge { font: 800 11px var(--font-head); letter-spacing: 0.1em; text-transform: uppercase; color: var(--red-ink); }
+.lsw-brief .ai-headline { font: 700 16px/1.4 var(--font-head); margin: 0 0 0.5rem; color: var(--ink); }
+.lsw-brief .ai-why { color: var(--ink-2); font-size: 13.5px; line-height: 1.55; margin: 0 0 0.9rem; }
+.lsw-brief .ai-pris li { border-top: 1px solid var(--border); }
+.lsw-brief .ai-pri { padding: 0.7rem 0; }
+.lsw-brief .ai-pri:hover .ai-do { color: var(--blue); }
+.lsw-brief .ai-pri-n {
+  display: inline-grid;
+  place-items: center;
+  min-width: 26px;
+  height: 22px;
+  border-radius: 6px;
+  background: var(--blue-soft);
+  color: var(--blue);
+  font: 800 11px var(--font-head);
+}
+.lsw-brief .ai-do { font-size: 13.5px; font-weight: 600; line-height: 1.4; }
+.lsw-brief .ai-meta { font-size: 12px; color: var(--muted); line-height: 1.4; }
+.lsw-brief .ai-pri-v { font: 800 13px var(--font-head); color: var(--ink); }
+.lsw-brief .ai-credit { font-size: 11.5px; color: var(--muted); margin: 0.9rem 0 0; }
+.lsw-brief .ask-proof h4 { font: 700 11px var(--font-head); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin: 0.9rem 0 0.3rem; }
+.aipop-refresh {
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--ink-2);
+  border-radius: 99px;
+  padding: 4px 10px;
+  font: 600 12px var(--font-head);
+}
+.aipop-refresh:hover { border-color: var(--blue); color: var(--blue); }
+.aipop-stale {
+  margin: 0 0 0.8rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 10px;
+  background: var(--warn-soft);
+  color: var(--warn-ink);
+  font-size: 12.5px;
+}
+.aipop-link { border: 0; background: none; padding: 0; color: inherit; font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
+.aipop-wait { color: var(--muted); }

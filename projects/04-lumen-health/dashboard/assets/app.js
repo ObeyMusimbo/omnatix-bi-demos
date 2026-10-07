@@ -20,7 +20,7 @@ import {
   renderNav, onFilterChange, readParam, writeParam, scope, keepScroll, fmtAny,
   wireTheme, views, insights, attachInsights, aiBrief,
 } from './shell.js';
-import { mountAsk } from './ask.js';
+import { mountAiPopup } from './ask.js';
 
 // The AI decision support, loaded once beside meta.json, and the tab router.
 let INS = null;
@@ -167,7 +167,6 @@ const SECTIONS = [
   ['reception', '05', 'Reception'],
   ['diaries', '06', 'Diaries'],
   ['trend', '07', 'Trend and data'],
-  ['ask', '08', 'Ask the data'],
 ];
 const ALL_CLINICS = 'All clinics';
 const clinic = { code: '', label: '' };
@@ -1091,7 +1090,6 @@ function renderOverview(target, m) {
         <div id="ov-heat"><div class="ox-skel ox-skel-chart"></div></div>
         <a class="panel-go" href="#week">Open the week</a>
       </div>
-      ${aiBrief(INS, { label: 'Priorities this month · AI', cls: 'bench-brief' })}
     </div>`;
 }
 
@@ -1126,13 +1124,18 @@ try {
   // One tab at a time, named in the hash. Switching tabs brings the tab bar back into view.
   V = views({ ids: SECTIONS.map(([id]) => id), fallback: 'ox-top', anchor: document.querySelector('.bench-head') });
   wireTheme(el('theme-toggle'), { key: 'ox-theme-lumen', onChange: () => rerender() });
-  // A conversation tab: ask the practice's own data, operational questions only.
-  mountAsk(el('ask'), {
+  // The assistant, a button in the corner of every tab: a conversation with the practice's own
+  // data, operational questions only, and this month's priorities.
+  mountAiPopup({
     demo: 'lumen',
-    title: 'Ask the data',
-    intro: 'Ask about a clinic, a scheme, a practitioner, an hour of the week or a month. Operational questions only; this is not clinical advice.',
-    placeholder: 'e.g. Which scheme takes longest to pay?',
+    name: 'Lumen assistant',
+    sub: 'Decision support · AI',
+    launch: 'Ask Lumen AI',
+    tabs: ['Ask', 'Priorities this month'],
+    greeting: 'Ask about a clinic, a scheme, a practitioner, an hour of the week or a month. Operational questions only; this is not clinical advice.',
+    placeholder: 'Ask about a clinic or a scheme',
     filter: () => clinic.code,
+    brief: aiBrief(INS, { label: 'Priorities this month · AI', cls: 'bench-brief' }),
   });
 
   onFilterChange(nav, (code) => {
