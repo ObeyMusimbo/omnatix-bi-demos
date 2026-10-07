@@ -92,6 +92,9 @@ function tables(S) {
       sheets_cut: cut ? cut.qty : 0, edging_metres: edge ? edge.qty : 0,
       counts_as_revenue: o.status !== 'Cancelled',
     });
+    // Lines of cancelled orders are left out: every product question is about what sold, and
+    // a model that forgets to filter them (seen live) would otherwise count them.
+    if (o.status === 'Cancelled') continue;
     for (const l of o.lines) {
       const p = pIndex[l.pid] || {};
       orderLines.push({
