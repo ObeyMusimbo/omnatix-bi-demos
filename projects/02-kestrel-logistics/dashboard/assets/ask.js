@@ -38,22 +38,53 @@ export function safeSql(sql) {
   return s;
 }
 
-// A grouping the prompt forbids, caught before it runs. Grouping by a percentage, rate or
-// average makes every distinct value its own group, so "the clinic with the lowest recovery
-// rate" comes back as one rejection reason's rate. Seen live from a fallback model. Such a query
-// goes back to the model to be corrected, like an error, and never runs as it stands.
+// Two ways to answer at the wrong level, both forbidden by the prompt and both seen live from a
+// fallback model when the free Qwen was busy, caught here before the query runs. A query that
+// trips one goes back to the model to be corrected, once, like a query that failed.
 const MEASURE = /(^|_)(pct|percent|percentage|rate|ratio|share|avg|average|mean)(_|$)/i;
 
-export function lint(sql) {
+const words = (s) => (String(s).toLowerCase().match(/[a-z_][a-z0-9_]*/g) || []);
+// clinic_name and clinic_code name the same thing, as do product_id and product_name.
+const stem = (c) => c.toLowerCase().replace(/_(id|code|name|key)$/, '');
+
+/**
+ * What is wrong with a query, as { message, strict }, or null. A strict flaw never runs; the
+ * other is a judgement from the table's shape, so the model's corrected query runs regardless.
+ */
+export function lint(sql, tables = []) {
+  const s = String(sql);
+
+  // Grouping by a percentage, rate or average makes every distinct value its own group, so
+  // "the clinic with the lowest recovery rate" comes back as one rejection reason's rate.
   const groupings = /\bgroup\s+by\b([\s\S]*?)(?=\border\s+by\b|\bhaving\b|\blimit\b|\bqualify\b|\bwindow\b|\bunion\b|\)|$)/gi;
-  for (const m of String(sql).matchAll(groupings)) {
-    const bad = (m[1].match(/[a-z_][a-z0-9_]*/gi) || []).find((w) => MEASURE.test(w));
+  for (const m of s.matchAll(groupings)) {
+    const bad = words(m[1]).find((w) => MEASURE.test(w));
     if (bad) {
-      return `The query groups by ${bad}, which is a percentage, rate or average. Group by the level `
-        + 'the question asks for instead, and recompute any rate as SUM(numerator) * 100.0 / SUM(denominator).';
+      return { strict: true, message: `The query groups by ${bad}, which is a percentage, rate or average. `
+        + 'Group by the level the question asks for instead, and recompute any rate as '
+        + 'SUM(numerator) * 100.0 / SUM(denominator).' };
     }
   }
-  return '';
+
+  // Reading rows straight off a table with one row per clinic and reason, showing only the
+  // clinic: each row is one reason's figure passed off as the clinic's. Checked on plain
+  // single-table reads only: every column of the table's grain must be selected or filtered on.
+  const lower = s.toLowerCase();
+  if ((lower.match(/\bselect\b/g) || []).length !== 1 || /\bgroup\s+by\b|\bjoin\b|\bover\s*\(|\bdistinct\b/.test(lower)
+    || /\b(sum|count|avg|min|max|median|quantile_cont|any_value|arg_min|arg_max|string_agg|list)\s*\(/.test(lower)) return null;
+  const from = lower.match(/\bfrom\s+([a-z_][a-z0-9_]*)/);
+  const table = from && tables.find((t) => t.name.toLowerCase() === from[1]);
+  if (!table || !Array.isArray(table.grain) || table.grain.length < 2) return null;
+  const selected = lower.slice(lower.indexOf('select') + 6, from.index);
+  if (/(^|[\s,.])\*/.test(selected)) return null;
+  const where = (lower.match(/\bwhere\b([\s\S]*?)(?=\border\s+by\b|\blimit\b|$)/) || [])[1] || '';
+  const seen = new Set([...words(selected), ...words(where)].map(stem));
+  const missing = table.grain.filter((g) => !seen.has(stem(g)));
+  if (!missing.length) return null;
+  return { strict: false, message: `${table.name} has one row per ${table.grain.join(' and ')}, but the `
+    + `query neither selects nor filters on ${missing.join(' or ')}, so each row it returns is only part `
+    + 'of the answer. Use a table whose grain matches the question, or GROUP BY the level asked and '
+    + 'recompute any rate as SUM(numerator) * 100.0 / SUM(denominator).' };
 }
 
 const cell = (v) => {
@@ -154,6 +185,11 @@ export function mountAsk(root, { demo, greeting = '', examples = [], filter = ()
   let busy = false;
   const toEnd = () => { scroller.scrollTop = scroller.scrollHeight; };
 
+  // The context pack beside the data: the starter questions, and each table's grain for lint().
+  const context = fetch(new URL('data/chat-context.json', location.href), { cache: 'no-store' })
+    .then((r) => (r.ok ? r.json() : null))
+    .catch(() => null);
+
   // The box grows with what is typed, to a point, then scrolls.
   const fit = () => {
     input.style.height = 'auto';
@@ -184,6 +220,7 @@ export function mountAsk(root, { demo, greeting = '', examples = [], filter = ()
 
     const base = { demo, question, history, today: localDate(), filter: { value: filter() || '' } };
     try {
+      const tables = (await context)?.tables || [];
       let plan = await call({ ...base, step: 'plan' });
       let rows = null, sql = null, ms = 0;
 
@@ -192,15 +229,15 @@ export function mountAsk(root, { demo, greeting = '', examples = [], filter = ()
       for (let attempt = 0; attempt < 2 && plan.type === 'sql'; attempt++) {
         sql = safeSql(plan.sql);
         if (!sql) { plan = { type: 'refuse', message: 'That question would need something other than reading the data, so I can\'t run it.' }; break; }
-        const flaw = lint(sql);
-        if (flaw) {
-          if (attempt === 1) {
-            plan = { type: 'error', message: 'The AI could not write a sound query for that just now. Please try asking it another way.' };
-            break;
-          }
+        const flaw = lint(sql, tables);
+        if (flaw && attempt === 0) {
           status('Correcting the query');
-          plan = await call({ ...base, step: 'plan', error: flaw, failedSql: sql });
+          plan = await call({ ...base, step: 'plan', error: flaw.message, failedSql: sql });
           continue;
+        }
+        if (flaw?.strict) {
+          plan = { type: 'error', message: 'The AI could not write a sound query for that just now. Please try asking it another way.' };
+          break;
         }
         status('Running it on the data');
         const t0 = performance.now();
@@ -261,20 +298,14 @@ export function mountAsk(root, { demo, greeting = '', examples = [], filter = ()
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); ask(input.value); }
   });
 
-  // The starter questions live in the context pack beside the data, unless the page passes its
-  // own.
+  // The starter questions live in the context pack, unless the page passes its own.
   const chips = root.querySelector('.ask-examples');
   const showChips = (list) => {
     chips.innerHTML = list.map((e) => `<button type="button" class="ask-chip">${esc(e)}</button>`).join('');
     chips.querySelectorAll('.ask-chip').forEach((b) => b.addEventListener('click', () => ask(b.textContent)));
   };
   if (examples.length) showChips(examples);
-  else {
-    fetch(new URL('data/chat-context.json', location.href), { cache: 'no-store' })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((c) => { if (c?.examples?.length) showChips(c.examples); })
-      .catch(() => { /* no starters, the box still works */ });
-  }
+  else context.then((c) => { if (c?.examples?.length) showChips(c.examples); });
 
   return {
     ask,

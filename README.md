@@ -127,7 +127,11 @@ wrote it.
    read-only SQL query, a reply in words (a greeting, or a question about the dashboard rather
    than its data), a question back, or a refusal.
 2. `ask.js` checks the query is a single read and runs it in the page's own DuckDB-WASM engine.
-   The result goes back to Qwen, which writes the answer from those rows alone.
+   The result goes back to Qwen, which writes the answer from those rows alone. Before it runs,
+   `lint()` checks for the two ways a model answers at the wrong level, both seen live from the
+   fallback models: grouping by a percentage, and reading rows off a table whose grain is finer
+   than the question (one row per clinic and reason, shown as the clinic's). Such a query goes
+   back to the model to be corrected, once.
 
 The SQL and the rows it returned are shown under every answer with figures in it. On the four
 warehouse demos, questions outside the demo's data, including general knowledge, advice and
