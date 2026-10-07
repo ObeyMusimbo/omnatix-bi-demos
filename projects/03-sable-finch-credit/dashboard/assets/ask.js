@@ -38,6 +38,24 @@ export function safeSql(sql) {
   return s;
 }
 
+// A grouping the prompt forbids, caught before it runs. Grouping by a percentage, rate or
+// average makes every distinct value its own group, so "the clinic with the lowest recovery
+// rate" comes back as one rejection reason's rate. Seen live from a fallback model. Such a query
+// goes back to the model to be corrected, like an error, and never runs as it stands.
+const MEASURE = /(^|_)(pct|percent|percentage|rate|ratio|share|avg|average|mean)(_|$)/i;
+
+export function lint(sql) {
+  const groupings = /\bgroup\s+by\b([\s\S]*?)(?=\border\s+by\b|\bhaving\b|\blimit\b|\bqualify\b|\bwindow\b|\bunion\b|\)|$)/gi;
+  for (const m of String(sql).matchAll(groupings)) {
+    const bad = (m[1].match(/[a-z_][a-z0-9_]*/gi) || []).find((w) => MEASURE.test(w));
+    if (bad) {
+      return `The query groups by ${bad}, which is a percentage, rate or average. Group by the level `
+        + 'the question asks for instead, and recompute any rate as SUM(numerator) * 100.0 / SUM(denominator).';
+    }
+  }
+  return '';
+}
+
 const cell = (v) => {
   if (v === null || v === undefined) return '';
   if (typeof v === 'number') {
@@ -169,10 +187,21 @@ export function mountAsk(root, { demo, greeting = '', examples = [], filter = ()
       let plan = await call({ ...base, step: 'plan' });
       let rows = null, sql = null, ms = 0;
 
-      // One retry: a query that fails goes back with its error, once.
+      // One retry: a query that fails, or breaks a rule lint() checks, goes back with its error,
+      // once.
       for (let attempt = 0; attempt < 2 && plan.type === 'sql'; attempt++) {
         sql = safeSql(plan.sql);
         if (!sql) { plan = { type: 'refuse', message: 'That question would need something other than reading the data, so I can\'t run it.' }; break; }
+        const flaw = lint(sql);
+        if (flaw) {
+          if (attempt === 1) {
+            plan = { type: 'error', message: 'The AI could not write a sound query for that just now. Please try asking it another way.' };
+            break;
+          }
+          status('Correcting the query');
+          plan = await call({ ...base, step: 'plan', error: flaw, failedSql: sql });
+          continue;
+        }
         status('Running it on the data');
         const t0 = performance.now();
         try {

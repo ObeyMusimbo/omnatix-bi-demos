@@ -217,6 +217,10 @@ const SQL_RULES = `SQL rules:
 - Never put a percentage, rate or average column in GROUP BY, never sort a detailed table by
   its row-level percentage to answer a group question, and never average percentages.
 - Columns starting all_ are group-wide totals repeated on every row: use them once, not summed.
+- Join tables only on their id or code columns (order_id, customer_id, product_id and the like),
+  never on a date, a month, a status or a name: a join on a date pairs every row with every other
+  row of that day and multiplies the totals. If a table already has the column you need, filter
+  it directly instead of joining.
 
 WORKED EXAMPLE (made-up tables, for the pattern only):
   region_summary: one row per region, with return_rate_pct.
@@ -369,6 +373,8 @@ Reply with ONE JSON object and nothing else:
 - Three to five priorities, most urgent first: money waiting to be collected, jobs late or due,
   stock about to run out on boards that sell, quotes about to expire, good customers gone quiet.
 - Every figure you write must appear in the facts. ${ctx.money_answer || 'Money is rand.'}
+- Compare honestly: below the same days last month is behind, never "on track". Orders and
+  cut and edge jobs are different things; name each correctly.
 - Write numbers for reading: R12,450, R1.2m. Name customers, boards and quotes as the facts do.
 - Plain text, no emojis, no em dashes. Direct and practical, like a sharp operations manager.`;
   return [
