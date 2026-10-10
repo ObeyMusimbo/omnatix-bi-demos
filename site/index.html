@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Omnatix · Decision intelligence demos</title>
-<meta name="description" content="Four analytics demos across FMCG distribution, logistics, microfinance and healthcare, each finding a problem worth money in data a business already has, and a live operations hub built for a client.">
+<meta name="description" content="Five dashboards across building supply, FMCG distribution, logistics, microfinance and healthcare, each with an AI you can question in plain language, built on data a business already has.">
 <link rel="stylesheet" href="omnatix.css">
 <link rel="icon" type="image/png" sizes="64x64" href="brand/favicon.png">
 <link rel="apple-touch-icon" href="brand/apple-touch-icon.png">
@@ -13,17 +13,18 @@
 
 <div class="wrap">
 
+  <!-- Short on purpose: all five cards should be on screen when the page opens on a laptop. -->
   <header>
-    <p class="mark"><img src="brand/omnatix-mark.png" alt="" width="48" height="48">Omnatix</p>
-    <h1>Every one of these found money the business already had.</h1>
+    <p class="mark"><img src="brand/omnatix-mark.png" alt="" width="40" height="40">Omnatix</p>
+    <h1>Decisions from the data a business already has.</h1>
     <p class="lede">
-      Four demonstrations across different industries. Each starts from the kind of raw exports a
-      South African business already produces, and ends with a decision someone can act on this
-      week. Open any of them and the dashboard will find its own problem in front of you.
+      Five dashboards across five industries, each with an AI you can question in plain language.
+      Open any of them and it shows you where the money is and what to do next.
     </p>
     <p class="note">
-      Every business here is fictional and every figure is generated. The findings are planted on
-      purpose, because a demo that only displays numbers proves nothing.
+      Leshaw is a real client, shown with permission, on sample data. The other four businesses
+      are fictional, with findings planted on purpose, because a demo that only displays numbers
+      proves nothing.
     </p>
   </header>
 
@@ -31,18 +32,10 @@
 {{CARDS}}
   </div>
 
-  <section class="client" aria-labelledby="client-head">
-    <h2 class="client-head" id="client-head">Built for a client</h2>
-    <p class="note">
-      A business hub built for Leshaw, a boards and hardware supplier in Spruitview: counter
-      sales, trade quotes, the cutting floor and stock in one place, with an AI assistant that
-      answers from the live figures. Shown with Leshaw's permission. The catalogue is Leshaw's
-      own; the customers, orders and figures are generated sample data.
-    </p>
-    <div class="grid grid-client">
-{{CLIENT_CARDS}}
-    </div>
-  </section>
+  <p class="ai-note">
+    An open AI model (Qwen, or Gemma or Nemotron when it is busy) answers from SQL that runs in
+    your browser on each dashboard's own data. Every answer with figures shows its query and rows.
+  </p>
 
   <section class="how">
     <div>
@@ -71,8 +64,8 @@
       <h3>Honest about age</h3>
       <p>
         On a client's live data, each dashboard counts the days since its newest transaction,
-        against your clock, and turns red when a feed stops. These demos cover a fixed period, so
-        the badge tracks the nightly rebuild instead.
+        against your clock, and turns red when a feed stops. The four fictional demos cover a
+        fixed period, so their badge tracks the nightly rebuild instead.
       </p>
     </div>
   </section>
@@ -95,11 +88,12 @@
 
   <footer>
     <p>
-      Omnatix builds the pipeline as well as the dashboard. Figures in rand, excluding VAT.
+      Omnatix builds the pipeline as well as the dashboard. Figures in rand: excluding VAT in the
+      four fictional demos, and including VAT in Leshaw's hub, as the business prices.
     </p>
     <p>
-      All data on these pages is synthetic. No client information appears anywhere in this
-      repository or on these demos.
+      All customers, orders and figures on these pages are generated. No client's private data
+      appears anywhere in this repository or on these demos.
     </p>
   </footer>
 

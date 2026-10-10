@@ -7,13 +7,13 @@ under its own path. Adding a project is one entry in PROJECTS below.
     .venv/Scripts/python.exe scripts/build_site.py
 
     dist/
-      index.html          the Omnatix landing page
+      index.html          the Omnatix landing page, one card per demo in PROJECTS order
       omnatix.css
+      leshaw/             projects/05-leshaw-boardcenter/dashboard, a client's hub, first
       meridian/           projects/01-meridian-provisions/dashboard, copied
       kestrel/
       sable-finch/
       lumen/
-      leshaw/             a client's business hub, in its own row on the landing page
 
 This is a pure file copy plus a rendered index, with no third-party imports, so Cloudflare can
 run it as the build command on a clean image. dist/ is therefore not committed: the committed
@@ -35,6 +35,19 @@ SITE = ROOT / "site"
 DIST = ROOT / "dist"
 
 PROJECTS = [
+    {
+        # A real client's hub, listed with Leshaw's approval, and first on the landing page.
+        # The page's intro says it is real and on sample data, and that the other four are
+        # fictional.
+        "slug": "leshaw",
+        "dir": "05-leshaw-boardcenter",
+        "client": "Leshaw Business Hub",
+        "industry": "Boards and hardware",
+        "problem": "One live view of the day: counter sales, trade quotes, the cutting floor and stock.",
+        "headline_label": "Operations hub with an AI assistant on the live figures",
+        "foot": "Live sample data",
+        "accent": "#FF4646",
+    },
     {
         "slug": "meridian",
         "dir": "01-meridian-provisions",
@@ -75,19 +88,6 @@ PROJECTS = [
         "headline_value": "R17.4m",
         "headline_label": "billed for care delivered and never collected",
         "accent": "#00919A",
-    },
-    {
-        # A real client's hub, listed with Leshaw's approval, in its own row under the four
-        # fictional demos: the page's claim that every business is fictional stays true of them.
-        "slug": "leshaw",
-        "dir": "05-leshaw-boardcenter",
-        "group": "client",
-        "client": "Leshaw Business Hub",
-        "industry": "Boards and hardware",
-        "problem": "One live view of the day: counter sales, trade quotes, the cutting floor and stock.",
-        "headline_label": "Operations hub with an AI assistant on the live figures",
-        "foot": "Live sample data",
-        "accent": "#FF4646",
     },
 ]
 
@@ -150,7 +150,7 @@ def main() -> int:
         shutil.rmtree(DIST)
     DIST.mkdir(parents=True)
 
-    cards, client_cards, built_count = [], [], 0
+    cards, built_count = [], 0
     for project in PROJECTS:
         src = dashboard_dir(project)
         built = (src / "index.html").exists()
@@ -165,11 +165,10 @@ def main() -> int:
         else:
             print(f"  {project['slug']:<14} not built yet, card will render without a link")
 
-        (client_cards if project.get("group") == "client" else cards).append(card(project, built, meta))
+        cards.append(card(project, built, meta))
 
     template = (SITE / "index.html").read_text(encoding="utf-8")
-    page = template.replace("{{CARDS}}", "\n".join(cards)).replace("{{CLIENT_CARDS}}", "\n".join(client_cards))
-    (DIST / "index.html").write_text(page, encoding="utf-8")
+    (DIST / "index.html").write_text(template.replace("{{CARDS}}", "\n".join(cards)), encoding="utf-8")
     shutil.copy2(SITE / "omnatix.css", DIST / "omnatix.css")
     # The Omnatix mark, favicon and home screen icon, cut from the business card artwork.
     shutil.copytree(SITE / "brand", DIST / "brand", dirs_exist_ok=True)

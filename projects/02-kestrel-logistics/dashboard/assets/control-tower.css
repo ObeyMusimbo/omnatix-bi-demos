@@ -713,7 +713,6 @@ footer p { margin: 0 0 0.5rem; max-width: 90ch; }
 .tower .ask-input:focus { outline: 2px solid var(--s1); outline-offset: 0; }
 .tower .ask-send { background: var(--s1); color: #FFFFFF; border: 0; border-radius: 6px; }
 .tower .ask-send:hover { filter: brightness(1.1); }
-.tower .ask-note { color: var(--text-3); background: var(--panel-2); }
 
 /* ---------------------------------------------------------------- the Omnatix frame
 

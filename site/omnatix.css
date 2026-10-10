@@ -1,8 +1,8 @@
 /*
   The Omnatix front door.
 
-  Deliberately not one of the four demo themes. It is a neutral dark shell so that the four
-  cards, each carrying its project's signature colour, do the talking. A prospect should see
+  Deliberately not one of the demo themes. It is a neutral dark shell so that the five cards,
+  each carrying its project's signature colour, do the talking. A prospect should see
   the range in the first three seconds without clicking anything.
 */
 
@@ -82,7 +82,7 @@ h1 {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 1.25rem;
-  margin: 3.5rem 0 4rem;
+  margin: 3.5rem 0 1.25rem;
 }
 
 .card {
@@ -171,22 +171,36 @@ a.card:hover .open { color: var(--accent); }
   color: var(--text-3);
 }
 
-/* ---------------------------------------------------------------- built for a client
-
-   A real client's hub sits in its own row under the four fictional demos, so the header's
-   promise that every business above is fictional stays true. One card, one column wide. */
-
-.client { border-top: 1px solid var(--rule); padding-top: 2.5rem; margin: 0 0 4rem; }
-.client-head {
-  font-size: 0.74rem;
-  font-weight: 500;
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
+/* The AI behind every demo, said once here rather than inside each pop-up. */
+.ai-note {
   color: var(--text-3);
-  margin: 0 0 0.6rem;
+  font-size: 0.82rem;
+  max-width: 90ch;
+  margin: 0 0 3.5rem;
 }
-.client .note { color: var(--text-2); }
-.grid-client { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); margin: 1.75rem 0 0; }
+
+/* ---------------------------------------------------------------- all five on the first screen
+
+   On a laptop the intro is short and the five cards sit in one row, so every demo is on
+   screen when the page opens. Narrower screens keep the flowing grid above. */
+@media (min-width: 1100px) {
+  .wrap { max-width: 1320px; }
+  header { padding-top: 2.25rem; }
+  .mark { margin-bottom: 1.4rem; }
+  .mark img { width: 40px; height: 40px; }
+  h1 { font-size: clamp(1.7rem, 2.4vw, 2.3rem); max-width: none; margin-bottom: 0.6rem; }
+  .lede { font-size: 1rem; max-width: 90ch; margin-bottom: 0.4rem; }
+  .note { font-size: 0.86rem; max-width: 90ch; }
+  .grid { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0.9rem; margin: 1.75rem 0 1rem; }
+  .card { padding: 1.25rem 1.1rem 1.05rem; }
+  .card-industry { font-size: 0.7rem; margin-bottom: 0.55rem; }
+  .card h2 { font-size: 1.04rem; }
+  .card .problem { font-size: 0.84rem; margin-bottom: 0.9rem; }
+  .headline { padding-top: 0.75rem; }
+  .headline-value { font-size: 1.25rem; }
+  .headline-label { font-size: 0.76rem; }
+  .card-foot { font-size: 0.74rem; flex-wrap: wrap; gap: 0.3rem 0.8rem; margin-top: 0.8rem; }
+}
 
 /* ---------------------------------------------------------------- build */
 
@@ -219,8 +233,9 @@ footer p { margin: 0 0 0.5rem; max-width: 74ch; }
 
 @media (max-width: 640px) {
   .wrap { padding: 0 1.25rem; }
-  header { padding-top: 3rem; }
-  .mark { margin-bottom: 2rem; }
+  header { padding-top: 2rem; }
+  .mark { margin-bottom: 1.5rem; }
+  .grid { margin-top: 2rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

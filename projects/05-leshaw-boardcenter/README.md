@@ -4,8 +4,7 @@ A clickable operations dashboard for Leshaw (boards and hardware, Spruitview), s
 [leshaw-lsw.co.za](https://leshaw-lsw.co.za/): navy `#0B2341`, brand blue `#1A5298`, signal red
 `#FA0000`, Raleway headings, Open Sans body, the real LSW logo and catalogue photography.
 
-Listed on the Omnatix demo site with Leshaw's approval, in its own "Built for a client" row,
-at `/leshaw/`.
+Listed on the Omnatix demo site with Leshaw's approval, as the first demo, at `/leshaw/`.
 
 ## Run it
 

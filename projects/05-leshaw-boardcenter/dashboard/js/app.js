@@ -1,4 +1,4 @@
-/* Leshaw Business Hub — application */
+/* Leshaw Business Hub: application */
 (function () {
   'use strict';
   const L = window.LESHAW;
@@ -63,9 +63,12 @@
       const raw = localStorage.getItem(STORE);
       if (raw) {
         const s = JSON.parse(raw);
-        if (s && s.v === 1 && Date.now() - new Date(s.generated).getTime() < 3 * DAY) return s;
+        // Kept for the rest of the day it was generated, so demo changes survive a reload. A day
+        // later it is generated afresh: the sample data runs up to now, and a hub kept from
+        // yesterday would open on "0 orders so far today", and so would its AI.
+        if (s && s.v === 1 && new Date(s.generated).toDateString() === new Date().toDateString()) return s;
       }
-    } catch (e) { /* storage unavailable — fall through */ }
+    } catch (e) { /* storage unavailable, so fall through */ }
     return L.generate();
   }
   let saveT;
@@ -483,7 +486,7 @@
           <td><span class="mono">${o.id}</span>${compact ? `<br><small class="muted">${relDate(o.date)}</small>` : ''}</td>
           <td><div class="cell-main"><span class="initials">${initials(c.name)}</span><div><strong>${esc(c.name)}</strong><small>${esc(c.type)}</small></div></div></td>
           ${compact ? '' : `<td>${relDate(o.date)}</td><td>${o.lines.reduce((s, l) => s + l.qty, 0)} <span class="muted">(${o.lines.length} lines)</span></td>
-          <td>${o.services.length ? o.services.map(s => `<span class="tag">${s.key === 'cut' ? 'Cut' : 'Edge'}</span>`).join(' ') : '<span class="muted">—</span>'}</td><td>${o.channel}</td>`}
+          <td>${o.services.length ? o.services.map(s => `<span class="tag">${s.key === 'cut' ? 'Cut' : 'Edge'}</span>`).join(' ') : '<span class="muted">-</span>'}</td><td>${o.channel}</td>`}
           <td>${pill(o.status)}</td>
           <td class="r"><b>${money(total(o))}</b></td>
         </tr>`; }).join('')}</tbody></table>`;
@@ -1025,7 +1028,7 @@
           <td><div class="cell-main"><span class="initials">${initials(c.name)}</span><div><strong>${esc(c.name)}</strong><small>${esc(c.contact)}</small></div></div></td>
           <td>${esc(c.type)}</td><td>${esc(c.area)}</td>
           <td class="r">${num(st[c.id].orders)}</td><td class="r"><b>${money(st[c.id].y)}</b></td>
-          <td>${st[c.id].last ? relDate(st[c.id].last) : '—'}</td>
+          <td>${st[c.id].last ? relDate(st[c.id].last) : '-'}</td>
           <td>${c.account ? '<span class="tag">30-day account</span>' : '<span class="muted">Cash / EFT</span>'}</td>
         </tr>`).join('')}</tbody></table>`;
       $$('[data-sort]', v).forEach(th => th.onclick = () => { const key = th.dataset.sort; ui.custSort = [key, ui.custSort[0] === key ? -ui.custSort[1] : (key === 'name' ? 1 : -1)]; draw(); });

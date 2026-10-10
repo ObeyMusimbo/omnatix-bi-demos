@@ -129,14 +129,13 @@
 .aipop .table-scroll { max-height: 260px; overflow: auto; }
 .aipop table { font-size: 0.76rem; }
 .ask-meta { margin: 0.4rem 0 0; }
-.ask-form { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.5rem; align-items: end; flex: none; padding: 0.7rem 0.8rem 0.45rem; }
+.ask-form { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.5rem; align-items: end; flex: none; padding: 0.75rem 0.8rem max(0.85rem, env(safe-area-inset-bottom)); }
 .ask-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .ask-input { box-sizing: border-box; width: 100%; min-height: 44px; max-height: 140px; resize: none; font: inherit; line-height: 1.4; }
 .ask-input::placeholder { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ask-send { display: inline-grid; place-items: center; width: 44px; min-height: 44px; padding: 0; font: inherit; cursor: pointer; }
 .ask-send svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 .ask-send:disabled { opacity: 0.5; cursor: progress; }
-.ask-note { flex: none; margin: 0; padding: 0 1rem 0.75rem; font-size: 0.68rem; line-height: 1.4; }
 
 /* A phone: the window is the screen, and the page behind it stays put. */
 @media (max-width: 640px) {
@@ -289,7 +288,6 @@
 .ask-input:focus { outline: 2px solid var(--blue-2); outline-offset: 0; border-color: transparent; }
 .ask-send { background: var(--red); color: #fff; border: 0; border-radius: 50%; box-shadow: 0 4px 14px -6px rgba(250, 0, 0, 0.55); }
 .ask-send:hover { background: var(--red-hover); }
-.ask-note { color: var(--muted); background: var(--surface); }
 
 /* Today's briefing. */
 .lsw-brief .ai-head { justify-content: space-between; margin-bottom: 0.6rem; }

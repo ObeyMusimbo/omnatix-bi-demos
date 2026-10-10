@@ -584,7 +584,6 @@ footer p { margin: 0 0 0.5rem; max-width: 75ch; }
 .ledger .ask-input:focus { outline: 2px solid var(--s1); outline-offset: 0; }
 .ledger .ask-send { background: var(--ink); color: var(--paper); border: 0; }
 .ledger .ask-send:hover { background: var(--s1); }
-.ledger .ask-note { color: var(--ink-3); }
 
 /* The analyst's view, in the pop-up's second tab. */
 .ledger .aipop .ledger-brief { margin: 0; padding: 0; background: none; border: 0; }

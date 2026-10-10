@@ -394,7 +394,6 @@ html[data-view="ox-top"] #loading, html[data-view="signoff"] #loading { display:
 .pack .ask-input { background: var(--panel); color: var(--ink); border: 1px solid var(--rule-strong); border-radius: 0; padding: 0.55rem 0.65rem; }
 .pack .ask-input:focus { outline: 2px solid var(--navy); outline-offset: 0; }
 .pack .ask-send { background: var(--navy); color: var(--panel); border: 0; }
-.pack .ask-note { color: var(--ink-3); background: var(--paper); }
 
 /* ---------------------------------------------------------------- sections */
 

@@ -171,9 +171,6 @@ export function mountAsk(root, { demo, greeting = '', examples = [], filter = ()
         <textarea class="ask-input" id="${id}" rows="1" maxlength="500" placeholder="${esc(placeholder)}"></textarea>
         <button class="ask-send" type="submit" aria-label="Send">${SEND}</button>
       </form>
-      <p class="ask-note">An open AI model (Qwen, or Gemma or Nemotron when it is busy) answers from
-        SQL that runs in your browser on this dashboard's own data. Every answer with figures shows
-        its query and rows.</p>
     </div>`;
 
   const scroller = root.querySelector('.ask-scroll');

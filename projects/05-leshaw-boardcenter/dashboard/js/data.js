@@ -1,4 +1,4 @@
-/* Leshaw Business Hub — demo data
+/* Leshaw Business Hub: demo data
    Catalogue items mirror leshaw-lsw.co.za. Orders, customers and quotes are
    generated from a fixed seed so the demo is identical on every machine. */
 (function () {
@@ -180,7 +180,7 @@
     orders.sort((a, b) => a.date.localeCompare(b.date));
     orders.forEach((o, i) => { o.id = 'LSW-' + (24001 + i); });
 
-    // Cut & Edge production board — built from live orders that need cutting
+    // Cut & Edge production board, built from live orders that need cutting
     const jobs = [];
     const live = orders.filter(o => o.services.length && ['Paid', 'In production', 'Ready for collection'].includes(o.status));
     live.forEach((o, i) => {

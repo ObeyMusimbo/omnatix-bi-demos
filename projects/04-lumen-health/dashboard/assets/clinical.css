@@ -394,7 +394,6 @@ section { margin: 0; }
 .bench .ask-input { background: var(--paper); color: var(--ink); border: 1px solid var(--rule-strong); border-radius: 22px; padding: 0.62rem 0.95rem; }
 .bench .ask-input:focus { outline: 2px solid var(--accent); outline-offset: 0; }
 .bench .ask-send { background: var(--accent-ink); color: var(--panel); border: 0; border-radius: 50%; }
-.bench .ask-note { color: var(--ink-3); background: var(--panel); }
 
 .section-head { margin-bottom: 1.1rem; display: flex; align-items: baseline; gap: 0.9rem; }
 .section-num {

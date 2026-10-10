@@ -54,7 +54,7 @@
         const t = el('text', { x: m.l - 10, y: yy + 4, 'text-anchor': 'end' }, svg);
         t.textContent = (opts.axisFmt || opts.fmt)(v);
       }
-      // X labels — thin out to avoid collisions
+      // X labels, thinned out to avoid collisions
       const maxLabels = Math.max(2, Math.floor(iw / 64));
       const every = Math.ceil(n / maxLabels);
       opts.labels.forEach((lb, i) => {

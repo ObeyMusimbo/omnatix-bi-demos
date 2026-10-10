@@ -29,19 +29,21 @@ scripts/refresh.py          rebuild after new data lands
 A fifth folder, `projects/05-leshaw-boardcenter/`, has a different shape: the Leshaw Business
 Hub, an operations dashboard built for a real client, Leshaw (boards and hardware, Spruitview),
 and listed with their approval. It has no pipeline: its sample data is generated in the page
-from a seed and changes as a visitor works in it. It sits in its own "Built for a client" row on
-the landing page, under the four fictional demos. See its [README](projects/05-leshaw-boardcenter/README.md).
+from a seed and changes as a visitor works in it. It is the first card on the landing page, whose
+intro says it is a real client on sample data and that the other four businesses are fictional.
+See its [README](projects/05-leshaw-boardcenter/README.md).
 
 All five publish from one Cloudflare Pages project, each under its own path, with the landing
-page at the root:
+page at the root. On a laptop the landing page shows all five cards in one row without scrolling,
+and the note about the AI models sits under them, not inside the pop-ups:
 
 ```
-demos.omnatix.co.za              all five, with the headline finding on each demo's card
+demos.omnatix.co.za              all five, in the order of PROJECTS in build_site.py
+demos.omnatix.co.za/leshaw       Leshaw Business Hub, a client build, first
 demos.omnatix.co.za/meridian     FMCG distribution
 demos.omnatix.co.za/kestrel      freight and fleet
 demos.omnatix.co.za/sable-finch  microfinance
 demos.omnatix.co.za/lumen        clinic group
-demos.omnatix.co.za/leshaw       Leshaw Business Hub, a client build
 ```
 
 Adding a demo is one entry in the `PROJECTS` list in `scripts/build_site.py`.
