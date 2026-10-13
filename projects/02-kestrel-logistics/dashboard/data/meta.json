@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-10-12T08:46:57+00:00",
+  "built_at": "2026-10-13T09:05:07+00:00",
   "data_from": "2024-09-02",
   "data_through": "2026-09-01",
   "fixed_period": true,
@@ -12,27 +12,27 @@
     },
     "mart_lane_economics": {
       "rows": 50,
-      "bytes": 10561
+      "bytes": 10605
     },
     "mart_failed_deliveries": {
       "rows": 10431,
-      "bytes": 123048
+      "bytes": 123479
     },
     "mart_fuel_outliers": {
       "rows": 124,
-      "bytes": 7548
+      "bytes": 7549
     },
     "mart_sla_performance": {
       "rows": 288,
-      "bytes": 9017
+      "bytes": 9047
     },
     "mart_load_factor": {
       "rows": 68,
-      "bytes": 6792
+      "bytes": 6794
     },
     "agg_trip_monthly": {
       "rows": 505,
-      "bytes": 27755
+      "bytes": 27722
     },
     "dim_lane": {
       "rows": 29,
@@ -60,7 +60,7 @@
         "n": "01",
         "id": "corridors",
         "title": "Empty return legs",
-        "v": 5530472.77,
+        "v": 5530793.86,
         "f": "Rc",
         "note": "lost a year on 12 corridors"
       },
@@ -68,7 +68,7 @@
         "n": "02",
         "id": "doors",
         "title": "Deliveries done twice",
-        "v": 6509218.06,
+        "v": 6509250.9,
         "f": "Rc",
         "note": "a year, 6 sites cause most of it"
       },
@@ -101,7 +101,7 @@
         "id": "close",
         "title": "What it is worth",
         "close": true,
-        "v": 19720056.13,
+        "v": 19720410.06,
         "f": "Rc",
         "note": "71.5% of the R27.6m the business earns"
       }
