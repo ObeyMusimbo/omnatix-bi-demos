@@ -27,7 +27,7 @@
     "n": "01",
     "id": "corridors",
     "title": "Empty return legs",
-    "v": 5525386.62,
+    "v": 5526107.13,
     "f": "Rc",
     "note": "lost a year on 12 corridors"
    },
@@ -35,7 +35,7 @@
     "n": "02",
     "id": "doors",
     "title": "Deliveries done twice",
-    "v": 6509219.73,
+    "v": 6509249.7,
     "f": "Rc",
     "note": "a year, 6 sites cause most of it"
    },
@@ -68,7 +68,7 @@
     "id": "close",
     "title": "What it is worth",
     "close": true,
-    "v": 19715412.31,
+    "v": 19716162.79,
     "f": "Rc",
     "note": "71.5% of the R27.6m the business earns"
    }
