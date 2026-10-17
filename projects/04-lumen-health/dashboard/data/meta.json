@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-10-16T06:49:45+00:00",
+  "built_at": "2026-10-17T06:42:20+00:00",
   "data_from": "2024-09-02",
   "data_through": "2026-08-31",
   "fixed_period": true,
@@ -14,7 +14,7 @@
     },
     "mart_slot_grid": {
       "rows": 50,
-      "bytes": 5872
+      "bytes": 5874
     },
     "mart_capacity_cost": {
       "rows": 50,

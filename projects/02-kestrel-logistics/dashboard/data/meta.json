@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-10-16T06:49:27+00:00",
+  "built_at": "2026-10-17T06:42:02+00:00",
   "data_from": "2024-09-02",
   "data_through": "2026-09-01",
   "fixed_period": true,
@@ -8,31 +8,31 @@
   "tables": {
     "mart_opportunity_bridge": {
       "rows": 6,
-      "bytes": 3953
+      "bytes": 3955
     },
     "mart_lane_economics": {
       "rows": 50,
-      "bytes": 10578
+      "bytes": 10594
     },
     "mart_failed_deliveries": {
       "rows": 10431,
-      "bytes": 123134
+      "bytes": 122928
     },
     "mart_fuel_outliers": {
       "rows": 124,
-      "bytes": 7544
+      "bytes": 7548
     },
     "mart_sla_performance": {
       "rows": 288,
-      "bytes": 9035
+      "bytes": 9050
     },
     "mart_load_factor": {
       "rows": 68,
-      "bytes": 6794
+      "bytes": 6786
     },
     "agg_trip_monthly": {
       "rows": 505,
-      "bytes": 27760
+      "bytes": 27839
     },
     "dim_lane": {
       "rows": 29,
@@ -60,7 +60,7 @@
         "n": "01",
         "id": "corridors",
         "title": "Empty return legs",
-        "v": 5526107.13,
+        "v": 5530953.89,
         "f": "Rc",
         "note": "lost a year on 12 corridors"
       },
@@ -76,7 +76,7 @@
         "n": "03",
         "id": "thirsty",
         "title": "Thirsty trucks",
-        "v": 2467347.12,
+        "v": 2466906.46,
         "f": "Rc",
         "note": "a year of excess diesel on 7 vehicles"
       },
@@ -101,9 +101,9 @@
         "id": "close",
         "title": "What it is worth",
         "close": true,
-        "v": 19716162.79,
+        "v": 19720568.89,
         "f": "Rc",
-        "note": "71.5% of the R27.6m the business earns"
+        "note": "71.6% of the R27.6m the business earns"
       }
     ],
     "filter": {
