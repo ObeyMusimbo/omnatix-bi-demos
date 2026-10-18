@@ -27,7 +27,7 @@
     "n": "01",
     "id": "corridors",
     "title": "Empty return legs",
-    "v": 5530953.89,
+    "v": 5525148.26,
     "f": "Rc",
     "note": "lost a year on 12 corridors"
    },
@@ -43,7 +43,7 @@
     "n": "03",
     "id": "thirsty",
     "title": "Thirsty trucks",
-    "v": 2466906.46,
+    "v": 2467347.12,
     "f": "Rc",
     "note": "a year of excess diesel on 7 vehicles"
    },
@@ -68,9 +68,9 @@
     "id": "close",
     "title": "What it is worth",
     "close": true,
-    "v": 19720568.89,
+    "v": 19715203.92,
     "f": "Rc",
-    "note": "71.6% of the R27.6m the business earns"
+    "note": "71.5% of the R27.6m the business earns"
    }
   ]
  },
