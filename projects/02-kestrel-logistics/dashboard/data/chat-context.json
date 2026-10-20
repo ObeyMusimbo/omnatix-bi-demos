@@ -35,7 +35,7 @@
     "n": "02",
     "id": "doors",
     "title": "Deliveries done twice",
-    "v": 6509218.06,
+    "v": 6509216.86,
     "f": "Rc",
     "note": "a year, 6 sites cause most of it"
    },
@@ -68,7 +68,7 @@
     "id": "close",
     "title": "What it is worth",
     "close": true,
-    "v": 19715410.64,
+    "v": 19715409.44,
     "f": "Rc",
     "note": "71.5% of the R27.6m the business earns"
    }
