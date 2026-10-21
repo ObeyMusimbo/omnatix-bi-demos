@@ -20,17 +20,17 @@
    "kicker": [
     "Revenue grew ",
     {
-     "v": 11.873662036007548,
+     "v": 11.873662036007238,
      "f": "signedPct"
     },
     ". Gross profit grew ",
     {
-     "v": 4.06199590583729,
+     "v": 4.061995905837734,
      "f": "signedPct"
     },
     "."
    ],
-   "v": 12615619.396515489,
+   "v": 12615619.396514237,
    "f": "Rc",
    "label": "of gross profit did not arrive, despite the revenue that should have carried it"
   },
@@ -39,7 +39,7 @@
     "n": "01",
     "id": "water",
     "title": "The range sold at a loss",
-    "v": -3849402.8900775914,
+    "v": -3849402.8900775863,
     "f": "Rc",
     "note": "contribution on bottled water, after freight and rebates"
    },
@@ -55,7 +55,7 @@
     "n": "03",
     "id": "discount",
     "title": "The discount nobody reset",
-    "v": 3894718.0313697397,
+    "v": 3894718.03136974,
     "f": "Rc",
     "note": "revenue forgone in twelve months on one account"
    },
@@ -71,7 +71,7 @@
     "n": "05",
     "id": "dead",
     "title": "Stock nobody is buying",
-    "v": 401257.9400000001,
+    "v": 401257.94000000006,
     "f": "Rc",
     "note": "of discontinued stock sitting at cost"
    }
