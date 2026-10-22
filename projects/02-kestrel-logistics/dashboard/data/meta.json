@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-10-21T07:13:24+00:00",
+  "built_at": "2026-10-22T07:15:09+00:00",
   "data_from": "2024-09-02",
   "data_through": "2026-09-01",
   "fixed_period": true,
@@ -8,43 +8,43 @@
   "tables": {
     "mart_opportunity_bridge": {
       "rows": 6,
-      "bytes": 3955
+      "bytes": 4095
     },
     "mart_lane_economics": {
       "rows": 50,
-      "bytes": 10564
+      "bytes": 10727
     },
     "mart_failed_deliveries": {
       "rows": 10431,
-      "bytes": 123255
+      "bytes": 123641
     },
     "mart_fuel_outliers": {
       "rows": 124,
-      "bytes": 7543
+      "bytes": 7912
     },
     "mart_sla_performance": {
       "rows": 288,
-      "bytes": 9040
+      "bytes": 9118
     },
     "mart_load_factor": {
       "rows": 68,
-      "bytes": 6799
+      "bytes": 6839
     },
     "agg_trip_monthly": {
       "rows": 505,
-      "bytes": 27780
+      "bytes": 27828
     },
     "dim_lane": {
       "rows": 29,
-      "bytes": 4540
+      "bytes": 4668
     },
     "dim_vehicle": {
       "rows": 124,
-      "bytes": 4361
+      "bytes": 4407
     },
     "dim_customer": {
       "rows": 242,
-      "bytes": 5553
+      "bytes": 5578
     }
   },
   "currency": "ZAR",
@@ -60,7 +60,7 @@
         "n": "01",
         "id": "corridors",
         "title": "Empty return legs",
-        "v": 5530632.8,
+        "v": 5525386.62,
         "f": "Rc",
         "note": "lost a year on 12 corridors"
       },
@@ -68,7 +68,7 @@
         "n": "02",
         "id": "doors",
         "title": "Deliveries done twice",
-        "v": 6509218.06,
+        "v": 6509219.73,
         "f": "Rc",
         "note": "a year, 6 sites cause most of it"
       },
@@ -76,7 +76,7 @@
         "n": "03",
         "id": "thirsty",
         "title": "Thirsty trucks",
-        "v": 2466906.46,
+        "v": 2467347.12,
         "f": "Rc",
         "note": "a year of excess diesel on 7 vehicles"
       },
@@ -101,9 +101,9 @@
         "id": "close",
         "title": "What it is worth",
         "close": true,
-        "v": 19720216.16,
+        "v": 19715412.31,
         "f": "Rc",
-        "note": "71.6% of the R27.6m the business earns"
+        "note": "71.5% of the R27.6m the business earns"
       }
     ],
     "filter": {

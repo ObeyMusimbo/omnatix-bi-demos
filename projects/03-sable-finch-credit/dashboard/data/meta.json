@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-10-21T07:13:35+00:00",
+  "built_at": "2026-10-22T07:15:17+00:00",
   "data_from": "2024-09-01",
   "data_through": "2026-08-31",
   "fixed_period": true,
@@ -8,39 +8,39 @@
   "tables": {
     "mart_exposure_bridge": {
       "rows": 6,
-      "bytes": 3398
+      "bytes": 3515
     },
     "mart_vintage": {
       "rows": 2691,
-      "bytes": 37625
+      "bytes": 37708
     },
     "mart_branch_risk": {
       "rows": 216,
-      "bytes": 10215
+      "bytes": 10356
     },
     "mart_affordability": {
       "rows": 648,
-      "bytes": 22433
+      "bytes": 22436
     },
     "mart_topup_masking": {
       "rows": 852,
-      "bytes": 34677
+      "bytes": 34862
     },
     "mart_debit_order": {
       "rows": 12,
-      "bytes": 2340
+      "bytes": 2386
     },
     "mart_collections": {
       "rows": 4,
-      "bytes": 2150
+      "bytes": 2186
     },
     "agg_book_monthly": {
       "rows": 23,
-      "bytes": 3763
+      "bytes": 3819
     },
     "dim_branch": {
       "rows": 9,
-      "bytes": 1382
+      "bytes": 1398
     }
   },
   "currency": "ZAR",
