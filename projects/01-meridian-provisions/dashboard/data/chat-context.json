@@ -20,17 +20,17 @@
    "kicker": [
     "Revenue grew ",
     {
-     "v": 11.873662036006971,
+     "v": 11.873662036007016,
      "f": "signedPct"
     },
     ". Gross profit grew ",
     {
-     "v": 4.061995905838001,
+     "v": 4.061995905838667,
      "f": "signedPct"
     },
     "."
    ],
-   "v": 12615619.396513343,
+   "v": 12615619.39651227,
    "f": "Rc",
    "label": "of gross profit did not arrive, despite the revenue that should have carried it"
   },
@@ -55,7 +55,7 @@
     "n": "03",
     "id": "discount",
     "title": "The discount nobody reset",
-    "v": 3894718.0313697485,
+    "v": 3894718.031369741,
     "f": "Rc",
     "note": "revenue forgone in twelve months on one account"
    },
@@ -71,7 +71,7 @@
     "n": "05",
     "id": "dead",
     "title": "Stock nobody is buying",
-    "v": 401257.93999999994,
+    "v": 401257.94000000006,
     "f": "Rc",
     "note": "of discontinued stock sitting at cost"
    }
