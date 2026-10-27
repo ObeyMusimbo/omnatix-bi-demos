@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-10-26T07:31:18+00:00",
+  "built_at": "2026-10-27T07:27:25+00:00",
   "data_from": "2024-09-02",
   "data_through": "2026-08-31",
   "fixed_period": true,
@@ -12,19 +12,19 @@
     },
     "mart_margin_waterfall": {
       "rows": 238,
-      "bytes": 16292
+      "bytes": 16281
     },
     "mart_promo_performance": {
       "rows": 2558,
-      "bytes": 235340
+      "bytes": 235236
     },
     "mart_discount_trend": {
       "rows": 9114,
-      "bytes": 610201
+      "bytes": 609959
     },
     "mart_stockout_impact": {
       "rows": 108,
-      "bytes": 5657
+      "bytes": 5668
     },
     "mart_dead_stock": {
       "rows": 393,
@@ -32,11 +32,11 @@
     },
     "agg_sales_monthly": {
       "rows": 834,
-      "bytes": 57345
+      "bytes": 57335
     },
     "agg_product_month": {
       "rows": 3096,
-      "bytes": 209665
+      "bytes": 209784
     },
     "dim_product": {
       "rows": 131,
@@ -54,17 +54,17 @@
       "kicker": [
         "Revenue grew ",
         {
-          "v": 11.873662036007282,
+          "v": 11.87366203600706,
           "f": "signedPct"
         },
         ". Gross profit grew ",
         {
-          "v": 4.061995905838867,
+          "v": 4.061995905838267,
           "f": "signedPct"
         },
         "."
       ],
-      "v": 12615619.39651236,
+      "v": 12615619.396513075,
       "f": "Rc",
       "label": "of gross profit did not arrive, despite the revenue that should have carried it"
     },
@@ -81,7 +81,7 @@
         "n": "02",
         "id": "promo",
         "title": "The promotion that loses money",
-        "v": -18.167872783154845,
+        "v": -18.16787278315485,
         "f": "R",
         "note": "gross profit per case on deal, against R44 off it"
       },
@@ -89,7 +89,7 @@
         "n": "03",
         "id": "discount",
         "title": "The discount nobody reset",
-        "v": 3894718.031369745,
+        "v": 3894718.0313697513,
         "f": "Rc",
         "note": "revenue forgone in twelve months on one account"
       },

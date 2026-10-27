@@ -20,17 +20,17 @@
    "kicker": [
     "Revenue grew ",
     {
-     "v": 11.873662036007282,
+     "v": 11.87366203600706,
      "f": "signedPct"
     },
     ". Gross profit grew ",
     {
-     "v": 4.061995905838867,
+     "v": 4.061995905838267,
      "f": "signedPct"
     },
     "."
    ],
-   "v": 12615619.39651236,
+   "v": 12615619.396513075,
    "f": "Rc",
    "label": "of gross profit did not arrive, despite the revenue that should have carried it"
   },
@@ -47,7 +47,7 @@
     "n": "02",
     "id": "promo",
     "title": "The promotion that loses money",
-    "v": -18.167872783154845,
+    "v": -18.16787278315485,
     "f": "R",
     "note": "gross profit per case on deal, against R44 off it"
    },
@@ -55,7 +55,7 @@
     "n": "03",
     "id": "discount",
     "title": "The discount nobody reset",
-    "v": 3894718.031369745,
+    "v": 3894718.0313697513,
     "f": "Rc",
     "note": "revenue forgone in twelve months on one account"
    },
