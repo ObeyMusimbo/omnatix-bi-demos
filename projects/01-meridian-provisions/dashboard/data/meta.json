@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-10-28T08:00:43+00:00",
+  "built_at": "2026-10-29T08:10:12+00:00",
   "data_from": "2024-09-02",
   "data_through": "2026-08-31",
   "fixed_period": true,
@@ -12,31 +12,31 @@
     },
     "mart_margin_waterfall": {
       "rows": 238,
-      "bytes": 16317
+      "bytes": 16343
     },
     "mart_promo_performance": {
       "rows": 2558,
-      "bytes": 235393
+      "bytes": 235455
     },
     "mart_discount_trend": {
       "rows": 9114,
-      "bytes": 610337
+      "bytes": 609927
     },
     "mart_stockout_impact": {
       "rows": 108,
-      "bytes": 5646
+      "bytes": 5676
     },
     "mart_dead_stock": {
       "rows": 393,
-      "bytes": 19330
+      "bytes": 19522
     },
     "agg_sales_monthly": {
       "rows": 834,
-      "bytes": 57351
+      "bytes": 57332
     },
     "agg_product_month": {
       "rows": 3096,
-      "bytes": 209776
+      "bytes": 209734
     },
     "dim_product": {
       "rows": 131,
@@ -54,17 +54,17 @@
       "kicker": [
         "Revenue grew ",
         {
-          "v": 11.87366203600735,
+          "v": 11.873662036007481,
           "f": "signedPct"
         },
         ". Gross profit grew ",
         {
-          "v": 4.061995905838112,
+          "v": 4.061995905837978,
           "f": "signedPct"
         },
         "."
       ],
-      "v": 12615619.39651373,
+      "v": 12615619.396514237,
       "f": "Rc",
       "label": "of gross profit did not arrive, despite the revenue that should have carried it"
     },
@@ -73,7 +73,7 @@
         "n": "01",
         "id": "water",
         "title": "The range sold at a loss",
-        "v": -3849402.89007759,
+        "v": -3849402.890077589,
         "f": "Rc",
         "note": "contribution on bottled water, after freight and rebates"
       },
@@ -89,7 +89,7 @@
         "n": "03",
         "id": "discount",
         "title": "The discount nobody reset",
-        "v": 3894718.0313697476,
+        "v": 3894718.031369745,
         "f": "Rc",
         "note": "revenue forgone in twelve months on one account"
       },
@@ -105,7 +105,7 @@
         "n": "05",
         "id": "dead",
         "title": "Stock nobody is buying",
-        "v": 401257.93999999994,
+        "v": 401257.94000000006,
         "f": "Rc",
         "note": "of discontinued stock sitting at cost"
       }
