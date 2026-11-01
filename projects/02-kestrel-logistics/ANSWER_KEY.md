@@ -13,8 +13,8 @@ All money is South African rand, excluding VAT.
 | Measure | TTM |
 |---|---|
 | Revenue | R243,339,163 |
-| Cost | R215,771,302 |
-| Contribution | R27,567,861 (11.3%) |
+| Cost | R215,771,361 |
+| Contribution | R27,567,802 (11.3%) |
 | Kilometres | 12,435,053 |
 | Earned per kilometre | R19.57 |
 | Spent per kilometre | R17.35 |
@@ -29,14 +29,14 @@ turns is carrying nothing, and until today nobody was charged for it.
 
 | Driver | Worth | Share | Finding |
 |---|---|---|---|
-| _Contribution earned in the last twelve months_ | _R27,567,861_ | | |
+| _Contribution earned in the last twelve months_ | _R27,567,802_ | | |
 | Corridors that fund their own empty return | R5,525,387 | 28.0% | 1 |
-| Deliveries that had to be done twice | R6,509,217 | 33.0% | 2 |
+| Deliveries that had to be done twice | R6,509,220 | 33.0% | 2 |
 | Vehicles burning more than their class | R2,467,347 | 12.5% | 3 |
 | Service penalties on the anchor account | R5,213,459 | 26.4% | 4 |
-| **Contribution with the same fleet and the same customers** | **R47,283,270** | | |
+| **Contribution with the same fleet and the same customers** | **R47,283,214** | | |
 
-**R19,715,409 identified against R27,567,861 earned, or 71.5% of
+**R19,715,412 identified against R27,567,802 earned, or 71.5% of
 contribution.** Four findings, each worth 13% to 33% of the
 total, on the same fleet serving the same customers with nothing new bought. Every step covers
 the same twelve months.
@@ -76,7 +76,7 @@ rate card is.
 ## Finding 2: deliveries that had to be done twice
 
 3,334 drops failed on first attempt in the last twelve months, 4.0% of
-everything delivered, costing **R6,509,217** in journeys that earned nothing.
+everything delivered, costing **R6,509,220** in journeys that earned nothing.
 
 | Site | Failure rate | Failed drops | Cost | Usual reason |
 |---|---|---|---|---|
