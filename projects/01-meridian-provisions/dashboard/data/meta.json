@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-11-06T09:00:23+00:00",
+  "built_at": "2026-11-07T08:28:33+00:00",
   "data_from": "2024-09-02",
   "data_through": "2026-08-31",
   "fixed_period": true,
@@ -12,15 +12,15 @@
     },
     "mart_margin_waterfall": {
       "rows": 238,
-      "bytes": 16278
+      "bytes": 16286
     },
     "mart_promo_performance": {
       "rows": 2558,
-      "bytes": 235437
+      "bytes": 235460
     },
     "mart_discount_trend": {
       "rows": 9114,
-      "bytes": 610042
+      "bytes": 610013
     },
     "mart_stockout_impact": {
       "rows": 108,
@@ -32,11 +32,11 @@
     },
     "agg_sales_monthly": {
       "rows": 834,
-      "bytes": 57390
+      "bytes": 57383
     },
     "agg_product_month": {
       "rows": 3096,
-      "bytes": 209742
+      "bytes": 209781
     },
     "dim_product": {
       "rows": 131,
@@ -54,17 +54,17 @@
       "kicker": [
         "Revenue grew ",
         {
-          "v": 11.873662036007238,
+          "v": 11.873662036006682,
           "f": "signedPct"
         },
         ". Gross profit grew ",
         {
-          "v": 4.061995905839377,
+          "v": 4.061995905837312,
           "f": "signedPct"
         },
         "."
       ],
-      "v": 12615619.396511465,
+      "v": 12615619.396514028,
       "f": "Rc",
       "label": "of gross profit did not arrive, despite the revenue that should have carried it"
     },
@@ -73,7 +73,7 @@
         "n": "01",
         "id": "water",
         "title": "The range sold at a loss",
-        "v": -3849402.890077588,
+        "v": -3849402.890077589,
         "f": "Rc",
         "note": "contribution on bottled water, after freight and rebates"
       },
@@ -81,7 +81,7 @@
         "n": "02",
         "id": "promo",
         "title": "The promotion that loses money",
-        "v": -18.167872783154845,
+        "v": -18.16787278315485,
         "f": "R",
         "note": "gross profit per case on deal, against R44 off it"
       },
