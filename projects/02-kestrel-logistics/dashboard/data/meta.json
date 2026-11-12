@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-11-11T08:58:33+00:00",
+  "built_at": "2026-11-12T09:25:45+00:00",
   "data_from": "2024-09-02",
   "data_through": "2026-09-01",
   "fixed_period": true,
@@ -12,27 +12,27 @@
     },
     "mart_lane_economics": {
       "rows": 50,
-      "bytes": 10751
+      "bytes": 10783
     },
     "mart_failed_deliveries": {
       "rows": 10431,
-      "bytes": 123426
+      "bytes": 123906
     },
     "mart_fuel_outliers": {
       "rows": 124,
-      "bytes": 7907
+      "bytes": 7927
     },
     "mart_sla_performance": {
       "rows": 288,
-      "bytes": 9117
+      "bytes": 9124
     },
     "mart_load_factor": {
       "rows": 68,
-      "bytes": 6853
+      "bytes": 6851
     },
     "agg_trip_monthly": {
       "rows": 505,
-      "bytes": 27827
+      "bytes": 27825
     },
     "dim_lane": {
       "rows": 29,
@@ -68,7 +68,7 @@
         "n": "02",
         "id": "doors",
         "title": "Deliveries done twice",
-        "v": 6509219.73,
+        "v": 6509216.86,
         "f": "Rc",
         "note": "a year, 6 sites cause most of it"
       },
@@ -101,9 +101,9 @@
         "id": "close",
         "title": "What it is worth",
         "close": true,
-        "v": 19720217.83,
+        "v": 19720214.96,
         "f": "Rc",
-        "note": "71.5% of the R27.6m the business earns"
+        "note": "71.6% of the R27.6m the business earns"
       }
     ],
     "filter": {
