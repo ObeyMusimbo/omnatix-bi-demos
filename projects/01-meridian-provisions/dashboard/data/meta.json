@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-11-13T09:13:22+00:00",
+  "built_at": "2026-11-14T08:43:17+00:00",
   "data_from": "2024-09-02",
   "data_through": "2026-08-31",
   "fixed_period": true,
@@ -12,15 +12,15 @@
     },
     "mart_margin_waterfall": {
       "rows": 238,
-      "bytes": 16283
+      "bytes": 16314
     },
     "mart_promo_performance": {
       "rows": 2558,
-      "bytes": 235562
+      "bytes": 235515
     },
     "mart_discount_trend": {
       "rows": 9114,
-      "bytes": 609979
+      "bytes": 609918
     },
     "mart_stockout_impact": {
       "rows": 108,
@@ -32,11 +32,11 @@
     },
     "agg_sales_monthly": {
       "rows": 834,
-      "bytes": 57358
+      "bytes": 57354
     },
     "agg_product_month": {
       "rows": 3096,
-      "bytes": 209682
+      "bytes": 209704
     },
     "dim_product": {
       "rows": 131,
@@ -54,17 +54,17 @@
       "kicker": [
         "Revenue grew ",
         {
-          "v": 11.873662036007149,
+          "v": 11.873662036007303,
           "f": "signedPct"
         },
         ". Gross profit grew ",
         {
-          "v": 4.061995905837734,
+          "v": 4.061995905838023,
           "f": "signedPct"
         },
         "."
       ],
-      "v": 12615619.396514058,
+      "v": 12615619.39651385,
       "f": "Rc",
       "label": "of gross profit did not arrive, despite the revenue that should have carried it"
     },
@@ -89,7 +89,7 @@
         "n": "03",
         "id": "discount",
         "title": "The discount nobody reset",
-        "v": 3894718.031369753,
+        "v": 3894718.031369756,
         "f": "Rc",
         "note": "revenue forgone in twelve months on one account"
       },

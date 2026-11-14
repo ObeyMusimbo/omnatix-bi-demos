@@ -20,17 +20,17 @@
    "kicker": [
     "Revenue grew ",
     {
-     "v": 11.873662036007149,
+     "v": 11.873662036007303,
      "f": "signedPct"
     },
     ". Gross profit grew ",
     {
-     "v": 4.061995905837734,
+     "v": 4.061995905838023,
      "f": "signedPct"
     },
     "."
    ],
-   "v": 12615619.396514058,
+   "v": 12615619.39651385,
    "f": "Rc",
    "label": "of gross profit did not arrive, despite the revenue that should have carried it"
   },
@@ -55,7 +55,7 @@
     "n": "03",
     "id": "discount",
     "title": "The discount nobody reset",
-    "v": 3894718.031369753,
+    "v": 3894718.031369756,
     "f": "Rc",
     "note": "revenue forgone in twelve months on one account"
    },
