@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-11-16T09:07:36+00:00",
+  "built_at": "2026-11-17T10:20:01+00:00",
   "data_from": "2024-09-02",
   "data_through": "2026-08-31",
   "fixed_period": true,
@@ -12,19 +12,19 @@
     },
     "mart_margin_waterfall": {
       "rows": 238,
-      "bytes": 16281
+      "bytes": 16307
     },
     "mart_promo_performance": {
       "rows": 2558,
-      "bytes": 235334
+      "bytes": 235464
     },
     "mart_discount_trend": {
       "rows": 9114,
-      "bytes": 610457
+      "bytes": 610101
     },
     "mart_stockout_impact": {
       "rows": 108,
-      "bytes": 5658
+      "bytes": 5666
     },
     "mart_dead_stock": {
       "rows": 393,
@@ -32,11 +32,11 @@
     },
     "agg_sales_monthly": {
       "rows": 834,
-      "bytes": 57403
+      "bytes": 57280
     },
     "agg_product_month": {
       "rows": 3096,
-      "bytes": 209739
+      "bytes": 209720
     },
     "dim_product": {
       "rows": 131,
@@ -54,17 +54,17 @@
       "kicker": [
         "Revenue grew ",
         {
-          "v": 11.873662036006749,
+          "v": 11.873662036006483,
           "f": "signedPct"
         },
         ". Gross profit grew ",
         {
-          "v": 4.061995905838667,
+          "v": 4.061995905838134,
           "f": "signedPct"
         },
         "."
       ],
-      "v": 12615619.396511883,
+      "v": 12615619.39651233,
       "f": "Rc",
       "label": "of gross profit did not arrive, despite the revenue that should have carried it"
     },
@@ -73,7 +73,7 @@
         "n": "01",
         "id": "water",
         "title": "The range sold at a loss",
-        "v": -3849402.8900775895,
+        "v": -3849402.890077587,
         "f": "Rc",
         "note": "contribution on bottled water, after freight and rebates"
       },
@@ -89,7 +89,7 @@
         "n": "03",
         "id": "discount",
         "title": "The discount nobody reset",
-        "v": 3894718.0313697476,
+        "v": 3894718.0313697485,
         "f": "Rc",
         "note": "revenue forgone in twelve months on one account"
       },
