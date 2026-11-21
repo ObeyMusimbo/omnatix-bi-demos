@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-11-20T09:47:21+00:00",
+  "built_at": "2026-11-21T09:19:28+00:00",
   "data_from": "2024-09-02",
   "data_through": "2026-08-31",
   "fixed_period": true,
@@ -12,19 +12,19 @@
     },
     "mart_margin_waterfall": {
       "rows": 238,
-      "bytes": 16282
+      "bytes": 16277
     },
     "mart_promo_performance": {
       "rows": 2558,
-      "bytes": 235568
+      "bytes": 224318
     },
     "mart_discount_trend": {
       "rows": 9114,
-      "bytes": 610132
+      "bytes": 609991
     },
     "mart_stockout_impact": {
       "rows": 108,
-      "bytes": 5646
+      "bytes": 5660
     },
     "mart_dead_stock": {
       "rows": 393,
@@ -32,11 +32,11 @@
     },
     "agg_sales_monthly": {
       "rows": 834,
-      "bytes": 57340
+      "bytes": 57357
     },
     "agg_product_month": {
       "rows": 3096,
-      "bytes": 209653
+      "bytes": 209671
     },
     "dim_product": {
       "rows": 131,
@@ -54,17 +54,17 @@
       "kicker": [
         "Revenue grew ",
         {
-          "v": 11.873662036007214,
+          "v": 11.873662036007794,
           "f": "signedPct"
         },
         ". Gross profit grew ",
         {
-          "v": 4.0619959058386,
+          "v": 4.061995905838645,
           "f": "signedPct"
         },
         "."
       ],
-      "v": 12615619.396512747,
+      "v": 12615619.396513551,
       "f": "Rc",
       "label": "of gross profit did not arrive, despite the revenue that should have carried it"
     },
@@ -73,7 +73,7 @@
         "n": "01",
         "id": "water",
         "title": "The range sold at a loss",
-        "v": -3849402.8900775844,
+        "v": -3849402.8900775923,
         "f": "Rc",
         "note": "contribution on bottled water, after freight and rebates"
       },
@@ -89,7 +89,7 @@
         "n": "03",
         "id": "discount",
         "title": "The discount nobody reset",
-        "v": 3894718.031369743,
+        "v": 3894718.031369748,
         "f": "Rc",
         "note": "revenue forgone in twelve months on one account"
       },
