@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-11-22T09:28:45+00:00",
+  "built_at": "2026-11-23T10:26:19+00:00",
   "data_from": "2024-09-01",
   "data_through": "2026-08-31",
   "fixed_period": true,
@@ -12,7 +12,7 @@
     },
     "mart_vintage": {
       "rows": 2691,
-      "bytes": 37795
+      "bytes": 37703
     },
     "mart_branch_risk": {
       "rows": 216,
@@ -40,7 +40,7 @@
     },
     "dim_branch": {
       "rows": 9,
-      "bytes": 1399
+      "bytes": 1400
     }
   },
   "currency": "ZAR",

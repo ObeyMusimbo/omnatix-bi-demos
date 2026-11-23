@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-11-22T09:28:29+00:00",
+  "built_at": "2026-11-23T10:26:04+00:00",
   "data_from": "2024-09-02",
   "data_through": "2026-08-31",
   "fixed_period": true,
@@ -12,19 +12,19 @@
     },
     "mart_margin_waterfall": {
       "rows": 238,
-      "bytes": 16319
+      "bytes": 16274
     },
     "mart_promo_performance": {
       "rows": 2558,
-      "bytes": 224291
+      "bytes": 224424
     },
     "mart_discount_trend": {
       "rows": 9114,
-      "bytes": 609884
+      "bytes": 610137
     },
     "mart_stockout_impact": {
       "rows": 108,
-      "bytes": 5646
+      "bytes": 5673
     },
     "mart_dead_stock": {
       "rows": 393,
@@ -32,11 +32,11 @@
     },
     "agg_sales_monthly": {
       "rows": 834,
-      "bytes": 57323
+      "bytes": 57370
     },
     "agg_product_month": {
       "rows": 3096,
-      "bytes": 209691
+      "bytes": 209616
     },
     "dim_product": {
       "rows": 131,
@@ -54,17 +54,17 @@
       "kicker": [
         "Revenue grew ",
         {
-          "v": 11.873662036006927,
+          "v": 11.873662036007794,
           "f": "signedPct"
         },
         ". Gross profit grew ",
         {
-          "v": 4.061995905837068,
+          "v": 4.061995905837734,
           "f": "signedPct"
         },
         "."
       ],
-      "v": 12615619.396514863,
+      "v": 12615619.396515131,
       "f": "Rc",
       "label": "of gross profit did not arrive, despite the revenue that should have carried it"
     },
@@ -73,7 +73,7 @@
         "n": "01",
         "id": "water",
         "title": "The range sold at a loss",
-        "v": -3849402.8900775877,
+        "v": -3849402.8900775947,
         "f": "Rc",
         "note": "contribution on bottled water, after freight and rebates"
       },
@@ -81,7 +81,7 @@
         "n": "02",
         "id": "promo",
         "title": "The promotion that loses money",
-        "v": -18.167872783154845,
+        "v": -18.16787278315485,
         "f": "R",
         "note": "gross profit per case on deal, against R44 off it"
       },
@@ -89,7 +89,7 @@
         "n": "03",
         "id": "discount",
         "title": "The discount nobody reset",
-        "v": 3894718.031369743,
+        "v": 3894718.031369744,
         "f": "Rc",
         "note": "revenue forgone in twelve months on one account"
       },
