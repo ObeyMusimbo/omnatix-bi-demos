@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-11-24T12:06:41+00:00",
+  "built_at": "2026-11-25T10:57:34+00:00",
   "data_from": "2024-09-02",
   "data_through": "2026-08-31",
   "fixed_period": true,
@@ -12,19 +12,19 @@
     },
     "mart_margin_waterfall": {
       "rows": 238,
-      "bytes": 16284
+      "bytes": 16270
     },
     "mart_promo_performance": {
       "rows": 2558,
-      "bytes": 224374
+      "bytes": 224422
     },
     "mart_discount_trend": {
       "rows": 9114,
-      "bytes": 610437
+      "bytes": 610111
     },
     "mart_stockout_impact": {
       "rows": 108,
-      "bytes": 5660
+      "bytes": 5672
     },
     "mart_dead_stock": {
       "rows": 393,
@@ -32,11 +32,11 @@
     },
     "agg_sales_monthly": {
       "rows": 834,
-      "bytes": 57392
+      "bytes": 57354
     },
     "agg_product_month": {
       "rows": 3096,
-      "bytes": 209755
+      "bytes": 209671
     },
     "dim_product": {
       "rows": 131,
@@ -54,17 +54,17 @@
       "kicker": [
         "Revenue grew ",
         {
-          "v": 11.873662036007303,
+          "v": 11.873662036006838,
           "f": "signedPct"
         },
         ". Gross profit grew ",
         {
-          "v": 4.061995905837978,
+          "v": 4.061995905838134,
           "f": "signedPct"
         },
         "."
       ],
-      "v": 12615619.39651391,
+      "v": 12615619.396512896,
       "f": "Rc",
       "label": "of gross profit did not arrive, despite the revenue that should have carried it"
     },
@@ -73,7 +73,7 @@
         "n": "01",
         "id": "water",
         "title": "The range sold at a loss",
-        "v": -3849402.890077588,
+        "v": -3849402.890077583,
         "f": "Rc",
         "note": "contribution on bottled water, after freight and rebates"
       },
@@ -89,7 +89,7 @@
         "n": "03",
         "id": "discount",
         "title": "The discount nobody reset",
-        "v": 3894718.0313697457,
+        "v": 3894718.0313697513,
         "f": "Rc",
         "note": "revenue forgone in twelve months on one account"
       },
@@ -97,7 +97,7 @@
         "n": "04",
         "id": "stock",
         "title": "Sales that never happened",
-        "v": 1074945.3928326657,
+        "v": 1074945.3928326664,
         "f": "Rc",
         "note": "revenue lost to weekend stock-outs"
       },
